@@ -1,4 +1,41 @@
-This is a [Deno](https://deno.land/) project.
+This is a [Deno](https://deno.land/) library.
+
+# Setup
+
+You will probably want to do two things besides your normal imports etc.;
+
+- Have a Deno configuration file (`deno.json`) that avoids importing `lib.dom.d.ts`;
+  ```json
+  {
+    "$schema": "https://deno.land/x/deno@v1.22.1/cli/schemas/config-file.v1.json",
+    "compilerOptions": {
+      "lib": ["deno.ns"]
+    }
+  }
+  ```
+
+- Either use a JSX pragma at the start of each `.tsx` file (`/** @jsx JSX */`), or add another line
+  to `compilerOptions` in `deno.js`:
+  ```js
+  "jsxFactory": "JSX"
+  ```
+
+
+From this point onward, your basic configuration looks like;
+
+```tsx
+/** @jsx JSX */
+import API, { JSX } from 'https://raw.githubusercontent.com/wvbe/experimental-deno-xml-to-docx/develop/mod.ts';
+
+const api = new API();
+
+// … Use `api.add()` to register XML-to-DOCX rules
+
+await api.writeXmlToDocx(
+  await Deno.readTextFile(Deno.args[0]),
+  Deno.args[1]
+);
+```
 
 # Tools
 ```sh

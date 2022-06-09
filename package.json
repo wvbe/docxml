@@ -1,0 +1,9 @@
+{
+	"scripts": {
+		"lint": "eslint . --ext .ts,.tsx"
+	},
+	"devDependencies": {
+		"@wvbe/eslint-config": "github:wvbe/eslint-config",
+		"eslint": "^8.16.0"
+	}
+}

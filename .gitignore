@@ -1,0 +1,9 @@
+/examples
+/node_modules
+package-lock.json
+.DS_Store
+~*.dotx
+~*.docx
+
+/*.docx
+/*.html

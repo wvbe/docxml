@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<recipe xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:fontoxml:training:delicious:recipe.xsd"
+	xmlns:fxd="http://schemas.fontoxml.com/document-history/1.0/differences.xsd">
+	<title>Mushroom lunch</title>
+	<description>
+		<p>Delicious, healthy meal for foodies!</p>
+	</description>
+	<allergy-warning>
+		<p>Do not use this recipe if you are allergic to:</p>
+		<ul>
+			<li>
+				<p>Lunch</p>
+			</li>
+			<li>
+				<p>Vegetarian food</p>
+			</li>
+			<li>
+				<p>Gluten-free food</p>
+			</li>
+		</ul>
+	</allergy-warning>
+	<steps>
+		<step>
+			<p>Slice the <ingredient>mushrooms</ingredient><fxd:addition> and crush the <ingredient>garlic clove</ingredient></fxd:addition>.</p>
+		</step>
+		<step>
+			<p>Heat the <ingredient>olive oil</ingredient> in a large non-stick frying pan, then fry the garlic over a low heat for 1 min<fxd:deletion> or until smoke develops</fxd:deletion>.</p>
+		</step>
+		<step>
+			<p>Add the mushrooms and cook until soft.</p>
+		</step>
+		<step>
+			<p>Add the <fxd:wrap><ingredient>kale</ingredient></fxd:wrap>.</p>
+			<p>If the kale won’t all fit in the pan, add half and stir until wilted, then add the rest.</p>
+		</step>
+		<step>
+			<p>Once all the <fxd:unwrap>
+				<ingredient>kale</ingredient>
+			</fxd:unwrap> is wilted, season.</p>
+	</step>
+	<fxd:move fxd:moveId="0">
+		<step>
+			<fxd:addition><p>Now crack in the <ingredient>eggs</ingredient> and keep them cooking gently for 2-3 mins.</p></fxd:addition>
+		</step>
+	</fxd:move>
+	<step>
+		<p>Cover with the lid to for a further 2-3 mins or until the eggs are cooked to your liking.</p>
+	</step>
+	<fxd:moveTombstone fxd:moveIdRef="0" />
+	<step>
+		<p>Serve with bread.</p>
+	</step>
+</steps>
+</recipe>

@@ -1,3 +1,5 @@
+import { Node } from 'https://esm.sh/slimdom@3.1.0';
+
 /**
  * Represents the information found in a .dotx Word template file. Contains styles that may be used
  * in {@link DocxComponent DocxComponents} so that you can quickly conform to a visual style.

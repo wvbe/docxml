@@ -1,5 +1,9 @@
 import docx from 'https://esm.sh/docx@7.3.0';
-import { slimdom, sync } from 'https://esm.sh/slimdom-sax-parser@1.5.3';
+import { Node } from 'https://esm.sh/slimdom@3.1.0';
+import {
+	slimdom,
+	sync,
+} from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/deno/src/index.ts';
 
 import { Renderer } from '../classes/renderer.ts';
 import writeDocxFile from '../component-utilities.ts';
@@ -62,6 +66,8 @@ export class Api {
 	/**
 	 * Convert a string of XML to an XML DOM, apply all element selector/template pairs, and write
 	 * the result to a .html file on disk.
+	 *
+	 * @deprecated WIP, this is not a reliable rendition of the document.
 	 */
 	public async writeXmlToHtml(xmlString: string, destination: string) {
 		const ast = await this.renderXmlStringToAst(xmlString);
@@ -99,6 +105,8 @@ export class Api {
 	 * Write an AST to a .docx file on your disk.
 	 *
 	 * For typical use, use {@link API#writeXmlToDocx} instead.
+	 *
+	 * @alpha
 	 */
 	public static async writeAstToDocx(
 		destination: string,
@@ -122,6 +130,9 @@ export class Api {
 			}
 			return String(value);
 		});
-		await Deno.writeTextFile(destination, slimdom.serializeToWellFormedString(dom));
+		await Deno.writeTextFile(
+			destination,
+			slimdom.serializeToWellFormedString(dom as unknown as Node),
+		);
 	}
 }

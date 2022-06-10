@@ -1,3 +1,5 @@
+/** @jsx JSX */
+
 import API, {
 	Document,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

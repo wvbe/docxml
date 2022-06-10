@@ -2,8 +2,8 @@ import docx from 'https://esm.sh/docx@7.3.0';
 
 import { asDocxArray, asJsonmlArray, assertChildrenAreOnlyOfType } from '../component-utilities.ts';
 import { DocxComponent, DocxNode } from '../types.ts';
-import { ParagraphNode } from './paragraphs.tsx';
-import { TableNode } from './tables.tsx';
+import { ParagraphNode } from './paragraphs.ts';
+import { TableNode } from './tables.ts';
 
 export type SectionProps = Omit<docx.ISectionOptions, 'children'> & {
 	// @TODO allow TableOfContents into children too

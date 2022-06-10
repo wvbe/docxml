@@ -5,7 +5,7 @@ type JsxPragma<
 	Props extends { children: unknown[] } = { children: unknown[] },
 	Return extends DocxNode<string, unknown> = DocxNode<string, unknown>,
 > = (
-	Component: DocxComponent<Props, Return>,
+	docxComponent: DocxComponent<Props, Return>,
 	props: Props,
 	...children: Props['children']
 ) => Return | Promise<Return>;

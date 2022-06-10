@@ -3,6 +3,7 @@ import {
 	evaluateXPathToBoolean,
 	evaluateXPathToNodes,
 } from 'https://esm.sh/fontoxpath@3.26.0';
+import { Node } from 'https://esm.sh/slimdom@3.1.0';
 
 import { RuleComponent, RuleProps, RuleReturnType, Template } from '../types.ts';
 

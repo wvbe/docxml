@@ -2,8 +2,8 @@ import docx from 'https://esm.sh/docx@7.3.0';
 
 import { asDocxArray, asJsonmlArray, assertChildrenAreOnlyOfType } from '../component-utilities.ts';
 import { DocxComponent, DocxNode, Style } from '../types.ts';
-import { ImageNode } from './images.tsx';
-import { TextNode } from './texts.tsx';
+import { ImageNode } from './images.ts';
+import { TextNode } from './texts.ts';
 
 type IParagraphOptions = Exclude<ConstructorParameters<typeof docx.Paragraph>[0], string>;
 

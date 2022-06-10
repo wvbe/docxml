@@ -1,3 +1,5 @@
+/** @jsx JSX */
+
 import API, {
 	DeletedText,
 	Document,

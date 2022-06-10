@@ -1,4 +1,4 @@
-import { Document } from 'https://esm.sh/slimdom@3.0.1';
+import { Document } from 'https://esm.sh/slimdom@3.1.0';
 
 import { Jsonml } from './types.ts';
 

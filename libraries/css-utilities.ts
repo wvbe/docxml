@@ -1,6 +1,6 @@
 import { Declaration, parse, Rule } from 'https://esm.sh/css@3.0.0';
 import { evaluateXPathToString } from 'https://esm.sh/fontoxpath@3.26.0';
-import { sync } from 'https://esm.sh/slimdom-sax-parser@1.5.3';
+import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/deno/src/index.ts';
 
 function getMsoStylesFromCssString(css: string): {
 	[styleName: string]: { [cssRule: string]: string };

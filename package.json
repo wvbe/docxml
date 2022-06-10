@@ -1,6 +1,7 @@
 {
 	"scripts": {
-		"lint": "eslint . --ext .ts,.tsx"
+		"lint": "eslint . --ext .ts,.tsx",
+		"compile": "deno compile --allow-env --allow-read --allow-write"
 	},
 	"devDependencies": {
 		"@wvbe/eslint-config": "github:wvbe/eslint-config",

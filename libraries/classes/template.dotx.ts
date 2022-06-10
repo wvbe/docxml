@@ -1,6 +1,6 @@
 import { JSZip, readZip } from 'https://deno.land/x/jszip@0.11.0/mod.ts';
 import { evaluateXPathToStrings } from 'https://esm.sh/fontoxpath@3.26.0';
-import { sync } from 'https://esm.sh/slimdom-sax-parser@1.5.3';
+import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/deno/src/index.ts';
 
 import { Style, Template } from '../types.ts';
 

@@ -1,7 +1,6 @@
 {
 	"$schema": "https://deno.land/x/deno@v1.22.1/cli/schemas/config-file.v1.json",
 	"compilerOptions": {
-		"jsxFactory": "JSX",
 		// Include only deno.ns (and not deno.window) to avoid conflicts with lib.dom.d.ts
 		"lib": ["deno.ns"]
 	}

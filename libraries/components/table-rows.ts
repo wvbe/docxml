@@ -2,7 +2,7 @@ import docx from 'https://esm.sh/docx@7.3.0';
 
 import { asDocxArray, asJsonmlArray, assertChildrenAreOnlyOfType } from '../component-utilities.ts';
 import { DocxComponent, DocxNode } from '../types.ts';
-import { TableCellNode } from './table-cells.tsx';
+import { TableCellNode } from './table-cells.ts';
 
 type ITableRowOptions = Exclude<ConstructorParameters<typeof docx.TableRow>[0], string>;
 

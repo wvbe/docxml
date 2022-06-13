@@ -1,5 +1,6 @@
 {
 	"scripts": {
+		"test": "deno test --allow-read libraries",
 		"lint": "eslint . --ext .ts,.tsx",
 		"compile": "deno compile --allow-env --allow-read --allow-write"
 	},

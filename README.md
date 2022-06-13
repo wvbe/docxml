@@ -74,5 +74,13 @@ deno compile --allow-env --allow-read --allow-write transform-html-to-docx.tsx
 You can now forever use your executable to transform HTML to DOCX:
 
 ```sh
+# Pipe XML into script, and save result as .docx file
 cat my-document.html | transform-html-to-docx > my-document.docx
+
+# Use option flags to determine in and output locations
+transform-html-to-docx --source my-document.html --destination my-document.docx
+
+# Run script and unzip to the current working directory immediately
+cat my-document.html | transform-html-to-docx | bsdtar -xvf-
 ```
+

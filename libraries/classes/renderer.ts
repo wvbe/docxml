@@ -13,7 +13,7 @@ import { RuleComponent, RuleProps, RuleReturnType, Template } from '../types.ts'
  */
 type RegistrySelector = string;
 
-class Registry<RegistryValue> {
+export class Registry<RegistryValue> {
 	/**
 	 * All test/value sets known to this registery. Is kept in descending order of test specificity because {@link
 	 * Registry.optimize} is always called when modifying this set through public methods.

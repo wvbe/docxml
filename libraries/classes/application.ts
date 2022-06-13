@@ -111,6 +111,7 @@ export class Application {
 		} catch (error: unknown) {
 			console.error('⚠️   The DOCX output failed because of an error:');
 			console.error(`    ${(error as Error).message || error}`);
+			Deno.exit(1);
 		}
 	}
 

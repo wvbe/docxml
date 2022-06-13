@@ -1,9 +1,7 @@
-/** @jsx JSX */
+/** @jsx Application.JSX */
 
-import API, {
+import Application, {
 	Document,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	JSX,
 	Paragraph,
 	Section,
 	Table,
@@ -12,7 +10,7 @@ import API, {
 	Text,
 } from '../mod.ts';
 
-await API.writeAstToDocx(
+await Application.writeAstToDocx(
 	'tables.docx',
 	<Document>
 		<Section>

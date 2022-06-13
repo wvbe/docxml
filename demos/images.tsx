@@ -1,20 +1,12 @@
-/** @jsx JSX */
+/** @jsx Application.JSX */
 
 import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
 
-import API, {
-	Document,
-	Image,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	JSX,
-	Paragraph,
-	Section,
-	Text,
-} from '../mod.ts';
+import Application, { Document, Image, Paragraph, Section, Text } from '../mod.ts';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 
-await API.writeAstToDocx(
+await Application.writeAstToDocx(
 	'images.docx',
 	<Document>
 		<Section>

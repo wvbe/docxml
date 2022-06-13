@@ -1,7 +1,7 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
-import { asDocxArray, asJsonmlArray, assertChildrenAreOnlyOfType } from '../component-utilities.ts';
 import { DocxComponent, DocxNode } from '../types.ts';
+import { asDocxArray, asJsonmlArray, assertChildrenAreOnlyOfType } from '../utilities/jsx.ts';
 import { SectionNode } from './sections.ts';
 
 type IPropertiesOptions = ConstructorParameters<typeof docx.Document>[0];

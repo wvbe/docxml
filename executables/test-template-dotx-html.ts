@@ -1,8 +1,8 @@
 import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
 
-import { assert, exit } from '../libraries/check-utilities.ts';
 import { DotxTemplate } from '../libraries/classes/template.dotx.ts';
-import { getMsoStylesFromDotxHtml } from '../libraries/css-utilities.ts';
+import { assert, exit } from '../libraries/utilities/assertions.ts';
+import { getMsoStylesFromDotxHtml } from '../libraries/utilities/css.ts';
 
 const DOTX = resolve(Deno.cwd(), Deno.args[0]);
 const HTML = resolve(Deno.cwd(), Deno.args[1]);

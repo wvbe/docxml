@@ -1,8 +1,50 @@
-import docx from 'https://esm.sh/docx@7.3.0';
+import { DocxComponent, DocxNode } from '../types.ts';
 
-import { DocxNode } from './types.ts';
+type JsxPragma<
+	Props extends { children: unknown[] } = { children: unknown[] },
+	Return extends DocxNode<string, unknown> = DocxNode<string, unknown>,
+> = (
+	docxComponent: DocxComponent<Props, Return>,
+	props: Props,
+	...children: Props['children']
+) => Return | Promise<Return>;
+
+/**
+ * This is the JSX pragma used to transform a hierarchy of DocxComponents to the AST that is
+ * interpreted by the rest of the application. Import it into any file where you would like to
+ * use JSX to compose a DOCX document.
+ *
+ * For example:
+ * ```ts
+ * /** @jsx Application.JSX * /
+ * import Application, { Document, Paragraph, Section, Text } from '../../mod.ts';
+ *
+ * await Application.writeAstToDocx(
+ *     'from-template.docx',
+ *     <Document template={template.init()}>
+ *         <Section>
+ *             <Paragraph>
+ *                 <Text>Howdy.</Text>
+ *             </Paragraph>
+ *         </Section>
+ * 	</Document>,
+ * );
+ * ```
+ *
+ * This pragma allows you to use single items as a child, arrays, nested arrays, promises of a child
+ * or promises of (nested) arrays, etc. Only attributes will be passed on to their component without
+ * being awaited.
+ */
+export const JSX: JsxPragma = async (docxComponent, props, ...children) => {
+	const result = await docxComponent({
+		...props,
+		children: await asArray(children),
+	});
+	return result;
+};
 
 type MultiDimensionalArray<P> = Array<P | MultiDimensionalArray<P>>;
+
 /**
  * A helper function that ensures that an array-ish (like JSX children, which could be undefined, a single item or an
  * array of items, or a promise thereof, or all of the aforementioned nested in more arrays) is always a single flat array.
@@ -57,13 +99,4 @@ export async function assertChildrenAreOnlyOfType<P extends DocxNode<string, unk
 	}
 }
 
-/**
- * Write a <Document> to disk as a .docx file.
- */
-export default async function writeDocxFile(
-	location: string,
-	document: docx.Document | Promise<docx.Document>,
-) {
-	const blob = await docx.Packer.toBlob(await document);
-	await Deno.writeFile(location, new Uint8Array(await blob.arrayBuffer()));
-}
+export default JSX;

@@ -1,7 +1,14 @@
+/**
+ * @file
+ * @todo remove this entire file, all its contents is deprecated
+ */
 import { Declaration, parse, Rule } from 'https://esm.sh/css@3.0.0';
 import { evaluateXPathToString } from 'https://esm.sh/fontoxpath@3.26.0';
 import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/deno/src/index.ts';
 
+/**
+ * @deprecated
+ */
 function getMsoStylesFromCssString(css: string): {
 	[styleName: string]: { [cssRule: string]: string };
 } {
@@ -39,6 +46,9 @@ function getMsoStylesFromCssString(css: string): {
 		);
 }
 
+/**
+ * @deprecated
+ */
 export async function getMsoStylesFromDotxHtml(location: string) {
 	// Of _course_ the HTML export of a Word file contains unquoted attributes etc. To make it work
 	// with our XML parser, regex for <style> tags first, remove some HTML comment tags, and parse

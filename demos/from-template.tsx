@@ -1,22 +1,14 @@
-/** @jsx JSX */
+/** @jsx Application.JSX */
 
 import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
 
-import API, {
-	Document,
-	DotxTemplate,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	JSX,
-	Paragraph,
-	Section,
-	Text,
-} from '../mod.ts';
+import Application, { Document, DotxTemplate, Paragraph, Section, Text } from '../mod.ts';
 
 const template = new DotxTemplate(
 	resolve(new URL('.', import.meta.url).pathname, 'from-template.dotx'),
 );
 
-await API.writeAstToDocx(
+await Application.writeAstToDocx(
 	'from-template.docx',
 	<Document template={await template.init()}>
 		<Section>

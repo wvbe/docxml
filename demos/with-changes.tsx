@@ -1,17 +1,15 @@
-/** @jsx JSX */
+/** @jsx Application.JSX */
 
-import API, {
+import Application, {
 	DeletedText,
 	Document,
 	InsertedText,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	JSX,
 	Paragraph,
 	Section,
 	Text,
 } from '../mod.ts';
 
-await API.writeAstToDocx(
+await Application.writeAstToDocx(
 	'with-changes.docx',
 	<Document
 		features={{

@@ -1,15 +1,8 @@
-/** @jsx JSX */
+/** @jsx Application.JSX */
 
-import API, {
-	Document,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	JSX,
-	Paragraph,
-	Section,
-	Text,
-} from '../mod.ts';
+import Application, { Document, Paragraph, Section, Text } from '../mod.ts';
 
-await API.writeAstToDocx(
+await Application.writeAstToDocx(
 	'hello-world.docx',
 	<Document>
 		<Section>

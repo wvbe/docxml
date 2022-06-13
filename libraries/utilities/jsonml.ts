@@ -1,6 +1,6 @@
 import { Document } from 'https://esm.sh/slimdom@3.1.0';
 
-import { Jsonml } from './types.ts';
+import { Jsonml } from '../types.ts';
 
 type AttributeOf<JsonmlType extends Jsonml<unknown>> = JsonmlType extends [
 	string,

@@ -1,7 +1,7 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
-import { asArray } from '../component-utilities.ts';
 import { DocxComponent, DocxNode, Style } from '../types.ts';
+import { asArray } from '../utilities/jsx.ts';
 
 type OneOrMany<P> = P extends Array<infer Q> ? Q | Array<Q> : never;
 

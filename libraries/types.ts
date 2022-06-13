@@ -1,6 +1,52 @@
 import { Node } from 'https://esm.sh/slimdom@3.1.0';
 
 /**
+ * The options with which the application can be run from a configuration file.
+ */
+export type Options = {
+	/**
+	 * The location of the source XML file, if any.
+	 *
+	 * When omitted, the application will attempt to read content piped in via
+	 * {@link Options.stdin}.
+	 */
+	source?: string | null;
+	/**
+	 * The location of the output DOCX file, if any.
+	 *
+	 * When omitted, the application will pipe a binary stream to {@link Options.stdout}.
+	 */
+	destination?: string | null;
+
+	/**
+	 * When set to `true`, the application will log additional information to help debug an export.
+	 */
+	debug?: boolean;
+
+	/**
+	 * The current working directory. Only used when pointing at files, eg when using
+	 * {@link Options.source} or {@link Options.destination}.
+	 *
+	 * When omitted, the application will use `Deno.cwd()`.
+	 */
+	cwd?: string;
+
+	/**
+	 * The input stream. Only used when not using files.
+	 *
+	 * When omitted, the application will use `Deno.stdin`.
+	 */
+	stdin?: Deno.Reader & { rid: number };
+
+	/**
+	 * The output stream. Only used when not using files.
+	 *
+	 * When omitted, the application will use `Deno.stdout`.
+	 */
+	stdout?: Deno.Writer;
+};
+
+/**
  * Represents the information found in a .dotx Word template file. Contains styles that may be used
  * in {@link DocxComponent DocxComponents} so that you can quickly conform to a visual style.
  */
@@ -83,7 +129,7 @@ export type DocxComponent<Props, DocxNodeReturn extends DocxNode> = (
  * `Bold` _docx_ component:
  *
  * ```ts
- * API.add('self::bold', ({ traverse }) => (
+ * app.add('self::bold', ({ traverse }) => (
  *   <Text bold>{traverse()}</Text>
  * ));
  * ```
@@ -120,7 +166,7 @@ export type RuleProps<Output = RuleReturnType> = {
 	 * For example:
 	 *
 	 * ```ts
-	 * API.add('self::bold', ({ traverse }) => (
+	 * app.add('self::bold', ({ traverse }) => (
 	 *   <Text bold>{traverse()}</Text>
 	 * ));
 	 * ```
@@ -128,7 +174,7 @@ export type RuleProps<Output = RuleReturnType> = {
 	 * Or with an XPath query:
 	 *
 	 * ```ts
-	 * API.add('self::chapter', ({ traverse }) => (
+	 * app.add('self::chapter', ({ traverse }) => (
 	 *   <Section>
 	 *     <Header>{traverse('./p[1]')}</Header>
 	 *     {traverse('./node()[not(./p[1])]')}

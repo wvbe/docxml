@@ -1,62 +1,78 @@
-This is a [Deno](https://deno.land/) library.
+This is a [Deno](https://deno.land/) library, for the following purposes;
 
-# Setup
+- Transform XML into a DOCX
+- Compile a standalone executable that does the above.
 
-You will probably want to do two things besides your normal imports etc.;
+It relies heavily on the excellent [slimdom](https://github.com/bwrrp/slimdom.js),
+[fontoxpath](https://github.com/FontoXML/fontoxpath) and [docx](https://github.com/dolanmiu/docx)
+libraries.
 
-- Have a Deno configuration file (`deno.json`) that avoids importing `lib.dom.d.ts`;
-  ```json
-  {
-    "$schema": "https://deno.land/x/deno@v1.22.1/cli/schemas/config-file.v1.json",
-    "compilerOptions": {
-      "lib": ["deno.ns"]
-    }
-  }
-  ```
+## How to configure
 
-- Either use a JSX pragma at the start of each `.tsx` file (`/** @jsx JSX */`), or add another line
-  to `compilerOptions` in `deno.js`:
-  ```js
-  "jsxFactory": "JSX"
-  ```
+We'll use a simple HTML schema as an example;
 
+**Step 1:** Create a file called `transform-html-to-docx.tsx`:
 
-From this point onward, your basic configuration looks like;
+```diff
++import Application from 'https://raw.githubusercontent.com/wvbe/experimental-deno-xml-to-docx/develop/mod.ts';
 
-```tsx
-/** @jsx JSX */
-import API, { JSX } from 'https://raw.githubusercontent.com/wvbe/experimental-deno-xml-to-docx/develop/mod.ts';
-
-const api = new API();
-
-// … Use `api.add()` to register XML-to-DOCX rules
-
-await api.writeXmlToDocx(
-  await Deno.readTextFile(Deno.args[0]),
-  Deno.args[1]
-);
++const app = new Application();
 ```
 
-# Tools
-```sh
-# Inspect roche-style-template.dotx/word/styles.xml
-# Work in progress
-deno run -A executables/get-styles-from-dotx.ts demos/from-template.dotx
+**Step 2:** Add the JSX pragma and a few of the basic rendering rules:
+
+```diff
++/** @jsx app.JSX */
+
+ import Application, {
++  Document,
++  Text,
+ } from 'https://raw.githubusercontent.com/wvbe/experimental-deno-xml-to-docx/develop/mod.ts';
+
++app.add('self::node()', () => null);
+
++app.add('self::element()', ({ traverse }) => traverse('./*'));
+
++app.add('self::document-node()', async ({ traverse, template }) => (
++  <Document>{traverse('./*')}</Document>
++));
+
++app.add('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>);
 ```
 
-# Demos
+**Step 3:** Add rendering rules for some of HTML's elements:
+
+```diff
+ import Application, {
+   Document,
++  Section,
+   Text,
++  Paragraph,
+ } from 'https://raw.githubusercontent.com/wvbe/experimental-deno-xml-to-docx/develop/mod.ts';
+
+ // …
+
++app.add('self::body', () => <Section>{traverse('./*')}</Section>);
+
++app.add('self::p', () => <Paragraph>{traverse('./*')}</Paragraph>);
+```
+
+**Step 4:** Configure the in- and output of your application:
+
+```diff
+// …
+
++await app.execute();
+```
+
+**Step 5:** Create a self-contained executable:
 
 ```sh
-# A simple DOCX
-deno run -A ./demos/hello-world.tsx && open hello-world.docx
+deno compile --allow-env --allow-read --allow-write transform-html-to-docx.tsx
+```
 
-# A simple DOCX, but it contains an image or a table
-deno run -A ./demos/images.tsx && open images.docx
-deno run -A ./demos/tables.tsx && open tables.docx
+You can now forever use your executable to transform HTML to DOCX:
 
-# An XML of Shakespeare's Macbeth, converted to a DOCX file
-deno run -A ./demos/macbeth.tsx && open macbeth.docx
-
-# An XML of a food recipe, converted to a DOCX file and including some change tracking info (WIP)
-deno run -A ./demos/mushroom-lunch.tsx && open mushroom-lunch.docx
+```sh
+cat my-document.html | transform-html-to-docx > my-document.docx
 ```

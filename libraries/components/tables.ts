@@ -1,7 +1,7 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
-import { asDocxArray, asJsonmlArray, assertChildrenAreOnlyOfType } from '../component-utilities.ts';
 import { DocxComponent, DocxNode, Style } from '../types.ts';
+import { asDocxArray, asJsonmlArray, assertChildrenAreOnlyOfType } from '../utilities/jsx.ts';
 import { TableRowNode } from './table-rows.ts';
 
 type ITableOptions = ConstructorParameters<typeof docx.Table>[0];

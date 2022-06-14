@@ -9,7 +9,7 @@ import {
 
 import { Renderer } from '../classes/renderer.ts';
 import { DocumentNode } from '../components/documents.ts';
-import { DocxNode, JsonmlWithStyles, Options, RuleComponent, Style, Template } from '../types.ts';
+import { AstNode, JsonmlWithStyles, Options, RuleComponent, Style, Template } from '../types.ts';
 import { getOptionsFromArgv, getPipedStdin } from '../utilities/command-line.ts';
 import { convertToDocument } from '../utilities/jsonml.ts';
 import JSX from '../utilities/jsx.ts';
@@ -127,11 +127,11 @@ export class Application {
 	 * @deprecated It is recommended to use an instance of Application instead. This method may
 	 *             be removed in the future.
 	 */
-	public static stringifyAst(ast: DocxNode) {
+	public static stringifyAst(ast: AstNode) {
 		const BR = '\n';
 		const TAB = '  ';
 		let str = '';
-		(function recurse(astNode: DocxNode, level: number) {
+		(function recurse(astNode: AstNode, level: number) {
 			const children = astNode.children.filter(Boolean);
 			const nodeName = astNode.type + (astNode.style ? `#${astNode.style.name}` : '');
 			if (!children.length) {

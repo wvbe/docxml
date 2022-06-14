@@ -1,7 +1,7 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
-import { DocxComponent, DocxNode } from '../types.ts';
-import { asDocxArray, asJsonmlArray, assertChildrenAreOnlyOfType } from '../utilities/jsx.ts';
+import { AstNode, DocxComponent } from '../types.ts';
+import { asDocxArray, asJsonmlArray } from '../utilities/jsx.ts';
 import { SectionNode } from './sections.ts';
 
 type IPropertiesOptions = ConstructorParameters<typeof docx.Document>[0];
@@ -11,7 +11,8 @@ export type DocumentProps = Omit<IPropertiesOptions, 'sections' | 'externalStyle
 	template?: string | undefined;
 };
 
-export type DocumentNode = DocxNode<'Document', docx.Document>;
+export type DocumentNode = AstNode<'Document', DocumentProps>;
+export type DocumentComponent = DocxComponent<DocumentNode, docx.Document>;
 
 /**
  * The <Document> component represents one DOCX document. There is only one per .docx file, and
@@ -20,25 +21,22 @@ export type DocumentNode = DocxNode<'Document', docx.Document>;
  * More info on its options:
  *   https://docx.js.org/#/usage/document
  */
-export const Document: DocxComponent<DocumentProps, DocumentNode> = async ({
-	children,
-	template,
-	...rest
-}) => {
-	await assertChildrenAreOnlyOfType('Document', children, 'Section');
 
-	return {
-		type: 'Document',
-		children: children || [],
-		docx: new docx.Document({
-			externalStyles: await template,
-			...rest,
-			sections: await asDocxArray(children),
-		}),
-		jsonml: [
-			'html',
-			['head', ['title', new Date().toISOString()]],
-			['body', ...(await asJsonmlArray(children))],
-		],
-	};
+export const Document: DocumentComponent = () => {
+	// no-op
 };
+
+Document.type = 'Document';
+
+Document.toDocx = async ({ children, template, ...props }) =>
+	new docx.Document({
+		externalStyles: await template,
+		...props,
+		sections: await asDocxArray(children),
+	});
+
+Document.toJsonml = async ({ children }) => [
+	'html',
+	['head', ['title', new Date().toISOString()]],
+	['body', ...(await asJsonmlArray(children))],
+];

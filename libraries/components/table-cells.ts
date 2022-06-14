@@ -1,7 +1,7 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
-import { DocxComponent, DocxNode } from '../types.ts';
-import { asDocxArray, asJsonmlArray, assertChildrenAreOnlyOfType } from '../utilities/jsx.ts';
+import { AstNode, DocxComponent } from '../types.ts';
+import { asDocxArray, asJsonmlArray } from '../utilities/jsx.ts';
 import { ParagraphNode } from './paragraphs.ts';
 import { TableNode } from './tables.ts';
 
@@ -11,24 +11,21 @@ export type TableCellProps = Omit<ITableCellOptions, 'children'> & {
 	children?: Array<ParagraphNode | TableNode>;
 };
 
-export type TableCellNode = DocxNode<'TableCell', docx.TableCell>;
+export type TableCellNode = AstNode<'TableCell', TableCellProps>;
+export type TableCellComponent = DocxComponent<TableCellNode, docx.TableCell>;
 
 /**
  * https://docx.js.org/#/usage/tables?id=table-cell
  */
-export const TableCell: DocxComponent<TableCellProps, TableCellNode> = async ({
-	children,
-	...rest
-}) => {
-	await assertChildrenAreOnlyOfType('TableCell', children, 'Paragraph', 'Table');
-
-	return {
-		type: 'TableCell',
-		children: children || [],
-		docx: new docx.TableCell({
-			...rest,
-			children: await asDocxArray(children),
-		}),
-		jsonml: ['td', ...(await asJsonmlArray(children))],
-	};
+export const TableCell: TableCellComponent = () => {
+	// no-op
 };
+TableCell.type = 'TableCell';
+
+TableCell.toDocx = async ({ children, ...props }) =>
+	new docx.TableCell({
+		...props,
+		children: await asDocxArray(children),
+	});
+
+TableCell.toJsonml = async ({ children }) => ['td', ...(await asJsonmlArray(children))];

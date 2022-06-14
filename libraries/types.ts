@@ -61,17 +61,15 @@ export interface Style {
 }
 
 /**
- * A `DocxNode` is a specification of how a DOCX element behaves. The script works by
+ * A `AstNode` is a specification of how a DOCX element behaves. The script works by
  * collecting these nodes in a hierarchy, through a set of rules that may differ per schema, and
  * finally serializing that to a `.docx` file.
  */
-export type DocxNode<Label extends string = string, DocxReturnType = unknown> = {
-	/**
-	 * An identifier of the type of node this is. Used for debugging purposes, eg. stringifying
-	 * the AST using {@link Api.stringifyAst}, but mostly for guarding against invalid children
-	 * (see also {@link assertChildrenAreOnlyOfType}).
-	 */
-	type: Label;
+export type AstNode<
+	Label extends string = string,
+	Props extends { [key: string]: unknown } = { [key: string]: unknown },
+> = {
+	component: DocxComponent<AstNode<Label, Props>, unknown>;
 
 	/**
 	 * @todo description
@@ -79,30 +77,22 @@ export type DocxNode<Label extends string = string, DocxReturnType = unknown> = 
 	style?: Style;
 
 	/**
-	 * The children of this DOCX element, which are themselves {@link DocxNode DocxNodes}.
+	 * The children of this DOCX element, which are themselves {@link AstNode AstNodes}.
 	 */
-	children: DocxNode[];
+	children?: (string | AstNode)[];
 
-	/**
-	 * The `docx` AST node that is ultimately serialized into a `*.docx` file. Use any of the
-	 * classes provided by {@link https://www.npmjs.com/package/docx docx}, and please refer to its
-	 * {@link https://docx.js.org documentation} for more info on accepted options etc.
-	 */
-	docx: DocxReturnType;
-
-	/**
-	 * A JSONML expression of the (HTML equivalent of) this Word node. Used to create an actual
-	 * HTML page later and measure to determine page breaks etc.
-	 *
-	 * Not fully implemented yet.
-	 */
-	jsonml: JsonmlWithStyles;
+	props: Props;
 };
+
+type NodeLabel<Node> = Node extends AstNode<infer Label, { [key: string]: unknown }>
+	? Label
+	: never;
+type NodeProps<Node> = Node extends AstNode<string, infer Props> ? Props : never;
 
 /**
  * A `DocxComponent` is a function that receives props depending on the type of DOCX thing is being
  * rendered (documented in {@link https://www.npmjs.com/package/docx}), and returns a
- * {@link DocxNode}.
+ * {@link AstNode}.
  *
  * DocxComponents can be used together with the {@link ../jsx.ts#JSX JSX} pragma for syntactic sugar.
  *
@@ -116,9 +106,12 @@ export type DocxNode<Label extends string = string, DocxReturnType = unknown> = 
  * </Document>
  * ```
  */
-export type DocxComponent<Props, DocxNodeReturn extends DocxNode> = (
-	props: Props,
-) => DocxNodeReturn | Promise<DocxNodeReturn>;
+export interface DocxComponent<N extends AstNode, DocxYield> {
+	(props: NodeProps<N>): void | Promise<void>;
+	type: NodeLabel<N>;
+	toDocx(props: NodeProps<N>, children: unknown[]): DocxYield | Promise<DocxYield>;
+	toJsonml?(props: NodeProps<N>, children: unknown[]): JsonmlWithStyles | Promise<JsonmlWithStyles>;
+}
 
 /**
  * When creating an element rendering rule, an XPath test is matched to a RuleComponent. The rule
@@ -186,13 +179,13 @@ export type RuleProps<Output = RuleReturnType> = {
 };
 
 /**
- * All the things that can be returned by a {@link DocxComponent} -- pretty much a {@link DocxNode},
+ * All the things that can be returned by a {@link DocxComponent} -- pretty much a {@link AstNode},
  * null, a promise thereof, or an array of any of the above.
  */
 export type RuleReturnType =
-	| DocxNode
+	| AstNode
 	| null
-	| Promise<DocxNode>
+	| Promise<AstNode>
 	| Promise<null>
 	| RuleReturnType[]
 	| Promise<RuleReturnType[]>;

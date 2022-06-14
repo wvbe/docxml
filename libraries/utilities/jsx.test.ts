@@ -1,6 +1,6 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { asArray } from './jsx.ts';
+import { asArray, guardAgainstInvalidChildren } from './jsx.ts';
 
 describe('asArray()', () => {
 	it('Turns a single value into an array of one', async () => {
@@ -18,4 +18,21 @@ describe('asArray()', () => {
 	});
 });
 
+describe('guardAgainstInvalidChildren', () => {
+	it('Hoists illegal children to an ancestor until they are valid', () => {
+		expect(
+			guardAgainstInvalidChildren(
+				[{ type: 'foo' }, { type: 'foo' }, { type: 'foo' }],
+				['foo'],
+				(children) => ({
+					type: 'parent',
+					children,
+				}),
+			),
+		).toEqual({
+			type: 'parent',
+			children: [{ type: 'foo' }, { type: 'foo' }, { type: 'foo' }],
+		});
+	});
+});
 run();

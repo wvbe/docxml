@@ -116,9 +116,9 @@ export type DocxNode<Label extends string = string, DocxReturnType = unknown> = 
  * </Document>
  * ```
  */
-export type DocxComponent<Props, DocxNodeReturn extends DocxNode> = (
+export type DocxComponent<Props> = (
 	props: Props,
-) => DocxNodeReturn | Promise<DocxNodeReturn>;
+) => DocxNode | Promise<DocxNode> | Array<DocxNode> | Promise<Array<DocxNode>>;
 
 /**
  * When creating an element rendering rule, an XPath test is matched to a RuleComponent. The rule

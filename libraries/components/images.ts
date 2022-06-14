@@ -15,7 +15,7 @@ export type ImageNode = DocxNode<'Image', docx.ImageRun>;
  * More info on its options:
  *   https://docx.js.org/#/usage/images
  */
-export const Image: DocxComponent<ImageProps, ImageNode> = async ({ path, ...props }) => {
+export const Image: DocxComponent<ImageProps> = async ({ path, ...props }) => {
 	const data = await Deno.readFile(path);
 	return {
 		type: 'Image',

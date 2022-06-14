@@ -1,13 +1,18 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
 import { DocxComponent, DocxNode } from '../types.ts';
-import { asDocxArray, asJsonmlArray, assertChildrenAreOnlyOfType } from '../utilities/jsx.ts';
+import {
+	asDocxArray,
+	asJsonmlArray,
+	assertChildrenAreOnlyOfType,
+	guardAgainstInvalidChildren,
+} from '../utilities/jsx.ts';
 import { SectionNode } from './sections.ts';
 
 type IPropertiesOptions = ConstructorParameters<typeof docx.Document>[0];
 
 export type DocumentProps = Omit<IPropertiesOptions, 'sections' | 'externalStyles'> & {
-	children?: SectionNode[];
+	children?: Array<DocxNode>;
 	template?: string | undefined;
 };
 
@@ -20,14 +25,10 @@ export type DocumentNode = DocxNode<'Document', docx.Document>;
  * More info on its options:
  *   https://docx.js.org/#/usage/document
  */
-export const Document: DocxComponent<DocumentProps, DocumentNode> = async ({
-	children,
-	template,
-	...rest
-}) => {
+export const Document: DocxComponent<DocumentProps> = async ({ children, template, ...rest }) => {
 	await assertChildrenAreOnlyOfType('Document', children, 'Section');
 
-	return {
+	return guardAgainstInvalidChildren<SectionNode>(children, ['Section'], async (children) => ({
 		type: 'Document',
 		children: children || [],
 		docx: new docx.Document({
@@ -40,5 +41,5 @@ export const Document: DocxComponent<DocumentProps, DocumentNode> = async ({
 			['head', ['title', new Date().toISOString()]],
 			['body', ...(await asJsonmlArray(children))],
 		],
-	};
+	}));
 };

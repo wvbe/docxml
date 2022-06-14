@@ -1,13 +1,14 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
 import { DocxComponent, DocxNode, Style } from '../types.ts';
-import { asArray } from '../utilities/jsx.ts';
+import { asArray, guardAgainstInvalidChildren } from '../utilities/jsx.ts';
 
 type OneOrMany<P> = P extends Array<infer Q> ? Q | Array<Q> : never;
 
 type IRunOptions = Exclude<ConstructorParameters<typeof docx.TextRun>[0], string>;
 
 export type TextProps = Omit<IRunOptions, 'children' | 'style'> & {
+	// string | Begin | FieldInstruction | Separate | End | FootnoteReferenceRun
 	children?: OneOrMany<IRunOptions['children']>;
 	style?: Style;
 };
@@ -17,8 +18,8 @@ export type TextNode = DocxNode<'Text', docx.TextRun>;
 /**
  * The <Text> component
  */
-export const Text: DocxComponent<TextProps, TextNode> = async ({ children, style, ...rest }) => {
-	return {
+export const Text: DocxComponent<TextProps> = ({ children, style, ...rest }) => {
+	return guardAgainstInvalidChildren<any, TextNode>(children, [], async (children) => ({
 		type: 'Text',
 		style,
 		// @TODO type the children that go into Text components
@@ -34,7 +35,7 @@ export const Text: DocxComponent<TextProps, TextNode> = async ({ children, style
 			{ ['data-style-name']: style?.name, style },
 			(await asArray(children)).join(''),
 		],
-	};
+	}));
 };
 
 type IInsertedRunOptions = Exclude<ConstructorParameters<typeof docx.InsertedTextRun>[0], string>;

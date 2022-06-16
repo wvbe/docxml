@@ -37,12 +37,12 @@ export class Application {
 			? await Deno.readTextFile(resolve(options.cwd || Deno.cwd(), options.source))
 			: await getPipedStdin(options.stdin || Deno.stdin);
 		if (!xml) {
-			throw new Error(`The XML input cannot be empty.`);
+			throw new Error(`DXE001: The XML input cannot be empty.`);
 		}
 
 		const ast = (await this.renderer.renderDocx(sync(xml), this._template)) as DocumentNode | null;
 		if (!ast) {
-			throw new Error('The transformation resulted in an empty document.');
+			throw new Error('DXE002:The transformation resulted in an empty document.');
 		}
 
 		if (options.debug) {

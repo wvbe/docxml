@@ -43,9 +43,6 @@ export const JSX: JsxPragma = async (component, props, ...children) => {
 		children: await asArray(children),
 	});
 
-	if (!props) {
-		console.log(component.type, props);
-	}
 	return {
 		component,
 		style: props?.style || null,
@@ -81,19 +78,16 @@ async function recursiveFlattenArray<P>(
 	];
 }
 
-export function getDocxHierarchy(node: AstNode) {
-	const all = [node];
-	(function walk(parent: string | AstNode) {
-		if (typeof parent === 'string') {
-			return;
-		}
-		for (let y = 0; y < parent.children.length; y++) {
-			const node = parent.children[y];
-			walk(node);
+export function bumpInvalidChildrenToAncestry(node: AstNode) {
+	const documentElements = [node];
+	(function walk(nodes: (string | AstNode)[]) {
+		for (let y = 0; y < nodes.length; y++) {
+			const node = nodes[y];
 			if (typeof node === 'string') {
 				// TODO handle mixed content
 				continue;
 			}
+			walk(node.children);
 			for (let i = 0; i < node.children.length; i++) {
 				const child = node.children[i];
 				if (
@@ -103,21 +97,20 @@ export function getDocxHierarchy(node: AstNode) {
 					// the child is valid;
 					// continue;
 				} else {
-					parent.children.splice(
-						parent.children.indexOf(node) + 1,
-						0,
-						...node.children.splice(i, 1),
-						{
-							...node,
-							children: node.children.splice(i, node.children.length - i),
-						},
-					);
+					nodes.splice(nodes.indexOf(node) + 1, 0, ...node.children.splice(i, 1), {
+						...node,
+						children: node.children.splice(i, node.children.length - i),
+					});
 				}
 			}
 		}
-	})(node);
+	})(documentElements);
 
-	return all;
+	if (documentElements.length !== 1) {
+		throw new Error('DXE030: Some AST nodes could not be given a valid position.');
+	}
+
+	return documentElements[0];
 }
 
 export default JSX;

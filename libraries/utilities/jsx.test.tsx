@@ -1,11 +1,11 @@
 /** @jsx JSX */
 
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
-import { AstNode } from '../types.ts';
-import { Document } from '../components/documents.ts';
+
 import { Paragraph } from '../components/paragraphs.ts';
+import { Section } from '../components/sections.ts';
 import { Text } from '../components/texts.ts';
-import { asArray, getDocxHierarchy, JSX } from './jsx.ts';
+import { asArray, bumpInvalidChildrenToAncestry, JSX } from './jsx.ts';
 
 describe('asArray()', () => {
 	it('Turns a single value into an array of one', async () => {
@@ -23,34 +23,67 @@ describe('asArray()', () => {
 	});
 });
 
-type F = string | F[];
-function hierarchyAsArray(nodes: (string | AstNode)[]): F {
-	return nodes.map((n) => {
-		if (typeof n === 'string') {
-			return `"${n}"`;
-		}
-		return [n.component.type, ...hierarchyAsArray(n.children)];
-	});
-}
-
-describe('getDocxHierarchy()', () => {
-	it('Recoverable', async () => {
+describe('bumpInvalidChildrenToAncestry()', () => {
+	it('Simple splitting', async () => {
 		const invalid = await (
 			<Paragraph>
 				<Text>
-					Beep{' '}
-					<Text>
-						bo
-						<Paragraph />
-						op
-					</Text>{' '}
-					baap
+					A<Text>B</Text>C
 				</Text>
 			</Paragraph>
 		);
-		const fixed = getDocxHierarchy(invalid);
-		console.log(hierarchyAsArray(fixed));
-		expect(fixed).toBe({});
+		expect(bumpInvalidChildrenToAncestry(invalid)).toEqual(
+			await (
+				<Paragraph>
+					<Text>A</Text>
+					<Text>B</Text>
+					<Text>C</Text>
+				</Paragraph>
+			),
+		);
+	});
+	it('Splitting multiple levels', async () => {
+		const invalid = await (
+			<Section>
+				<Paragraph>
+					<Text>
+						A
+						<Text>
+							B<Paragraph />C
+						</Text>
+						D
+					</Text>
+				</Paragraph>
+			</Section>
+		);
+		expect(bumpInvalidChildrenToAncestry(invalid)).toEqual(
+			await (
+				<Section>
+					<Paragraph>
+						<Text>A</Text>
+						<Text>B</Text>
+						<Text />
+					</Paragraph>
+					<Paragraph />
+					<Paragraph>
+						<Text />
+						<Text>C</Text>
+						<Text>D</Text>
+					</Paragraph>
+				</Section>
+			),
+		);
+	});
+	it('Unrecoverable nesting error', async () => {
+		const invalid = await (
+			<Text>
+				<Paragraph />
+			</Text>
+		);
+		expect(() => bumpInvalidChildrenToAncestry(invalid)).toThrow(
+			'Some AST nodes could not be given a valid position',
+		);
 	});
 });
+
 run();

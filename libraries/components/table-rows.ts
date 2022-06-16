@@ -1,7 +1,6 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
 import { AstNode, DocxComponent } from '../types.ts';
-import { asDocxArray, asJsonmlArray } from '../utilities/jsx.ts';
 import { TableCellNode } from './table-cells.ts';
 
 type ITableRowOptions = Exclude<ConstructorParameters<typeof docx.TableRow>[0], string>;
@@ -10,8 +9,8 @@ export type TableRowProps = Omit<ITableRowOptions, 'children'> & {
 	children?: TableCellNode[];
 };
 
-export type TableRowNode = AstNode<'TableRow', TableRowProps>;
-export type TableRowComponent = DocxComponent<TableRowNode, docx.TableRow>;
+export type TableRowNode = AstNode<'TableRow', TableRowProps, docx.TableRow>;
+export type TableRowComponent = DocxComponent<TableRowNode>;
 
 /**
  * https://docx.js.org/#/usage/tables?id=table-row
@@ -22,10 +21,12 @@ export const TableRow: TableRowComponent = () => {
 
 TableRow.type = 'TableRow';
 
-TableRow.toDocx = async ({ children, ...props }) =>
+TableRow.children = ['TableCell'];
+
+TableRow.toDocx = ({ children, ...props }) =>
 	new docx.TableRow({
 		...props,
-		children: await asDocxArray(children),
+		children,
 	});
 
-TableRow.toJsonml = async ({ children }) => ['tr', ...(await asJsonmlArray(children))];
+// TableRow.toJsonml = async ({ children }) => ['tr', ...(await asJsonmlArray(children))];

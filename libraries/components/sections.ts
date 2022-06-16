@@ -1,7 +1,6 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
 import { AstNode, DocxComponent } from '../types.ts';
-import { asDocxArray } from '../utilities/jsx.ts';
 import { ParagraphNode } from './paragraphs.ts';
 import { TableNode } from './tables.ts';
 
@@ -10,8 +9,8 @@ export type SectionProps = Omit<docx.ISectionOptions, 'children'> & {
 	children?: Array<ParagraphNode | TableNode>;
 };
 
-export type SectionNode = AstNode<'Section', SectionProps>;
-export type SectionComponent = DocxComponent<SectionNode, docx.ISectionOptions>;
+export type SectionNode = AstNode<'Section', SectionProps, docx.ISectionOptions>;
+export type SectionComponent = DocxComponent<SectionNode>;
 
 /**
  * The <Section> component represents one or more pages in a MS Word document. Each section can be
@@ -26,7 +25,9 @@ export const Section: SectionComponent = () => {
 
 Section.type = 'Section';
 
-Section.toDocx = async ({ children, ...props }) => ({
+Section.children = ['Paragraph', 'Table'];
+
+Section.toDocx = ({ children, ...props }) => ({
 	...props,
-	children: await asDocxArray(children),
+	children,
 });

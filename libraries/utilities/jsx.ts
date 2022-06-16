@@ -6,7 +6,7 @@ type JsxPragmaProps = {
 	[key: string]: unknown;
 };
 type JsxPragma = (
-	docxComponent: DocxComponent<AstNode<string, JsxPragmaProps>, unknown>,
+	docxComponent: DocxComponent<AstNode<string, JsxPragmaProps, unknown>>,
 	props: JsxPragmaProps,
 	...children: JsxPragmaProps['children']
 ) => AstNode | Promise<AstNode>;
@@ -43,11 +43,14 @@ export const JSX: JsxPragma = async (component, props, ...children) => {
 		children: await asArray(children),
 	});
 
+	if (!props) {
+		console.log(component.type, props);
+	}
 	return {
 		component,
-		style: props.style,
-		props,
-		children,
+		style: props?.style || null,
+		props: props || {},
+		children: await asArray(children),
 	};
 };
 
@@ -78,12 +81,43 @@ async function recursiveFlattenArray<P>(
 	];
 }
 
-// @OTOD make strict, children should always already be a flat array
-export async function asDocxArray(children?: AstNode | AstNode[]) {
-	return (await asArray(children)).map((child) => child.docx);
-}
-export async function asJsonmlArray(children?: AstNode | AstNode[]) {
-	return (await asArray(children)).map((child) => child.jsonml);
+export function getDocxHierarchy(node: AstNode) {
+	const all = [node];
+	(function walk(parent: string | AstNode) {
+		if (typeof parent === 'string') {
+			return;
+		}
+		for (let y = 0; y < parent.children.length; y++) {
+			const node = parent.children[y];
+			walk(node);
+			if (typeof node === 'string') {
+				// TODO handle mixed content
+				continue;
+			}
+			for (let i = 0; i < node.children.length; i++) {
+				const child = node.children[i];
+				if (
+					(typeof child === 'string' && node.component.mixed) ||
+					(typeof child !== 'string' && node.component.children.includes(child.component.type))
+				) {
+					// the child is valid;
+					// continue;
+				} else {
+					parent.children.splice(
+						parent.children.indexOf(node) + 1,
+						0,
+						...node.children.splice(i, 1),
+						{
+							...node,
+							children: node.children.splice(i, node.children.length - i),
+						},
+					);
+				}
+			}
+		}
+	})(node);
+
+	return all;
 }
 
 export default JSX;

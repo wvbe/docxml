@@ -1,7 +1,6 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
 import { AstNode, DocxComponent, Style } from '../types.ts';
-import { asDocxArray, asJsonmlArray } from '../utilities/jsx.ts';
 import { TableRowNode } from './table-rows.ts';
 
 type ITableOptions = ConstructorParameters<typeof docx.Table>[0];
@@ -11,8 +10,8 @@ export type TableProps = Omit<ITableOptions, 'rows' | 'style'> & {
 	style?: Style;
 };
 
-export type TableNode = AstNode<'Table', TableProps>;
-export type TableComponent = DocxComponent<TableNode, docx.Table>;
+export type TableNode = AstNode<'Table', TableProps, docx.Table>;
+export type TableComponent = DocxComponent<TableNode>;
 
 /**
  * The <Table> component
@@ -23,16 +22,17 @@ export const Table: TableComponent = () => {
 };
 
 Table.type = 'Table';
+Table.children = ['TableRow'];
 
-Table.toDocx = async ({ children, style, ...props }) =>
+Table.toDocx = ({ children, style, ...props }) =>
 	new docx.Table({
 		...props,
 		style: style?.name,
-		rows: await asDocxArray(children),
+		rows: children,
 	});
 
-Table.toJsonml = async ({ children, style }) => [
-	'table',
-	{ ['data-style-name']: style?.name, style },
-	['tdbody', ...(await asJsonmlArray(children))],
-];
+// Table.toJsonml = async ({ children, style }) => [
+// 	'table',
+// 	{ ['data-style-name']: style?.name, style },
+// 	['tdbody', ...(await asJsonmlArray(children))],
+// ];

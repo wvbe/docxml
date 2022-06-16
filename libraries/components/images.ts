@@ -6,8 +6,8 @@ type IImageOptions = Exclude<ConstructorParameters<typeof docx.ImageRun>[0], str
 
 export type ImageProps = Omit<IImageOptions, 'data'> & { path: string };
 
-export type ImageNode = AstNode<'Image', ImageProps>;
-export type ImageComponent = DocxComponent<ImageNode, docx.ImageRun>;
+export type ImageNode = AstNode<'Image', ImageProps, docx.ImageRun>;
+export type ImageComponent = DocxComponent<ImageNode>;
 
 /**
  * The <Image> component represents a graphic image. The `path` prop should be an a path to an image
@@ -21,6 +21,8 @@ export const Image: ImageComponent = ({ ...props }) => {
 };
 
 Image.type = 'Image';
+
+Image.children = [];
 
 Image.toDocx = async (props) => {
 	const data = await Deno.readFile(props.path);

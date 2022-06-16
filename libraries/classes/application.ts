@@ -133,12 +133,15 @@ export class Application {
 		let str = '';
 		(function recurse(astNode: AstNode, level: number) {
 			const children = astNode.children.filter(Boolean);
-			const nodeName = astNode.type + (astNode.style ? `#${astNode.style.name}` : '');
+			const nodeName = astNode.component.type + (astNode.style ? `#${astNode.style.name}` : '');
 			if (!children.length) {
 				str += (str ? BR : '') + TAB.repeat(level) + `<${nodeName} />`;
 			} else {
 				str += (str ? BR : '') + TAB.repeat(level) + `<${nodeName}>`;
-				astNode.children.filter(Boolean).forEach((child) => recurse(child, level + 1));
+				astNode.children
+					.filter(Boolean)
+					.filter((child): child is AstNode => typeof child !== 'string')
+					.forEach((child) => recurse(child, level + 1));
 				str += (str ? BR : '') + TAB.repeat(level) + `</${nodeName}>`;
 			}
 		})(ast, 0);

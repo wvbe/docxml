@@ -13,8 +13,8 @@ export type TextProps = Omit<IRunOptions, 'children' | 'style'> & {
 	style?: Style;
 };
 
-export type TextNode = AstNode<'Text', TextProps>;
-export type TextComponent = DocxComponent<TextNode, docx.TextRun>;
+export type TextNode = AstNode<'Text', TextProps, docx.TextRun>;
+export type TextComponent = DocxComponent<TextNode>;
 
 /**
  * The <Text> component
@@ -24,6 +24,9 @@ export const Text: TextComponent = () => {
 };
 
 Text.type = 'Text';
+Text.mixed = true;
+
+Text.children = [];
 
 Text.toDocx = ({ style, children, ...props }) =>
 	new docx.TextRun({
@@ -32,11 +35,11 @@ Text.toDocx = ({ style, children, ...props }) =>
 		children: children === undefined ? children : Array.isArray(children) ? children : [children],
 	});
 
-Text.toJsonml = async ({ style, children }) => [
-	'span',
-	{ ['data-style-name']: style?.name, style },
-	(await asArray(children)).join(''),
-];
+// Text.toJsonml = async ({ style, children }) => [
+// 	'span',
+// 	{ ['data-style-name']: style?.name, style },
+// 	(await asArray(children)).join(''),
+// ];
 
 // type IInsertedRunOptions = Exclude<ConstructorParameters<typeof docx.InsertedTextRun>[0], string>;
 

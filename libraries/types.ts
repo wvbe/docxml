@@ -68,18 +68,19 @@ export interface Style {
 export type AstNode<
 	Label extends string = string,
 	Props extends { [key: string]: unknown } = { [key: string]: unknown },
+	DocxYield = unknown,
 > = {
-	component: DocxComponent<AstNode<Label, Props>, unknown>;
+	component: DocxComponent<AstNode<Label, Props, DocxYield>>;
 
 	/**
 	 * @todo description
 	 */
-	style?: Style;
+	style: Style | null;
 
 	/**
 	 * The children of this DOCX element, which are themselves {@link AstNode AstNodes}.
 	 */
-	children?: (string | AstNode)[];
+	children: (string | AstNode)[];
 
 	props: Props;
 };
@@ -87,7 +88,21 @@ export type AstNode<
 type NodeLabel<Node> = Node extends AstNode<infer Label, { [key: string]: unknown }>
 	? Label
 	: never;
-type NodeProps<Node> = Node extends AstNode<string, infer Props> ? Props : never;
+
+type NodeYield<Node> = Node extends AstNode<string, { [key: string]: unknown }, infer Yield>
+	? Yield
+	: never;
+
+/**
+ * The props passed into the top-level component function
+ */
+type ComponentProps<Node> = Node extends AstNode<string, infer Props> ? Props : never;
+
+type NodeToDocxChildren<Node> = ComponentProps<Node>['children'] extends
+	| Array<string | AstNode<string, { [key: string]: unknown }, infer Y>>
+	| undefined
+	? Array<Y>
+	: never;
 
 /**
  * A `DocxComponent` is a function that receives props depending on the type of DOCX thing is being
@@ -106,11 +121,19 @@ type NodeProps<Node> = Node extends AstNode<string, infer Props> ? Props : never
  * </Document>
  * ```
  */
-export interface DocxComponent<N extends AstNode, DocxYield> {
-	(props: NodeProps<N>): void | Promise<void>;
+export interface DocxComponent<N extends AstNode> {
+	(props: ComponentProps<N>): void | Promise<void>;
 	type: NodeLabel<N>;
-	toDocx(props: NodeProps<N>, children: unknown[]): DocxYield | Promise<DocxYield>;
-	toJsonml?(props: NodeProps<N>, children: unknown[]): JsonmlWithStyles | Promise<JsonmlWithStyles>;
+	children: string[];
+	mixed?: boolean;
+	toDocx(
+		// The props passed to `toDocx` are the same as passed to the component itself, but the
+		// children are of the correlating docx.* type (and not components themselves)
+		props: Omit<ComponentProps<N>, 'children'> & {
+			children: NodeToDocxChildren<N>;
+		},
+	): NodeYield<N> | Promise<NodeYield<N>>;
+	toJsonml?(props: ComponentProps<N>): JsonmlWithStyles | Promise<JsonmlWithStyles>;
 }
 
 /**

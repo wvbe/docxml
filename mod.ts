@@ -17,4 +17,3 @@ export * from './libraries/components/table-cells.ts';
 export * from './libraries/components/table-rows.ts';
 export * from './libraries/components/tables.ts';
 export * from './libraries/components/texts.ts';
-export * from './libraries/utilities/command-line.ts';

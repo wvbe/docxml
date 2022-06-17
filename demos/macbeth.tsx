@@ -1,4 +1,22 @@
-/** @jsx application.JSX */
+/**
+ * @jsx application.JSX
+ *
+ * @file
+ * This file demonstrates a pretty realistic transformation of XML (a Shakespearean play) to DOCX,
+ * making use of a DOTX template file to source some of the visual styles used.
+ *
+ * Run this from your terminal like so;
+ *
+ * ```sh
+ * deno run -A macbeth.tsx --source macbeth.xml --destination macbeth.docx
+ * ```
+ *
+ * Or;
+ *
+ * ```sh
+ * cat macbeth.xml | deno run -A macbeth.tsx > macbeth.docx
+ * ```
+ */
 
 import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
 import { evaluateXPathToString } from 'https://esm.sh/fontoxpath@3.26.0';

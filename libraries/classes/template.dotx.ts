@@ -62,11 +62,11 @@ export class DotxTemplate implements Template {
 	private styles = new Map<string, DotxStyle>();
 	public style(name: string): Style {
 		if (!this.availableStyleNames) {
-			throw new Error(`Cannot use styles without calling \`init\` first.`);
+			throw new Error(`DXE010:Cannot use styles without calling \`init\` first.`);
 		}
 		if (!this.availableStyleNames.includes(name)) {
 			throw new Error(
-				`Style "${name}" is not available in this template. The only available style names are: ${this.availableStyleNames.join(
+				`DXE011:Style "${name}" is not available in this template. The only available style names are: ${this.availableStyleNames.join(
 					', ',
 				)}`,
 			);

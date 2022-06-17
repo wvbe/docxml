@@ -1,4 +1,9 @@
-/** @jsx Application.JSX */
+/**
+ * @jsx Application.JSX
+ *
+ * @file
+ * This file demonstates DOCX's change tracking information.
+ */
 
 import Application, {
 	DeletedText,

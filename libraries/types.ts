@@ -48,7 +48,7 @@ export type Options = {
 
 /**
  * Represents the information found in a .dotx Word template file. Contains styles that may be used
- * in {@link DocxComponent DocxComponents} so that you can quickly conform to a visual style.
+ * in {@link AstComponent AstComponents} so that you can quickly conform to a visual style.
  */
 export interface Template {
 	init(): Promise<string | undefined>;
@@ -61,52 +61,67 @@ export interface Style {
 }
 
 /**
- * A `DocxNode` is a specification of how a DOCX element behaves. The script works by
+ * A `AstNode` is a specification of how a DOCX element behaves. The script works by
  * collecting these nodes in a hierarchy, through a set of rules that may differ per schema, and
  * finally serializing that to a `.docx` file.
  */
-export type DocxNode<Label extends string = string, DocxReturnType = unknown> = {
-	/**
-	 * An identifier of the type of node this is. Used for debugging purposes, eg. stringifying
-	 * the AST using {@link Api.stringifyAst}, but mostly for guarding against invalid children
-	 * (see also {@link assertChildrenAreOnlyOfType}).
-	 */
-	type: Label;
+export type AstNode<
+	Label extends string = string,
+	Props extends { [key: string]: unknown } = { [key: string]: unknown },
+	DocxYield = unknown,
+> = {
+	component: AstComponent<AstNode<Label, Props, DocxYield>>;
 
 	/**
 	 * @todo description
 	 */
-	style?: Style;
+	style: Style | null;
 
 	/**
-	 * The children of this DOCX element, which are themselves {@link DocxNode DocxNodes}.
+	 * The children of this DOCX element, which are themselves {@link AstNode AstNodes}.
 	 */
-	children: DocxNode[];
+	children: (string | AstNode)[];
 
-	/**
-	 * The `docx` AST node that is ultimately serialized into a `*.docx` file. Use any of the
-	 * classes provided by {@link https://www.npmjs.com/package/docx docx}, and please refer to its
-	 * {@link https://docx.js.org documentation} for more info on accepted options etc.
-	 */
-	docx: DocxReturnType;
-
-	/**
-	 * A JSONML expression of the (HTML equivalent of) this Word node. Used to create an actual
-	 * HTML page later and measure to determine page breaks etc.
-	 *
-	 * Not fully implemented yet.
-	 */
-	jsonml: JsonmlWithStyles;
+	props: Props;
 };
 
+type AstNodeLabel<Node> = Node extends AstNode<infer Label, { [key: string]: unknown }>
+	? Label
+	: never;
+
 /**
- * A `DocxComponent` is a function that receives props depending on the type of DOCX thing is being
- * rendered (documented in {@link https://www.npmjs.com/package/docx}), and returns a
- * {@link DocxNode}.
+ * The props passed into the top-level component function
+ */
+type AstComponentProps<Node> = Node extends AstNode<string, infer Props> ? Props : never;
+
+export type DocxFactoryYield<Node> = Node extends AstNode<
+	string,
+	{ [key: string]: unknown },
+	infer Yield
+>
+	? Yield
+	: never;
+
+type DocxFactory<N extends AstNode> = (
+	// The props passed to `toDocx` are the same as passed to the component itself, but the
+	// children are of the correlating docx.* type (and not components themselves)
+	props: Omit<AstComponentProps<N>, 'children'> & {
+		children: AstComponentProps<N>['children'] extends
+			| Array<string | AstNode<string, { [key: string]: unknown }, infer Y>>
+			| undefined
+			? Array<Y>
+			: Array<unknown>;
+	},
+) => DocxFactoryYield<N> | Promise<DocxFactoryYield<N>>;
+
+/**
+ * A `AstComponent` is a function that receives props depending on the type of DOCX thing is being
+ * rendered (documented in {@link https://www.npmjs.com/package/docx}), and returns an
+ * {@link AstNode}.
  *
- * DocxComponents can be used together with the {@link ../jsx.ts#JSX JSX} pragma for syntactic sugar.
+ * AstComponents can be used together with the {@link ../jsx.ts#JSX JSX} pragma for syntactic sugar.
  *
- * In the following example, `Document`, `Section`, `Paragraph` and `Text` are all DocxComponents:
+ * In the following example, `Document`, `Section`, `Paragraph` and `Text` are all AstComponents:
  *
  * ```ts
  * <Document>
@@ -116,13 +131,17 @@ export type DocxNode<Label extends string = string, DocxReturnType = unknown> = 
  * </Document>
  * ```
  */
-export type DocxComponent<Props, DocxNodeReturn extends DocxNode> = (
-	props: Props,
-) => DocxNodeReturn | Promise<DocxNodeReturn>;
+export interface AstComponent<N extends AstNode> {
+	(props: AstComponentProps<N>): void | Promise<void>;
+	type: AstNodeLabel<N>;
+	children: string[];
+	mixed?: boolean;
+	toDocx: DocxFactory<N>;
+}
 
 /**
- * When creating an element rendering rule, an XPath test is matched to a RuleComponent. The rule
- * component is expected to return null or a DocxComponent -- which represents a node in the DOCX
+ * When creating an element rendering rule, an XPath test is matched to a RuleAstComponent. The rule
+ * component is expected to return null or a AstComponent -- which represents a node in the DOCX
  * AST.
  *
  * In the following example, the arrow function declaration is a _rule_ component that returns the
@@ -134,7 +153,7 @@ export type DocxComponent<Props, DocxNodeReturn extends DocxNode> = (
  * ));
  * ```
  */
-export type RuleComponent = (props: RuleProps<RuleReturnType>) => RuleReturnType;
+export type RuleAstComponent = (props: RuleProps<RuleReturnType>) => RuleReturnType;
 
 /**
  * The props/parameters passed into a rule component by the renderer.
@@ -186,39 +205,13 @@ export type RuleProps<Output = RuleReturnType> = {
 };
 
 /**
- * All the things that can be returned by a {@link DocxComponent} -- pretty much a {@link DocxNode},
+ * All the things that can be returned by a {@link AstComponent} -- pretty much a {@link AstNode},
  * null, a promise thereof, or an array of any of the above.
  */
 export type RuleReturnType =
-	| DocxNode
+	| AstNode
 	| null
-	| Promise<DocxNode>
+	| Promise<AstNode>
 	| Promise<null>
 	| RuleReturnType[]
 	| Promise<RuleReturnType[]>;
-
-/**
- * Normal JSONML. Used to represent a HTML document. Attributes must be a string, or they must be
- * undefined (in which case they are not serialized)
- */
-export type Jsonml<AttrsType> =
-	| string
-	| [string, ...Jsonml<AttrsType>[]]
-	| [string, { [name: string]: AttrsType }, ...Jsonml<AttrsType>[]];
-
-/**
- * Like normal {@link Jsonml}, but element `style` attributes are allowed to be an instance
- * of {@link Style}. The system will convert them to traditional HTML style attributes before
- * serialization.
- *
- * For example:
- *
- * ```ts
- * const jsonml: JsonmlWithStyles = [
- *   'p',
- *   { style: template.style('SpecialParagraph') },
- *   'Hello world!'
- * ];
- * ```
- */
-export type JsonmlWithStyles = Jsonml<string | Style | undefined>;

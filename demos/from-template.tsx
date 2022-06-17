@@ -1,4 +1,9 @@
-/** @jsx Application.JSX */
+/**
+ * @jsx Application.JSX
+ *
+ * @file
+ * This file demonstrates a simple use of DOTX template files to source visual styles from.
+ */
 
 import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
 

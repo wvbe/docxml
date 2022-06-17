@@ -1,23 +1,18 @@
 import { copy, readerFromStreamReader } from 'https://deno.land/std@0.140.0/streams/conversion.ts';
 import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
 import docx from 'https://esm.sh/docx@7.3.0';
-import { Node } from 'https://esm.sh/slimdom@3.1.0';
-import {
-	slimdom,
-	sync,
-} from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/deno/src/index.ts';
+import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/deno/src/index.ts';
 
 import { Renderer } from '../classes/renderer.ts';
 import { DocumentNode } from '../components/documents.ts';
-import { DocxNode, JsonmlWithStyles, Options, RuleComponent, Style, Template } from '../types.ts';
+import { AstNode, DocxFactoryYield, Options, RuleAstComponent, Template } from '../types.ts';
 import { getOptionsFromArgv, getPipedStdin } from '../utilities/command-line.ts';
-import { convertToDocument } from '../utilities/jsonml.ts';
-import JSX from '../utilities/jsx.ts';
+import JSX, { bumpInvalidChildrenToAncestry } from '../utilities/jsx.ts';
 import { EmptyTemplate } from './template.empty.ts';
 
 /**
  * This class is the primary public Application for this package. Use it to associate
- * {@link DocxComponent} and DOTX styles to element selectors, see also the {@link Application.add add()}
+ * {@link AstComponent} and DOTX styles to element selectors, see also the {@link Application.add add()}
  * method. Finally, run `.write()` in order to apply those rules and generate
  * a `.docx` file from them.
  */
@@ -37,19 +32,21 @@ export class Application {
 			? await Deno.readTextFile(resolve(options.cwd || Deno.cwd(), options.source))
 			: await getPipedStdin(options.stdin || Deno.stdin);
 		if (!xml) {
-			throw new Error(`The XML input cannot be empty.`);
+			throw new Error(`DXE001: The XML input cannot be empty.`);
 		}
 
 		const ast = (await this.renderer.renderDocx(sync(xml), this._template)) as DocumentNode | null;
 		if (!ast) {
-			throw new Error('The transformation resulted in an empty document.');
+			throw new Error('DXE002:The transformation resulted in an empty document.');
 		}
 
 		if (options.debug) {
 			console.error(Application.stringifyAst(ast as DocumentNode));
 		}
 
-		const blob = await docx.Packer.toBlob(ast.docx);
+		bumpInvalidChildrenToAncestry(ast);
+
+		const blob = await docx.Packer.toBlob(await Application.getDocxForAst(ast));
 		if (options.destination) {
 			const bytes = new Uint8Array(await blob.arrayBuffer());
 			await Deno.writeFile(resolve(options.cwd || Deno.cwd(), options.destination), bytes);
@@ -67,7 +64,7 @@ export class Application {
 
 	/**
 	 * The recommended JSX pragma to use in any TSX file where
-	 * {@link ../types.ts#DocxComponent DocxComponents} are used.
+	 * {@link ../types.ts#AstComponent AstComponents} are used.
 	 */
 	public JSX = JSX;
 
@@ -78,7 +75,7 @@ export class Application {
 	 * a DOCX component (one that receives options accepted by the `docx` library, and returning
 	 * a DOCX AST.
 	 */
-	public add(selector: string, component: RuleComponent) {
+	public add(selector: string, component: RuleAstComponent) {
 		this.renderer.add(selector, component);
 		return this;
 	}
@@ -127,18 +124,21 @@ export class Application {
 	 * @deprecated It is recommended to use an instance of Application instead. This method may
 	 *             be removed in the future.
 	 */
-	public static stringifyAst(ast: DocxNode) {
+	public static stringifyAst(ast: AstNode) {
 		const BR = '\n';
 		const TAB = '  ';
 		let str = '';
-		(function recurse(astNode: DocxNode, level: number) {
+		(function recurse(astNode: AstNode, level: number) {
 			const children = astNode.children.filter(Boolean);
-			const nodeName = astNode.type + (astNode.style ? `#${astNode.style.name}` : '');
+			const nodeName = astNode.component.type + (astNode.style ? `#${astNode.style.name}` : '');
 			if (!children.length) {
 				str += (str ? BR : '') + TAB.repeat(level) + `<${nodeName} />`;
 			} else {
 				str += (str ? BR : '') + TAB.repeat(level) + `<${nodeName}>`;
-				astNode.children.filter(Boolean).forEach((child) => recurse(child, level + 1));
+				astNode.children
+					.filter(Boolean)
+					.filter((child): child is AstNode => typeof child !== 'string')
+					.forEach((child) => recurse(child, level + 1));
 				str += (str ? BR : '') + TAB.repeat(level) + `</${nodeName}>`;
 			}
 		})(ast, 0);
@@ -158,7 +158,8 @@ export class Application {
 		destination: string,
 		ast: DocumentNode | Promise<DocumentNode>,
 	) {
-		const blob = await docx.Packer.toBlob((await ast).docx);
+		bumpInvalidChildrenToAncestry(await ast);
+		const blob = await docx.Packer.toBlob(await Application.getDocxForAst(await ast));
 		await Deno.writeFile(destination, new Uint8Array(await blob.arrayBuffer()));
 	}
 
@@ -168,24 +169,19 @@ export class Application {
 	 */
 	public static JSX = JSX;
 
-	/**
-	 * Write an AST to a .docx file on your disk.
-	 *
-	 * @deprecated HTML exports do not work well. This method may be removed in the future.
-	 */
-	public static async writeAstToHtml(
-		destination: string,
-		ast: DocumentNode | Promise<DocumentNode>,
-	) {
-		const dom = convertToDocument<JsonmlWithStyles>((await ast).jsonml, (_name, value) => {
-			if (value && (value as Style).name) {
-				return (value as Style).inlineCss;
+	private static async getDocxForAst<M extends AstNode>(astNode: M) {
+		const result = await (async function recurse<N extends AstNode>(
+			astNode: string | N,
+		): Promise<unknown> {
+			if (typeof astNode === 'string') {
+				return astNode;
 			}
-			return String(value);
-		});
-		await Deno.writeTextFile(
-			destination,
-			slimdom.serializeToWellFormedString(dom as unknown as Node),
-		);
+			return astNode.component.toDocx({
+				...astNode.props,
+				children: await Promise.all(astNode.children.map(recurse)),
+			});
+		})(astNode);
+
+		return result as DocxFactoryYield<M>;
 	}
 }

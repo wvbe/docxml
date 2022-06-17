@@ -84,3 +84,41 @@ transform-html-to-docx --source my-document.html --destination my-document.docx
 cat my-document.html | transform-html-to-docx | bsdtar -xvf-
 ```
 
+
+## Error codes
+
+`DXE001: The XML input cannot be empty.`: For some reason, the options with which you executed an
+application did not result in a string that could be processed as XML.
+
+`DXE002: The transformation resulted in an empty document.`: The processing of your input XML went
+fine, but it resulted in an empty document. Verify that at least one element maps to the
+`<Document />` component, and that the rendering rules traverse into meaningful content from there.
+
+`DXE010:Cannot use styles without calling 'init' first.`: A content rendering rule is attempting
+to use a style (via `Template#style()`), but the template could not verify it exists. Run (and
+`await`) `Template#init()` at an earlier time -- for example when passing it to `<Document />`'s
+`template` prop.
+
+`DXE011:Style "…" is not available in this template. The only available style names are: …`: You are
+referencing a style name that does not exist in the supplied `.dotx` Word template. Please check
+the template and spelling.
+
+`DXE020: Unrecognized CLI option "…"`: The user gave a command line argument or option that is
+not recognized. Please check your input.
+
+`DXE021: The --source option should be followed by the location of an XML file`: The user attempted
+to use the `--source` CLI option without giving it a value. Please use as `--source <value>`
+instead. That value should be an XML file that exists on your disk.
+
+`DXE022: The --destination option should be followed by the location to which a DOCX file will be written`:
+The user attempted to use the `--destination` CLI option without giving it a value. Please use as
+`--destination <value>` instead. The value does not have to exist on disk already, and using the
+`.docx` file extension is recommended.
+
+`DXE029: getPipedStdin unexpectedly finished without returning.` This error should never occur. It
+has to do with the way you piped XML into the application. [Please submit an issue](https://github.com/wvbe/experimental-deno-xml-to-docx/issues/new), and share anything you can about your command-line
+input and XML file.
+
+`DXE030: Some AST nodes could not be given a valid position.`: The rendering rules resulted in
+invalid nesting of components, and after correction by the system some components could not be
+given a valid new place.

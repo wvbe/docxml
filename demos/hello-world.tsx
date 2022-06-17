@@ -1,9 +1,13 @@
-/** @jsx Application.JSX */
+/**
+ * @jsx Application.JSX
+ *
+ * @file
+ * This file demonstrates a very simple DOCX output.
+ */
 
 import Application, { Document, Paragraph, Section, Text } from '../mod.ts';
 
-await Application.writeAstToDocx(
-	'hello-world.docx',
+const ast = await (
 	<Document>
 		<Section>
 			<Paragraph>
@@ -18,5 +22,7 @@ await Application.writeAstToDocx(
 				<Text>This is the second section.</Text>
 			</Paragraph>
 		</Section>
-	</Document>,
+	</Document>
 );
+
+await Application.writeAstToDocx('hello-world.docx', ast);

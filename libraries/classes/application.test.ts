@@ -15,7 +15,6 @@ describe('Application', () => {
 		// The shallowest of tests, I know, and I'm sorry. Maybe I'll do better next time.
 		expect(typeof Application.stringifyAst).toBe('function');
 		expect(typeof Application.writeAstToDocx).toBe('function');
-		expect(typeof Application.writeAstToHtml).toBe('function');
 		expect(typeof Application.JSX).toBe('function');
 	});
 });

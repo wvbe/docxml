@@ -1,12 +1,15 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
-import { DocxComponent, DocxNode } from '../types.ts';
+import { AstComponent, AstNode } from '../types.ts';
 
-type IImageOptions = Exclude<ConstructorParameters<typeof docx.ImageRun>[0], string>;
-
-export type ImageProps = Omit<IImageOptions, 'data'> & { path: string };
-
-export type ImageNode = DocxNode<'Image', docx.ImageRun>;
+export type ImageNode = AstNode<
+	// Label:
+	'Image',
+	// Props:
+	Omit<Exclude<ConstructorParameters<typeof docx.ImageRun>[0], string>, 'data'> & { path: string },
+	// Yield:
+	docx.ImageRun
+>;
 
 /**
  * The <Image> component represents a graphic image. The `path` prop should be an a path to an image
@@ -15,12 +18,15 @@ export type ImageNode = DocxNode<'Image', docx.ImageRun>;
  * More info on its options:
  *   https://docx.js.org/#/usage/images
  */
-export const Image: DocxComponent<ImageProps, ImageNode> = async ({ path, ...props }) => {
-	const data = await Deno.readFile(path);
-	return {
-		type: 'Image',
-		children: [],
-		docx: new docx.ImageRun({ ...props, data }),
-		jsonml: ['img'],
-	};
+export const Image: AstComponent<ImageNode> = () => {
+	// no-op
+};
+
+Image.type = 'Image';
+
+Image.children = [];
+
+Image.toDocx = async (props) => {
+	const data = await Deno.readFile(props.path);
+	return new docx.ImageRun({ ...props, data });
 };

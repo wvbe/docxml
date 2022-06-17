@@ -1,4 +1,12 @@
-/** @jsx app.JSX */
+/**
+ * @jsx app.JSX
+ *
+ * @file
+ * This file demonstrates that an XML diff can be transformed into DOCX change tracking
+ * information.
+ *
+ * The XML diff of choice is {@link https://documentation.fontoxml.com/latest/export-fonto-document-history-diffs-81177763523b Fonto Document History's exported format}.
+ */
 
 import Application, {
 	DeletedText,

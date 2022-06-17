@@ -5,7 +5,7 @@ import {
 } from 'https://esm.sh/fontoxpath@3.26.0';
 import { Node } from 'https://esm.sh/slimdom@3.1.0';
 
-import { RuleComponent, RuleProps, RuleReturnType, Template } from '../types.ts';
+import { RuleAstComponent, RuleProps, RuleReturnType, Template } from '../types.ts';
 
 /**
  * An XPath expression that must evaluate to truthy or falsy for a given node, which determines wether or not the
@@ -130,12 +130,12 @@ export class Registry<RegistryValue> {
 	}
 }
 
-type RendererFactory<Component = RuleComponent, Output = RuleReturnType> = (
-	value: Component | undefined,
+type RendererFactory<AstComponent = RuleAstComponent, Output = RuleReturnType> = (
+	value: AstComponent | undefined,
 	props: RuleProps<Output>,
 ) => Output;
 
-export class Renderer extends Registry<RuleComponent> {
+export class Renderer extends Registry<RuleAstComponent> {
 	renderDocx(node: Node, template: Template) {
 		return (function recurse(
 			registry: Renderer,

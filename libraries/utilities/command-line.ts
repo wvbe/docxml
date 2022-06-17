@@ -16,7 +16,9 @@ export function getOptionsFromArgv(argv: string[]) {
 			case '--source': {
 				const source = argv.shift();
 				if (!source) {
-					throw new Error('The --source option should be followed by the location of an XML file');
+					throw new Error(
+						'DXE021: The --source option should be followed by the location of an XML file',
+					);
 				}
 				options.source = source;
 				continue;
@@ -26,7 +28,7 @@ export function getOptionsFromArgv(argv: string[]) {
 				const destination = argv.shift();
 				if (!destination) {
 					throw new Error(
-						'The --destination option should be followed by the location to which a DOCX file will be written',
+						'DXE022: The --destination option should be followed by the location to which a DOCX file will be written',
 					);
 				}
 				options.destination = destination;
@@ -38,7 +40,7 @@ export function getOptionsFromArgv(argv: string[]) {
 				continue;
 			}
 			default: {
-				throw new Error(`Unrecognized CLI option "${arg}"`);
+				throw new Error(`DXE020: Unrecognized CLI option "${arg}"`);
 			}
 		}
 	}
@@ -63,5 +65,5 @@ export async function getPipedStdin(stdin: Deno.Reader & { rid: number }) {
 	} while (bytesRead);
 
 	// This should never happen
-	throw new Error(`getPipedStdin unexpectedly finished without returning.`);
+	throw new Error(`DXE029: getPipedStdin unexpectedly finished without returning.`);
 }

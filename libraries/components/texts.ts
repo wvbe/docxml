@@ -1,92 +1,110 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
-import { DocxComponent, DocxNode, Style } from '../types.ts';
-import { asArray } from '../utilities/jsx.ts';
+import { AstComponent, AstNode, Style } from '../types.ts';
 
 type OneOrMany<P> = P extends Array<infer Q> ? Q | Array<Q> : never;
 
-type IRunOptions = Exclude<ConstructorParameters<typeof docx.TextRun>[0], string>;
-
-export type TextProps = Omit<IRunOptions, 'children' | 'style'> & {
-	children?: OneOrMany<IRunOptions['children']>;
-	style?: Style;
-};
-
-export type TextNode = DocxNode<'Text', docx.TextRun>;
+export type TextNode = AstNode<
+	// Label:
+	'Text',
+	// Props:
+	Omit<Exclude<ConstructorParameters<typeof docx.TextRun>[0], string>, 'children' | 'style'> & {
+		// string | docx.FootnoteReferenceRun | Begin | FieldInstruction | Separate | End
+		children?: OneOrMany<string[]>;
+		style?: Style;
+	},
+	// Yield:
+	docx.TextRun
+>;
 
 /**
  * The <Text> component
  */
-export const Text: DocxComponent<TextProps, TextNode> = async ({ children, style, ...rest }) => {
-	return {
-		type: 'Text',
-		style,
-		// @TODO type the children that go into Text components
-		children: [],
-		docx: new docx.TextRun({
-			...rest,
-			style: style?.name,
-			children: children === undefined ? children : Array.isArray(children) ? children : [children],
-		}),
-		//  @TODO
-		jsonml: [
-			'span',
-			{ ['data-style-name']: style?.name, style },
-			(await asArray(children)).join(''),
-		],
-	};
+export const Text: AstComponent<TextNode> = () => {
+	// no-op
 };
 
-type IInsertedRunOptions = Exclude<ConstructorParameters<typeof docx.InsertedTextRun>[0], string>;
+Text.type = 'Text';
 
-export type InsertedTextProps = Omit<IInsertedRunOptions, 'children'> & {
-	children?: OneOrMany<IInsertedRunOptions['children']>;
-};
+Text.mixed = true;
 
-export type InsertedTextNode = DocxNode<'InsertedText', docx.InsertedTextRun>;
+Text.children = [];
+
+Text.toDocx = ({ style, children, ...props }) =>
+	new docx.TextRun({
+		...props,
+		style: style?.name,
+		children: children === undefined ? children : Array.isArray(children) ? children : [children],
+	});
+
+export type InsertedTextNode = AstNode<
+	// Label:
+	'InsertedText',
+	// Props:
+	Omit<
+		Exclude<ConstructorParameters<typeof docx.InsertedTextRun>[0], string>,
+		'children' | 'style'
+	> & {
+		// string | docx.FootnoteReferenceRun | Begin | FieldInstruction | Separate | End
+		children?: OneOrMany<string[]>;
+		style?: Style;
+	},
+	// Yield:
+	docx.InsertedTextRun
+>;
 
 /**
  * The <InsertedText> component
  */
-export const InsertedText: DocxComponent<InsertedTextProps, InsertedTextNode> = ({
-	children,
-	...rest
-}) => {
-	return {
-		type: 'InsertedText',
-		// @TODO type the children that go into Text components
-		children: [],
-		docx: new docx.InsertedTextRun({
-			...rest,
-			children: children === undefined ? children : Array.isArray(children) ? children : [children],
-		}),
-		jsonml: 'zz',
-	};
+export const InsertedText: AstComponent<InsertedTextNode> = () => {
+	// no-op
 };
 
-type IDeletedRunOptions = Exclude<ConstructorParameters<typeof docx.DeletedTextRun>[0], string>;
+InsertedText.type = 'InsertedText';
 
-export type DeletedTextProps = Omit<IDeletedRunOptions, 'children'> & {
-	children?: OneOrMany<IDeletedRunOptions['children']>;
-};
+InsertedText.mixed = true;
 
-export type DeletedTextNode = DocxNode<'DeletedText', docx.DeletedTextRun>;
+InsertedText.children = [];
+
+InsertedText.toDocx = ({ style, children, ...props }) =>
+	new docx.InsertedTextRun({
+		...props,
+		style: style?.name,
+		children: children === undefined ? children : Array.isArray(children) ? children : [children],
+	});
+
+export type DeletedTextNode = AstNode<
+	// Label:
+	'DeletedText',
+	// Props:
+	Omit<
+		Exclude<ConstructorParameters<typeof docx.DeletedTextRun>[0], string>,
+		'children' | 'style'
+	> & {
+		// string | docx.FootnoteReferenceRun | Begin | FieldInstruction | Separate | End
+		children?: OneOrMany<string[]>;
+		style?: Style;
+	},
+	// Yield:
+	docx.DeletedTextRun
+>;
 
 /**
  * The <DeletedText> component
  */
-export const DeletedText: DocxComponent<DeletedTextProps, DeletedTextNode> = ({
-	children,
-	...rest
-}) => {
-	return {
-		type: 'DeletedText',
-		// @TODO type the children that go into Text components
-		children: [],
-		docx: new docx.DeletedTextRun({
-			...rest,
-			children: children === undefined ? children : Array.isArray(children) ? children : [children],
-		}),
-		jsonml: 'zz',
-	};
+export const DeletedText: AstComponent<DeletedTextNode> = () => {
+	// no-op
 };
+
+DeletedText.type = 'DeletedText';
+
+DeletedText.mixed = true;
+
+DeletedText.children = [];
+
+DeletedText.toDocx = ({ style, children, ...props }) =>
+	new docx.DeletedTextRun({
+		...props,
+		style: style?.name,
+		children: children === undefined ? children : Array.isArray(children) ? children : [children],
+	});

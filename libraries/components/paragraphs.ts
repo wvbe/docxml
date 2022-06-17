@@ -1,43 +1,38 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
-import { DocxComponent, DocxNode, Style } from '../types.ts';
-import { asDocxArray, asJsonmlArray, assertChildrenAreOnlyOfType } from '../utilities/jsx.ts';
+import { AstComponent, AstNode, Style } from '../types.ts';
 import { ImageNode } from './images.ts';
 import { TextNode } from './texts.ts';
 
 type IParagraphOptions = Exclude<ConstructorParameters<typeof docx.Paragraph>[0], string>;
 
-export type ParagraphProps = Omit<IParagraphOptions, 'children' | 'style'> & {
-	children?: Array<TextNode | ImageNode>;
-	style?: Style;
-};
-
-export type ParagraphNode = DocxNode<'Paragraph', docx.Paragraph>;
+export type ParagraphNode = AstNode<
+	// Label:
+	'Paragraph',
+	// Props:
+	Omit<IParagraphOptions, 'children' | 'style'> & {
+		children?: Array<TextNode | ImageNode>;
+		style?: Style;
+	},
+	// Yield:
+	docx.Paragraph
+>;
 
 /**
  * The <Paragraph> component represents a Word paragraph. Word paragraphs are used to contain most
  * contents, such as text and images.
  */
-export const Paragraph: DocxComponent<ParagraphProps, ParagraphNode> = async ({
-	children,
-	style,
-	...rest
-}) => {
-	await assertChildrenAreOnlyOfType(
-		'Paragraph',
-		children,
-		...['Text', 'Image', 'InsertedText', 'DeletedText'],
-	);
-
-	return {
-		type: 'Paragraph',
-		style,
-		children: children || [],
-		docx: new docx.Paragraph({
-			...rest,
-			style: style?.name,
-			children: await asDocxArray(children),
-		}),
-		jsonml: ['p', { ['data-style-name']: style?.name, style }, ...(await asJsonmlArray(children))],
-	};
+export const Paragraph: AstComponent<ParagraphNode> = () => {
+	// no-op
 };
+
+Paragraph.type = 'Paragraph';
+
+Paragraph.children = ['Text', 'Image', 'InsertedText', 'DeletedText'];
+
+Paragraph.toDocx = ({ children, style, ...props }) =>
+	new docx.Paragraph({
+		...props,
+		style: style?.name,
+		children: children,
+	});

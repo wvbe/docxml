@@ -1,4 +1,9 @@
-/** @jsx Application.JSX */
+/**
+ * @jsx Application.JSX
+ *
+ * @file
+ * This file demonstrates a simple table in DOCX, and repeating its first row on every page.
+ */
 
 import Application, {
 	Document,

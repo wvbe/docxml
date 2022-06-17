@@ -1,16 +1,18 @@
-import { DocxComponent, DocxNode } from '../types.ts';
+import { AstComponent, AstNode, Style } from '../types.ts';
 
-type JsxPragma<
-	Props extends { children: unknown[] } = { children: unknown[] },
-	Return extends DocxNode<string, unknown> = DocxNode<string, unknown>,
-> = (
-	docxComponent: DocxComponent<Props, Return>,
-	props: Props,
-	...children: Props['children']
-) => Return | Promise<Return>;
+type JsxPragmaProps = {
+	children: AstNode[];
+	style?: Style;
+	[key: string]: unknown;
+};
+type JsxPragma = (
+	docxAstComponent: AstComponent<AstNode<string, JsxPragmaProps, unknown>>,
+	props: JsxPragmaProps,
+	...children: JsxPragmaProps['children']
+) => AstNode | Promise<AstNode>;
 
 /**
- * This is the JSX pragma used to transform a hierarchy of DocxComponents to the AST that is
+ * This is the JSX pragma used to transform a hierarchy of AstComponents to the AST that is
  * interpreted by the rest of the application. Import it into any file where you would like to
  * use JSX to compose a DOCX document.
  *
@@ -35,12 +37,18 @@ type JsxPragma<
  * or promises of (nested) arrays, etc. Only attributes will be passed on to their component without
  * being awaited.
  */
-export const JSX: JsxPragma = async (docxComponent, props, ...children) => {
-	const result = await docxComponent({
+export const JSX: JsxPragma = async (component, props, ...children) => {
+	await component({
 		...props,
-		children: await asArray(children),
+		children: await ensureFlatResolvedArray(children),
 	});
-	return result;
+
+	return {
+		component,
+		style: props?.style || null,
+		props: props || {},
+		children: await ensureFlatResolvedArray(children),
+	};
 };
 
 type MultiDimensionalArray<P> = Array<P | MultiDimensionalArray<P>>;
@@ -49,7 +57,9 @@ type MultiDimensionalArray<P> = Array<P | MultiDimensionalArray<P>>;
  * A helper function that ensures that an array-ish (like JSX children, which could be undefined, a single item or an
  * array of items, or a promise thereof, or all of the aforementioned nested in more arrays) is always a single flat array.
  */
-export async function asArray<P>(children: P | MultiDimensionalArray<P> | undefined) {
+export async function ensureFlatResolvedArray<P>(
+	children: P | MultiDimensionalArray<P> | undefined,
+) {
 	const x = await [children]
 		.filter((item): item is P | MultiDimensionalArray<P> => item !== undefined && item !== null)
 		.reduce<Promise<P[]>>(recursiveFlattenArray, Promise.resolve([]));
@@ -70,33 +80,43 @@ async function recursiveFlattenArray<P>(
 	];
 }
 
-export async function asDocxArray<P>(children?: DocxNode<string, P> | DocxNode<string, P>[]) {
-	return (await asArray(children)).map((child) => child.docx);
-}
-export async function asJsonmlArray<P>(children?: DocxNode<string, P> | DocxNode<string, P>[]) {
-	return (await asArray(children)).map((child) => child.jsonml);
-}
-
 /**
- * A helper function to check that the children (passed to a DocxComponent) are of an allowed
- * type. If not, the function throws a descriptive error.
+ * @note Modifies by reference!
+ * @todo Not modify by reference
  */
-export async function assertChildrenAreOnlyOfType<P extends DocxNode<string, unknown>>(
-	parentLabel: string,
-	children: P | P[] | undefined,
-	...allowedTypes: string[]
-) {
-	const mismatch = (await asArray(children)).find((child) => !allowedTypes.includes(child.type));
+export function bumpInvalidChildrenToAncestry<N extends AstNode>(node: N): N {
+	const documentElements = [node];
+	(function walk(nodes: (string | AstNode)[]) {
+		for (let y = 0; y < nodes.length; y++) {
+			const node = nodes[y];
+			if (typeof node === 'string') {
+				// TODO handle mixed content
+				continue;
+			}
+			walk(node.children);
+			for (let i = 0; i < node.children.length; i++) {
+				const child = node.children[i];
+				if (
+					(typeof child === 'string' && node.component.mixed) ||
+					(typeof child !== 'string' && node.component.children.includes(child.component.type))
+				) {
+					// the child is valid;
+					// continue;
+				} else {
+					nodes.splice(nodes.indexOf(node) + 1, 0, ...node.children.splice(i, 1), {
+						...node,
+						children: node.children.splice(i, node.children.length - i),
+					});
+				}
+			}
+		}
+	})(documentElements);
 
-	if (mismatch) {
-		throw new Error(
-			`The <${parentLabel}> component contains an invalid child component of type <${
-				mismatch.type
-			}>. The only allowed child component types are: ${allowedTypes
-				.map((type) => `<${type}>`)
-				.join(', ')}.`,
-		);
+	if (documentElements.length !== 1) {
+		throw new Error('DXE030: Some AST nodes could not be given a valid position.');
 	}
+
+	return documentElements[0];
 }
 
 export default JSX;

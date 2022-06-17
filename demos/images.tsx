@@ -1,4 +1,10 @@
-/** @jsx Application.JSX */
+/**
+ * @jsx Application.JSX
+ *
+ * @file
+ * This file demonstrates that Word files generated with the script may contain images, if the image
+ * can be found on disk.
+ */
 
 import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
 

@@ -92,7 +92,7 @@ type AstNodeLabel<Node> = Node extends AstNode<infer Label, { [key: string]: unk
 /**
  * The props passed into the top-level component function
  */
-type AstComponentProps<Node> = Node extends AstNode<string, infer Props> ? Props : never;
+export type AstComponentProps<Node> = Node extends AstNode<string, infer Props> ? Props : never;
 
 export type DocxFactoryYield<Node> = Node extends AstNode<
 	string,
@@ -208,10 +208,10 @@ export type RuleProps<Output = RuleReturnType> = {
  * All the things that can be returned by a {@link AstComponent} -- pretty much a {@link AstNode},
  * null, a promise thereof, or an array of any of the above.
  */
-export type RuleReturnType =
-	| AstNode
-	| null
-	| Promise<AstNode>
-	| Promise<null>
-	| RuleReturnType[]
-	| Promise<RuleReturnType[]>;
+type SelfArrayPromiseOrPromisedArrayOfSelf<Self> =
+	| Self
+	| Promise<Self>
+	| SelfArrayPromiseOrPromisedArrayOfSelf<Self>[]
+	| Promise<SelfArrayPromiseOrPromisedArrayOfSelf<Self>[]>;
+	
+export type RuleReturnType = SelfArrayPromiseOrPromisedArrayOfSelf<AstNode | null | string>;

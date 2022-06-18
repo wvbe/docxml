@@ -35,16 +35,24 @@ export class Application {
 			throw new Error(`DXE001: The XML input cannot be empty.`);
 		}
 
-		const ast = (await this.renderer.renderDocx(sync(xml), this._template)) as DocumentNode | null;
+		const ast = (await this.renderer.renderDocx(sync(xml), this._template)) as
+			| DocumentNode
+			| null
+			| string;
 		if (!ast) {
-			throw new Error('DXE002:The transformation resulted in an empty document.');
+			throw new Error('DXE002: The transformation resulted in an empty document.');
+		}
+		if (typeof ast === 'string') {
+			throw new Error(
+				'DXE003: The transformation resulted in a string, which is not a valid document.',
+			);
 		}
 
 		if (options.debug) {
 			console.error(Application.stringifyAst(ast as DocumentNode));
 		}
 
-		bumpInvalidChildrenToAncestry(ast);
+		await bumpInvalidChildrenToAncestry(ast);
 
 		const blob = await docx.Packer.toBlob(await Application.getDocxForAst(ast));
 		if (options.destination) {
@@ -158,7 +166,7 @@ export class Application {
 		destination: string,
 		ast: DocumentNode | Promise<DocumentNode>,
 	) {
-		bumpInvalidChildrenToAncestry(await ast);
+		await bumpInvalidChildrenToAncestry(await ast);
 		const blob = await docx.Packer.toBlob(await Application.getDocxForAst(await ast));
 		await Deno.writeFile(destination, new Uint8Array(await blob.arrayBuffer()));
 	}

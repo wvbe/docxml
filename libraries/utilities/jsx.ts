@@ -1,15 +1,5 @@
-import { AstComponent, AstNode, Style } from '../types.ts';
-
-type JsxPragmaProps = {
-	children: AstNode[];
-	style?: Style;
-	[key: string]: unknown;
-};
-type JsxPragma = (
-	docxAstComponent: AstComponent<AstNode<string, JsxPragmaProps, unknown>>,
-	props: JsxPragmaProps,
-	...children: JsxPragmaProps['children']
-) => AstNode | Promise<AstNode>;
+import { Text } from '../components/texts.ts';
+import { AstComponent, AstComponentProps, AstNode, Style } from '../types.ts';
 
 /**
  * This is the JSX pragma used to transform a hierarchy of AstComponents to the AST that is
@@ -37,7 +27,11 @@ type JsxPragma = (
  * or promises of (nested) arrays, etc. Only attributes will be passed on to their component without
  * being awaited.
  */
-export const JSX: JsxPragma = async (component, props, ...children) => {
+export async function JSX<C extends AstComponent<AstNode>>(
+	component: C,
+	props: Omit<C extends AstComponent<infer N> ? AstComponentProps<N> : never, 'children'>,
+	...children: (string | AstNode)[]
+) {
 	await component({
 		...props,
 		children: await ensureFlatResolvedArray(children),
@@ -48,8 +42,8 @@ export const JSX: JsxPragma = async (component, props, ...children) => {
 		style: props?.style || null,
 		props: props || {},
 		children: await ensureFlatResolvedArray(children),
-	};
-};
+	} as AstNode;
+}
 
 type MultiDimensionalArray<P> = Array<P | MultiDimensionalArray<P>>;
 
@@ -84,25 +78,31 @@ async function recursiveFlattenArray<P>(
  * @note Modifies by reference!
  * @todo Not modify by reference
  */
-export function bumpInvalidChildrenToAncestry<N extends AstNode>(node: N): N {
+export async function bumpInvalidChildrenToAncestry<N extends AstNode>(node: N): Promise<N> {
 	const documentElements = [node];
-	(function walk(nodes: (string | AstNode)[]) {
+
+	await (async function walk(nodes: (string | AstNode)[]) {
 		for (let y = 0; y < nodes.length; y++) {
 			const node = nodes[y];
 			if (typeof node === 'string') {
 				// TODO handle mixed content
 				continue;
 			}
-			walk(node.children);
+			await walk(node.children);
 			for (let i = 0; i < node.children.length; i++) {
-				const child = node.children[i];
+				let child = node.children[i];
+
+				if (typeof child === 'string' && !node.component.mixed) {
+					// If the child is an unexpected string, wrap it in <Text> to attempt to make valid
+					child = await JSX(Text, {}, child);
+					node.children.splice(i, 1, child);
+				}
+
 				if (
-					(typeof child === 'string' && node.component.mixed) ||
-					(typeof child !== 'string' && node.component.children.includes(child.component.type))
+					(typeof child === 'string' && !node.component.mixed) ||
+					(typeof child !== 'string' && !node.component.children.includes(child.component.type))
 				) {
-					// the child is valid;
-					// continue;
-				} else {
+					// If the child is invalid here, split the parent and move it to the middle
 					nodes.splice(nodes.indexOf(node) + 1, 0, ...node.children.splice(i, 1), {
 						...node,
 						children: node.children.splice(i, node.children.length - i),

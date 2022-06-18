@@ -5,9 +5,6 @@ class EmptyStyle implements Style {
 	constructor(name: string) {
 		this.name = name;
 	}
-	get inlineCss() {
-		return '';
-	}
 }
 
 export class EmptyTemplate implements Template {

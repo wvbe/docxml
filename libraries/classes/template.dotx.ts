@@ -5,24 +5,19 @@ import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/
 import { Style, Template } from '../types.ts';
 
 class DotxStyle implements Style {
-	private template: DotxTemplate;
 	public name: string;
-	constructor(template: DotxTemplate, name: string) {
-		this.template = template;
+	constructor(name: string) {
 		this.name = name;
-	}
-	get inlineCss() {
-		// @todo
-		// Not implemented!
-		return '';
 	}
 }
 
 export class DotxTemplate implements Template {
 	private location: string;
+
 	constructor(location: string) {
 		this.location = location;
 	}
+
 	private _zip: JSZip | null = null;
 	private get zip() {
 		if (!this._zip) {
@@ -34,13 +29,14 @@ export class DotxTemplate implements Template {
 			return Promise.resolve(this._zip);
 		}
 	}
+
 	private async file(location: string): Promise<string> {
 		const zip = await this.zip;
 		return zip.file(location).async('string');
 	}
 
 	// Only public for debug purposes;
-	public availableStyleNames: string[] | null = null;
+	private availableStyleNames: string[] | null = null;
 
 	/**
 	 * Read a DOTX file, cache some stuff _and_ return the string XML that the docx lib expects
@@ -71,11 +67,12 @@ export class DotxTemplate implements Template {
 				)}`,
 			);
 		}
-		if (!this.styles.has(name)) {
-			const style = new DotxStyle(this, name);
-			this.styles.set(name, style);
-			return style;
+		const style = this.styles.get(name);
+		if (!style) {
+			const newStyle = new DotxStyle(name);
+			this.styles.set(name, newStyle);
+			return newStyle;
 		}
-		return this.styles.get(name) as DotxStyle;
+		return style;
 	}
 }

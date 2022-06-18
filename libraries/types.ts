@@ -57,7 +57,6 @@ export interface Template {
 
 export interface Style {
 	name: string;
-	inlineCss: string;
 }
 
 /**
@@ -213,5 +212,5 @@ type SelfArrayPromiseOrPromisedArrayOfSelf<Self> =
 	| Promise<Self>
 	| SelfArrayPromiseOrPromisedArrayOfSelf<Self>[]
 	| Promise<SelfArrayPromiseOrPromisedArrayOfSelf<Self>[]>;
-	
+
 export type RuleReturnType = SelfArrayPromiseOrPromisedArrayOfSelf<AstNode | null | string>;

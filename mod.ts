@@ -17,3 +17,17 @@ export * from './libraries/components/table-cells.ts';
 export * from './libraries/components/table-rows.ts';
 export * from './libraries/components/tables.ts';
 export * from './libraries/components/texts.ts';
+
+/*
+ * Re-exporting enums from `docx`
+ *
+ * @note Picked entirely arbitrarily for now.
+ */
+import docx from 'https://esm.sh/docx@7.3.0';
+export const AlignmentType = docx.AlignmentType;
+export const BorderStyle = docx.BorderStyle;
+export const HorizontalPositionAlign = docx.HorizontalPositionAlign;
+export const NumberFormat = docx.NumberFormat;
+export const PageOrientation = docx.PageOrientation;
+export const VerticalAlign = docx.VerticalAlign;
+export const VerticalPositionAlign = docx.VerticalPositionAlign;

@@ -74,6 +74,9 @@ async function recursiveFlattenArray<P>(
 	];
 }
 
+/**
+ * @note Modifies by reference!
+ */
 function inheritProperties(parent: AstNode, child: string | AstNode): string | AstNode {
 	if (typeof child === 'string') {
 		// No inheritance, although we may see this string again wrapped in a TextNode;

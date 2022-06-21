@@ -1,5 +1,5 @@
 import { Text } from '../components/texts.ts';
-import { AstComponent, AstComponentProps, AstNode, Style } from '../types.ts';
+import { AstComponent, AstComponentProps, AstNode } from '../types.ts';
 
 /**
  * This is the JSX pragma used to transform a hierarchy of AstComponents to the AST that is

@@ -5,8 +5,8 @@ import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/
 
 import { Registry } from './renderer.ts';
 
-function getNode(nodeOrNull: any) {
-	return nodeOrNull as any;
+function getNode(nodeOrNull: unknown) {
+	return nodeOrNull as Node;
 }
 
 describe('Registry', () => {

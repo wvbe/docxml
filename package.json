@@ -1,8 +1,10 @@
 {
 	"scripts": {
-		"test": "deno test --allow-read libraries",
+		"test": "npm run deno:test --silent",
 		"lint": "eslint . --ext .ts,.tsx",
-		"compile": "deno compile --allow-env --allow-read --allow-write"
+		"deno:test": "deno test --allow-read libraries",
+		"deno:lint": "deno lint libraries",
+		"deno:compile": "deno compile --allow-env --allow-read --allow-write"
 	},
 	"devDependencies": {
 		"@wvbe/eslint-config": "github:wvbe/eslint-config",

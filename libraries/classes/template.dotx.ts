@@ -21,10 +21,15 @@ export class DotxTemplate implements Template {
 	private _zip: JSZip | null = null;
 	private get zip() {
 		if (!this._zip) {
-			return readZip(this.location).then((contents) => {
-				this._zip = contents;
-				return this._zip;
-			});
+			return readZip(this.location)
+				.then((contents) => {
+					this._zip = contents;
+					return this._zip;
+				})
+				.catch((error) => {
+					error.message = `DXE004: Could not read the DOTX template file due to error "${error.message}"`;
+					throw error;
+				});
 		} else {
 			return Promise.resolve(this._zip);
 		}

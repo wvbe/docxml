@@ -106,16 +106,19 @@ export class Application {
 	 */
 	public async execute(options?: Options | string[]) {
 		try {
+			const opts = Array.isArray(options)
+				? getOptionsFromArgv(Array.from(options))
+				: options || getOptionsFromArgv(Array.from(Deno.args));
 			const timeStart = Date.now();
-			await this.executeOptions(
-				Array.isArray(options)
-					? getOptionsFromArgv(Array.from(options))
-					: options || getOptionsFromArgv(Array.from(Deno.args)),
-			);
+			await this.executeOptions(opts);
 			console.error(`Succeeded in ${Date.now() - timeStart} milliseconds.`);
 		} catch (error: unknown) {
+			const hasDebug =
+				(Array.isArray(options) && options.includes('--debug')) ||
+				(options as Options)?.debug ||
+				Deno.args.includes('--debug');
 			console.error('⚠️   The DOCX output failed because of an error:');
-			console.error(`    ${(error as Error).message || error}`);
+			console.error(`    ${(error as Error)[hasDebug ? 'stack' : 'message'] || error}`);
 			Deno.exit(1);
 		}
 	}

@@ -74,6 +74,15 @@ async function recursiveFlattenArray<P>(
 	];
 }
 
+function inheritProperties(parent: AstNode, child: string | AstNode): string | AstNode {
+	if (typeof child === 'string') {
+		// No inheritance, although we may see this string again wrapped in a TextNode;
+	} else if (parent.component.type === 'Text' && child.component.type === 'Text') {
+		child.props = { ...parent.props, ...child.props };
+	}
+	return child;
+}
+
 /**
  * @note Modifies by reference!
  * @todo Not modify by reference
@@ -95,6 +104,7 @@ export async function bumpInvalidChildrenToAncestry<N extends AstNode>(node: N):
 				if (typeof child === 'string' && !node.component.mixed) {
 					// If the child is an unexpected string, wrap it in <Text> to attempt to make valid
 					child = await JSX(Text, {}, child);
+					inheritProperties(node, child);
 					node.children.splice(i, 1, child);
 				}
 
@@ -102,8 +112,11 @@ export async function bumpInvalidChildrenToAncestry<N extends AstNode>(node: N):
 					(typeof child === 'string' && !node.component.mixed) ||
 					(typeof child !== 'string' && !node.component.children.includes(child.component.type))
 				) {
+					const children = node.children
+						.splice(i, 1)
+						.map((child) => inheritProperties(node, child));
 					// If the child is invalid here, split the parent and move it to the middle
-					nodes.splice(nodes.indexOf(node) + 1, 0, ...node.children.splice(i, 1), {
+					nodes.splice(nodes.indexOf(node) + 1, 0, ...children, {
 						...node,
 						children: node.children.splice(i, node.children.length - i),
 					});

@@ -10,6 +10,7 @@ export { Application as default } from './libraries/classes/application.ts';
 export * from './libraries/classes/template.dotx.ts';
 export * from './libraries/classes/template.empty.ts';
 export * from './libraries/components/documents.ts';
+export * from './libraries/components/footnotes.ts';
 export * from './libraries/components/images.ts';
 export * from './libraries/components/paragraphs.ts';
 export * from './libraries/components/sections.ts';

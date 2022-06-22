@@ -28,7 +28,7 @@ Text.type = 'Text';
 
 Text.mixed = true;
 
-Text.children = [];
+Text.children = ['FootnoteReference'];
 
 Text.toDocx = ({ style, children, ...props }) =>
 	new docx.TextRun({

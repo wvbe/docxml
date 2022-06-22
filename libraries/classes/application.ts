@@ -5,9 +5,9 @@ import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/
 
 import { Renderer } from '../classes/renderer.ts';
 import { DocumentNode } from '../components/documents.ts';
-import { AstNode, DocxFactoryYield, Options, RuleAstComponent, Template } from '../types.ts';
+import { AstNode, Options, RuleAstComponent, Template } from '../types.ts';
 import { getOptionsFromArgv, getPipedStdin } from '../utilities/command-line.ts';
-import JSX, { bumpInvalidChildrenToAncestry } from '../utilities/jsx.ts';
+import JSX, { bumpInvalidChildrenToAncestry, getDocxTree } from '../utilities/jsx.ts';
 import { EmptyTemplate } from './template.empty.ts';
 
 /**
@@ -54,7 +54,7 @@ export class Application {
 
 		await bumpInvalidChildrenToAncestry(ast);
 
-		const blob = await docx.Packer.toBlob(await Application.getDocxForAst(ast));
+		const blob = await docx.Packer.toBlob(await getDocxTree(ast));
 		if (options.destination) {
 			const bytes = new Uint8Array(await blob.arrayBuffer());
 			await Deno.writeFile(resolve(options.cwd || Deno.cwd(), options.destination), bytes);
@@ -170,7 +170,7 @@ export class Application {
 		ast: DocumentNode | Promise<DocumentNode>,
 	) {
 		await bumpInvalidChildrenToAncestry(await ast);
-		const blob = await docx.Packer.toBlob(await Application.getDocxForAst(await ast));
+		const blob = await docx.Packer.toBlob(await getDocxTree(await ast));
 		await Deno.writeFile(destination, new Uint8Array(await blob.arrayBuffer()));
 	}
 
@@ -179,20 +179,4 @@ export class Application {
 	 *             be removed in the future.
 	 */
 	public static JSX = JSX;
-
-	private static async getDocxForAst<M extends AstNode>(astNode: M) {
-		const result = await (async function recurse<N extends AstNode>(
-			astNode: string | N,
-		): Promise<unknown> {
-			if (typeof astNode === 'string') {
-				return astNode;
-			}
-			return astNode.component.toDocx({
-				...astNode.props,
-				children: await Promise.all(astNode.children.map(recurse)),
-			});
-		})(astNode);
-
-		return result as DocxFactoryYield<M>;
-	}
 }

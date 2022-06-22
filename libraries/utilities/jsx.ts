@@ -1,5 +1,5 @@
 import { Text } from '../components/texts.ts';
-import { AstComponent, AstComponentProps, AstNode } from '../types.ts';
+import { AstComponent, AstComponentProps, AstNode, DocxFactoryYield } from '../types.ts';
 
 /**
  * This is the JSX pragma used to transform a hierarchy of AstComponents to the AST that is
@@ -43,6 +43,22 @@ export async function JSX<C extends AstComponent<AstNode>>(
 		props: props || {},
 		children: await ensureFlatResolvedArray(children),
 	} as AstNode;
+}
+
+export async function getDocxTree<M extends AstNode>(astNode: M): Promise<DocxFactoryYield<M>> {
+	const result = await (async function recurse<N extends AstNode>(
+		astNode: string | N,
+	): Promise<unknown> {
+		if (typeof astNode === 'string') {
+			return astNode;
+		}
+		return astNode.component.toDocx({
+			...astNode.props,
+			children: await Promise.all(astNode.children.map(recurse)),
+		});
+	})(astNode);
+
+	return result as DocxFactoryYield<M>;
 }
 
 type MultiDimensionalArray<P> = Array<P | MultiDimensionalArray<P>>;
@@ -93,14 +109,25 @@ function inheritProperties(parent: AstNode, child: string | AstNode): string | A
 export async function bumpInvalidChildrenToAncestry<N extends AstNode>(node: N): Promise<N> {
 	const documentElements = [node];
 
-	await (async function walk(nodes: (string | AstNode)[]) {
+	async function recurseWalkFromNode(node: AstNode) {
+		if (node.children) {
+			await walk(node.children);
+		}
+		if (node.component.type === 'Document' && node.props.footnotes) {
+			await Promise.all(
+				Object.values(node.props.footnotes as Record<number, AstNode[]>).map((list) => walk(list)),
+			);
+		}
+	}
+
+	async function walk(nodes: (string | AstNode)[]) {
 		for (let y = 0; y < nodes.length; y++) {
 			const node = nodes[y];
 			if (typeof node === 'string') {
 				// TODO handle mixed content
 				continue;
 			}
-			await walk(node.children);
+			recurseWalkFromNode(node);
 			for (let i = 0; i < node.children.length; i++) {
 				let child = node.children[i];
 
@@ -126,7 +153,9 @@ export async function bumpInvalidChildrenToAncestry<N extends AstNode>(node: N):
 				}
 			}
 		}
-	})(documentElements);
+	}
+
+	await walk(documentElements);
 
 	if (documentElements.length !== 1) {
 		throw new Error('DXE030: Some AST nodes could not be given a valid position.');

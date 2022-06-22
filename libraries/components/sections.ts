@@ -29,7 +29,7 @@ export const Section: AstComponent<SectionNode> = () => {
 
 Section.type = 'Section';
 
-Section.children = ['Paragraph', 'Table'];
+Section.children = ['Paragraph', 'Table', 'FootNotes'];
 
 Section.toDocx = ({ children, ...props }) => ({
 	...props,

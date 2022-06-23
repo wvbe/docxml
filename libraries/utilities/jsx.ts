@@ -127,7 +127,7 @@ export async function bumpInvalidChildrenToAncestry<N extends AstNode>(node: N):
 				// TODO handle mixed content
 				continue;
 			}
-			recurseWalkFromNode(node);
+			await recurseWalkFromNode(node);
 			for (let i = 0; i < node.children.length; i++) {
 				let child = node.children[i];
 

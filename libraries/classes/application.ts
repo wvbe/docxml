@@ -1,6 +1,10 @@
 import { copy, readerFromStreamReader } from 'https://deno.land/std@0.140.0/streams/conversion.ts';
 import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
 import docx from 'https://esm.sh/docx@7.3.0';
+import {
+	evaluateUpdatingExpression,
+	executePendingUpdateList,
+} from 'https://esm.sh/fontoxpath@3.26.0';
 import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/deno/src/index.ts';
 
 import { Renderer } from '../classes/renderer.ts';
@@ -12,7 +16,7 @@ import { EmptyTemplate } from './template.empty.ts';
 
 /**
  * This class is the primary public Application for this package. Use it to associate
- * {@link AstComponent} and DOTX styles to element selectors, see also the {@link Application.add add()}
+ * {@link AstComponent} and DOTX styles to element selectors, see also the {@link Application.match match()}
  * method. Finally, run `.write()` in order to apply those rules and generate
  * a `.docx` file from them.
  */
@@ -28,14 +32,28 @@ export class Application {
 	private _template: Template = new EmptyTemplate();
 
 	private async executeOptions(options: Options) {
-		const xml = options.source
+		const xml = options.xml
+			? options.xml
+			: options.source
 			? await Deno.readTextFile(resolve(options.cwd || Deno.cwd(), options.source))
 			: await getPipedStdin(options.stdin || Deno.stdin);
 		if (!xml) {
 			throw new Error(`DXE001: The XML input cannot be empty.`);
 		}
 
-		const ast = (await this.renderer.renderDocx(sync(xml), this._template)) as
+		const dom = sync(xml);
+		for await (const transformation of this.transformations) {
+			while (transformation.times-- > 0) {
+				console.error('Transforming document');
+
+				executePendingUpdateList(
+					(await evaluateUpdatingExpression(transformation.xquf, dom, null, {}, { debug: true }))
+						.pendingUpdateList,
+				);
+			}
+		}
+
+		const ast = (await this.renderer.renderDocx(dom, this._template)) as
 			| DocumentNode
 			| null
 			| string;
@@ -48,11 +66,11 @@ export class Application {
 			);
 		}
 
-		if (options.debug) {
-			console.error(Application.stringifyAst(ast as DocumentNode));
-		}
-
 		await bumpInvalidChildrenToAncestry(ast);
+
+		if (options.debug) {
+			console.error(Application.stringifyAst(ast));
+		}
 
 		const blob = await docx.Packer.toBlob(await getDocxTree(ast));
 		if (options.destination) {
@@ -70,6 +88,13 @@ export class Application {
 	//
 	//----
 
+	private transformations: { xquf: string; times: number }[] = [];
+	public transform(xquf: string, times = 1) {
+		this.transformations.push({
+			xquf,
+			times,
+		});
+	}
 	/**
 	 * The recommended JSX pragma to use in any TSX file where
 	 * {@link ../types.ts#AstComponent AstComponents} are used.
@@ -83,7 +108,7 @@ export class Application {
 	 * a DOCX component (one that receives options accepted by the `docx` library, and returning
 	 * a DOCX AST.
 	 */
-	public add(selector: string, component: RuleAstComponent) {
+	public match(selector: string, component: RuleAstComponent) {
 		this.renderer.add(selector, component);
 		return this;
 	}
@@ -139,7 +164,11 @@ export class Application {
 		const BR = '\n';
 		const TAB = '  ';
 		let str = '';
-		(function recurse(astNode: AstNode, level: number) {
+		(function recurse(astNode: string | AstNode, level: number) {
+			if (typeof astNode === 'string') {
+				str += (str ? BR : '') + TAB.repeat(level) + `"${astNode}"`;
+				return;
+			}
 			const children = astNode.children.filter(Boolean);
 			const nodeName = astNode.component.type + (astNode.style ? `#${astNode.style.name}` : '');
 			if (!children.length) {
@@ -148,7 +177,7 @@ export class Application {
 				str += (str ? BR : '') + TAB.repeat(level) + `<${nodeName}>`;
 				astNode.children
 					.filter(Boolean)
-					.filter((child): child is AstNode => typeof child !== 'string')
+					// .filter((child): child is AstNode => typeof child !== 'string')
 					.forEach((child) => recurse(child, level + 1));
 				str += (str ? BR : '') + TAB.repeat(level) + `</${nodeName}>`;
 			}

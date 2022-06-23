@@ -11,6 +11,13 @@ export type Options = {
 	 * {@link Options.stdin}.
 	 */
 	source?: string | null;
+
+	/**
+	 * Alternatively to {@link Options.source} and piping {@link Options.stdin} you can feed an XML
+	 * string directly into options.
+	 */
+	xml?: string;
+
 	/**
 	 * The location of the output DOCX file, if any.
 	 *
@@ -147,7 +154,7 @@ export interface AstComponent<N extends AstNode> {
  * `Bold` _docx_ component:
  *
  * ```ts
- * app.add('self::bold', ({ traverse }) => (
+ * app.match('self::bold', ({ traverse }) => (
  *   <Text bold>{traverse()}</Text>
  * ));
  * ```
@@ -184,7 +191,7 @@ export type RuleProps<Output = RuleReturnType> = {
 	 * For example:
 	 *
 	 * ```ts
-	 * app.add('self::bold', ({ traverse }) => (
+	 * app.match('self::bold', ({ traverse }) => (
 	 *   <Text bold>{traverse()}</Text>
 	 * ));
 	 * ```
@@ -192,7 +199,7 @@ export type RuleProps<Output = RuleReturnType> = {
 	 * Or with an XPath query:
 	 *
 	 * ```ts
-	 * app.add('self::chapter', ({ traverse }) => (
+	 * app.match('self::chapter', ({ traverse }) => (
 	 *   <Section>
 	 *     <Header>{traverse('./p[1]')}</Header>
 	 *     {traverse('./node()[not(./p[1])]')}

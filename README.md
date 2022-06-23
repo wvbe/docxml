@@ -66,16 +66,16 @@ import Application, {
 const app = new Application();
 
 // Some catch-all rules for any XML node, any XML element, any text:
-app.add('self::node()', () => null);
-app.add('self::element()', ({ traverse }) => traverse('./*'));
-app.add('self::text()', ({ node }) => node.nodeValue);
-app.add('self::document-node()', ({ traverse }) => <Document>{traverse('./*')}</Document>);
+app.match('self::node()', () => null);
+app.match('self::element()', ({ traverse }) => traverse('./*'));
+app.match('self::text()', ({ node }) => node.nodeValue);
+app.match('self::document-node()', ({ traverse }) => <Document>{traverse('./*')}</Document>);
 
 // Some rules for specific HTML elements. Elements that have no specific configuration
 // fall back to the catch-all ones.
-app.add('self::html', ({ traverse }) => <Section>{traverse('./*')}</Section>);
-app.add('self::p', ({ traverse }) => <Paragraph>{traverse()}</Paragraph>);
-app.add('self::b', ({ traverse }) => <Text bold>{traverse()}</Text>);
+app.match('self::html', ({ traverse }) => <Section>{traverse('./*')}</Section>);
+app.match('self::p', ({ traverse }) => <Paragraph>{traverse()}</Paragraph>);
+app.match('self::b', ({ traverse }) => <Text bold>{traverse()}</Text>);
 
 await app.execute();
 ```

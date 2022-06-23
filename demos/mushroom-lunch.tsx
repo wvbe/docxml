@@ -28,32 +28,32 @@ const LIST_INDENTATION_WIDTH = '1cm';
  * Generics
  */
 
-app.add('self::node()', () => null);
+app.match('self::node()', () => null);
 
-app.add('self::element()', ({ traverse }) => traverse('./*'));
+app.match('self::element()', ({ traverse }) => traverse('./*'));
 
-app.add('self::document-node()', async ({ traverse, template }) => {
+app.match('self::document-node()', async ({ traverse, template }) => {
 	return <Document template={await template.init()}>{traverse('./*')}</Document>;
 });
 
-app.add('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>);
+app.match('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>);
 
 /*
  * Blocks
  */
 
-app.add('self::recipe', ({ traverse }) => <Section>{traverse('./*')}</Section>);
+app.match('self::recipe', ({ traverse }) => <Section>{traverse('./*')}</Section>);
 
-app.add('self::title', ({ traverse, template }) => (
+app.match('self::title', ({ traverse, template }) => (
 	<Paragraph style={template.style('Title')}>{traverse()}</Paragraph>
 ));
 
-app.add('self::p', ({ traverse }) => <Paragraph>{traverse()}</Paragraph>);
+app.match('self::p', ({ traverse }) => <Paragraph>{traverse()}</Paragraph>);
 
 /*
  * DESCRIPTION
  */
-app.add('self::p[ancestor::description]', ({ traverse, template }) => (
+app.match('self::p[ancestor::description]', ({ traverse, template }) => (
 	<Paragraph style={template.style('Strong1')}>{traverse()}</Paragraph>
 ));
 
@@ -61,7 +61,7 @@ app.add('self::p[ancestor::description]', ({ traverse, template }) => (
  * ALLERGY WARNING
  */
 
-app.add('self::allergy-warning', ({ traverse, template }) => [
+app.match('self::allergy-warning', ({ traverse, template }) => [
 	<Paragraph style={template.style('Heading1')}>
 		<Text>Allergy warning</Text>
 	</Paragraph>,
@@ -73,18 +73,18 @@ app.add('self::allergy-warning', ({ traverse, template }) => [
 	</Table>,
 ]);
 
-app.add('self::p[ancestor::allergy-warning]', ({ traverse, template }) => (
+app.match('self::p[ancestor::allergy-warning]', ({ traverse, template }) => (
 	<Paragraph style={template.style('Intense Emphasis')}>{traverse()}</Paragraph>
 ));
 
 /*
  * STEPS
  */
-app.add('self::steps', ({ traverse }) => traverse('./*'));
+app.match('self::steps', ({ traverse }) => traverse('./*'));
 
-app.add('self::step', ({ traverse }) => traverse('./*'));
+app.match('self::step', ({ traverse }) => traverse('./*'));
 
-app.add(
+app.match(
 	'self::p[parent::step or parent::fxd:*/parent::step][not(preceding-sibling::*)]',
 	({ traverse }) => (
 		<Paragraph indent={{ start: LIST_INDENTATION_WIDTH }} bullet={{ level: 0 }}>
@@ -93,7 +93,7 @@ app.add(
 	),
 );
 
-app.add(
+app.match(
 	'self::p[parent::step or parent::fxd:*/parent::step][preceding-sibling::*]',
 	({ traverse }) => <Paragraph indent={{ start: LIST_INDENTATION_WIDTH }}>{traverse()}</Paragraph>,
 );
@@ -102,22 +102,22 @@ app.add(
  * INLINES
  */
 
-app.add('self::ingredient', ({ traverse }) => traverse());
-app.add('self::text()[parent::ingredient]', ({ node }) => <Text bold>{node.nodeValue}</Text>);
+app.match('self::ingredient', ({ traverse }) => traverse());
+app.match('self::text()[parent::ingredient]', ({ node }) => <Text bold>{node.nodeValue}</Text>);
 
 /*
  * TRACKED CHANGES
  */
-app.add('self::fxd:addition', ({ traverse }) => traverse());
+app.match('self::fxd:addition', ({ traverse }) => traverse());
 
-app.add('self::text()[ancestor::fxd:addition]', ({ node }) => (
+app.match('self::text()[ancestor::fxd:addition]', ({ node }) => (
 	<InsertedText id={0} author={'Wybe'} date={new Date().toISOString()}>
 		{node.nodeValue}
 	</InsertedText>
 ));
 
-app.add('self::fxd:deletion', ({ traverse }) => traverse());
-app.add('self::text()[ancestor::fxd:deletion]', ({ node }) => (
+app.match('self::fxd:deletion', ({ traverse }) => traverse());
+app.match('self::text()[ancestor::fxd:deletion]', ({ node }) => (
 	<DeletedText id={0} author={'Wybe'} date={new Date().toISOString()}>
 		{node.nodeValue}
 	</DeletedText>

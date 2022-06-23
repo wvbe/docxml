@@ -33,39 +33,39 @@ application.template(
  * Generics
  */
 
-application.add('self::node()', () => null);
+application.match('self::node()', () => null);
 
-application.add('self::element()', ({ traverse }) => traverse('./*'));
+application.match('self::element()', ({ traverse }) => traverse('./*'));
 
-application.add('self::document-node()', async ({ traverse, template }) => {
+application.match('self::document-node()', async ({ traverse, template }) => {
 	return <Document template={await template.init()}>{traverse('./*')}</Document>;
 });
 
-application.add('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>);
+application.match('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>);
 
 /*
  * Blocks
  */
 
-application.add('self::play', ({ traverse }) => [
+application.match('self::play', ({ traverse }) => [
 	<Section>{traverse('./(title | playwright | edition)')}</Section>,
 	traverse('./personae'),
 	traverse('./act'),
 ]);
 
-application.add('self::title', ({ traverse, template }) => (
+application.match('self::title', ({ traverse, template }) => (
 	<Paragraph style={template.style('Title')}>{traverse()}</Paragraph>
 ));
 
-application.add('self::playwright', ({ traverse, template }) => (
+application.match('self::playwright', ({ traverse, template }) => (
 	<Paragraph style={template.style('Subtitle')}>{traverse()}</Paragraph>
 ));
 
-application.add('self::edition', ({ traverse, template }) => (
+application.match('self::edition', ({ traverse, template }) => (
 	<Paragraph style={template.style('SubtitleEdition')}>{traverse()}</Paragraph>
 ));
 
-application.add('self::act', ({ node, traverse, template }) => (
+application.match('self::act', ({ node, traverse, template }) => (
 	<Section>
 		<Paragraph style={template.style('Heading1')}>
 			<Text>
@@ -77,21 +77,21 @@ application.add('self::act', ({ node, traverse, template }) => (
 	</Section>
 ));
 
-application.add('self::scenetitle', ({ traverse, template }) => (
+application.match('self::scenetitle', ({ traverse, template }) => (
 	<Paragraph style={template.style('Heading2')}>{traverse()}</Paragraph>
 ));
 
-application.add('self::speech', ({ traverse }) => traverse('./*'));
+application.match('self::speech', ({ traverse }) => traverse('./*'));
 
-application.add('self::speaker', ({ traverse, template }) => (
+application.match('self::speaker', ({ traverse, template }) => (
 	<Paragraph style={template.style('SpeechSpeaker')}>{traverse()}</Paragraph>
 ));
 
-application.add('self::line', ({ traverse, template }) => (
+application.match('self::line', ({ traverse, template }) => (
 	<Paragraph style={template.style('SpeechLine')}>{traverse()}</Paragraph>
 ));
 
-application.add('self::stagedir', ({ traverse, template }) => (
+application.match('self::stagedir', ({ traverse, template }) => (
 	<Paragraph style={template.style('SpeechStageDir')}>{traverse()}</Paragraph>
 ));
 
@@ -99,13 +99,13 @@ application.add('self::stagedir', ({ traverse, template }) => (
  * Inlines
  */
 
-application.add('self::name', ({ traverse }) => traverse());
-application.add('self::text()[parent::name]', ({ node }) => (
+application.match('self::name', ({ traverse }) => traverse());
+application.match('self::text()[parent::name]', ({ node }) => (
 	<Text smallCaps>{node.nodeValue}</Text>
 ));
 
-application.add('self::italic', ({ traverse }) => traverse());
-application.add('self::text()[parent::italic]', ({ node }) => (
+application.match('self::italic', ({ traverse }) => traverse());
+application.match('self::text()[parent::italic]', ({ node }) => (
 	<Text italics>{node.nodeValue}</Text>
 ));
 

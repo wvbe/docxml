@@ -7,7 +7,7 @@ describe('Application', () => {
 		// The shallowest of tests, I know, and I'm sorry. Maybe I'll do better next time.
 		const app = new Application();
 		expect(typeof app.template).toBe('function');
-		expect(typeof app.add).toBe('function');
+		expect(typeof app.match).toBe('function');
 		expect(typeof app.execute).toBe('function');
 		expect(typeof app.JSX).toBe('function');
 	});

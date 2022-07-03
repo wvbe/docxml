@@ -210,14 +210,14 @@ export type RuleProps<Output = RuleReturnType> = {
 	traverse: (query?: string) => Promise<Output[]>;
 };
 
-/**
- * All the things that can be returned by a {@link AstComponent} -- pretty much a {@link AstNode},
- * null, a promise thereof, or an array of any of the above.
- */
 type SelfArrayPromiseOrPromisedArrayOfSelf<Self> =
 	| Self
 	| Promise<Self>
 	| SelfArrayPromiseOrPromisedArrayOfSelf<Self>[]
 	| Promise<SelfArrayPromiseOrPromisedArrayOfSelf<Self>[]>;
 
+/**
+ * All the things that can be returned by a {@link AstComponent} -- pretty much a {@link AstNode},
+ * null, a promise thereof, or an array of any of the above.
+ */
 export type RuleReturnType = SelfArrayPromiseOrPromisedArrayOfSelf<AstNode | null | string>;

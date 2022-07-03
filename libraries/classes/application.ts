@@ -53,7 +53,7 @@ export class Application {
 			}
 		}
 
-		const ast = (await this.renderer.renderDocx(dom, this._template)) as
+		const ast = (await this.renderer.renderDocx(dom as unknown as Node, this._template)) as
 			| DocumentNode
 			| null
 			| string;

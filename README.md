@@ -117,7 +117,7 @@ cat my-source.xml | my-executable > my-destination.docx
 
 - `DXE004: Could not read the DOTX template file due to error "…"`
 
-- `DXE010:Cannot use styles without calling 'init' first.`: A content rendering rule is attempting
+- `DXE010: Cannot use styles without calling 'init' first.`: A content rendering rule is attempting
   to use a style (via `Template#style()`), but the template could not verify it exists. Run (and
   `await`) `Template#init()` at an earlier time -- for example when passing it to `<Document />`'s
   `template` prop.

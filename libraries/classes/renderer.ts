@@ -1,6 +1,5 @@
-import Registry from 'https://deno.land/x/xml_renderer@5.0.0/mod.ts';
+import Registry from 'https://deno.land/x/xml_renderer@5.0.1/mod.ts';
 import { evaluateXPathToNodes } from 'https://esm.sh/fontoxpath@3.26.0';
-import { Node as SlimdomNode } from 'https://esm.sh/slimdom@3.1.0';
 
 import { RuleAstComponent, RuleProps, RuleReturnType, Template } from '../types.ts';
 
@@ -17,7 +16,7 @@ export class Renderer extends Registry<RuleAstComponent> {
 			node: Node,
 		): ReturnType<RendererFactory> {
 			return factory(registry.find(node), {
-				node: node as unknown as SlimdomNode,
+				node,
 				template,
 				traverse: (query = './node()') =>
 					Promise.all(

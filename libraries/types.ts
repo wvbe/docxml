@@ -1,5 +1,3 @@
-import { Node } from 'https://esm.sh/slimdom@3.1.0';
-
 /**
  * The options with which the application can be run from a configuration file.
  */

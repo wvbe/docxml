@@ -30,5 +30,6 @@ export const BorderStyle = docx.BorderStyle;
 export const HorizontalPositionAlign = docx.HorizontalPositionAlign;
 export const NumberFormat = docx.NumberFormat;
 export const PageOrientation = docx.PageOrientation;
+export const UnderlineType = docx.UnderlineType;
 export const VerticalAlign = docx.VerticalAlign;
 export const VerticalPositionAlign = docx.VerticalPositionAlign;

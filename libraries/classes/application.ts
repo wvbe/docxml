@@ -66,11 +66,11 @@ export class Application {
 			);
 		}
 
-		await bumpInvalidChildrenToAncestry(ast);
-
 		if (options.debug) {
 			console.error(Application.stringifyAst(ast));
 		}
+
+		await bumpInvalidChildrenToAncestry(ast);
 
 		const blob = await docx.Packer.toBlob(await getDocxTree(ast));
 		if (options.destination) {

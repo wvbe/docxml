@@ -131,7 +131,7 @@ export async function bumpInvalidChildrenToAncestry<N extends AstNode>(node: N):
 			for (let i = 0; i < node.children.length; i++) {
 				let child = node.children[i];
 
-				if (typeof child === 'string' && !node.component.mixed) {
+				if (typeof child === 'string' && !node.component.mixed && !!child) {
 					// If the child is an unexpected string, wrap it in <Text> to attempt to make valid
 					child = await JSX(Text, {}, child);
 					inheritProperties(node, child);
@@ -145,11 +145,20 @@ export async function bumpInvalidChildrenToAncestry<N extends AstNode>(node: N):
 					const children = node.children
 						.splice(i, 1)
 						.map((child) => inheritProperties(node, child));
+
 					// If the child is invalid here, split the parent and move it to the middle
 					nodes.splice(nodes.indexOf(node) + 1, 0, ...children, {
 						...node,
 						children: node.children.splice(i, node.children.length - i),
 					});
+
+					// Clean up empty text nodes because they are noisy
+					nodes
+						.filter(
+							(node): node is AstNode =>
+								typeof node !== 'string' && node.component.type === 'Text' && !node.children.length,
+						)
+						.forEach((node) => nodes.splice(nodes.indexOf(node), 1));
 				}
 			}
 		}

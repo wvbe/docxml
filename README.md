@@ -77,7 +77,7 @@ app.match('self::html', ({ traverse }) => <Section>{traverse('./*')}</Section>);
 app.match('self::p', ({ traverse }) => <Paragraph>{traverse()}</Paragraph>);
 app.match('self::b', ({ traverse }) => <Text bold>{traverse()}</Text>);
 
-await app.execute();
+await app.cli();
 ```
 
 This could then be compiled into a self-contained executable:
@@ -86,7 +86,7 @@ This could then be compiled into a self-contained executable:
 deno compile -A -o my-executable my-script.tsx
 ```
 
-When calling `Application#execute()`, like in the earlier code example, the script will look for the
+When calling `Application#cli()`, like in the earlier code example, the script will look for the
 following command-line input;
 
 - **-s <filename>**, **--source <filename>**, specify the XML file that needs to be transformed.

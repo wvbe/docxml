@@ -21,17 +21,17 @@ import { EmptyTemplate } from './template.empty.ts';
  * a `.docx` file from them.
  */
 export class Application {
-	//----
-	//
-	// Private instance members
-	//
-	//----
-
 	private renderer = new Renderer();
 
-	private _template: Template = new EmptyTemplate();
+	private _template: Template;
+	constructor(template?: Template) {
+		this._template = template || new EmptyTemplate();
+	}
+	public get template() {
+		return this._template;
+	}
 
-	private async executeOptions(options: Options) {
+	private async createAstFromOptions(options: Options) {
 		const xml = options.xml
 			? options.xml
 			: options.source
@@ -44,8 +44,6 @@ export class Application {
 		const dom = sync(xml);
 		for await (const transformation of this.transformations) {
 			while (transformation.times-- > 0) {
-				console.error('Transforming document');
-
 				executePendingUpdateList(
 					(await evaluateUpdatingExpression(transformation.xquf, dom, null, {}, { debug: true }))
 						.pendingUpdateList,
@@ -65,14 +63,17 @@ export class Application {
 				'DXE003: The transformation resulted in a string, which is not a valid document.',
 			);
 		}
-
 		if (options.debug) {
 			console.error(Application.stringifyAst(ast));
 		}
 
 		await bumpInvalidChildrenToAncestry(ast);
+		return ast;
+	}
 
-		const blob = await docx.Packer.toBlob(await getDocxTree(ast));
+	public async execute(options: Options) {
+		const ast = await this.createAstFromOptions(options);
+		const blob = await docx.Packer.toBlob(await getDocxTree(ast, this));
 		if (options.destination) {
 			const bytes = new Uint8Array(await blob.arrayBuffer());
 			await Deno.writeFile(resolve(options.cwd || Deno.cwd(), options.destination), bytes);
@@ -82,12 +83,6 @@ export class Application {
 		}
 	}
 
-	//----
-	//
-	// Public instance members
-	//
-	//----
-
 	private transformations: { xquf: string; times: number }[] = [];
 	public transform(xquf: string, times = 1) {
 		this.transformations.push({
@@ -95,6 +90,7 @@ export class Application {
 			times,
 		});
 	}
+
 	/**
 	 * The recommended JSX pragma to use in any TSX file where
 	 * {@link ../types.ts#AstComponent AstComponents} are used.
@@ -113,29 +109,28 @@ export class Application {
 		return this;
 	}
 
-	/**
-	 * Register a DOTX template to reuse for its formatting styles. This interface will be made
-	 * available to each rendering rule as the `template` prop. The {@link Template.style} method
-	 * can be used to reference one of the styles in the template safely.
-	 *
-	 * If you use a {@link DotxTemplate}, be sure to send `await template.init()` to the `template`
-	 * prop of the {@link Document} component.
-	 */
-	public template(template: Template) {
-		this._template = template;
-	}
+	private error: null | Error = null;
 
 	/**
 	 * Run your configuration, using whatever options are passed to this method, or whatever options
 	 * can be passed from command line arguments passed to this method.
 	 */
-	public async execute(options?: Options | string[]) {
+	public async cli(options?: Options | string[]) {
+		self.addEventListener('unload', () => {
+			// Exit with an error code if there was an error, but _not until the program exits_
+			// Forcefully exiting in the `catch` statement would quit any program that includes
+			// the application, which is a little heavy handed.
+			if (this.error) {
+				Deno.exit(1);
+			}
+		});
 		try {
 			const opts = Array.isArray(options)
 				? getOptionsFromArgv(Array.from(options))
 				: options || getOptionsFromArgv(Array.from(Deno.args));
 			const timeStart = Date.now();
-			await this.executeOptions(opts);
+
+			await this.execute(opts);
 			console.error(`Succeeded in ${Date.now() - timeStart} milliseconds.`);
 		} catch (error: unknown) {
 			const hasDebug =
@@ -144,7 +139,7 @@ export class Application {
 				Deno.args.includes('--debug');
 			console.error('⚠️   The DOCX output failed because of an error:');
 			console.error(`    ${(error as Error)[hasDebug ? 'stack' : 'message'] || error}`);
-			Deno.exit(1);
+			this.error = error as Error;
 		}
 	}
 
@@ -175,10 +170,7 @@ export class Application {
 				str += (str ? BR : '') + TAB.repeat(level) + `<${nodeName} />`;
 			} else {
 				str += (str ? BR : '') + TAB.repeat(level) + `<${nodeName}>`;
-				astNode.children
-					.filter(Boolean)
-					// .filter((child): child is AstNode => typeof child !== 'string')
-					.forEach((child) => recurse(child, level + 1));
+				astNode.children.filter(Boolean).forEach((child) => recurse(child, level + 1));
 				str += (str ? BR : '') + TAB.repeat(level) + `</${nodeName}>`;
 			}
 		})(ast, 0);
@@ -199,7 +191,7 @@ export class Application {
 		ast: DocumentNode | Promise<DocumentNode>,
 	) {
 		await bumpInvalidChildrenToAncestry(await ast);
-		const blob = await docx.Packer.toBlob(await getDocxTree(await ast));
+		const blob = await docx.Packer.toBlob(await getDocxTree(await ast, new Application()));
 		await Deno.writeFile(destination, new Uint8Array(await blob.arrayBuffer()));
 	}
 

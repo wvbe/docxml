@@ -2,19 +2,15 @@ import { JSZip, readZip } from 'https://deno.land/x/jszip@0.11.0/mod.ts';
 import { evaluateXPathToStrings } from 'https://esm.sh/fontoxpath@3.26.0';
 import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/deno/src/index.ts';
 
-import { Style, Template } from '../types.ts';
+import type { Template } from '../types.ts';
+import { Style } from './style.ts';
+import { EmptyTemplate } from './template.empty.ts';
 
-class DotxStyle implements Style {
-	public name: string;
-	constructor(name: string) {
-		this.name = name;
-	}
-}
-
-export class DotxTemplate implements Template {
+export class DotxTemplate extends EmptyTemplate implements Template {
 	private location: string;
 
 	constructor(location: string) {
+		super();
 		this.location = location;
 	}
 
@@ -57,24 +53,28 @@ export class DotxTemplate implements Template {
 			`,
 			dom,
 		);
-		return xml;
+		return { externalStyles: xml, styles: this.customStyles };
 	}
 
-	private styles = new Map<string, DotxStyle>();
+	private styles = new Map<string, Style>();
 	public style(name: string): Style {
 		if (!this.availableStyleNames) {
 			throw new Error(`DXE010:Cannot use styles without calling \`init\` first.`);
 		}
-		if (!this.availableStyleNames.includes(name)) {
+		if (
+			!this.availableStyleNames.includes(name) &&
+			!this.customStyles.paragraphStyles.some((style) => style.id === name)
+		) {
 			throw new Error(
-				`DXE011:Style "${name}" is not available in this template. The only available style names are: ${this.availableStyleNames.join(
-					', ',
-				)}`,
+				`DXE011:Style "${name}" is not available in this template. The only available style names are: ${[
+					...this.availableStyleNames,
+					...this.customStyles.paragraphStyles.map((style) => style.id),
+				].join(', ')}`,
 			);
 		}
 		const style = this.styles.get(name);
 		if (!style) {
-			const newStyle = new DotxStyle(name);
+			const newStyle = new Style(name);
 			this.styles.set(name, newStyle);
 			return newStyle;
 		}

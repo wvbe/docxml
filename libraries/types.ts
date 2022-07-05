@@ -1,3 +1,8 @@
+import docx from 'https://esm.sh/docx@7.3.0';
+
+import type { Application } from './classes/application.ts';
+import type { Style } from './classes/style.ts';
+
 /**
  * The options with which the application can be run from a configuration file.
  */
@@ -56,12 +61,10 @@ export type Options = {
  * in {@link AstComponent AstComponents} so that you can quickly conform to a visual style.
  */
 export interface Template {
-	init(): Promise<string | undefined>;
+	init(): Promise<Partial<ConstructorParameters<typeof docx.Document>[0]>>;
 	style(name: string): Style;
-}
-
-export interface Style {
-	name: string;
+	defineParagraphStyle(definition: Omit<docx.IParagraphStyleOptions, 'id'>): Style;
+	defineParagraphStyle(id: string, definition: Omit<docx.IParagraphStyleOptions, 'id'>): Style;
 }
 
 /**
@@ -116,6 +119,7 @@ type DocxFactory<N extends AstNode> = (
 			? Array<Y>
 			: Array<unknown>;
 	},
+	application: Application,
 ) => DocxFactoryYield<N> | Promise<DocxFactoryYield<N>>;
 
 /**

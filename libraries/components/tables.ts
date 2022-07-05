@@ -1,6 +1,7 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
-import { AstComponent, AstNode, Style } from '../types.ts';
+import type { Style } from '../classes/style.ts';
+import { AstComponent, AstNode } from '../types.ts';
 import { TableRowNode } from './table-rows.ts';
 
 export type TableNode = AstNode<

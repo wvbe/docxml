@@ -38,7 +38,7 @@ app.match('self::p', () => {
 
 app.match('self::paragraph', ({ traverse }) => <Paragraph>{traverse()}</Paragraph>);
 
-await app.execute({
+await app.cli({
 	xml: `<d><p>This element is a "P" node, but the rendering rules only know it as "paragraph".</p></d>`,
 	// destination: 'mushroom-lunch.docx',
 });

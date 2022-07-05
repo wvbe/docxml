@@ -126,7 +126,7 @@ app.match('self::text()[ancestor::fxd:deletion]', ({ node }) => (
 /*
  * SCRIPT EXECUTION
  */
-await app.execute({
+await app.cli({
 	source: new URL('.', import.meta.url).pathname + '/mushroom-lunch.xml',
 	destination: 'mushroom-lunch.docx',
 });

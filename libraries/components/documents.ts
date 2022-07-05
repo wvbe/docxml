@@ -14,7 +14,6 @@ export type DocumentNode = AstNode<
 	Omit<IPropertiesOptions, 'sections' | 'externalStyles' | 'footnotes'> & {
 		footnotes?: Record<string, ParagraphNode[]>;
 		children?: SectionNode[];
-		template?: string | undefined;
 	},
 	// Yield:
 	docx.Document
@@ -36,18 +35,21 @@ Document.type = 'Document';
 
 Document.children = ['Section'];
 
-Document.toDocx = async ({ children, template, footnotes: footnoteAstMap, ...props }) => {
+Document.toDocx = async ({ children, footnotes: footnoteAstMap, ...props }, application) => {
 	const footnotes =
 		footnoteAstMap &&
 		(await Object.keys(footnoteAstMap).reduce(
 			async (fns, id) => ({
 				...fns,
-				[id]: { children: await Promise.all(footnoteAstMap[id].map((x) => getDocxTree(x))) },
+				[id]: {
+					children: await Promise.all(footnoteAstMap[id].map((x) => getDocxTree(x, application))),
+				},
 			}),
 			Promise.resolve({}),
 		));
+	const templateMixin = await application.template.init();
 	return new docx.Document({
-		externalStyles: await template,
+		...templateMixin,
 		footnotes,
 		...props,
 		sections: children,

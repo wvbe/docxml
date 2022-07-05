@@ -1,5 +1,6 @@
+import type { Application } from '../classes/application.ts';
 import { Text } from '../components/texts.ts';
-import { AstComponent, AstComponentProps, AstNode, DocxFactoryYield } from '../types.ts';
+import type { AstComponent, AstComponentProps, AstNode, DocxFactoryYield } from '../types.ts';
 
 /**
  * This is the JSX pragma used to transform a hierarchy of AstComponents to the AST that is
@@ -45,17 +46,23 @@ export async function JSX<C extends AstComponent<AstNode>>(
 	} as AstNode;
 }
 
-export async function getDocxTree<M extends AstNode>(astNode: M): Promise<DocxFactoryYield<M>> {
+export async function getDocxTree<M extends AstNode>(
+	astNode: M,
+	application: Application,
+): Promise<DocxFactoryYield<M>> {
 	const result = await (async function recurse<N extends AstNode>(
 		astNode: string | N,
 	): Promise<unknown> {
 		if (typeof astNode === 'string') {
 			return astNode;
 		}
-		return astNode.component.toDocx({
-			...astNode.props,
-			children: await Promise.all(astNode.children.map(recurse)),
-		});
+		return astNode.component.toDocx(
+			{
+				...astNode.props,
+				children: await Promise.all(astNode.children.map(recurse)),
+			},
+			application,
+		);
 	})(astNode);
 
 	return result as DocxFactoryYield<M>;

@@ -88,11 +88,11 @@ describe('bumpInvalidChildrenToAncestry()', () => {
 					<Paragraph>
 						<Text>A</Text>
 						<Text>B</Text>
-						<Text />
+						{/* Notice how an empty <Text/> node is automatically removed */}
 					</Paragraph>
 					<Paragraph />
 					<Paragraph>
-						<Text />
+						{/* Notice how an empty <Text/> node is automatically removed */}
 						<Text>C</Text>
 						<Text>D</Text>
 					</Paragraph>

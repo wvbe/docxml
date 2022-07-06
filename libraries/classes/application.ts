@@ -50,7 +50,7 @@ export class Application {
 				);
 			}
 		}
-
+		await this.template.init();
 		const ast = (await this.renderer.renderDocx(dom as unknown as Node, this._template)) as
 			| DocumentNode
 			| null
@@ -71,9 +71,12 @@ export class Application {
 		return ast;
 	}
 
-	public async execute(options: Options) {
-		const ast = await this.createAstFromOptions(options);
-		const blob = await docx.Packer.toBlob(await getDocxTree(ast, this));
+	public async execute(options: Options, astOverride?: AstNode | Promise<AstNode>) {
+		const ast: AstNode = astOverride ? await astOverride : await this.createAstFromOptions(options);
+		if (ast.component.type !== 'Document') {
+			throw new Error('DXE004: The root node was not a document.');
+		}
+		const blob = await docx.Packer.toBlob(await getDocxTree(ast as DocumentNode, this));
 		if (options.destination) {
 			const bytes = new Uint8Array(await blob.arrayBuffer());
 			await Deno.writeFile(resolve(options.cwd || Deno.cwd(), options.destination), bytes);

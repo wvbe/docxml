@@ -115,14 +115,17 @@ cat my-source.xml | my-executable > my-destination.docx
   of your input XML did use any of the required components -- at least `<Document />` and
   `<Section />`.
 
-- `DXE004: Could not read the DOTX template file due to error "…"`
+- `DXE004: The root node was not a document.`: The processing of your input did not result in a
+  `<Document />` root AST. Any valid Word document must start with `<Document />`.
+
+- `DXE005: Could not read the DOTX template file due to error "…"`
 
 - `DXE010: Cannot use styles without calling 'init' first.`: A content rendering rule is attempting
   to use a style (via `Template#style()`), but the template could not verify it exists. Run (and
   `await`) `Template#init()` at an earlier time -- for example when passing it to `<Document />`'s
   `template` prop.
 
-- `DXE011:Style "…" is not available in this template. The only available style names are: …`: You
+- `DXE011: Style "…" is not available in this template. The only available style names are: …`: You
   are referencing a style name that does not exist in the supplied `.dotx` Word template. Please
   check the template and spelling.
 

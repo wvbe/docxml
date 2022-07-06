@@ -7,7 +7,8 @@
 
 import Application, { Document, Paragraph, Section, Text } from '../mod.ts';
 
-const ast = await (
+await Application.writeAstToDocx(
+	'hello-world.docx',
 	<Document>
 		<Section>
 			<Paragraph>
@@ -22,7 +23,5 @@ const ast = await (
 				<Text>This is the second section.</Text>
 			</Paragraph>
 		</Section>
-	</Document>
+	</Document>,
 );
-
-await Application.writeAstToDocx('hello-world.docx', ast);

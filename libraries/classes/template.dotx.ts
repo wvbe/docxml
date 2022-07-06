@@ -23,7 +23,7 @@ export class DotxTemplate extends EmptyTemplate implements Template {
 					return this._zip;
 				})
 				.catch((error) => {
-					error.message = `DXE004: Could not read the DOTX template file due to error "${error.message}"`;
+					error.message = `DXE005: Could not read the DOTX template file due to error "${error.message}"`;
 					throw error;
 				});
 		} else {
@@ -59,14 +59,14 @@ export class DotxTemplate extends EmptyTemplate implements Template {
 	private styles = new Map<string, Style>();
 	public style(name: string): Style {
 		if (!this.availableStyleNames) {
-			throw new Error(`DXE010:Cannot use styles without calling \`init\` first.`);
+			throw new Error(`DXE010: Cannot use styles without calling \`init\` first.`);
 		}
 		if (
 			!this.availableStyleNames.includes(name) &&
 			!this.customStyles.paragraphStyles.some((style) => style.id === name)
 		) {
 			throw new Error(
-				`DXE011:Style "${name}" is not available in this template. The only available style names are: ${[
+				`DXE011: Style "${name}" is not available in this template. The only available style names are: ${[
 					...this.availableStyleNames,
 					...this.customStyles.paragraphStyles.map((style) => style.id),
 				].join(', ')}`,

@@ -47,6 +47,7 @@ Document.toDocx = async ({ children, footnotes: footnoteAstMap, ...props }, appl
 			}),
 			Promise.resolve({}),
 		));
+	// @TODO not execute init() twice -- right now it is _also_ required to run before evaluating any of the child rules.
 	const templateMixin = await application.template.init();
 	return new docx.Document({
 		...templateMixin,

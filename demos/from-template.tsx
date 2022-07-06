@@ -12,10 +12,10 @@ import Application, { Document, DotxTemplate, Paragraph, Section, Text } from '.
 const template = new DotxTemplate(
 	resolve(new URL('.', import.meta.url).pathname, 'from-template.dotx'),
 );
-
-await Application.writeAstToDocx(
-	'from-template.docx',
-	<Document template={await template.init()}>
+await template.init();
+new Application(template).execute(
+	{ destination: 'from-template.docx' },
+	<Document>
 		<Section>
 			<Paragraph style={template.style('Title')}>
 				<Text>This is a title in one of Word's default styles</Text>

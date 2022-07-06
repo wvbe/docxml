@@ -32,9 +32,7 @@ app.match('self::node()', () => null);
 
 app.match('self::element()', ({ traverse }) => traverse('./*'));
 
-app.match('self::document-node()', async ({ traverse, template }) => {
-	return <Document template={await template.init()}>{traverse('./*')}</Document>;
-});
+app.match('self::document-node()', ({ traverse }) => <Document>{traverse('./*')}</Document>);
 
 app.match('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>);
 

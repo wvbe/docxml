@@ -23,9 +23,7 @@ import { evaluateXPathToString } from 'https://esm.sh/fontoxpath@3.26.0';
 
 import Application, { Document, DotxTemplate, Paragraph, Section, Text } from '../mod.ts';
 
-const application = new Application();
-
-application.template(
+const application = new Application(
 	new DotxTemplate(resolve(new URL('.', import.meta.url).pathname, 'macbeth.dotx')),
 );
 
@@ -37,9 +35,9 @@ application.match('self::node()', () => null);
 
 application.match('self::element()', ({ traverse }) => traverse('./*'));
 
-application.match('self::document-node()', async ({ traverse, template }) => {
-	return <Document template={await template.init()}>{traverse('./*')}</Document>;
-});
+application.match('self::document-node()', ({ traverse, template }) => (
+	<Document>{traverse('./*')}</Document>
+));
 
 application.match('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>);
 

@@ -16,13 +16,11 @@ app.match('self::node()', () => null);
 
 app.match('self::element()', ({ traverse }) => traverse('./*'));
 
-app.match('self::document-node()', async ({ traverse, template }) => {
-	return (
-		<Document template={await template.init()}>
-			<Section>{traverse('./*')}</Section>
-		</Document>
-	);
-});
+app.match('self::document-node()', ({ traverse }) => (
+	<Document>
+		<Section>{traverse('./*')}</Section>
+	</Document>
+));
 
 app.match('self::text()', ({ node }) => node.nodeValue);
 
@@ -40,5 +38,5 @@ app.match('self::paragraph', ({ traverse }) => <Paragraph>{traverse()}</Paragrap
 
 await app.cli({
 	xml: `<d><p>This element is a "P" node, but the rendering rules only know it as "paragraph".</p></d>`,
-	// destination: 'mushroom-lunch.docx',
+	destination: 'transformed.docx',
 });

@@ -1,6 +1,6 @@
 import { JSZip, readZip } from 'https://deno.land/x/jszip@0.11.0/mod.ts';
 import { evaluateXPathToStrings } from 'https://esm.sh/fontoxpath@3.26.0';
-import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/deno/src/index.ts';
+import { parseXmlDocument } from 'https://esm.sh/slimdom@4.0.1';
 
 import type { Template } from '../types.ts';
 import { Style } from './style.ts';
@@ -45,7 +45,7 @@ export class DotxTemplate extends EmptyTemplate implements Template {
 	 */
 	public async init() {
 		const xml = await this.file('word/styles.xml');
-		const dom = sync(xml);
+		const dom = parseXmlDocument(xml);
 		this.availableStyleNames = evaluateXPathToStrings(
 			`
 				/w:styles/w:style/@w:styleId,

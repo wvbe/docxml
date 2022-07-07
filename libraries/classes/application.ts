@@ -6,7 +6,7 @@ import {
 	evaluateUpdatingExpression,
 	executePendingUpdateList,
 } from 'https://esm.sh/fontoxpath@3.26.0';
-import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/deno/src/index.ts';
+import { parseXmlDocument } from 'https://esm.sh/slimdom@4.0.1';
 
 import { DocumentNode } from '../components/documents.ts';
 import { AstNode, Options, RuleAstComponent, RuleReturnType, Template } from '../types.ts';
@@ -45,7 +45,7 @@ export class Application {
 			throw new Error(`DXE001: The XML input cannot be empty.`);
 		}
 
-		const dom = sync(xml);
+		const dom = parseXmlDocument(xml);
 		for await (const transformation of this.transformations) {
 			while (transformation.times-- > 0) {
 				executePendingUpdateList(

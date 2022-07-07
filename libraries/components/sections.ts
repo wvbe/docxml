@@ -1,4 +1,4 @@
-import docx from 'https://esm.sh/docx@7.3.0';
+import docx from 'https://esm.sh/docx@7.4.0';
 
 import { AstComponent, AstNode } from '../types.ts';
 import { ParagraphNode } from './paragraphs.ts';

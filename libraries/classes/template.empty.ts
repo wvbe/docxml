@@ -1,4 +1,4 @@
-import docx from 'https://esm.sh/docx@7.3.0';
+import docx from 'https://esm.sh/docx@7.4.0';
 
 import type { DefaultStyle, Template } from '../types.ts';
 import { Style } from './style.ts';

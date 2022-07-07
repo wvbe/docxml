@@ -1,5 +1,5 @@
 import { JSZip, readZip } from 'https://deno.land/x/jszip@0.11.0/mod.ts';
-import { evaluateXPathToStrings } from 'https://esm.sh/fontoxpath@3.26.0';
+import { evaluateXPathToStrings } from 'https://esm.sh/fontoxpath@3.26.1';
 import { parseXmlDocument } from 'https://esm.sh/slimdom@4.0.1';
 
 import type { Template } from '../types.ts';

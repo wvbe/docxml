@@ -18,8 +18,8 @@
  * ```
  */
 
-import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
-import { evaluateXPathToString } from 'https://esm.sh/fontoxpath@3.26.0';
+import { resolve } from 'https://deno.land/std@0.147.0/path/mod.ts';
+import { evaluateXPathToString } from 'https://esm.sh/fontoxpath@3.26.1';
 
 import Application, { Document, DotxTemplate, Paragraph, Section, Text } from '../mod.ts';
 

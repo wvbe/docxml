@@ -1,5 +1,5 @@
 import { Component as XmlRendererComponent } from 'https://deno.land/x/xml_renderer@5.0.2/mod.ts';
-import docx from 'https://esm.sh/docx@7.3.0';
+import docx from 'https://esm.sh/docx@7.4.0';
 
 import type { Application } from './classes/application.ts';
 import type { Style } from './classes/style.ts';

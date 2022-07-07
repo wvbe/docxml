@@ -1,11 +1,11 @@
-import { copy, readerFromStreamReader } from 'https://deno.land/std@0.140.0/streams/conversion.ts';
-import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
+import { resolve } from 'https://deno.land/std@0.147.0/path/mod.ts';
+import { copy, readerFromStreamReader } from 'https://deno.land/std@0.147.0/streams/conversion.ts';
 import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.2/mod.ts';
-import docx from 'https://esm.sh/docx@7.3.0';
+import docx from 'https://esm.sh/docx@7.4.0';
 import {
 	evaluateUpdatingExpression,
 	executePendingUpdateList,
-} from 'https://esm.sh/fontoxpath@3.26.0';
+} from 'https://esm.sh/fontoxpath@3.26.1';
 import { parseXmlDocument } from 'https://esm.sh/slimdom@4.0.1';
 
 import { DocumentNode } from '../components/documents.ts';

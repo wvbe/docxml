@@ -6,7 +6,7 @@
  * can be found on disk.
  */
 
-import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
+import { resolve } from 'https://deno.land/std@0.147.0/path/mod.ts';
 
 import Application, { Document, Image, Paragraph, Section, Text } from '../mod.ts';
 

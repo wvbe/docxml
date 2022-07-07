@@ -5,7 +5,7 @@
  * This file demonstrates a simple use of DOTX template files to source visual styles from.
  */
 
-import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
+import { resolve } from 'https://deno.land/std@0.147.0/path/mod.ts';
 
 import Application, { Document, DotxTemplate, Paragraph, Section, Text } from '../mod.ts';
 

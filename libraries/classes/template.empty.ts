@@ -1,6 +1,6 @@
 import docx from 'https://esm.sh/docx@7.3.0';
 
-import type { Template } from '../types.ts';
+import type { DefaultStyle, Template } from '../types.ts';
 import { Style } from './style.ts';
 
 export class EmptyTemplate implements Template {
@@ -14,23 +14,31 @@ export class EmptyTemplate implements Template {
 		return new Style(id);
 	}
 
-	protected customStyles: { paragraphStyles: docx.IParagraphStyleOptions[] } = {
+	protected customStyles: {
+		default: Partial<Record<DefaultStyle, docx.IBaseParagraphStyleOptions>>;
+		paragraphStyles: docx.IParagraphStyleOptions[];
+	} = {
+		default: {},
 		paragraphStyles: [],
 	};
 
-	public defineParagraphStyle(definition: Omit<docx.IParagraphStyleOptions, 'id'>): Style;
-	public defineParagraphStyle(
-		id: string,
-		definition: Omit<docx.IParagraphStyleOptions, 'id'>,
-	): Style;
-	public defineParagraphStyle(
+	public overwrite(id: DefaultStyle, definition: docx.IBaseParagraphStyleOptions): this {
+		this.customStyles.default[id] = definition;
+		return this;
+	}
+
+	public define(definition: Omit<docx.IParagraphStyleOptions, 'id'>): Style;
+
+	public define(id: string, definition: Omit<docx.IParagraphStyleOptions, 'id'>): Style;
+
+	public define(
 		_id: string | Omit<docx.IParagraphStyleOptions, 'id'>,
 		definition?: Omit<docx.IParagraphStyleOptions, 'id'>,
 	): Style {
 		let id: string;
 		if (typeof _id === 'object') {
 			definition = _id;
-			id = 'random-style-' + Math.ceil(Math.random() * 9999);
+			id = self.crypto.randomUUID();
 		} else {
 			id = _id;
 		}

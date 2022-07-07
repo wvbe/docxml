@@ -109,3 +109,21 @@ DeletedText.toDocx = ({ style, children, ...props }) =>
 		style: style?.name,
 		children: children === undefined ? children : Array.isArray(children) ? children : [children],
 	});
+
+export type LineBreakNode = AstNode<'LineBreak', { size?: number }, docx.TextRun>;
+
+/**
+ * The <LineBreak> component
+ */
+export const LineBreak: AstComponent<LineBreakNode> = () => {
+	// no-op
+};
+
+LineBreak.type = 'LineBreak';
+
+LineBreak.children = [];
+
+LineBreak.toDocx = ({ size }) =>
+	new docx.TextRun({
+		break: size || 1,
+	});

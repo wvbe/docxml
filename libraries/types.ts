@@ -1,3 +1,4 @@
+import { Component as XmlRendererComponent } from 'https://deno.land/x/xml_renderer@5.0.2/mod.ts';
 import docx from 'https://esm.sh/docx@7.3.0';
 
 import type { Application } from './classes/application.ts';
@@ -57,14 +58,25 @@ export type Options = {
 };
 
 /**
+ * Represents the overwrite properties of a default DOTX style.
+ *
+ * @deprecated This type may be renamed for clarity.
+ */
+export type DefaultStyle = keyof Exclude<docx.IStylesOptions['default'], undefined>;
+
+/**
  * Represents the information found in a .dotx Word template file. Contains styles that may be used
  * in {@link AstComponent AstComponents} so that you can quickly conform to a visual style.
  */
 export interface Template {
 	init(): Promise<Partial<ConstructorParameters<typeof docx.Document>[0]>>;
+
 	style(name: string): Style;
-	defineParagraphStyle(definition: Omit<docx.IParagraphStyleOptions, 'id'>): Style;
-	defineParagraphStyle(id: string, definition: Omit<docx.IParagraphStyleOptions, 'id'>): Style;
+
+	overwrite(id: DefaultStyle, definition: docx.IBaseParagraphStyleOptions): this;
+
+	define(definition: Omit<docx.IParagraphStyleOptions, 'id'>): Style;
+	define(id: string, definition: Omit<docx.IParagraphStyleOptions, 'id'>): Style;
 }
 
 /**
@@ -153,7 +165,7 @@ export interface AstComponent<N extends AstNode> {
  * AST.
  *
  * In the following example, the arrow function declaration is a _rule_ component that returns the
- * `Bold` _docx_ component:
+ * `Text` _docx_ component:
  *
  * ```ts
  * app.match('self::bold', ({ traverse }) => (
@@ -161,56 +173,16 @@ export interface AstComponent<N extends AstNode> {
  * ));
  * ```
  */
-export type RuleAstComponent = (props: RuleProps<RuleReturnType>) => RuleReturnType;
-
-/**
- * The props/parameters passed into a rule component by the renderer.
- */
-export type RuleProps<Output = RuleReturnType> = {
-	/**
-	 * The XML node that is being rendered with this rule. Can be any type of node, and it matches
-	 * the XPath test with which this rule is associated.
-	 *
-	 * Having the node available is useful in case you want to use other fontoxpath functions to
-	 * query it further.
-	 */
-	node: Node;
-
-	/**
-	 * The DOTX template that is associated with the renderer. Provides helper methods to access
-	 * reuseable styles defined in the DOTX file.
-	 */
-	template: Template;
-
-	/**
-	 * A function to kick off the rendering of arbitrary (child? sibling? who cares) XML nodes.
-	 * Accepts an XPath query, or defaults to "all child nodes". Intended to be easily usable within
-	 * a JSX template.
-	 *
-	 * The context node for any query ran through `traverse()` is the same as the
-	 * {@link RuleProps.node node} prop.
-	 *
-	 * For example:
-	 *
-	 * ```ts
-	 * app.match('self::bold', ({ traverse }) => (
-	 *   <Text bold>{traverse()}</Text>
-	 * ));
-	 * ```
-	 *
-	 * Or with an XPath query:
-	 *
-	 * ```ts
-	 * app.match('self::chapter', ({ traverse }) => (
-	 *   <Section>
-	 *     <Header>{traverse('./p[1]')}</Header>
-	 *     {traverse('./node()[not(./p[1])]')}
-	 *   </Section>
-	 * ));
-	 * ```
-	 */
-	traverse: (query?: string) => Promise<Output[]>;
-};
+export type RuleAstComponent = XmlRendererComponent<
+	RuleReturnType,
+	{
+		/**
+		 * The DOTX template that is associated with the renderer. Provides helper methods to access
+		 * reuseable styles defined in the DOTX file.
+		 */
+		template: Template;
+	}
+>;
 
 type SelfArrayPromiseOrPromisedArrayOfSelf<Self> =
 	| Self

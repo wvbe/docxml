@@ -1,5 +1,6 @@
 import { copy, readerFromStreamReader } from 'https://deno.land/std@0.140.0/streams/conversion.ts';
 import { resolve } from 'https://deno.land/std@0.141.0/path/mod.ts';
+import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.2/mod.ts';
 import docx from 'https://esm.sh/docx@7.3.0';
 import {
 	evaluateUpdatingExpression,
@@ -7,9 +8,8 @@ import {
 } from 'https://esm.sh/fontoxpath@3.26.0';
 import { sync } from 'https://raw.githubusercontent.com/wvbe/slimdom-sax-parser/deno/src/index.ts';
 
-import { Renderer } from '../classes/renderer.ts';
 import { DocumentNode } from '../components/documents.ts';
-import { AstNode, Options, RuleAstComponent, Template } from '../types.ts';
+import { AstNode, Options, RuleAstComponent, RuleReturnType, Template } from '../types.ts';
 import { getOptionsFromArgv, getPipedStdin } from '../utilities/command-line.ts';
 import JSX, { bumpInvalidChildrenToAncestry, getDocxTree } from '../utilities/jsx.ts';
 import { EmptyTemplate } from './template.empty.ts';
@@ -21,7 +21,11 @@ import { EmptyTemplate } from './template.empty.ts';
  * a `.docx` file from them.
  */
 export class Application {
-	private renderer = new Renderer();
+	private renderer = new GenericRenderer<
+		RuleReturnType,
+		{ template: Template },
+		RuleAstComponent
+	>();
 
 	private _template: Template;
 	constructor(template?: Template) {
@@ -51,10 +55,9 @@ export class Application {
 			}
 		}
 		await this.template.init();
-		const ast = (await this.renderer.renderDocx(dom as unknown as Node, this._template)) as
-			| DocumentNode
-			| null
-			| string;
+		const ast = (await this.renderer.render(dom as unknown as Node, {
+			template: this._template,
+		})) as DocumentNode | null | string;
 		if (!ast) {
 			throw new Error('DXE002: The transformation resulted in an empty document.');
 		}

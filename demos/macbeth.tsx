@@ -35,7 +35,7 @@ application.match('self::node()', () => null);
 
 application.match('self::element()', ({ traverse }) => traverse('./*'));
 
-application.match('self::document-node()', ({ traverse, template }) => (
+application.match('self::document-node()', ({ traverse }) => (
 	<Document>{traverse('./*')}</Document>
 ));
 

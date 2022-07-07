@@ -29,7 +29,14 @@ export const Paragraph: AstComponent<ParagraphNode> = () => {
 
 Paragraph.type = 'Paragraph';
 
-Paragraph.children = ['Text', 'Image', 'InsertedText', 'DeletedText', 'FootnoteReference'];
+Paragraph.children = [
+	'DeletedText',
+	'FootnoteReference',
+	'Image',
+	'InsertedText',
+	'LineBreak',
+	'Text',
+];
 
 Paragraph.toDocx = ({ children, style, ...props }) =>
 	new docx.Paragraph({

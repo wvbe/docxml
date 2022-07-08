@@ -4,24 +4,26 @@ This is a [Deno](https://deno.land/) library, for the following purposes;
 - Compile a standalone executable that does the above.
 
 ```tsx
-/** @jsx Application.JSX */
+/**
+ * @file test.tsx
+ * @jsx Application.JSX
+ **/
 
 import Application, {
 	Document,
 	Paragraph,
 	Section,
-	Text,
-} from 'https://raw.githubusercontent.com/wvbe/experimental-deno-xml-to-docx/develop/mod.ts';
+	// Remember to point to a specific version of docxml:
+} from 'https://deno.land/x/docxml/mod.ts';
 
-const ast = await (
+await Application.writeAstToDocx(
+	'hello-world.docx',
 	<Document>
 		<Section>
 			<Paragraph>This is probably the simplest document you could make</Paragraph>
 		</Section>
-	</Document>
+	</Document>,
 );
-
-await Application.writeAstToDocx('hello-world.docx', ast);
 
 // Hey presto, `hello-world.docx` is saved to disk
 ```
@@ -61,7 +63,8 @@ import Application, {
 	Section,
 	Text,
 	Paragraph,
-} from 'https://raw.githubusercontent.com/wvbe/experimental-deno-xml-to-docx/develop/mod.ts';
+	// Remember to point to a specific version of docxml:
+} from 'https://deno.land/x/docxml/mod.ts';
 
 const app = new Application();
 

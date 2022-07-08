@@ -24,7 +24,7 @@ export * from './libraries/components/texts.ts';
  *
  * @note Picked entirely arbitrarily for now.
  */
-import docx from 'https://esm.sh/docx@7.4.0';
+import docx from 'https://esm.sh/docx@7.3.0';
 export const AlignmentType = docx.AlignmentType;
 export const BorderStyle = docx.BorderStyle;
 export const HorizontalPositionAlign = docx.HorizontalPositionAlign;

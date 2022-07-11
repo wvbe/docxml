@@ -20,7 +20,7 @@ import Application, {
 	Text,
 } from '../mod.ts';
 
-const app = new Application();
+const app = new Application<{ skeet: boolean }>();
 
 const LIST_INDENTATION_WIDTH = '1cm';
 
@@ -124,7 +124,8 @@ app.match('self::text()[ancestor::fxd:deletion]', ({ node }) => (
 /*
  * SCRIPT EXECUTION
  */
-await app.cli({
+await app.execute({
 	source: new URL('.', import.meta.url).pathname + '/mushroom-lunch.xml',
 	destination: 'mushroom-lunch.docx',
+	props: { skeet: true },
 });

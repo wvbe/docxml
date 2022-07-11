@@ -66,7 +66,7 @@ import Application, {
 	// Remember to point to a specific version of docxml:
 } from 'https://deno.land/x/docxml/mod.ts';
 
-const app = new Application();
+const app = new Application<{ derp: boolean }>();
 
 // Some catch-all rules for any XML node, any XML element, any text:
 app.match('self::node()', () => null);
@@ -78,9 +78,11 @@ app.match('self::document-node()', ({ traverse }) => <Document>{traverse('./*')}
 // fall back to the catch-all ones.
 app.match('self::html', ({ traverse }) => <Section>{traverse('./*')}</Section>);
 app.match('self::p', ({ traverse }) => <Paragraph>{traverse()}</Paragraph>);
-app.match('self::b', ({ traverse }) => <Text bold>{traverse()}</Text>);
+app.match('self::b', ({ traverse, derp }) => <Text bold={derp}>{traverse()}</Text>);
 
-await app.cli();
+await app.cli({
+  derp: true
+});
 ```
 
 This could then be compiled into a self-contained executable:

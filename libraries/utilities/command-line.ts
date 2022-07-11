@@ -1,13 +1,17 @@
 import { Options } from '../types.ts';
 
-export function getOptionsFromArgv(argv: string[]) {
-	const options: Options = {
+export function getOptionsFromArgv<PropsGeneric extends { [key: string]: unknown }>(
+	argv: string[],
+	additionalProps: PropsGeneric,
+) {
+	const options: Options<PropsGeneric> = {
 		cwd: Deno.cwd(),
 		stdin: Deno.stdin,
 		stdout: Deno.stdout,
 		source: null,
 		destination: null,
 		debug: false,
+		props: additionalProps,
 	};
 	while (argv.length) {
 		const arg = argv.shift();

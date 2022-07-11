@@ -107,4 +107,4 @@ application.match('self::text()[parent::italic]', ({ node }) => (
 	<Text italics>{node.nodeValue}</Text>
 ));
 
-await application.cli();
+await application.cli({});

@@ -1,6 +1,6 @@
 import { resolve } from 'https://deno.land/std@0.147.0/path/mod.ts';
 import { copy, readerFromStreamReader } from 'https://deno.land/std@0.147.0/streams/conversion.ts';
-import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.2/mod.ts';
+import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.4/mod.ts';
 import docx from 'https://esm.sh/docx@7.3.0';
 import {
 	evaluateUpdatingExpression,
@@ -9,7 +9,14 @@ import {
 import { parseXmlDocument } from 'https://esm.sh/slimdom@4.0.1';
 
 import { DocumentNode } from '../components/documents.ts';
-import { AstNode, Options, RuleAstComponent, RuleReturnType, Template } from '../types.ts';
+import {
+	AstNode,
+	Options,
+	RuleAdditionalProps,
+	RuleAstComponent,
+	RuleReturnType,
+	Template,
+} from '../types.ts';
 import { getOptionsFromArgv, getPipedStdin } from '../utilities/command-line.ts';
 import JSX, { bumpInvalidChildrenToAncestry, getDocxTree } from '../utilities/jsx.ts';
 import { EmptyTemplate } from './template.empty.ts';
@@ -20,11 +27,13 @@ import { EmptyTemplate } from './template.empty.ts';
  * method. Finally, run `.write()` in order to apply those rules and generate
  * a `.docx` file from them.
  */
-export class Application {
+export class Application<
+	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
+> {
 	private renderer = new GenericRenderer<
 		RuleReturnType,
-		{ template: Template },
-		RuleAstComponent
+		RuleAdditionalProps<PropsGeneric>,
+		RuleAstComponent<PropsGeneric>
 	>();
 
 	private _template: Template;
@@ -35,7 +44,7 @@ export class Application {
 		return this._template;
 	}
 
-	private async createAstFromOptions(options: Options) {
+	private async createAstFromOptions(options: Options<PropsGeneric>) {
 		const xml = options.xml
 			? options.xml
 			: options.source
@@ -55,8 +64,10 @@ export class Application {
 			}
 		}
 		await this.template.init();
+
 		const ast = (await this.renderer.render(dom as unknown as Node, {
 			template: this._template,
+			...options.props,
 		})) as DocumentNode | null | string;
 		if (!ast) {
 			throw new Error('DXE002: The transformation resulted in an empty document.');
@@ -74,7 +85,7 @@ export class Application {
 		return ast;
 	}
 
-	public async execute(options: Options, astOverride?: AstNode | Promise<AstNode>) {
+	public async execute(options: Options<PropsGeneric>, astOverride?: AstNode | Promise<AstNode>) {
 		const ast: AstNode = astOverride ? await astOverride : await this.createAstFromOptions(options);
 		if (ast.component.type !== 'Document') {
 			throw new Error('DXE004: The root node was not a document.');
@@ -110,7 +121,7 @@ export class Application {
 	 * a DOCX component (one that receives options accepted by the `docx` library, and returning
 	 * a DOCX AST.
 	 */
-	public match(selector: string, component: RuleAstComponent) {
+	public match(selector: string, component: RuleAstComponent<PropsGeneric>) {
 		this.renderer.add(selector, component);
 		return this;
 	}
@@ -121,7 +132,7 @@ export class Application {
 	 * Run your configuration, using whatever options are passed to this method, or whatever options
 	 * can be passed from command line arguments passed to this method.
 	 */
-	public async cli(options?: Options | string[]) {
+	public async cli(props: PropsGeneric) {
 		self.addEventListener('unload', () => {
 			// Exit with an error code if there was an error, but _not until the program exits_
 			// Forcefully exiting in the `catch` statement would quit any program that includes
@@ -131,18 +142,13 @@ export class Application {
 			}
 		});
 		try {
-			const opts = Array.isArray(options)
-				? getOptionsFromArgv(Array.from(options))
-				: options || getOptionsFromArgv(Array.from(Deno.args));
+			const opts = getOptionsFromArgv<PropsGeneric>(Array.from(Deno.args), props);
 			const timeStart = Date.now();
 
 			await this.execute(opts);
 			console.error(`Succeeded in ${Date.now() - timeStart} milliseconds.`);
 		} catch (error: unknown) {
-			const hasDebug =
-				(Array.isArray(options) && options.includes('--debug')) ||
-				(options as Options)?.debug ||
-				Deno.args.includes('--debug');
+			const hasDebug = Deno.args.includes('--debug');
 			console.error('⚠️   The DOCX output failed because of an error:');
 			console.error(`    ${(error as Error)[hasDebug ? 'stack' : 'message'] || error}`);
 			this.error = error as Error;

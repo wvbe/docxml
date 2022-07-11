@@ -46,10 +46,13 @@ export async function JSX<C extends AstComponent<AstNode>>(
 	} as AstNode;
 }
 
-export async function getDocxTree<M extends AstNode>(
-	astNode: M,
-	application: Application,
-): Promise<DocxFactoryYield<M>> {
+export async function getDocxTree<
+	NodeGeneric extends AstNode,
+	PropsGeneric extends { [key: string]: unknown },
+>(
+	astNode: NodeGeneric,
+	application: Application<PropsGeneric>,
+): Promise<DocxFactoryYield<NodeGeneric>> {
 	const result = await (async function recurse<N extends AstNode>(
 		astNode: string | N,
 	): Promise<unknown> {
@@ -61,11 +64,12 @@ export async function getDocxTree<M extends AstNode>(
 				...astNode.props,
 				children: await Promise.all(astNode.children.map(recurse)),
 			},
-			application,
+			// Fuck TypeScript sometimes.
+			application as unknown as Application<{ [key: string]: never }>,
 		);
 	})(astNode);
 
-	return result as DocxFactoryYield<M>;
+	return result as DocxFactoryYield<NodeGeneric>;
 }
 
 type MultiDimensionalArray<P> = Array<P | MultiDimensionalArray<P>>;

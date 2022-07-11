@@ -1,4 +1,4 @@
-import { Component as XmlRendererComponent } from 'https://deno.land/x/xml_renderer@5.0.2/mod.ts';
+import { Component as XmlRendererComponent } from 'https://deno.land/x/xml_renderer@5.0.4/mod.ts';
 import docx from 'https://esm.sh/docx@7.3.0';
 
 import type { Application } from './classes/application.ts';
@@ -7,7 +7,7 @@ import type { Style } from './classes/style.ts';
 /**
  * The options with which the application can be run from a configuration file.
  */
-export type Options = {
+export type Options<PropsGeneric extends { [key: string]: unknown }> = {
 	/**
 	 * The location of the source XML file, if any.
 	 *
@@ -55,6 +55,8 @@ export type Options = {
 	 * When omitted, the application will use `Deno.stdout`.
 	 */
 	stdout?: Deno.Writer;
+
+	props: PropsGeneric;
 };
 
 /**
@@ -121,18 +123,18 @@ export type DocxFactoryYield<Node> = Node extends AstNode<
 	? Yield
 	: never;
 
-type DocxFactory<N extends AstNode> = (
+type DocxFactory<NodeGeneric extends AstNode, PropsGeneric extends { [key: string]: unknown }> = (
 	// The props passed to `toDocx` are the same as passed to the component itself, but the
 	// children are of the correlating docx.* type (and not components themselves)
-	props: Omit<AstComponentProps<N>, 'children'> & {
-		children: AstComponentProps<N>['children'] extends
+	props: Omit<AstComponentProps<NodeGeneric>, 'children'> & {
+		children: AstComponentProps<NodeGeneric>['children'] extends
 			| Array<string | AstNode<string, { [key: string]: unknown }, infer Y>>
 			| undefined
 			? Array<Y>
 			: Array<unknown>;
 	},
-	application: Application,
-) => DocxFactoryYield<N> | Promise<DocxFactoryYield<N>>;
+	application: Application<PropsGeneric>,
+) => DocxFactoryYield<NodeGeneric> | Promise<DocxFactoryYield<NodeGeneric>>;
 
 /**
  * A `AstComponent` is a function that receives props depending on the type of DOCX thing is being
@@ -151,12 +153,15 @@ type DocxFactory<N extends AstNode> = (
  * </Document>
  * ```
  */
-export interface AstComponent<N extends AstNode> {
-	(props: AstComponentProps<N>): void | Promise<void>;
-	type: AstNodeLabel<N>;
+export interface AstComponent<
+	NodeGeneric extends AstNode,
+	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
+> {
+	(props: AstComponentProps<NodeGeneric>): void | Promise<void>;
+	type: AstNodeLabel<NodeGeneric>;
 	children: string[];
 	mixed?: boolean;
-	toDocx: DocxFactory<N>;
+	toDocx: DocxFactory<NodeGeneric, PropsGeneric>;
 }
 
 /**
@@ -173,25 +178,25 @@ export interface AstComponent<N extends AstNode> {
  * ));
  * ```
  */
-export type RuleAstComponent = XmlRendererComponent<
-	RuleReturnType,
-	{
-		/**
-		 * The DOTX template that is associated with the renderer. Provides helper methods to access
-		 * reuseable styles defined in the DOTX file.
-		 */
-		template: Template;
-	}
->;
+export type RuleAstComponent<PropsGeneric extends { [key: string]: unknown }> =
+	XmlRendererComponent<RuleReturnType, RuleAdditionalProps<PropsGeneric>>;
 
-type SelfArrayPromiseOrPromisedArrayOfSelf<Self> =
+export type RuleAdditionalProps<PropsGeneric extends { [key: string]: unknown }> = {
+	/**
+	 * The DOTX template that is associated with the renderer. Provides helper methods to access
+	 * reuseable styles defined in the DOTX file.
+	 */
+	template: Template;
+} & PropsGeneric;
+
+type Util_SelfArrayPromiseOrPromisedArrayOfSelf<Self> =
 	| Self
 	| Promise<Self>
-	| SelfArrayPromiseOrPromisedArrayOfSelf<Self>[]
-	| Promise<SelfArrayPromiseOrPromisedArrayOfSelf<Self>[]>;
+	| Util_SelfArrayPromiseOrPromisedArrayOfSelf<Self>[]
+	| Promise<Util_SelfArrayPromiseOrPromisedArrayOfSelf<Self>[]>;
 
 /**
  * All the things that can be returned by a {@link AstComponent} -- pretty much a {@link AstNode},
  * null, a promise thereof, or an array of any of the above.
  */
-export type RuleReturnType = SelfArrayPromiseOrPromisedArrayOfSelf<AstNode | null | string>;
+export type RuleReturnType = Util_SelfArrayPromiseOrPromisedArrayOfSelf<AstNode | null | string>;

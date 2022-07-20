@@ -1,10 +1,6 @@
 {
 	"scripts": {
-		"test": "npm run deno:test --silent",
-		"lint": "eslint . --ext .ts,.tsx",
-		"deno:test": "deno test --allow-read libraries",
-		"deno:lint": "deno lint libraries",
-		"deno:compile": "deno compile --allow-env --allow-read --allow-write"
+		"lint": "eslint . --ext .ts,.tsx"
 	},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^5.30.0",

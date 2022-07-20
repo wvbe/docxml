@@ -1,0 +1,10 @@
+{
+	"$schema": "https://deno.land/x/deno@v1.22.1/cli/schemas/config-file.v1.json",
+	"compilerOptions": {
+		"lib": ["deno.ns"]
+	},
+	"tasks": {
+		"test": "deno test -A src",
+		"lint": "deno lint src && npm run lint"
+	}
+}

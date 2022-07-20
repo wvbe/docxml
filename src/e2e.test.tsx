@@ -1,0 +1,88 @@
+/** @jsx JSX */
+import { describe, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Document, JSX, Paragraph, Text } from '../mod.ts';
+import { RelationshipType } from './bundle/Relationships.ts';
+import { Docx } from './Docx.ts';
+import { QNS } from './util/dom.ts';
+import { expectDocumentToContain, expectDocxToContain } from './util/tests.ts';
+
+describe('End-to-end', () => {
+	describe('Text run formatting', () => {
+		const docx = Docx.fromJsx(
+			<Document>
+				<Paragraph>
+					<Text>Normal text</Text>
+					<Text isItalic>Italic text</Text>
+					<Text isBold>Bold text</Text>
+					<Text language="nl-NL">Buitenlandse tekst</Text>
+				</Paragraph>
+			</Document>,
+		);
+
+		it('Unformatted', () =>
+			expectDocxToContain(
+				docx,
+				RelationshipType.officeDocument,
+				`
+					let $rpr := //${QNS.w}r[child::${QNS.w}t = "Normal text"]/${QNS.w}rPr
+					return $rpr/(not(${QNS.w}b) and not(${QNS.w}i))
+				`,
+			));
+
+		it('Italic', () =>
+			expectDocxToContain(
+				docx,
+				RelationshipType.officeDocument,
+				`
+					let $rpr := //${QNS.w}r[child::${QNS.w}t = "Italic text"]/${QNS.w}rPr
+					return $rpr/(not(${QNS.w}b) and ${QNS.w}i)
+				`,
+			));
+
+		it('Bold', () =>
+			expectDocxToContain(
+				docx,
+				RelationshipType.officeDocument,
+				`
+					let $rpr := //${QNS.w}r[child::${QNS.w}t = "Bold text"]/${QNS.w}rPr
+					return $rpr/(${QNS.w}b and not(${QNS.w}i))
+				`,
+			));
+
+		it('Language', () =>
+			expectDocxToContain(
+				docx,
+				RelationshipType.officeDocument,
+				`
+					let $rpr := //${QNS.w}r[child::${QNS.w}t = "Buitenlandse tekst"]/${QNS.w}rPr
+					return $rpr/${QNS.w}lang/@${QNS.w}val = "nl-NL"
+				`,
+			));
+	});
+	describe('Paragraph style', () => {
+		const docx = Docx.fromNothing();
+		const name = docx.document.styles.add({
+			type: 'paragraph',
+			id: 'test',
+			paragraphProperties: {
+				indentation: {
+					firstLine: 420,
+				},
+			},
+		});
+
+		it('Indentation', () =>
+			expectDocumentToContain(
+				docx,
+				RelationshipType.styles,
+				`
+					let $ppr := /*/${QNS.w}style[@${QNS.w}styleId = "${name}"]/${QNS.w}pPr
+					return boolean($ppr/${QNS.w}ind/@${QNS.w}firstLine = "420")
+				`,
+			));
+	});
+});
+
+run();

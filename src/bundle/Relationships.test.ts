@@ -1,0 +1,30 @@
+import { beforeAll, describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+
+import { serialize } from '../util/dom.ts';
+import { archive } from '../util/tests.ts';
+import { Relationships } from './Relationships.ts';
+
+describe('Relationships', () => {
+	let relationships: Relationships;
+	beforeAll(async () => {
+		relationships = await Relationships.fromArchive(
+			await archive('test/simple.docx'),
+			'_rels/.rels',
+		);
+	});
+
+	it('serializes correctly', () => {
+		// @TODO include an "external" relationship
+		expect(serialize(relationships.$$$toNode())).toBe(
+			`
+				<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+					<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>
+					<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
+					<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+				</Relationships>
+			`.replace(/\n|\t/g, ''),
+		);
+	});
+});
+
+run();

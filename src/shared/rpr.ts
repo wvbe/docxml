@@ -17,6 +17,28 @@ type HalfPoint = number;
 export type RprI = {
 	color?: string | null;
 	verticalAlign?: 'baseline' | 'subscript' | 'superscript' | null;
+	isUnderlined?:
+		| null
+		| boolean
+		| 'single'
+		| 'words'
+		| 'double'
+		| 'thick'
+		| 'dotted'
+		| 'dottedHeavy'
+		| 'dash'
+		| 'dashedHeavy'
+		| 'dashLong'
+		| 'dashLongHeavy'
+		| 'dotDash'
+		| 'dashDotHeavy'
+		| 'dotDotDash'
+		| 'dashDotDotHeavy'
+		| 'wave'
+		| 'wavyHeavy'
+		| 'wavyDouble'
+		| 'none'
+		| null;
 	isBold?: boolean | null;
 	isItalic?: boolean | null;
 	isSmallCaps?: boolean | null;
@@ -38,6 +60,7 @@ export class Rpr {
 					`
 						map {
 							"color": ./${QNS.w}color/@${QNS.w}val/string(),
+							"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
 							"isBold": boolean(./${QNS.w}b),
 							"isItalic": boolean(./${QNS.w}i),
 							"isSmallCaps": boolean(./${QNS.w}smallCaps),
@@ -58,6 +81,9 @@ export class Rpr {
 					if ($color) then element ${QNS.w}color {
 						attribute ${QNS.w}val { $color }
 					} else (),
+					if ($isUnderlined) then element ${QNS.w}u {
+						attribute ${QNS.w}val { $isUnderlined }
+					} else (),
 					if ($isBold) then element ${QNS.w}b {} else (),
 					if ($isItalic) then element ${QNS.w}i {} else (),
 					if ($isSmallCaps) then element ${QNS.w}smallCaps {} else (),
@@ -74,6 +100,7 @@ export class Rpr {
 			`,
 			{
 				color: rpr.color || null,
+				isUnderlined: rpr.isUnderlined === true ? 'single' : rpr.isUnderlined || null,
 				language: rpr.language || null,
 				isBold: rpr.isBold || false,
 				verticalAlign: rpr.verticalAlign || null,

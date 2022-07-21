@@ -17,6 +17,8 @@ describe('End-to-end', () => {
 					<Text color="red">Colored text</Text>
 					<Text isItalic>Italic text</Text>
 					<Text isBold>Bold text</Text>
+					<Text isUnderlined>Underlined default text</Text>
+					<Text isUnderlined="wave">Underlined wave text</Text>
 					<Text language="nl-NL">Buitenlandse tekst</Text>
 				</Paragraph>
 			</Document>,
@@ -61,6 +63,25 @@ describe('End-to-end', () => {
 					return $rpr/(${QNS.w}b and not(${QNS.w}i))
 				`,
 			));
+
+		it('Underlined', () => {
+			expectDocxToContain(
+				docx,
+				RelationshipType.officeDocument,
+				`
+					let $rpr := //${QNS.w}r[child::${QNS.w}t = "Underlined default text"]/${QNS.w}rPr
+					return $rpr/${QNS.w}u/@${QNS.w}val = 'single'
+				`,
+			);
+			expectDocxToContain(
+				docx,
+				RelationshipType.officeDocument,
+				`
+					let $rpr := //${QNS.w}r[child::${QNS.w}t = "Underlined wave text"]/${QNS.w}rPr
+					return $rpr/${QNS.w}u/@${QNS.w}val = 'wave'
+				`,
+			);
+		});
 
 		it('Language', () =>
 			expectDocxToContain(

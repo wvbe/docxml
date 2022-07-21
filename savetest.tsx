@@ -55,6 +55,11 @@ api.document.set(
 			<Text verticalAlign={'baseline'}>baseline</Text> or{' '}
 			<Text isSmallCaps>small capital letters</Text>.
 		</Paragraph>
+		<Paragraph>
+			Could use <Text color="red">different</Text> <Text color="#0000FF">colors</Text> or{' '}
+			<Text isUnderlined>different</Text> <Text isUnderlined="dashDotDotHeavy">kinds</Text>{' '}
+			<Text isUnderlined="wave">underline</Text> <Text isUnderlined="double">underline</Text>
+		</Paragraph>
 		<Paragraph style={$skeet}>
 			This is a paragraph with a named style "skeet", shown in UI as "Skeet of the boop".
 		</Paragraph>
@@ -97,10 +102,6 @@ api.document.set(
 			paragraph with indentation, and more indentation on the first line. This is a paragraph with
 			indentation, and more indentation on the first line. This is a paragraph with indentation, and
 			more indentation on the first line.
-		</Paragraph>
-		<Paragraph>
-			<Text color="red">This text is colored red.</Text>
-			<Text color="#0000FF"> This text is colored blue.</Text>
 		</Paragraph>
 	</Document>,
 );

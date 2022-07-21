@@ -1,3 +1,22 @@
+This is a [Deno](https://deno.land) module for making `.docx` files.
+
+It can be used to create a `.docx` using components, for example:
+
+```ts
+/** @jsx JSX */
+import { Docx, JSX, Paragraph } from 'https://deno.land/x/docxml@1.0.0/mod.ts';
+
+Docx.fromJsx(<Paragraph>This is the simplest document you could make.</Paragraph>)
+	.toArchive()
+	.toFile('test.docx');
+```
+
+Or it can be used to convert any XML to DOCX:
+
+```ts
+// TODO example code
+```
+
 # Formatting options
 
 ## Paragraph formatting

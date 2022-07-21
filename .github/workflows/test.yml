@@ -34,7 +34,7 @@ jobs:
       #   run: deno fmt --check
 
       - name: Run linter
-        run: deno task lint
+        run: npm install && deno task lint
 
       - name: Run tests
         run: deno task test

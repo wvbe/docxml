@@ -126,7 +126,7 @@ export class Docx {
 			);
 		}
 		const bundle = Docx.fromNothing();
-		bundle.document.append(roots[0]);
+		bundle.document.set(roots[0]);
 		return bundle;
 	}
 }

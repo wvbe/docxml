@@ -14,6 +14,7 @@ describe('End-to-end', () => {
 			<Document>
 				<Paragraph>
 					<Text>Normal text</Text>
+					<Text color="red">Colored text</Text>
 					<Text isItalic>Italic text</Text>
 					<Text isBold>Bold text</Text>
 					<Text language="nl-NL">Buitenlandse tekst</Text>
@@ -28,6 +29,16 @@ describe('End-to-end', () => {
 				`
 					let $rpr := //${QNS.w}r[child::${QNS.w}t = "Normal text"]/${QNS.w}rPr
 					return $rpr/(not(${QNS.w}b) and not(${QNS.w}i))
+				`,
+			));
+
+		it('Color', () =>
+			expectDocxToContain(
+				docx,
+				RelationshipType.officeDocument,
+				`
+					let $rpr := //${QNS.w}r[child::${QNS.w}t = "Colored text"]/${QNS.w}rPr
+					return $rpr/${QNS.w}color/@${QNS.w}val = 'red'
 				`,
 			));
 

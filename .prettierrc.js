@@ -1,1 +1,1 @@
-module.exports = require("@wvbe/eslint-config/prettier");
+module.exports = require('@wvbe/eslint-config/prettier');

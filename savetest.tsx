@@ -98,6 +98,10 @@ api.document.set(
 			indentation, and more indentation on the first line. This is a paragraph with indentation, and
 			more indentation on the first line.
 		</Paragraph>
+		<Paragraph>
+			<Text color="red">This text is colored red.</Text>
+			<Text color="#0000FF"> This text is colored blue.</Text>
+		</Paragraph>
 	</Document>,
 );
 

@@ -122,6 +122,10 @@ export class Relationships extends XmlFile {
 	public getRelated() {
 		const related: XmlFile[] = [this];
 		this.instances.forEach((inst) => {
+			if (inst.isEmpty()) {
+				// Empty styles.xml? No thank you!
+				return;
+			}
 			related.splice(related.length, 0, ...inst.getRelated());
 		});
 		return related;

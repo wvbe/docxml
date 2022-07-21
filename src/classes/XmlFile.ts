@@ -33,6 +33,13 @@ export class XmlFile {
 	}
 
 	/**
+	 * Let a file tell the system when it is effectively empty, so it can be omitted from the archive.
+	 */
+	public isEmpty() {
+		return false;
+	}
+
+	/**
 	 * Add all related files to the given archive.
 	 */
 	public toArchive(archive: ZipArchive): void {

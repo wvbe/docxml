@@ -41,6 +41,10 @@ export class Styles extends XmlFile {
 		super(location);
 	}
 
+	public isEmpty() {
+		return !this.styles.length && !this.latentStyles.length;
+	}
+
 	protected toNode(): Document {
 		// @TODO look at attribute w:document@mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh wp14"
 		return create(

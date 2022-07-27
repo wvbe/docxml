@@ -2,22 +2,33 @@ import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
 import { Ppr, PprI } from '../shared/ppr.ts';
 import { Rpr, RprI } from '../shared/rpr.ts';
+import { Tblpr, TblprI } from '../shared/tblpr.ts';
 import { ContentType } from '../types.ts';
-import { ALL_NAMESPACE_DECLARATIONS, create, QNS } from '../util/dom.ts';
+import { create } from '../util/dom.ts';
 import { createRandomId } from '../util/identifiers.ts';
+import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../util/namespaces.ts';
 import { evaluateXPathToArray } from '../util/xquery.ts';
 
-type ParagraphStyle = {
+type StyleCommons = {
 	id: string;
-	type: 'paragraph';
 	name?: string | null;
 	basedOn?: string | null;
-	isDefault?: boolean;
+	isDefault?: boolean | null;
+};
+type ParagraphStyle = {
+	type: 'paragraph';
 	paragraphProperties?: PprI;
 	textProperties?: RprI;
+	tableProperties?: null;
+};
+type TableStyle = {
+	type: 'table';
+	tableProperties?: TblprI;
+	paragraphProperties?: null;
+	textProperties?: null;
 };
 
-type Style = ParagraphStyle;
+type Style = StyleCommons & (ParagraphStyle | TableStyle);
 
 /**
  * https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_lsdException_topic_ID0EX4NT.html
@@ -86,6 +97,7 @@ export class Styles extends XmlFile {
 									if ($style('isDefault')) then attribute ${QNS.w}default {"1"} else (),
 									if ($style('name')) then <w:name w:val="{$style('name')}" /> else (),
 									if ($style('basedOn')) then <w:basedOn w:val="{$style('basedOn')}" /> else (),
+									if ($style('tblpr')) then $style('tblpr') else (),
 									if ($style('ppr')) then $style('ppr') else (),
 									if ($style('rpr')) then $style('rpr') else ()
 								}
@@ -96,8 +108,9 @@ export class Styles extends XmlFile {
 			{
 				styles: this.styles.map((style) => ({
 					...style,
-					ppr: Ppr.toNode(style.paragraphProperties),
-					rpr: Rpr.toNode(style.textProperties),
+					ppr: Ppr.toNode((style as ParagraphStyle).paragraphProperties),
+					rpr: Rpr.toNode((style as ParagraphStyle).textProperties),
+					tblpr: Tblpr.toNode((style as TableStyle).tableProperties),
 				})),
 				latentStyles: this.latentStyles,
 			},
@@ -109,7 +122,7 @@ export class Styles extends XmlFile {
 		const style = {
 			...properties,
 			id: properties.id || properties.name?.replace(/[^a-zA-Z0-9]/g, '') || createRandomId(),
-		};
+		} as Style;
 		this.styles.push(style);
 		return style.id;
 	}
@@ -139,22 +152,24 @@ export class Styles extends XmlFile {
 
 		evaluateXPathToArray(
 			`
-				array { /*/${QNS.w}style[@${QNS.w}type = "paragraph" and @${QNS.w}styleId]/map {
+				array { /*/${QNS.w}style[@${QNS.w}type = ("paragraph", "table") and @${QNS.w}styleId]/map {
 					"id": @${QNS.w}styleId/string(),
 					"type": @${QNS.w}type/string(),
 					"name": ./${QNS.w}name/@${QNS.w}val/string(),
 					"basedOn": ./${QNS.w}basedOn/@${QNS.w}val/string(),
 					"isDefault": @${QNS.w}default/ooxml:is-on-off-enabled(.),
+					"tblpr": ./${QNS.w}tblPr,
 					"ppr": ./${QNS.w}pPr,
 					"rpr": ./${QNS.w}rPr
 				}}
 			`,
 			dom,
-		).forEach(({ ppr, rpr, ...json }) =>
+		).forEach(({ ppr, rpr, tblpr, ...json }) =>
 			instance.add({
 				...json,
 				paragraphProperties: Ppr.fromNode(ppr),
 				textProperties: Rpr.fromNode(rpr),
+				tableProperties: Tblpr.fromNode(tblpr),
 			}),
 		);
 

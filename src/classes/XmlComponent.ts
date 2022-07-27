@@ -30,6 +30,8 @@ export interface XmlComponentClassDefinition<
 		? Array<XmlComponentClassDefinition<XmlComponentChild<C>>>
 		: unknown[];
 	mixed: boolean;
+	matchesNode(node: Node): boolean;
+	fromNode(node: Node): C;
 }
 
 export class XmlComponent<
@@ -61,6 +63,16 @@ export class XmlComponent<
 	public constructor(props: PropsGeneric, ...children: ChildGeneric[]) {
 		this.props = props;
 		this.children = children;
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public static matchesNode(_node: Node): boolean {
+		return false;
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public static fromNode(_node: Node): AnyXmlComponent {
+		throw new Error('Not implemented');
 	}
 
 	/**

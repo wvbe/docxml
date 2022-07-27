@@ -3,8 +3,9 @@ import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
 import { ContentType } from '../types.ts';
-import { create, QNS } from '../util/dom.ts';
+import { create } from '../util/dom.ts';
 import { createRandomId } from '../util/identifiers.ts';
+import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToArray } from '../util/xquery.ts';
 import { castRelationshipToClass } from './index.ts';
 

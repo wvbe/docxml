@@ -1,5 +1,6 @@
 import { XmlComponent } from '../classes/XmlComponent.ts';
-import { create, QNS } from '../util/dom.ts';
+import { create } from '../util/dom.ts';
+import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
 
 export type BreakChild = never;
@@ -14,6 +15,7 @@ export type BreakProps = {
  */
 export class Break extends XmlComponent<BreakProps, BreakChild> {
 	public static children = [];
+
 	public static mixed = false;
 
 	public toNode(): Node {
@@ -29,6 +31,10 @@ export class Break extends XmlComponent<BreakProps, BreakChild> {
 				clear: this.props.clear || null,
 			},
 		);
+	}
+
+	static matchesNode(node: Node) {
+		return node.nodeName === 'w:br';
 	}
 
 	static fromNode(node: Node): Break {

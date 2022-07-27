@@ -13,11 +13,13 @@ export class Document extends XmlComponent<DocumentProps, DocumentChild> {
 	public static children = [Paragraph];
 	public static mixed = false;
 
-	/**
-	 * @deprecated Remove?
-	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	static fromNode(_node: Node): Promise<Document> {
+	static matchesNode(_node: Node) {
+		return false;
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	static fromNode(_node: Node): Document {
 		throw new Error(`Cannot fromNode a <Document> component.`);
 	}
 }

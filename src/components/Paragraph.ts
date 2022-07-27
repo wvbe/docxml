@@ -1,11 +1,12 @@
 import { XmlComponent, XmlComponentClassDefinition } from '../classes/XmlComponent.ts';
 import { Ppr, PprI } from '../shared/ppr.ts';
 import { RprI } from '../shared/rpr.ts';
-import { create, QNS } from '../util/dom.ts';
+import { create } from '../util/dom.ts';
+import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
 import { TextAddition, TextDeletion } from './changes.ts';
-import { castNodesToComponents } from './index.ts';
 import { Text } from './Text.ts';
+
 export type ParagraphChild = Text | TextAddition | TextDeletion;
 
 export type ParagraphProps = PprI & RprI;
@@ -33,23 +34,32 @@ export class Paragraph extends XmlComponent<ParagraphProps, ParagraphChild> {
 		);
 	}
 
+	static matchesNode(node: Node) {
+		return node.nodeName === 'w:p';
+	}
+
 	static fromNode(node: Node): Paragraph {
-		const { children, ppr, ...props } = evaluateXPathToMap(
+		const { childNodes, ppr, ...props } = evaluateXPathToMap(
 			`
 				map {
 					"ppr": ./${QNS.w}pPr,
 					"style": ./${QNS.w}pPr/${QNS.w}pStyle/@${QNS.w}val/string(),
-					"children": array{ ./(${QNS.w}r | ${QNS.w}del | ${QNS.w}ins) }
+					"childNodes": array{ ./(${QNS.w}r | ${QNS.w}del | ${QNS.w}ins) }
 				}
 			`,
 			node,
-		) as { ppr: Node; children: Node[]; style?: string };
+		) as { ppr: Node; childNodes: Node[]; style?: string };
+
+		const children = childNodes
+			.map((node) => this.children.find((Child) => Child.matchesNode(node))?.fromNode(node) || null)
+			.filter((child): child is Exclude<typeof child, null> => !!child);
+
 		return new Paragraph(
 			{
 				...Ppr.fromNode(ppr),
 				...props,
 			},
-			...castNodesToComponents<ParagraphChild>(children),
+			...(children as ParagraphChild[]),
 		);
 	}
 }

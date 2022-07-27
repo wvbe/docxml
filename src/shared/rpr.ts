@@ -1,12 +1,7 @@
-import { create, QNS } from '../util/dom.ts';
+import { HalfPoint } from '../types.ts';
+import { create } from '../util/dom.ts';
+import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
-
-/**
- * Half of 1pt
- *
- * eg. "28" means 14pt
- */
-type HalfPoint = number;
 
 /**
  * All the formatting options that can be given on a text run (inline text).

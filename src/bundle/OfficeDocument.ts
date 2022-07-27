@@ -3,10 +3,11 @@ import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
 import type { Document as DocumentComponent } from '../components/Document.ts';
-import { castNodesToComponents } from '../components/index.ts';
-import type { Paragraph } from '../components/Paragraph.ts';
+import { Paragraph } from '../components/Paragraph.ts';
 import { BundleFile, ContentType } from '../types.ts';
-import { ALL_NAMESPACE_DECLARATIONS, create, QNS } from '../util/dom.ts';
+import { create } from '../util/dom.ts';
+import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../util/namespaces.ts';
+import { evaluateXPathToNodes } from '../util/xquery.ts';
 import { Relationships, RelationshipType } from './Relationships.ts';
 import { Styles } from './Styles.ts';
 
@@ -89,10 +90,14 @@ export class OfficeDocument extends XmlFile {
 			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
 		);
 		const dom = await archive.readXml(location);
-		const children = (await castNodesToComponents(
-			`/*/${QNS.w}body/*`,
-			dom,
-		)) as OfficeDocumentChild[];
+		const children = evaluateXPathToNodes(`/*/${QNS.w}body/${QNS.w}p`, dom).map((node) => {
+			switch (node.nodeName) {
+				case 'w:p':
+					return Paragraph.fromNode(node);
+				default:
+					throw new Error(`Unexpected child ${node.nodeName}`);
+			}
+		});
 		return new OfficeDocument(location, relationships, children);
 	}
 }

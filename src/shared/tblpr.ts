@@ -1,0 +1,303 @@
+import { EightPoint } from '../types.ts';
+import { create } from '../util/dom.ts';
+import { NamespaceUri, QNS } from '../util/namespaces.ts';
+import { evaluateXPathToMap } from '../util/xquery.ts';
+
+type TableBorder = {
+	color?: null | string;
+	width?: null | EightPoint;
+	spacing?: null | number;
+	type?:
+		| null
+		| 'auto'
+		| 'apples'
+		| 'archedScallops'
+		| 'babyPacifier'
+		| 'babyRattle'
+		| 'balloons3Colors'
+		| 'balloonsHotAir'
+		| 'basicBlackDashes'
+		| 'basicBlackDots'
+		| 'basicBlackSquares'
+		| 'basicThinLines'
+		| 'basicWhiteDashes'
+		| 'basicWhiteDots'
+		| 'basicWhiteSquares'
+		| 'basicWideInline'
+		| 'basicWideMidline'
+		| 'basicWideOutline'
+		| 'bats'
+		| 'birds'
+		| 'birdsFlight'
+		| 'cabins'
+		| 'cakeSlice'
+		| 'candyCorn'
+		| 'celticKnotwork'
+		| 'certificateBanner'
+		| 'chainLink'
+		| 'champagneBottle'
+		| 'checkedBarBlack'
+		| 'checkedBarColor'
+		| 'checkered'
+		| 'christmasTree'
+		| 'circlesLines'
+		| 'circlesRectangles'
+		| 'classicalWave'
+		| 'clocks'
+		| 'compass'
+		| 'confetti'
+		| 'confettiGrays'
+		| 'confettiOutline'
+		| 'confettiStreamers'
+		| 'confettiWhite'
+		| 'cornerTriangles'
+		| 'couponCutoutDashes'
+		| 'couponCutoutDots'
+		| 'crazyMaze'
+		| 'creaturesButterfly'
+		| 'creaturesFish'
+		| 'creaturesInsects'
+		| 'creaturesLadyBug'
+		| 'crossStitch'
+		| 'cup'
+		| 'dashDotStroked'
+		| 'dashed'
+		| 'dashSmallGap'
+		| 'decoArch'
+		| 'decoArchColor'
+		| 'decoBlocks'
+		| 'diamondsGray'
+		| 'dotDash'
+		| 'dotDotDash'
+		| 'dotted'
+		| 'double'
+		| 'doubleD'
+		| 'doubleDiamonds'
+		| 'doubleWave'
+		| 'earth1'
+		| 'earth2'
+		| 'eclipsingSquares1'
+		| 'eclipsingSquares2'
+		| 'eggsBlack'
+		| 'fans'
+		| 'film'
+		| 'firecrackers'
+		| 'flowersBlockPrint'
+		| 'flowersDaisies'
+		| 'flowersModern1'
+		| 'flowersModern2'
+		| 'flowersPansy'
+		| 'flowersRedRose'
+		| 'flowersRoses'
+		| 'flowersTeacup'
+		| 'flowersTiny'
+		| 'gems'
+		| 'gingerbreadMan'
+		| 'gradient'
+		| 'handmade1'
+		| 'handmade2'
+		| 'heartBalloon'
+		| 'heartGray'
+		| 'hearts'
+		| 'heebieJeebies'
+		| 'holly'
+		| 'houseFunky'
+		| 'hypnotic'
+		| 'iceCreamCones'
+		| 'inset'
+		| 'lightBulb'
+		| 'lightning1'
+		| 'lightning2'
+		| 'mapleLeaf'
+		| 'mapleMuffins'
+		| 'mapPins'
+		| 'marquee'
+		| 'marqueeToothed'
+		| 'moons'
+		| 'mosaic'
+		| 'musicNotes'
+		| 'nil'
+		| 'none'
+		| 'northwest'
+		| 'outset'
+		| 'ovals'
+		| 'packages'
+		| 'palmsBlack'
+		| 'palmsColor'
+		| 'paperClips'
+		| 'papyrus'
+		| 'partyFavor'
+		| 'partyGlass'
+		| 'pencils'
+		| 'people'
+		| 'peopleHats'
+		| 'peopleWaving'
+		| 'poinsettias'
+		| 'postageStamp'
+		| 'pumpkin1'
+		| 'pushPinNote1'
+		| 'pushPinNote2'
+		| 'pyramids'
+		| 'pyramidsAbove'
+		| 'quadrants'
+		| 'rings'
+		| 'safari'
+		| 'sawtooth'
+		| 'sawtoothGray'
+		| 'scaredCat'
+		| 'seattle'
+		| 'shadowedSquares'
+		| 'sharksTeeth'
+		| 'shorebirdTracks'
+		| 'single'
+		| 'skyrocket'
+		| 'snowflakeFancy'
+		| 'snowflakes'
+		| 'sombrero'
+		| 'southwest'
+		| 'stars'
+		| 'stars3d'
+		| 'starsBlack'
+		| 'starsShadowed'
+		| 'starsTop'
+		| 'sun'
+		| 'swirligig'
+		| 'thick'
+		| 'thickThinLargeGap'
+		| 'thickThinMediumGap'
+		| 'thickThinSmallGap'
+		| 'thinThickLargeGap'
+		| 'thinThickMediumGap'
+		| 'thinThickSmallGap'
+		| 'thinThickThinLargeGap'
+		| 'thinThickThinMediumGap'
+		| 'thinThickThinSmallGap'
+		| 'threeDEmboss'
+		| 'threeDEngrave'
+		| 'tornPaper'
+		| 'tornPaperBlack'
+		| 'trees'
+		| 'triangleParty'
+		| 'triangles'
+		| 'tribal1'
+		| 'tribal2'
+		| 'tribal3'
+		| 'tribal4'
+		| 'tribal5'
+		| 'tribal6'
+		| 'triple'
+		| 'twistedLines1'
+		| 'twistedLines2'
+		| 'vine'
+		| 'wave'
+		| 'waveline'
+		| 'weavingAngles'
+		| 'weavingBraid'
+		| 'weavingRibbon'
+		| 'weavingStrips'
+		| 'whiteFlowers'
+		| 'woodwork'
+		| 'xIllusions'
+		| 'zanyTriangles'
+		| 'zigZag'
+		| 'zigZagStitch';
+};
+
+export type TblprI = {
+	style?: string | null;
+	look?: null | {
+		firstColumn?: null | boolean;
+		lastColumn?: null | boolean;
+		firstRow?: null | boolean;
+		lastRow?: null | boolean;
+		noHBand?: null | boolean;
+		noVBand?: null | boolean;
+	};
+	borders?: null | {
+		top?: null | TableBorder;
+		left?: null | TableBorder;
+		bottom?: null | TableBorder;
+		right?: null | TableBorder;
+		insideH?: null | TableBorder;
+		insideV?: null | TableBorder;
+	};
+};
+
+export class Tblpr {
+	private constructor() {
+		throw new Error('This class is not meant to be instantiated');
+	}
+
+	public static fromNode(node?: Node | null): TblprI {
+		return node
+			? evaluateXPathToMap(
+					`
+						map {
+							"style": ./${QNS.w}tblStyle/@${QNS.w}val/string(),
+							"look": ./${QNS.w}tblLook/map {
+								"firstColumn": ./@${QNS.w}firstColumn/ooxml:is-on-off-enabled(.),
+								"lastColumn": ./@${QNS.w}lastColumn/ooxml:is-on-off-enabled(.),
+								"firstRow": ./@${QNS.w}firstRow/ooxml:is-on-off-enabled(.),
+								"lastRow": ./@${QNS.w}lastRow/ooxml:is-on-off-enabled(.),
+								"noHBand": ./@${QNS.w}noHBand/ooxml:is-on-off-enabled(.),
+								"noVBand": ./@${QNS.w}noVBand/ooxml:is-on-off-enabled(.)
+							},
+							"borders": ./${QNS.w}tblBorders/map {
+								"left": ./${QNS.w}left/ooxml:table-border(.),
+								"right": ./${QNS.w}right/ooxml:table-border(.),
+								"top": ./${QNS.w}top/ooxml:table-border(.),
+								"bottom": ./${QNS.w}bottom/ooxml:table-border(.),
+								"insideH": ./${QNS.w}insideH/ooxml:table-border(.),
+								"insideV": ./${QNS.w}insideV/ooxml:table-border(.)
+							}
+						}
+					`,
+					node,
+			  )
+			: {};
+	}
+
+	public static toNode(tblpr: TblprI = {}): Node {
+		return create(
+			`
+				element ${QNS.w}tblPr {
+					if ($style) then element ${QNS.w}tblStyle {
+						attribute ${QNS.w}val { $style }
+					} else (),
+					if ($look) then element ${QNS.w}tblLook {
+						attribute ${QNS.w}firstColumn { "1" },
+						attribute ${QNS.w}firstRow { "1" },
+						attribute ${QNS.w}lastColumn { "1" },
+						attribute ${QNS.w}lastRow { "1" },
+						attribute ${QNS.w}noHBand { "1" },
+						attribute ${QNS.w}noVBand { "1" }
+					} else (),
+					if (exists($borders)) then element ${QNS.w}tblBorders {
+						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
+						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
+						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
+						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
+						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
+						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
+					} else ()
+
+				}
+			`,
+			{
+				style: tblpr.style || null,
+				look: tblpr.look || null,
+				borders: tblpr.borders
+					? {
+							top: null,
+							left: null,
+							right: null,
+							bottom: null,
+							insideH: null,
+							insideV: null,
+							...tblpr.borders,
+					  }
+					: null,
+			},
+		);
+	}
+}

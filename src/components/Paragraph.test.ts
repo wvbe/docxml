@@ -1,6 +1,7 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { create, NamespaceUri, serialize } from '../util/dom.ts';
+import { create, serialize } from '../util/dom.ts';
+import { NamespaceUri } from '../util/namespaces.ts';
 import { Paragraph } from './Paragraph.ts';
 
 describe('Paragraph from XML', () => {

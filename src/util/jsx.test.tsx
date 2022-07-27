@@ -17,9 +17,23 @@ describe('JSX fixing', () => {
 	class Bar extends XmlComponent<{ [key: string]: never }, string> {
 		static children = [];
 		static mixed = true;
+		// static matchesNode() {
+		// 	return false;
+		// }
+		// static fromNode() {
+		// 	throw new Error('Not implemented');
+		// }
 	}
+
 	class Foo extends XmlComponent<{ [key: string]: never }, Text | Bar> {
 		static children = [Text, Bar];
+		static false = true;
+		// static matchesNode() {
+		// 	return false;
+		// }
+		// static fromNode() {
+		// 	throw new Error('Not implemented');
+		// }
 	}
 
 	it('splits invalid node nesting', () => {

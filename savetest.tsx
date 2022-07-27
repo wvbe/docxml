@@ -1,6 +1,16 @@
 /** @jsx API.JSX */
 
-import API, { Break, Document, Paragraph, Text, TextAddition, TextDeletion } from './mod.ts';
+import API, {
+	Break,
+	Cell,
+	Document,
+	Paragraph,
+	Row,
+	Table,
+	Text,
+	TextAddition,
+	TextDeletion,
+} from './mod.ts';
 
 const api = new API();
 
@@ -28,6 +38,27 @@ const $skeet = api.styles.add({
 	},
 });
 
+api.styles.add({
+	id: 'TableGrid',
+	type: 'table',
+	name: 'Table Grid',
+	basedOn: 'TableNormal',
+	isDefault: null,
+	paragraphProperties: { change: null },
+	textProperties: {},
+	tableProperties: {
+		style: null,
+		look: null,
+		borders: {
+			left: { type: 'single', spacing: 0, width: 4, color: 'auto' },
+			right: { type: 'single', spacing: 0, width: 4, color: 'auto' },
+			top: { type: 'single', spacing: 0, width: 4, color: 'auto' },
+			bottom: { type: 'single', spacing: 0, width: 4, color: 'auto' },
+			insideH: { type: 'single', spacing: 0, width: 4, color: 'auto' },
+			insideV: { type: 'single', spacing: 0, width: 4, color: 'auto' },
+		},
+	},
+});
 api.document.set(
 	<Document>
 		<Paragraph>
@@ -103,6 +134,24 @@ api.document.set(
 			indentation, and more indentation on the first line. This is a paragraph with indentation, and
 			more indentation on the first line.
 		</Paragraph>
+		<Table style="TableGrid">
+			<Row>
+				<Cell>
+					<Paragraph>A1</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>B1</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>A2</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>B2</Paragraph>
+				</Cell>
+			</Row>
+		</Table>
 	</Document>,
 );
 

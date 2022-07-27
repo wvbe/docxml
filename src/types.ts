@@ -30,3 +30,24 @@ export enum ContentType {
 	theme = 'application/vnd.openxmlformats-officedocument.theme+xml',
 	webSettings = 'application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml',
 }
+
+/**
+ * Half of 1pt
+ *
+ * eg. "28" means 14pt
+ */
+export type HalfPoint = number;
+
+/**
+ * 1/8th of 1pt
+ */
+export type EightPoint = number;
+
+/**
+ * OOXML uses 20th points sometimes, meaning that the "real" font size is actually 20 times smaller
+ * than what you'd write in XML -- a value of "240" means 12pt in MS Word terms.
+ *
+ * Also known as "twips" or ST_TwipsMeasure
+ *   http://www.datypic.com/sc/ooxml/t-w_ST_TwipsMeasure.html
+ */
+export type TwentiethPoint = number;

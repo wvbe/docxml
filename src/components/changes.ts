@@ -1,7 +1,7 @@
 import { XmlComponent } from '../classes/XmlComponent.ts';
-import { create, QNS } from '../util/dom.ts';
+import { create } from '../util/dom.ts';
+import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
-import { castNodesToComponents } from './index.ts';
 import { Text } from './Text.ts';
 
 export type TextChangeChild = Text;
@@ -53,9 +53,19 @@ export class TextDeletion extends XmlComponent<TextChangeProps, TextChangeChild>
 		);
 	}
 
+	static matchesNode(node: Node) {
+		return node.nodeName === 'w:del';
+	}
 	static fromNode(node: Node): TextDeletion {
 		const { children, ...props } = fromNode(node);
-		return new TextDeletion(props, ...castNodesToComponents<TextChangeChild>(children));
+		return new TextDeletion(
+			props,
+			...children
+				.map(
+					(node) => this.children.find((Child) => Child.matchesNode(node))?.fromNode(node) || null,
+				)
+				.filter((child): child is Exclude<typeof child, null> => !!child),
+		);
 	}
 }
 
@@ -81,8 +91,18 @@ export class TextAddition extends XmlComponent<TextChangeProps, TextChangeChild>
 		);
 	}
 
+	static matchesNode(node: Node) {
+		return node.nodeName === 'w:ins';
+	}
 	static fromNode(node: Node): TextAddition {
 		const { children, ...props } = fromNode(node);
-		return new TextAddition(props, ...castNodesToComponents<TextChangeChild>(children));
+		return new TextAddition(
+			props,
+			...children
+				.map(
+					(node) => this.children.find((Child) => Child.matchesNode(node))?.fromNode(node) || null,
+				)
+				.filter((child): child is Exclude<typeof child, null> => !!child),
+		);
 	}
 }

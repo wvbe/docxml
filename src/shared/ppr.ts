@@ -1,15 +1,8 @@
-import { create, QNS } from '../util/dom.ts';
+import { TwentiethPoint } from '../types.ts';
+import { create } from '../util/dom.ts';
+import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../util/xquery.ts';
 import { Rpr, RprI } from './rpr.ts';
-
-/**
- * OOXML uses 20th points sometimes, meaning that the "real" font size is actually 20 times smaller
- * than what you'd write in XML -- a value of "240" means 12pt in MS Word terms.
- *
- * Also known as "twips" or ST_TwipsMeasure
- *   http://www.datypic.com/sc/ooxml/t-w_ST_TwipsMeasure.html
- */
-type TwentiethPoint = number;
 
 type PprII = {
 	alignment?: 'left' | 'right' | 'center' | 'both' | null;

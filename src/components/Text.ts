@@ -1,9 +1,9 @@
 import { XmlComponent, XmlComponentClassDefinition } from '../classes/XmlComponent.ts';
 import { Rpr, RprI } from '../shared/rpr.ts';
-import { create, QNS } from '../util/dom.ts';
+import { create } from '../util/dom.ts';
+import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
 import { Break } from './Break.ts';
-import { castNodesToComponents } from './index.ts';
 
 export type TextProps = RprI;
 
@@ -50,6 +50,9 @@ export class Text extends XmlComponent<TextProps, TextChild> {
 		);
 	}
 
+	static matchesNode(node: Node) {
+		return node.nodeName === 'w:r';
+	}
 	static fromNode(node: Node): Text {
 		const { children, rpr } = evaluateXPathToMap(
 			`
@@ -66,6 +69,15 @@ export class Text extends XmlComponent<TextProps, TextChild> {
 			`,
 			node,
 		) as { rpr: Node; children: Node[] };
-		return new Text(Rpr.fromNode(rpr), ...castNodesToComponents<TextChild>(children));
+		return new Text(
+			Rpr.fromNode(rpr),
+			...(children
+				.map((node) =>
+					node.nodeType === 3
+						? node.nodeValue
+						: this.children.find((Child) => Child.matchesNode(node))?.fromNode(node) || null,
+				)
+				.filter((child): child is Exclude<typeof child, null> => !!child) as TextChild[]),
+		);
 	}
 }

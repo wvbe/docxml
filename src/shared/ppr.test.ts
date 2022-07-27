@@ -1,6 +1,7 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { ALL_NAMESPACE_DECLARATIONS, create } from '../util/dom.ts';
+import { create } from '../util/dom.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../util/namespaces.ts';
 import { Ppr, PprI } from './ppr.ts';
 
 describe('Paragraph formatting', () => {

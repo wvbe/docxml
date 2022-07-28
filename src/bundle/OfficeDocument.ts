@@ -4,6 +4,7 @@ import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
 import type { Document as DocumentComponent } from '../components/Document.ts';
 import { Paragraph } from '../components/Paragraph.ts';
+import { Table } from '../components/Table.ts';
 import { BundleFile, ContentType } from '../types.ts';
 import { create } from '../util/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../util/namespaces.ts';
@@ -11,7 +12,7 @@ import { evaluateXPathToNodes } from '../util/xquery.ts';
 import { Relationships, RelationshipType } from './Relationships.ts';
 import { Styles } from './Styles.ts';
 
-export type OfficeDocumentChild = Paragraph | DocumentComponent;
+export type OfficeDocumentChild = Paragraph | Table | DocumentComponent;
 
 export class OfficeDocument extends XmlFile {
 	public static contentType = ContentType.mainDocument;
@@ -90,14 +91,18 @@ export class OfficeDocument extends XmlFile {
 			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
 		);
 		const dom = await archive.readXml(location);
-		const children = evaluateXPathToNodes(`/*/${QNS.w}body/${QNS.w}p`, dom).map((node) => {
-			switch (node.nodeName) {
-				case 'w:p':
-					return Paragraph.fromNode(node);
-				default:
-					throw new Error(`Unexpected child ${node.nodeName}`);
-			}
-		});
+		const children = evaluateXPathToNodes(`/*/${QNS.w}body/*`, dom)
+			.map((node) => {
+				switch (node.nodeName) {
+					case 'w:p':
+						return Paragraph.fromNode(node);
+					case 'w:tbl':
+						return Table.fromNode(node);
+					default:
+						return null;
+				}
+			})
+			.filter((x): x is Exclude<typeof x, null> => Boolean(x));
 		return new OfficeDocument(location, relationships, children);
 	}
 }

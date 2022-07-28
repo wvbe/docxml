@@ -134,7 +134,13 @@ api.document.set(
 			indentation, and more indentation on the first line. This is a paragraph with indentation, and
 			more indentation on the first line.
 		</Paragraph>
-		<Table style="TableGrid">
+		<Table
+			style="TableGrid"
+			borders={{ top: { type: 'wave' } }}
+			// @TODO make this work, fuksake
+			// width={{ length: 0, unit: 'auto' }}
+			columnWidths={[12000, 12000]}
+		>
 			<Row>
 				<Cell>
 					<Paragraph>A1</Paragraph>

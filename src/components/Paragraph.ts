@@ -1,4 +1,8 @@
-import { XmlComponent, XmlComponentClassDefinition } from '../classes/XmlComponent.ts';
+import {
+	AnyXmlComponent,
+	XmlComponent,
+	XmlComponentClassDefinition,
+} from '../classes/XmlComponent.ts';
 import { Ppr, PprI } from '../shared/ppr.ts';
 import { RprI } from '../shared/rpr.ts';
 import { create } from '../util/dom.ts';
@@ -18,7 +22,7 @@ export class Paragraph extends XmlComponent<ParagraphProps, ParagraphChild> {
 	public static children = [Text, TextAddition, TextDeletion] as XmlComponentClassDefinition[];
 	public static mixed = false;
 
-	public toNode(): Node {
+	public toNode(ancestry: AnyXmlComponent[] = []): Node {
 		return create(
 			`
 				element ${QNS.w}p {
@@ -29,7 +33,7 @@ export class Paragraph extends XmlComponent<ParagraphProps, ParagraphChild> {
 			`,
 			{
 				pPr: Ppr.toNode(this.props),
-				children: super.toNode(),
+				children: super.toNode(ancestry),
 			},
 		);
 	}

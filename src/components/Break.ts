@@ -1,4 +1,4 @@
-import { XmlComponent } from '../classes/XmlComponent.ts';
+import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
@@ -18,7 +18,8 @@ export class Break extends XmlComponent<BreakProps, BreakChild> {
 
 	public static mixed = false;
 
-	public toNode(): Node {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public toNode(_ancestry: AnyXmlComponent[]): Node {
 		return create(
 			`
 				element ${QNS.w}br {

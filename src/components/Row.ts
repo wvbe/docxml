@@ -1,4 +1,4 @@
-import { XmlComponent } from '../classes/XmlComponent.ts';
+import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
@@ -12,7 +12,7 @@ export class Row extends XmlComponent<RowProps, RowChild> {
 	public static children = [Cell];
 	public static mixed = false;
 
-	public toNode(): Node {
+	public toNode(ancestry: AnyXmlComponent[] = []): Node {
 		return create(
 			`
 				element ${QNS.w}tr {
@@ -21,7 +21,7 @@ export class Row extends XmlComponent<RowProps, RowChild> {
 				}
 			`,
 			{
-				children: super.toNode(),
+				children: super.toNode(ancestry),
 			},
 		);
 	}

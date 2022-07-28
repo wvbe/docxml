@@ -34,6 +34,12 @@ export interface XmlComponentClassDefinition<
 	fromNode(node: Node): C;
 }
 
+/**
+ * If an XML component is written to DOM, it could be represented by any node, or a flat string,
+ * or multiple of them.
+ */
+type XmlComponentNodes = string | Node | (string | Node)[];
+
 export class XmlComponent<
 	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
 	ChildGeneric extends AnyXmlComponent | string = never,
@@ -81,10 +87,10 @@ export class XmlComponent<
 	 * By default, an XML component would serialize to its children and string contents -- like a
 	 * fragment. Most components have an override to use specific OOXML elememnts, such as <w:p>.
 	 */
-	public toNode(): string | Node | (string | Node)[] {
+	public toNode(ancestry: AnyXmlComponent[] = []): XmlComponentNodes {
+		const anc = [this, ...ancestry];
 		return this.children.reduce<(string | Node)[]>((flat, child) => {
-			const s: string | Node | (string | Node)[] =
-				typeof child === 'string' ? child : child.toNode();
+			const s: XmlComponentNodes = typeof child === 'string' ? child : child.toNode(anc);
 			return Array.isArray(s) ? flat.concat(s) : [...flat, s];
 		}, []);
 	}

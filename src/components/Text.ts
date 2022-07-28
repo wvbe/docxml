@@ -1,9 +1,14 @@
-import { XmlComponent, XmlComponentClassDefinition } from '../classes/XmlComponent.ts';
+import {
+	AnyXmlComponent,
+	XmlComponent,
+	XmlComponentClassDefinition,
+} from '../classes/XmlComponent.ts';
 import { Rpr, RprI } from '../shared/rpr.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
 import { Break } from './Break.ts';
+import { TextDeletion } from './changes.ts';
 
 export type TextProps = RprI;
 
@@ -21,7 +26,9 @@ export class Text extends XmlComponent<TextProps, TextChild> {
 	];
 	public static mixed = true;
 
-	public toNode(asTextDeletion = false): Node {
+	public toNode(ancestry: AnyXmlComponent[] = []): Node {
+		const asTextDeletion = ancestry.some((ancestor) => ancestor instanceof TextDeletion);
+		const anc = [this, ...ancestry];
 		return create(
 			`
 				element ${QNS.w}r {
@@ -44,7 +51,7 @@ export class Text extends XmlComponent<TextProps, TextChild> {
 							},
 						);
 					}
-					return child.toNode();
+					return child.toNode(anc);
 				}),
 			},
 		);

@@ -1,4 +1,4 @@
-import { XmlComponent } from '../classes/XmlComponent.ts';
+import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
@@ -35,7 +35,7 @@ export class TextDeletion extends XmlComponent<TextChangeProps, TextChangeChild>
 	public static children = [Text];
 	public static mixed = false;
 
-	public toNode(): Node {
+	public toNode(ancestry: AnyXmlComponent[] = []): Node {
 		return create(
 			`
 				element ${QNS.w}del {
@@ -48,7 +48,7 @@ export class TextDeletion extends XmlComponent<TextChangeProps, TextChangeChild>
 			{
 				...this.props,
 				date: this.props.date.toISOString(),
-				children: this.children.map((child) => child.toNode(true)),
+				children: super.toNode(ancestry),
 			},
 		);
 	}
@@ -73,7 +73,7 @@ export class TextAddition extends XmlComponent<TextChangeProps, TextChangeChild>
 	public static children = [Text];
 	public static mixed = false;
 
-	public toNode(): Node {
+	public toNode(ancestry: AnyXmlComponent[] = []): Node {
 		return create(
 			`
 				element ${QNS.w}ins {
@@ -86,7 +86,7 @@ export class TextAddition extends XmlComponent<TextChangeProps, TextChangeChild>
 			{
 				...this.props,
 				date: this.props.date.toISOString(),
-				children: this.children.map((child) => child.toNode()),
+				children: super.toNode(ancestry),
 			},
 		);
 	}

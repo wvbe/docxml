@@ -1,30 +1,38 @@
-import { XmlComponent } from '../classes/XmlComponent.ts';
+import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
 import { Tblpr, TblprI } from '../shared/tblpr.ts';
+import { TwentiethPoint } from '../types.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
 import { Row } from './Row.ts';
-
 export type TableChild = Row;
 
-export type TableProps = TblprI;
+export type TableProps = TblprI & {
+	columnWidths?: null | TwentiethPoint[];
+};
 
 export class Table extends XmlComponent<TableProps, TableChild> {
 	public static children = [Row];
 	public static mixed = false;
 
-	public toNode(): Node {
+	public toNode(ancestry: AnyXmlComponent[] = []): Node {
 		return create(
 			`
 				element ${QNS.w}tbl {
 					$tblPr,
+					if (exists($columnWidths)) then element ${QNS.w}tblGrid {
+						for $columnWidth in array:flatten($columnWidths) return element ${QNS.w}gridCol {
+							attribute ${QNS.w}w { $columnWidth }
+						}
+					} else (),
 					for $child in $children
 						return $child
 				}
 			`,
 			{
 				tblPr: Tblpr.toNode(this.props),
-				children: super.toNode(),
+				columnWidths: this.props.columnWidths?.length ? this.props.columnWidths : null,
+				children: super.toNode(ancestry),
 			},
 		);
 	}
@@ -33,10 +41,13 @@ export class Table extends XmlComponent<TableProps, TableChild> {
 		return node.nodeName === 'w:tbl';
 	}
 	static fromNode(node: Node): Table {
-		const { children, tblpr } = evaluateXPathToMap(
+		const { children, tblpr, ...props } = evaluateXPathToMap(
 			`
 				map {
 					"tblpr": ./${QNS.w}tblPr,
+					"columnWidths": array {
+						./${QNS.w}tblGrid/${QNS.w}gridCol/@${QNS.w}w/number()
+					},
 					"children": array{ ./(${QNS.w}tr) }
 				}
 			`,
@@ -44,6 +55,7 @@ export class Table extends XmlComponent<TableProps, TableChild> {
 		) as { tblpr: Node; children: Node[] };
 		return new Table(
 			{
+				...props,
 				...Tblpr.fromNode(tblpr),
 			},
 			...children

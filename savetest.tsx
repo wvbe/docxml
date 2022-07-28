@@ -137,9 +137,9 @@ api.document.set(
 		<Table
 			style="TableGrid"
 			borders={{ top: { type: 'wave' } }}
+			columnWidths={[4500, 4500]}
 			// @TODO make this work, fuksake
 			// width={{ length: 0, unit: 'auto' }}
-			columnWidths={[12000, 12000]}
 		>
 			<Row>
 				<Cell>

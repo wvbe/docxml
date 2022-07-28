@@ -1,6 +1,7 @@
 import { OfficeDocumentChild } from '../bundle/OfficeDocument.ts';
 import { XmlComponent } from '../classes/XmlComponent.ts';
 import { Paragraph } from './Paragraph.ts';
+import { Table } from './Table.ts';
 
 export type DocumentChild = OfficeDocumentChild;
 
@@ -10,7 +11,7 @@ export type DocumentProps = { [key: string]: never };
  * http://officeopenxml.com/WPDocument.php
  */
 export class Document extends XmlComponent<DocumentProps, DocumentChild> {
-	public static children = [Paragraph];
+	public static children = [Paragraph, Table];
 	public static mixed = false;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

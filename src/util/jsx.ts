@@ -40,8 +40,11 @@ export function JSX<C extends XmlComponent>(
 					}
 					const isValid =
 						(Component.mixed && typeof child === 'string') ||
-						Component.children.includes(child.constructor as XmlComponentClassDefinition<never>);
+						Component.children.includes(child.constructor as XmlComponentClassDefinition<never>) ||
+						Component.children.includes(child.constructor.name);
 					if (!isValid) {
+						console.log(`Invalid child in ${Component.name}`);
+						console.log(child);
 						nodes.push(child);
 					} else {
 						const lastQueuedItem = nodes[nodes.length - 1];

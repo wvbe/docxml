@@ -1,6 +1,7 @@
 import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
 import { Tblpr, TblprI } from '../shared/tblpr.ts';
 import { TwentiethPoint } from '../types.ts';
+import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
@@ -13,8 +14,8 @@ export type TableProps = TblprI & {
 };
 
 export class Table extends XmlComponent<TableProps, TableChild> {
-	public static children = [Row];
-	public static mixed = false;
+	public static readonly children: string[] = [Row.name];
+	public static readonly mixed: boolean = false;
 
 	public toNode(ancestry: AnyXmlComponent[] = []): Node {
 		return create(
@@ -38,10 +39,10 @@ export class Table extends XmlComponent<TableProps, TableChild> {
 		);
 	}
 
-	static matchesNode(node: Node) {
+	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:tbl';
 	}
-	
+
 	static fromNode(node: Node): Table {
 		const { children, tblpr, ...props } = evaluateXPathToMap(
 			`
@@ -60,11 +61,7 @@ export class Table extends XmlComponent<TableProps, TableChild> {
 				...props,
 				...Tblpr.fromNode(tblpr),
 			},
-			...children
-				.map(
-					(node) => this.children.find((Child) => Child.matchesNode(node))?.fromNode(node) || null,
-				)
-				.filter((child): child is Exclude<typeof child, null> => !!child),
+			...createChildComponentsFromNodes<TableChild>(this.children, children),
 		);
 	}
 
@@ -140,3 +137,4 @@ export class Table extends XmlComponent<TableProps, TableChild> {
 		};
 	}
 }
+registerComponent(Table);

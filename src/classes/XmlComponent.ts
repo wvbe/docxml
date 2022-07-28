@@ -26,9 +26,7 @@ export interface XmlComponentClassDefinition<
 	C extends AnyXmlComponent | unknown = AnyXmlComponent,
 > {
 	new (props: XmlComponentProps<C>, ...children: XmlComponentChild<C>[]): C;
-	children: C extends AnyXmlComponent
-		? Array<XmlComponentClassDefinition<XmlComponentChild<C>> | string>
-		: unknown[];
+	children: string[];
 	mixed: boolean;
 	matchesNode(node: Node): boolean;
 	fromNode(node: Node): C;
@@ -48,13 +46,13 @@ export class XmlComponent<
 	 * Informs the JSX pragma which child components are allowed in this component.
 	 * The JSX pragma can use this to attempt repairs at invalidly nested children.
 	 */
-	public static children: (XmlComponentClassDefinition<unknown> | string)[] = [];
+	public static readonly children: string[] = [];
 
 	/**
 	 * Informs the JSX pragma on wether or not this component can contain text (string)
 	 * children. The JSX pragma can use this to attempt repairs at invalidly nested children.
 	 */
-	public static mixed = false;
+	public static readonly mixed: boolean = false;
 
 	/**
 	 * The props given to this component instance.

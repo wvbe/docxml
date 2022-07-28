@@ -1,4 +1,5 @@
 import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
+import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
@@ -11,9 +12,10 @@ export type CellProps = {
 	colSpan?: number | null;
 	rowSpan?: number | null;
 };
+
 export class Cell extends XmlComponent<CellProps, CellChild> {
-	public static children = [Paragraph, 'Table'];
-	public static mixed = false;
+	public static readonly children: string[] = [Paragraph.name, 'Table'];
+	public static readonly mixed: boolean = false;
 
 	public toNode(ancestry: AnyXmlComponent[] = []): Node {
 		const { width } = ancestry
@@ -47,7 +49,7 @@ export class Cell extends XmlComponent<CellProps, CellChild> {
 		);
 	}
 
-	static matchesNode(node: Node) {
+	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:tc';
 	}
 
@@ -60,13 +62,7 @@ export class Cell extends XmlComponent<CellProps, CellChild> {
 			`,
 			node,
 		) as { children: Node[] };
-		return new Cell(
-			{},
-			...children
-				.map(
-					(node) => this.children.find((Child) => Child.matchesNode(node))?.fromNode(node) || null,
-				)
-				.filter((child): child is Exclude<typeof child, null> => !!child),
-		);
+		return new Cell({}, ...createChildComponentsFromNodes<CellChild>(this.children, children));
 	}
 }
+registerComponent(Cell);

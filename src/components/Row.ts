@@ -1,4 +1,9 @@
-import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
+import {
+	AnyXmlComponent,
+	XmlComponent,
+	XmlComponentClassDefinition,
+} from '../classes/XmlComponent.ts';
+import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
@@ -9,8 +14,8 @@ export type RowChild = Cell;
 export type RowProps = { [key: string]: never };
 
 export class Row extends XmlComponent<RowProps, RowChild> {
-	public static children = [Cell];
-	public static mixed = false;
+	public static readonly children: string[] = [Cell.name];
+	public static readonly mixed: boolean = false;
 
 	public toNode(ancestry: AnyXmlComponent[] = []): Node {
 		return create(
@@ -26,7 +31,7 @@ export class Row extends XmlComponent<RowProps, RowChild> {
 		);
 	}
 
-	static matchesNode(node: Node) {
+	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:tr';
 	}
 
@@ -39,13 +44,7 @@ export class Row extends XmlComponent<RowProps, RowChild> {
 			`,
 			node,
 		) as { children: Node[] };
-		return new Row(
-			{},
-			...children
-				.map(
-					(node) => this.children.find((Child) => Child.matchesNode(node))?.fromNode(node) || null,
-				)
-				.filter((child): child is Exclude<typeof child, null> => !!child),
-		);
+		return new Row({}, ...createChildComponentsFromNodes<RowChild>(this.children, children));
 	}
 }
+registerComponent(Row as unknown as XmlComponentClassDefinition);

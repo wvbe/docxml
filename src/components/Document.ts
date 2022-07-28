@@ -11,8 +11,8 @@ export type DocumentProps = { [key: string]: never };
  * http://officeopenxml.com/WPDocument.php
  */
 export class Document extends XmlComponent<DocumentProps, DocumentChild> {
-	public static children = [Paragraph, Table];
-	public static mixed = false;
+	public static readonly children: string[] = [Paragraph.name, Table.name];
+	public static readonly mixed: boolean = false;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	static matchesNode(_node: Node) {

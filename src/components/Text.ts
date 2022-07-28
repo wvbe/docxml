@@ -1,9 +1,6 @@
-import {
-	AnyXmlComponent,
-	XmlComponent,
-	XmlComponentClassDefinition,
-} from '../classes/XmlComponent.ts';
+import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
 import { Rpr, RprI } from '../shared/rpr.ts';
+import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
@@ -20,11 +17,8 @@ export type TextChild = string | Break;
  * http://officeopenxml.com/WPtext.php
  */
 export class Text extends XmlComponent<TextProps, TextChild> {
-	public static children = [
-		// The static prop `children` on Break (`never[]`) is incompatible with XmlComponentClassDefinition :(
-		Break as unknown as XmlComponentClassDefinition,
-	];
-	public static mixed = true;
+	public static readonly children: string[] = [Break.name];
+	public static readonly mixed: boolean = true;
 
 	public toNode(ancestry: AnyXmlComponent[] = []): Node {
 		const asTextDeletion = ancestry.some((ancestor) => ancestor instanceof TextDeletion);
@@ -57,9 +51,10 @@ export class Text extends XmlComponent<TextProps, TextChild> {
 		);
 	}
 
-	static matchesNode(node: Node) {
+	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:r';
 	}
+
 	static fromNode(node: Node): Text {
 		const { children, rpr } = evaluateXPathToMap(
 			`
@@ -78,13 +73,8 @@ export class Text extends XmlComponent<TextProps, TextChild> {
 		) as { rpr: Node; children: Node[] };
 		return new Text(
 			Rpr.fromNode(rpr),
-			...(children
-				.map((node) =>
-					node.nodeType === 3
-						? node.nodeValue
-						: this.children.find((Child) => Child.matchesNode(node))?.fromNode(node) || null,
-				)
-				.filter((child): child is Exclude<typeof child, null> => !!child) as TextChild[]),
+			...createChildComponentsFromNodes<TextChild>(this.children, children),
 		);
 	}
 }
+registerComponent(Text);

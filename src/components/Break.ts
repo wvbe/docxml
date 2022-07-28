@@ -1,4 +1,5 @@
 import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
+import { registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
@@ -14,9 +15,9 @@ export type BreakProps = {
  * http://www.datypic.com/sc/ooxml/e-w_br-1.html
  */
 export class Break extends XmlComponent<BreakProps, BreakChild> {
-	public static children = [];
+	public static readonly children: string[] = [];
 
-	public static mixed = false;
+	public static readonly mixed: boolean = false;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public toNode(_ancestry: AnyXmlComponent[]): Node {
@@ -34,7 +35,7 @@ export class Break extends XmlComponent<BreakProps, BreakChild> {
 		);
 	}
 
-	static matchesNode(node: Node) {
+	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:br';
 	}
 
@@ -52,3 +53,5 @@ export class Break extends XmlComponent<BreakProps, BreakChild> {
 		);
 	}
 }
+
+registerComponent(Break);

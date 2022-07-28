@@ -1,10 +1,7 @@
-import {
-	AnyXmlComponent,
-	XmlComponent,
-	XmlComponentClassDefinition,
-} from '../classes/XmlComponent.ts';
+import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
 import { Ppr, PprI } from '../shared/ppr.ts';
 import { RprI } from '../shared/rpr.ts';
+import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
@@ -19,8 +16,8 @@ export type ParagraphProps = PprI & RprI;
  * http://officeopenxml.com/WPparagraph.php
  */
 export class Paragraph extends XmlComponent<ParagraphProps, ParagraphChild> {
-	public static children = [Text, TextAddition, TextDeletion] as XmlComponentClassDefinition[];
-	public static mixed = false;
+	public static readonly children: string[] = [Text.name, TextAddition.name, TextDeletion.name];
+	public static readonly mixed: boolean = false;
 
 	public toNode(ancestry: AnyXmlComponent[] = []): Node {
 		return create(
@@ -38,32 +35,29 @@ export class Paragraph extends XmlComponent<ParagraphProps, ParagraphChild> {
 		);
 	}
 
-	static matchesNode(node: Node) {
+	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:p';
 	}
 
 	static fromNode(node: Node): Paragraph {
-		const { childNodes, ppr, ...props } = evaluateXPathToMap(
+		const { children, ppr, ...props } = evaluateXPathToMap(
 			`
 				map {
 					"ppr": ./${QNS.w}pPr,
 					"style": ./${QNS.w}pPr/${QNS.w}pStyle/@${QNS.w}val/string(),
-					"childNodes": array{ ./(${QNS.w}r | ${QNS.w}del | ${QNS.w}ins) }
+					"children": array{ ./(${QNS.w}r | ${QNS.w}del | ${QNS.w}ins) }
 				}
 			`,
 			node,
-		) as { ppr: Node; childNodes: Node[]; style?: string };
-
-		const children = childNodes
-			.map((node) => this.children.find((Child) => Child.matchesNode(node))?.fromNode(node) || null)
-			.filter((child): child is Exclude<typeof child, null> => !!child);
+		) as { ppr: Node; children: Node[]; style?: string };
 
 		return new Paragraph(
 			{
 				...Ppr.fromNode(ppr),
 				...props,
 			},
-			...(children as ParagraphChild[]),
+			...createChildComponentsFromNodes<ParagraphChild>(this.children, children),
 		);
 	}
 }
+registerComponent(Paragraph);

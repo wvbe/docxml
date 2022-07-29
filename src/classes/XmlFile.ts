@@ -44,7 +44,7 @@ export class XmlFile {
 	 */
 	public toArchive(archive: ZipArchive): void {
 		this.getRelated().forEach((related) => {
-			archive.writeXml(related.location, related.toNode());
+			archive.addXmlFile(related.location, related.toNode());
 		});
 	}
 

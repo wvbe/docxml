@@ -5,6 +5,7 @@
 	},
 	"tasks": {
 		"test": "deno test -A src",
-		"lint": "deno lint src && npm run lint"
+		"lint": "deno lint src && npm run lint",
+		"precommit": "deno task lint && deno task test"
 	}
 }

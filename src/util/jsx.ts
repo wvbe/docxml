@@ -42,9 +42,9 @@ export function JSX<C extends XmlComponent>(
 						(Component.mixed && typeof child === 'string') ||
 						Component.children.includes(child.constructor.name);
 					if (!isValid) {
-						// if (child.constructor === Text && Component === Text) {
-						// 	Object.assign((child as Text).props, props);
-						// }
+						if (child.constructor === Text && Component === Text) {
+							Object.assign((child as Text).props, props);
+						}
 						nodes.push(child);
 					} else {
 						const lastQueuedItem = nodes[nodes.length - 1];

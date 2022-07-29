@@ -17,7 +17,7 @@ export type Options = {
  * `src/bundle/`.
  */
 export class Docx {
-	private readonly contentTypes: ContentTypes;
+	public readonly contentTypes: ContentTypes;
 
 	public readonly relationships: Relationships;
 

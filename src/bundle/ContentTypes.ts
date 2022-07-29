@@ -12,7 +12,7 @@ type ContentTypeOverride = {
 
 type ContentTypeDefault = {
 	extension: string;
-	contentType: ContentType;
+	contentType: string | ContentType;
 };
 
 export class ContentTypes extends XmlFile {
@@ -32,7 +32,7 @@ export class ContentTypes extends XmlFile {
 		super(location);
 	}
 
-	public addDefault(extension: string, contentType: ContentType) {
+	public addDefault(extension: string, contentType: string | ContentType) {
 		const exists = this.defaults.findIndex((item) => item.extension === extension);
 		if (exists >= 0) {
 			this.defaults.splice(exists, 1);

@@ -42,6 +42,9 @@ export function JSX<C extends XmlComponent>(
 						(Component.mixed && typeof child === 'string') ||
 						Component.children.includes(child.constructor.name);
 					if (!isValid) {
+						// if (child.constructor === Text && Component === Text) {
+						// 	Object.assign((child as Text).props, props);
+						// }
 						nodes.push(child);
 					} else {
 						const lastQueuedItem = nodes[nodes.length - 1];
@@ -72,5 +75,6 @@ export function JSX<C extends XmlComponent>(
 				}
 				return new Component(node.props || {}, ...(node.children || []));
 			})
+			.filter((node) => !(node.constructor === Text && !(node as Text).children.length))
 	);
 }

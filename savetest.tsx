@@ -114,6 +114,17 @@ api.document.set(
 			.
 		</Paragraph>
 		<Paragraph>
+			Some{' '}
+			<TextAddition author={'Wybe the Formatter'} date={new Date()} id={7} isBold>
+				additions
+			</TextAddition>{' '}
+			and{' '}
+			<TextDeletion author={'Wybe the Formatter'} date={new Date()} id={8} isItalic>
+				removals
+			</TextDeletion>
+			each with their own inline formatting
+		</Paragraph>
+		<Paragraph>
 			<Text>
 				There are two
 				<Break />

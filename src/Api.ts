@@ -1,4 +1,4 @@
-import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.4/mod.ts';
+import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.5/mod.ts';
 
 import type { XmlComponent } from './classes/XmlComponent.ts';
 import { Docx, Options } from './Docx.ts';

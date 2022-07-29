@@ -50,6 +50,47 @@ describe('JSX fixing', () => {
 		);
 		expect(<Foo>bar</Foo>).toEqual([new Foo({}, new Text({}, 'bar'))]);
 	});
+
+	it('cleans up empty <Text>', () => {
+		expect(
+			<Text>
+				<Text>bar</Text>
+			</Text>,
+		).toEqual(<Text>bar</Text>);
+	});
+
+	it('inherits formatting options onto <Text>', () => {
+		expect(
+			<Foo>
+				<Text isItalic isBold>
+					Beep
+					{
+						// JSX Keep this text node
+						' '
+					}
+					<Text>boop</Text>
+					{
+						// JSX Keep this text node
+						' '
+					}
+					baap
+				</Text>
+			</Foo>,
+		).toEqual(
+			<Foo>
+				<Text isItalic isBold>
+					Beep{' '}
+				</Text>
+				<Text isItalic isBold>
+					boop
+				</Text>
+				<Text isItalic isBold>
+					{' '}
+					baap
+				</Text>
+			</Foo>,
+		);
+	});
 });
 
 run();

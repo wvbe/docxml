@@ -1,5 +1,5 @@
 import {
-	AnyXmlComponent,
+	AnyXmlComponentAncestor,
 	XmlComponent,
 	XmlComponentClassDefinition,
 } from '../classes/XmlComponent.ts';
@@ -40,7 +40,7 @@ export class TextDeletion extends XmlComponent<TextChangeProps, TextChangeChild>
 	public static readonly children: string[] = [Text.name];
 	public static readonly mixed: boolean = false;
 
-	public toNode(ancestry: AnyXmlComponent[] = []): Node {
+	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}del {
@@ -74,7 +74,7 @@ export class TextAddition extends XmlComponent<TextChangeProps, TextChangeChild>
 	public static readonly children: string[] = [Text.name];
 	public static readonly mixed: boolean = false;
 
-	public toNode(ancestry: AnyXmlComponent[] = []): Node {
+	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}ins {

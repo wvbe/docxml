@@ -1,4 +1,4 @@
-import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
+import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
 import { Rpr, RprI } from '../shared/rpr.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
@@ -6,10 +6,11 @@ import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
 import { Break } from './Break.ts';
 import { TextDeletion } from './changes.ts';
+import { Image } from './Image.ts';
 
 export type TextProps = RprI;
 
-export type TextChild = string | Break;
+export type TextChild = string | Break | Image;
 
 /**
  * Text run
@@ -17,10 +18,10 @@ export type TextChild = string | Break;
  * http://officeopenxml.com/WPtext.php
  */
 export class Text extends XmlComponent<TextProps, TextChild> {
-	public static readonly children: string[] = [Break.name];
+	public static readonly children: string[] = [Break.name, Image.name];
 	public static readonly mixed: boolean = true;
 
-	public toNode(ancestry: AnyXmlComponent[] = []): Node {
+	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
 		const asTextDeletion = ancestry.some((ancestor) => ancestor instanceof TextDeletion);
 		const anc = [this, ...ancestry];
 		return create(

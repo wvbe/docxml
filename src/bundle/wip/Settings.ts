@@ -1,9 +1,9 @@
 import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 
-import { UnhandledXmlFile, XmlFile } from '../../classes/XmlFile.ts';
+import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
 import { ZipArchive } from '../../classes/ZipArchive.ts';
 import { ContentType } from '../../types.ts';
-import { Relationships } from '../Relationships.ts';
+import { File, Relationships } from '../Relationships.ts';
 
 export class Settings extends UnhandledXmlFile {
 	public static contentType = ContentType.settings;
@@ -15,7 +15,7 @@ export class Settings extends UnhandledXmlFile {
 		this.relationships = relationships;
 	}
 
-	public getRelated(): XmlFile[] {
+	public getRelated(): File[] {
 		return [this, ...this.relationships.getRelated()];
 	}
 

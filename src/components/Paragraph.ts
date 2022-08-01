@@ -1,4 +1,4 @@
-import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
+import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
 import { Ppr, PprI } from '../shared/ppr.ts';
 import { RprI } from '../shared/rpr.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
@@ -19,7 +19,7 @@ export class Paragraph extends XmlComponent<ParagraphProps, ParagraphChild> {
 	public static readonly children: string[] = [Text.name, TextAddition.name, TextDeletion.name];
 	public static readonly mixed: boolean = false;
 
-	public toNode(ancestry: AnyXmlComponent[] = []): Node {
+	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}p {

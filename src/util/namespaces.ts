@@ -41,6 +41,10 @@ export const NamespaceUri = {
 	dcterms: 'http://purl.org/dc/terms/',
 	dcmitype: 'http://purl.org/dc/dcmitype/',
 	xsi: 'http://www.w3.org/2001/XMLSchema-instance',
+
+	// Drawings/images
+	a: 'http://schemas.openxmlformats.org/drawingml/2006/main',
+	pic: 'http://schemas.openxmlformats.org/drawingml/2006/picture',
 };
 
 /**

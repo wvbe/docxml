@@ -1,4 +1,4 @@
-import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
+import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
 import { registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
@@ -20,7 +20,7 @@ export class Break extends XmlComponent<BreakProps, BreakChild> {
 	public static readonly mixed: boolean = false;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toNode(_ancestry: AnyXmlComponent[]): Node {
+	public toNode(_ancestry: AnyXmlComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}br {

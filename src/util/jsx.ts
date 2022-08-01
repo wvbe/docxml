@@ -78,3 +78,6 @@ export function JSX<C extends XmlComponent>(
 			.filter((node) => !(node.constructor === Text && !(node as Text).children.length))
 	);
 }
+
+// @TODO this should give code intelligence, and currently it doesn't:
+//JSX(Text, { });

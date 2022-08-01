@@ -1,3 +1,7 @@
+import type { OfficeDocument } from '../bundle/OfficeDocument.ts';
+
+export type AnyXmlComponentAncestor = OfficeDocument | AnyXmlComponent;
+
 /**
  * A component-like approach to DOCX body content, such as paragraphs, lists, list items, tables,
  * etc.
@@ -85,7 +89,7 @@ export class XmlComponent<
 	 * By default, an XML component would serialize to its children and string contents -- like a
 	 * fragment. Most components have an override to use specific OOXML elememnts, such as <w:p>.
 	 */
-	public toNode(ancestry: AnyXmlComponent[] = []): XmlComponentNodes {
+	public toNode(ancestry: Array<AnyXmlComponentAncestor>): XmlComponentNodes {
 		const anc = [this, ...ancestry];
 		return this.children.reduce<(string | Node)[]>((flat, child) => {
 			const s: XmlComponentNodes = typeof child === 'string' ? child : child.toNode(anc);

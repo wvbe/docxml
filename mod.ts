@@ -3,6 +3,7 @@ export * from './src/components/Break.ts';
 export * from './src/components/Cell.ts';
 export * from './src/components/changes.ts';
 export * from './src/components/Document.ts';
+export * from './src/components/Image.ts';
 export * from './src/components/Paragraph.ts';
 export * from './src/components/Row.ts';
 export * from './src/components/Table.ts';

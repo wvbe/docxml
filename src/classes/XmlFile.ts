@@ -1,10 +1,19 @@
+import { ContentType } from '../types.ts';
 import { parse } from '../util/dom.ts';
-import { ZipArchive } from './ZipArchive.ts';
+import type { BinaryFile } from './BinaryFile.ts';
+import type { ZipArchive } from './ZipArchive.ts';
 
 export class XmlFile {
+	public static readonly contentType: ContentType = ContentType.xml;
+
 	public readonly location: string;
+
 	protected constructor(location: string) {
 		this.location = location;
+	}
+
+	public get contentType(): ContentType {
+		return (this.constructor as typeof XmlFile).contentType;
 	}
 
 	/**
@@ -28,7 +37,7 @@ export class XmlFile {
 	 *
 	 * By default only returns the instance itself but no other related instances.
 	 */
-	public getRelated(): XmlFile[] {
+	public getRelated(): Array<XmlFile | BinaryFile> {
 		return [this];
 	}
 
@@ -44,7 +53,11 @@ export class XmlFile {
 	 */
 	public toArchive(archive: ZipArchive): void {
 		this.getRelated().forEach((related) => {
-			archive.addXmlFile(related.location, related.toNode());
+			if (related instanceof XmlFile) {
+				archive.addXmlFile(related.location, related.toNode());
+			} else {
+				related.toArchive(archive);
+			}
 		});
 	}
 

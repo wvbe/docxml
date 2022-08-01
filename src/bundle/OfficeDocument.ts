@@ -9,7 +9,7 @@ import { BundleFile, ContentType } from '../types.ts';
 import { create } from '../util/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../util/namespaces.ts';
 import { evaluateXPathToNodes } from '../util/xquery.ts';
-import { Relationships, RelationshipType } from './Relationships.ts';
+import { File, Relationships, RelationshipType } from './Relationships.ts';
 import { Styles } from './Styles.ts';
 
 export type OfficeDocumentChild = Paragraph | Table | DocumentComponent;
@@ -56,11 +56,12 @@ export class OfficeDocument extends XmlFile {
 			`
 				<w:document ${ALL_NAMESPACE_DECLARATIONS}>
 					<w:body>
-					{$children}</w:body>
+						{$children}
+					</w:body>
 				</w:document>
 			`,
 			{
-				children: this.children.map((child) => child.toNode()),
+				children: this.children.map((child) => child.toNode([this])),
 			},
 			true,
 		);
@@ -78,7 +79,7 @@ export class OfficeDocument extends XmlFile {
 		this.append(children);
 	}
 
-	public getRelated(): XmlFile[] {
+	public getRelated(): File[] {
 		return [this, ...this.relationships.getRelated()];
 	}
 

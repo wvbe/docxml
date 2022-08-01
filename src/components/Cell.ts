@@ -1,4 +1,4 @@
-import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
+import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
@@ -14,10 +14,10 @@ export type CellProps = {
 };
 
 export class Cell extends XmlComponent<CellProps, CellChild> {
-	public static readonly children: string[] = [Paragraph.name, 'Table'];
+	public static readonly children: string[] = ['Paragraph', 'Table'];
 	public static readonly mixed: boolean = false;
 
-	public toNode(ancestry: AnyXmlComponent[] = []): Node {
+	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
 		const { width } = ancestry
 			.find((ancestor): ancestor is Table => ancestor instanceof Table)
 			?.getCellProperties(this) || { width: 0 };

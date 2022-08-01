@@ -52,6 +52,19 @@ export class Styles extends XmlFile {
 		super(location);
 	}
 
+	public ensureStyle(styleName: string) {
+		if (styleName && !this.hasStyle(styleName)) {
+			// if (verbose) {
+			console.error(`⚠️ Referencing unknown style "${styleName}"`);
+			// }
+			this.add({
+				id: styleName,
+				type: 'paragraph',
+				basedOn: 'Normal',
+			});
+		}
+	}
+
 	public isEmpty() {
 		return !this.styles.length && !this.latentStyles.length;
 	}

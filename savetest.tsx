@@ -4,6 +4,7 @@ import API, {
 	Break,
 	Cell,
 	Document,
+	Image,
 	Paragraph,
 	Row,
 	Table,
@@ -169,6 +170,17 @@ api.document.set(
 				</Cell>
 			</Row>
 		</Table>
+		<Paragraph>
+			<Text>
+				<Image
+					data={Deno.readFile('test/spacekees.jpeg')}
+					width={1943100}
+					height={1943100}
+					title="Title"
+					alt="Description"
+				/>
+			</Text>
+		</Paragraph>
 	</Document>,
 );
 

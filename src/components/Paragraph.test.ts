@@ -34,7 +34,7 @@ describe('Paragraph from XML', () => {
 	});
 
 	it('serializes correctly', () => {
-		expect(serialize(paragraph.toNode())).toBe(
+		expect(serialize(paragraph.toNode([]))).toBe(
 			`
 				<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					<pPr>
@@ -67,7 +67,7 @@ describe('Paragraph with style change', () => {
 		},
 	});
 	it('serializes correctly', () => {
-		expect(serialize(paragraph.toNode())).toBe(
+		expect(serialize(paragraph.toNode([]))).toBe(
 			`
 				<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					<pPr>

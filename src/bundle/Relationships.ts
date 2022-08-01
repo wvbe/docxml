@@ -1,5 +1,6 @@
 import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 
+import { BinaryFile } from '../classes/BinaryFile.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
 import { ContentType } from '../types.ts';
@@ -24,6 +25,9 @@ export enum RelationshipType {
 	webSettings = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/webSettings',
 	customXml = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml',
 	people = 'http://schemas.microsoft.com/office/2011/relationships/people',
+
+	image = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
+
 	/**
 	 * @deprecated This is an external relationship, which are not implemneted yet
 	 */
@@ -35,7 +39,10 @@ export type RelationshipMeta = {
 	type: RelationshipType;
 	target: string;
 	isExternal: boolean;
+	isBinary: boolean;
 };
+
+export type File = XmlFile | BinaryFile;
 
 export class Relationships extends XmlFile {
 	public static contentType = ContentType.relationships;
@@ -48,12 +55,12 @@ export class Relationships extends XmlFile {
 	/**
 	 * Class instances of all relationships that are not "external"
 	 */
-	private instances: Map<string, XmlFile>;
+	private instances: Map<string, File>;
 
 	public constructor(
 		location: string,
 		meta: RelationshipMeta[] = [],
-		instances = new Map<string, XmlFile>(),
+		instances = new Map<string, File>(),
 	) {
 		super(location);
 		this.meta = meta;
@@ -64,7 +71,7 @@ export class Relationships extends XmlFile {
 	 * Find a relationship instance (eg. a OfficeDocument) by its metadata. The metadata would tell you what type
 	 * of relationship it is.
 	 */
-	public find<R extends XmlFile = XmlFile>(cb: (meta: RelationshipMeta) => boolean): R | null {
+	public find<R extends File = File>(cb: (meta: RelationshipMeta) => boolean): R | null {
 		const id = this.meta.find(cb)?.id;
 		if (!id) {
 			return null;
@@ -72,18 +79,23 @@ export class Relationships extends XmlFile {
 		return (this.instances.get(id) as R) || null;
 	}
 
-	public add(type: RelationshipType, instance: XmlFile) {
+	/**
+	 * Create a new relationship and return the new identifier
+	 */
+	public add(type: RelationshipType, instance: File): string {
 		const meta: RelationshipMeta = {
 			id: createRandomId(),
 			type,
 			target: instance.location,
 			isExternal: false,
+			isBinary: type === RelationshipType.image,
 		};
 		this.meta.push(meta);
 		this.instances.set(meta.id, instance);
+		return meta.id;
 	}
 
-	public ensureRelationship<C extends XmlFile>(type: RelationshipType, createInstance: () => C): C {
+	public ensureRelationship<C extends File>(type: RelationshipType, createInstance: () => C): C {
 		let doc = this.find<C>((meta) => meta.type === type);
 		if (!doc) {
 			doc = createInstance();
@@ -120,16 +132,20 @@ export class Relationships extends XmlFile {
 		);
 	}
 
-	public getRelated() {
-		const related: XmlFile[] = [this];
+	public getRelated(): File[] {
+		const related: File[] = [this];
 		this.instances.forEach((inst) => {
 			if (inst.isEmpty()) {
 				// Empty styles.xml? No thank you!
 				return;
 			}
-			related.splice(related.length, 0, ...inst.getRelated());
+			related.splice(0, 0, ...inst.getRelated());
 		});
 		return related;
+	}
+
+	public toArchive(archive: ZipArchive): void {
+		super.toArchive(archive);
 	}
 
 	/**
@@ -151,6 +167,7 @@ export class Relationships extends XmlFile {
 			target: meta.isExternal
 				? meta.target
 				: path.posix.join(path.posix.dirname(location), '..', meta.target),
+			isBinary: meta.type === RelationshipType.image,
 		})) as RelationshipMeta[];
 
 		const instances = (
@@ -159,16 +176,18 @@ export class Relationships extends XmlFile {
 					.filter((meta) => !meta.isExternal)
 					.map(async (meta) => ({
 						...meta,
-						instance: await castRelationshipToClass(archive, {
-							type: meta.type,
-							target: meta.target,
-						}),
+						instance: meta.isBinary
+							? await BinaryFile.fromArchive(archive, meta.target)
+							: await castRelationshipToClass(archive, {
+									type: meta.type,
+									target: meta.target,
+							  }),
 					})),
 			)
 		).reduce((map, { id, instance }) => {
 			map.set(id, instance);
 			return map;
-		}, new Map<string, XmlFile>());
+		}, new Map<string, File>());
 
 		return new Relationships(location, meta, instances);
 	}

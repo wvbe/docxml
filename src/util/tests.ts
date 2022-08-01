@@ -7,6 +7,7 @@ import { expect } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { castRelationshipToClass } from '../bundle/index.ts';
 import { RelationshipType } from '../bundle/Relationships.ts';
+import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
 import { Docx } from '../Docx.ts';
 import { evaluateXPathToBoolean } from './xquery.ts';
@@ -82,7 +83,7 @@ export function expectDocxToContain(
 	if (!document) {
 		throw new Error('$$$ Unknown relationship ' + relationshipType);
 	}
-	const dom = document.$$$toNode();
+	const dom = (document as XmlFile).$$$toNode();
 
 	return expect(evaluateXPathToBoolean(test, dom.documentElement)).toBeTruthy();
 }
@@ -95,7 +96,7 @@ export function expectDocumentToContain(
 	if (!document) {
 		throw new Error('$$$ Unknown relationship ' + relationshipType);
 	}
-	const dom = document.$$$toNode();
+	const dom = (document as XmlFile).$$$toNode();
 
 	return expect(evaluateXPathToBoolean(test, dom.documentElement)).toBeTruthy();
 }

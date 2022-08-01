@@ -1,4 +1,4 @@
-import { AnyXmlComponent, XmlComponent } from '../classes/XmlComponent.ts';
+import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
 import { Tblpr, TblprI } from '../shared/tblpr.ts';
 import { TwentiethPoint } from '../types.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
@@ -17,7 +17,7 @@ export class Table extends XmlComponent<TableProps, TableChild> {
 	public static readonly children: string[] = [Row.name];
 	public static readonly mixed: boolean = false;
 
-	public toNode(ancestry: AnyXmlComponent[] = []): Node {
+	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}tbl {

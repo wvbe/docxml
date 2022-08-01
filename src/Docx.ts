@@ -3,10 +3,11 @@ import { OfficeDocument, OfficeDocumentChild } from './bundle/OfficeDocument.ts'
 import { Relationships, RelationshipType } from './bundle/Relationships.ts';
 import { AnyXmlComponent } from './classes/XmlComponent.ts';
 import { ZipArchive } from './classes/ZipArchive.ts';
+import { Image } from './components/Image.ts';
 import { BundleFile } from './types.ts';
 
 export type Options = {
-	verbose?: boolean;
+	[key: string]: never;
 };
 
 /**
@@ -35,6 +36,7 @@ export class Docx {
 		Object.defineProperty(this, '_officeDocument', { enumerable: false });
 	}
 
+	// Also not enumerable
 	private _officeDocument: OfficeDocument | null = null;
 	public get document() {
 		// @TODO Invalidate the cached _officeDocument whenever that relationship changes.
@@ -48,39 +50,39 @@ export class Docx {
 	}
 
 	public toArchive(): ZipArchive {
-		const { verbose } = this.options;
-
-		// Better late than never
-		this.relationships
-			.getRelated()
-			.filter((related) => !(related instanceof Relationships))
-			.forEach((related) => {
-				// deno-lint-ignore no-explicit-any
-				this.contentTypes.addOverride(related.location, (related.constructor as any).contentType);
-			});
-
 		const styles = this.document.styles;
+		const relationships = this.document.relationships;
 		this.document.children.forEach(function walk(component: AnyXmlComponent | string) {
 			if (typeof component === 'string') {
 				return;
 			}
+
 			const styleName = component.props.style as string;
-			if (styleName && !styles.hasStyle(styleName)) {
-				if (verbose) {
-					console.error(`⚠️ Referencing unknown style "${styleName}"`);
-				}
-				styles.add({
-					id: styleName,
-					type: 'paragraph',
-					basedOn: 'Normal',
-				});
+			if (styleName) {
+				styles.ensureStyle(styleName);
 			}
+
+			if (component instanceof Image) {
+				component.ensureRelationship(relationships);
+			}
+
 			component.children.forEach(walk);
 		});
 
 		const archive = new ZipArchive();
-		this.contentTypes.toArchive(archive);
+
 		this.relationships.toArchive(archive);
+
+		// New relationships may be created as they are necessary for serializing content, eg. for
+		// images.
+		this.relationships
+			.getRelated()
+			.filter((related) => !(related instanceof Relationships))
+			.forEach((related) => {
+				this.contentTypes.addOverride(related.location, related.contentType);
+			});
+
+		this.contentTypes.toArchive(archive);
 		return archive;
 	}
 

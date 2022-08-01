@@ -8,3 +8,8 @@ let i = 0;
 export function createRandomId() {
 	return `random-id-${++i}`;
 }
+
+let uniqueNumericIdentifiers = 0;
+export function createUniqueNumericIdentifier() {
+	return ++uniqueNumericIdentifiers;
+}

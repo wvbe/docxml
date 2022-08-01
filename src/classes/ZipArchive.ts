@@ -5,6 +5,9 @@ import { parse, serialize } from '../util/dom.ts';
 export class ZipArchive {
 	public readonly location?: string;
 
+	/**
+	 * @deprecated Try not to use this directly.
+	 */
 	public readonly zip: JSZip;
 
 	constructor(zip?: JSZip) {
@@ -29,12 +32,19 @@ export class ZipArchive {
 		}
 	}
 
-	public asUint8Array(): Promise<Uint8Array> {
+	public async asUint8Array(): Promise<Uint8Array> {
+		for await (const { location, promise } of this.promisedBinaryFiles) {
+			this.zip.addFile(location, await promise);
+		}
 		return this.zip.generateAsync({ type: 'uint8array' });
 	}
 
 	public async readXml(location: string): Promise<Document> {
 		return parse(await this.readText(location));
+	}
+
+	public readBinary(location: string): Promise<Uint8Array> {
+		return this.zip.file(location).async('uint8array');
 	}
 
 	/**
@@ -57,6 +67,19 @@ export class ZipArchive {
 	 */
 	public addTextFile(location: string, contents: string): this {
 		this.zip.addFile(location, contents);
+		return this;
+	}
+	private readonly promisedBinaryFiles: { location: string; promise: Promise<Uint8Array> }[] = [];
+
+	/**
+	 * Create a new text file in the DOCX archive.
+	 *
+	 * In order to keep this method (and methods that use it, eg. Docx#toArchive) synchronous,
+	 * we're only writing a promise to memory for now and leave the asynchronous operations for
+	 * output time (see also ZipArchive#toUint8Array).
+	 */
+	public addBinaryFile(location: string, promised: Promise<Uint8Array>): this {
+		this.promisedBinaryFiles.push({ location, promise: promised });
 		return this;
 	}
 

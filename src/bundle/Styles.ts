@@ -45,8 +45,8 @@ type LatentStyle = {
 export class Styles extends XmlFile {
 	public static contentType = ContentType.styles;
 
-	private latentStyles: LatentStyle[] = [];
-	private styles: Style[] = [];
+	private readonly latentStyles: LatentStyle[] = [];
+	private readonly styles: Style[] = [];
 
 	public constructor(location: string) {
 		super(location);

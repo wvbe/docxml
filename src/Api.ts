@@ -18,7 +18,7 @@ export class Api<PropsGeneric extends { [key: string]: unknown }> {
 	public readonly JSX = JSX;
 	public static readonly JSX = JSX;
 
-	private readonly options: Options;
+	public readonly options: Options;
 	public readonly docx: Docx;
 
 	constructor(options: Options = {}) {

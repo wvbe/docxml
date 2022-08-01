@@ -21,7 +21,7 @@ export class Docx {
 
 	public readonly relationships: Relationships;
 
-	private options: Options;
+	private readonly options: Options;
 
 	private constructor(
 		options: Options,

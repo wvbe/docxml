@@ -1,6 +1,7 @@
 import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
+import { cm } from '../util/length.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
 import { Paragraph } from './Paragraph.ts';
@@ -20,7 +21,7 @@ export class Cell extends XmlComponent<CellProps, CellChild> {
 	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
 		const { width } = ancestry
 			.find((ancestor): ancestor is Table => ancestor instanceof Table)
-			?.getCellProperties(this) || { width: 0 };
+			?.getCellProperties(this) || { width: cm(0) };
 
 		const children = super.toNode(ancestry) as Node[];
 		if (!(this.children[this.children.length - 1] instanceof Paragraph)) {
@@ -44,7 +45,7 @@ export class Cell extends XmlComponent<CellProps, CellChild> {
 			`,
 			{
 				children,
-				width,
+				width: width.twip,
 			},
 		);
 	}

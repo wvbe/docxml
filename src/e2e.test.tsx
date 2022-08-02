@@ -5,6 +5,7 @@ import { describe, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 import { Document, JSX, Paragraph, Text } from '../mod.ts';
 import { RelationshipType } from './bundle/Relationships.ts';
 import { Docx } from './Docx.ts';
+import { twip } from './util/length.ts';
 import { QNS } from './util/namespaces.ts';
 import { expectDocumentToContain, expectDocxToContain } from './util/tests.ts';
 
@@ -100,7 +101,7 @@ describe('End-to-end', () => {
 			id: 'test',
 			paragraphProperties: {
 				indentation: {
-					firstLine: 420,
+					firstLine: twip(420),
 				},
 			},
 		});

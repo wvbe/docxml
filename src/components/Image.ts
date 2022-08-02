@@ -8,19 +8,18 @@ import {
 import { registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { createUniqueNumericIdentifier } from '../util/identifiers.ts';
+import { UniversalSize } from '../util/length.ts';
 import { NamespaceUri, QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
 
 export type ImageChild = never;
 
-type EnglishMetricUnit = number;
-
 export type ImageProps = {
 	data: Promise<Uint8Array>;
 	title?: null | string;
 	alt?: null | string;
-	width: EnglishMetricUnit;
-	height: EnglishMetricUnit;
+	width: UniversalSize;
+	height: UniversalSize;
 };
 
 /**
@@ -112,8 +111,8 @@ export class Image extends XmlComponent<ImageProps, ImageChild> {
 			{
 				identifier: createUniqueNumericIdentifier(),
 				relationshipId: this.relationshipId,
-				width: this.props.width,
-				height: this.props.height,
+				width: Math.round(this.props.width.emu),
+				height: Math.round(this.props.height.emu),
 				name: this.props.title || '',
 				desc: this.props.alt || '',
 			},

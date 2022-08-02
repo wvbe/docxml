@@ -1,16 +1,17 @@
 import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
 import { Tblpr, TblprI } from '../shared/tblpr.ts';
-import { TwentiethPoint } from '../types.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
+import { twip, UniversalSize } from '../util/length.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
 import { Cell } from './Cell.ts';
 import { Row } from './Row.ts';
+
 export type TableChild = Row;
 
 export type TableProps = TblprI & {
-	columnWidths?: null | TwentiethPoint[];
+	columnWidths?: null | UniversalSize[];
 };
 
 export class Table extends XmlComponent<TableProps, TableChild> {
@@ -33,7 +34,9 @@ export class Table extends XmlComponent<TableProps, TableChild> {
 			`,
 			{
 				tblPr: Tblpr.toNode(this.props),
-				columnWidths: this.props.columnWidths?.length ? this.props.columnWidths : null,
+				columnWidths: this.props.columnWidths?.length
+					? this.props.columnWidths.map((width) => width.twip)
+					: null,
 				children: super.toNode(ancestry),
 			},
 		);
@@ -55,10 +58,10 @@ export class Table extends XmlComponent<TableProps, TableChild> {
 				}
 			`,
 			node,
-		) as { tblpr: Node; children: Node[] };
+		) as { tblpr: Node; children: Node[]; columnWidths: number[] };
 		return new Table(
 			{
-				...props,
+				columnWidths: props.columnWidths.map((size: number) => twip(size)),
 				...Tblpr.fromNode(tblpr),
 			},
 			...createChildComponentsFromNodes<TableChild>(this.children, children),
@@ -120,15 +123,12 @@ export class Table extends XmlComponent<TableProps, TableChild> {
 	 * @deprecated unreliable function behavior, work in progress!
 	 */
 	public getCellProperties(cell: Cell) {
-		if (!this.props.columnWidths) {
-			return 0;
-		}
 		const row = this.children.find((row) => row.children.includes(cell));
 		if (!row) {
 			throw new Error('Cell is not part of this table');
 		}
 		const nthColumn = row.children.indexOf(cell);
-		const width = this.props.columnWidths[nthColumn] || 0;
+		const width = (this.props.columnWidths || [])[nthColumn] || twip(0);
 
 		return {
 			width,

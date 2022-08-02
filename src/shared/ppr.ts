@@ -1,5 +1,5 @@
-import { TwentiethPoint } from '../types.ts';
 import { create } from '../util/dom.ts';
+import { twip, UniversalSize } from '../util/length.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../util/xquery.ts';
 import { Rpr, RprI } from './rpr.ts';
@@ -8,21 +8,21 @@ type PprII = {
 	alignment?: 'left' | 'right' | 'center' | 'both' | null;
 	style?: string | null;
 	spacing?: null | {
-		before?: TwentiethPoint | null;
-		after?: TwentiethPoint | null;
-		line?: TwentiethPoint | null;
+		before?: UniversalSize | null;
+		after?: UniversalSize | null;
+		line?: UniversalSize | null;
 		lineRule?: 'atLeast' | 'exactly' | 'auto' | null;
 		afterAutoSpacing?: boolean | null;
 		beforeAutoSpacing?: boolean | null;
 	};
 	indentation?: null | {
-		left?: TwentiethPoint | null;
+		left?: UniversalSize | null;
 		leftChars?: number | null;
-		right?: TwentiethPoint | null;
+		right?: UniversalSize | null;
 		rightChars?: number | null;
-		hanging?: TwentiethPoint | null;
+		hanging?: UniversalSize | null;
 		hangingChars?: number | null;
-		firstLine?: TwentiethPoint | null;
+		firstLine?: UniversalSize | null;
 		firstLineChars?: number | null;
 	};
 	change?:
@@ -52,7 +52,7 @@ export class Ppr {
 	}
 
 	public static fromNode(node?: Node | null): PprI {
-		const ppr = node
+		const data = node
 			? evaluateXPathToMap(
 					`
 				map {
@@ -89,14 +89,37 @@ export class Ppr {
 			  ) || {}
 			: {};
 
+		// Sad but necessary.
+		if (data.spacing?.before) {
+			data.spacing.before = twip(data.spacing.before);
+		}
+		if (data.spacing?.after) {
+			data.spacing.after = twip(data.spacing.after);
+		}
+		if (data.spacing?.line) {
+			data.spacing.line = twip(data.spacing.line);
+		}
+		if (data.indentation?.left) {
+			data.indentation.left = twip(data.indentation.left);
+		}
+		if (data.indentation?.right) {
+			data.indentation.right = twip(data.indentation.right);
+		}
+		if (data.indentation?.hanging) {
+			data.indentation.hanging = twip(data.indentation.hanging);
+		}
+		if (data.indentation?.firstLine) {
+			data.indentation.firstLine = twip(data.indentation.firstLine);
+		}
+
 		return {
-			...ppr,
+			...data,
 			...Rpr.fromNode(node && evaluateXPathToFirstNode(`./${QNS.w}rPr`, node)),
-			change: ppr.change
+			change: data.change
 				? {
-						...ppr.change,
-						date: new Date(ppr.change.date),
-						...this.fromNode(ppr.change._node),
+						...data.change,
+						date: new Date(data.change.date),
+						...this.fromNode(data.change._node),
 						_node: undefined,
 				  }
 				: null,
@@ -175,10 +198,21 @@ export class Ppr {
 			{
 				style: ppr.style || null,
 				alignment: ppr.alignment || null,
-				indentation: ppr.indentation || null,
+				indentation: ppr.indentation
+					? {
+							...ppr.indentation,
+							left: ppr.indentation.left?.twip || null,
+							right: ppr.indentation.right?.twip || null,
+							hanging: ppr.indentation.hanging?.twip || null,
+							firstLine: ppr.indentation.firstLine?.twip || null,
+					  }
+					: null,
 				spacing: ppr.spacing
 					? {
 							...ppr.spacing,
+							before: ppr.spacing.before?.twip || null,
+							after: ppr.spacing.after?.twip || null,
+							line: ppr.spacing.line?.twip || null,
 							lineRule: ppr.spacing.lineRule || null,
 					  }
 					: null,

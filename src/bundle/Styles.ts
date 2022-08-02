@@ -54,9 +54,6 @@ export class Styles extends XmlFile {
 
 	public ensureStyle(styleName: string) {
 		if (styleName && !this.hasStyle(styleName)) {
-			// if (verbose) {
-			console.error(`⚠️ Referencing unknown style "${styleName}"`);
-			// }
 			this.add({
 				id: styleName,
 				type: 'paragraph',
@@ -119,12 +116,14 @@ export class Styles extends XmlFile {
 				</w:styles>
 			`,
 			{
-				styles: this.styles.map((style) => ({
-					...style,
-					ppr: Ppr.toNode((style as ParagraphStyle).paragraphProperties),
-					rpr: Rpr.toNode((style as ParagraphStyle).textProperties),
-					tblpr: Tblpr.toNode((style as TableStyle).tableProperties),
-				})),
+				styles: this.styles.map(
+					({ paragraphProperties, textProperties, tableProperties, ...style }) => ({
+						...style,
+						ppr: Ppr.toNode(paragraphProperties as ParagraphStyle['paragraphProperties']),
+						rpr: Rpr.toNode(textProperties as ParagraphStyle['textProperties']),
+						tblpr: Tblpr.toNode(tableProperties as TableStyle['tableProperties']),
+					}),
+				),
 				latentStyles: this.latentStyles,
 			},
 			true,

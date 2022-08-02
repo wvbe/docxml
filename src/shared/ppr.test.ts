@@ -1,6 +1,7 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { create } from '../util/dom.ts';
+import { hpt, twip } from '../util/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../util/namespaces.ts';
 import { Ppr, PprI } from './ppr.ts';
 
@@ -30,13 +31,13 @@ describe('Paragraph formatting', () => {
 		verticalAlign: 'subscript',
 		spacing: {
 			before: null,
-			after: 200,
-			line: 276,
+			after: twip(200),
+			line: twip(276),
 			lineRule: 'auto',
 			afterAutoSpacing: null,
 			beforeAutoSpacing: null,
 		},
-		fontSize: 19,
+		fontSize: hpt(19),
 	};
 
 	const parsedTwice = Ppr.fromNode(Ppr.toNode(parsedOnce));

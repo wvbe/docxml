@@ -206,6 +206,9 @@ type TableBorder = {
 
 export type TblprI = {
 	style?: string | null;
+	/**
+	 * @deprecated Use columnWidths instead
+	 */
 	width?:
 		| null
 		| number

@@ -3,6 +3,7 @@
 import API, {
 	Break,
 	Cell,
+	cm,
 	Document,
 	Image,
 	Paragraph,
@@ -21,8 +22,8 @@ api.styles.add({
 	name: 'Normal',
 	paragraphProperties: {
 		spacing: {
-			before: 150,
-			after: 150,
+			before: cm(0.25),
+			after: cm(0.25),
 		},
 	},
 });
@@ -45,7 +46,6 @@ api.styles.add({
 	name: 'Table Grid',
 	basedOn: 'TableNormal',
 	isDefault: null,
-	paragraphProperties: { change: null },
 	textProperties: {},
 	tableProperties: {
 		style: null,
@@ -77,7 +77,7 @@ api.document.set(
 			The text in this paragraph is unstyled, but it's pilcrow sign (you can display it by enabling
 			the "¶" toolbar button) is bold and italic.
 		</Paragraph>
-		<Paragraph alignment="center" spacing={{ before: 96 * 20, after: 96 * 20 }}>
+		<Paragraph alignment="center" spacing={{ before: cm(4), after: cm(4) }}>
 			This text is center aligned, and the paragraph is given a lot of space before/after it
 		</Paragraph>
 		<Paragraph>
@@ -95,11 +95,11 @@ api.document.set(
 		<Paragraph style={$skeet}>
 			This is a paragraph with a named style "skeet", shown in UI as "Skeet of the boop".
 		</Paragraph>
-		<Paragraph />
+		<Paragraph>---</Paragraph>
 		<Paragraph change={{ id: 0, author: 'Wybe', date: new Date(), style: $skeet }}>
 			This paragraph went from "Skeet of the boop" to being a normal paragraph.
 		</Paragraph>
-		<Paragraph />
+		<Paragraph>---</Paragraph>
 		<Paragraph style={$skeet} change={{ id: 0, author: 'Hans Pannekoek', date: new Date() }}>
 			This paragraph went from a normal paragraph to "Skeet of the boop".
 		</Paragraph>
@@ -136,8 +136,8 @@ api.document.set(
 		</Paragraph>
 		<Paragraph
 			indentation={{
-				left: 24 * 20,
-				firstLine: 48 * 20,
+				left: cm(1),
+				firstLine: cm(1),
 			}}
 			alignment="both"
 		>
@@ -149,7 +149,7 @@ api.document.set(
 		<Table
 			style="TableGrid"
 			borders={{ top: { type: 'wave' } }}
-			columnWidths={[4500, 4500]}
+			columnWidths={[cm(3), cm(3)]}
 			// @TODO make this work, fuksake
 			// width={{ length: 0, unit: 'auto' }}
 		>
@@ -174,8 +174,8 @@ api.document.set(
 			<Text>
 				<Image
 					data={Deno.readFile('test/spacekees.jpeg')}
-					width={1943100}
-					height={1943100}
+					width={cm(16)}
+					height={cm(16)}
 					title="Title"
 					alt="Description"
 				/>

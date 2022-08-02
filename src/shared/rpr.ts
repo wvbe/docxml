@@ -1,5 +1,5 @@
-import { HalfPoint } from '../types.ts';
 import { create } from '../util/dom.ts';
+import { hpt, UniversalSize } from '../util/length.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToMap } from '../util/xquery.ts';
 
@@ -41,7 +41,7 @@ export type RprI = {
 	/**
 	 * In twentieth points
 	 */
-	fontSize?: HalfPoint | null;
+	fontSize?: UniversalSize | null;
 };
 
 export class Rpr {
@@ -50,23 +50,30 @@ export class Rpr {
 	}
 
 	public static fromNode(node?: Node | null): RprI {
-		return node
-			? evaluateXPathToMap(
-					`
-						map {
-							"color": ./${QNS.w}color/@${QNS.w}val/string(),
-							"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
-							"isBold": boolean(./${QNS.w}b),
-							"isItalic": boolean(./${QNS.w}i),
-							"isSmallCaps": boolean(./${QNS.w}smallCaps),
-							"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
-							"language": ./${QNS.w}lang/@${QNS.w}val/string(),
-							"fontSize": ./${QNS.w}sz/@${QNS.w}val/number()
-						}
-					`,
-					node,
-			  )
-			: {};
+		if (!node) {
+			return {};
+		}
+		const data = evaluateXPathToMap(
+			`
+				map {
+					"color": ./${QNS.w}color/@${QNS.w}val/string(),
+					"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
+					"isBold": boolean(./${QNS.w}b),
+					"isItalic": boolean(./${QNS.w}i),
+					"isSmallCaps": boolean(./${QNS.w}smallCaps),
+					"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
+					"language": ./${QNS.w}lang/@${QNS.w}val/string(),
+					"fontSize": ./${QNS.w}sz/@${QNS.w}val/number()
+				}
+			`,
+			node,
+		);
+
+		if (data.fontSize !== undefined && data.fontSize !== null) {
+			data.fontSize = hpt(data.fontSize);
+		}
+
+		return data;
 	}
 
 	public static toNode(rpr: RprI = {}): Node {
@@ -101,7 +108,7 @@ export class Rpr {
 				verticalAlign: rpr.verticalAlign || null,
 				isItalic: rpr.isItalic || false,
 				isSmallCaps: rpr.isSmallCaps || false,
-				fontSize: rpr.fontSize || null,
+				fontSize: rpr.fontSize ? rpr.fontSize.hpt : null,
 			},
 		);
 	}

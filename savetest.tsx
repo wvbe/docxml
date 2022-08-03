@@ -121,9 +121,27 @@ api.document.set(
 			</TextAddition>{' '}
 			and{' '}
 			<TextDeletion author={'Wybe the Formatter'} date={new Date()} id={8} isItalic>
-				removals
+				removals{' '}
 			</TextDeletion>
 			each with their own inline formatting
+		</Paragraph>
+		<Paragraph>
+			<TextAddition author="Wybe the First" date={new Date('2001-01-01')} id={30}>
+				This paragraph is added entirely at first, and{' '}
+				<TextDeletion author="Wybe the Second" date={new Date('2002-01-01')} id={31}>
+					later part of it is removed
+				</TextDeletion>
+				.
+			</TextAddition>
+		</Paragraph>
+		<Paragraph>
+			<TextDeletion author="Wybe the Second" date={new Date('2002-01-01')} id={31}>
+				This paragraph is removed entirely, but{' '}
+				<TextAddition author="Wybe the First" date={new Date('2001-01-01')} id={30}>
+					it has a partial insertion at first
+				</TextAddition>
+				.
+			</TextDeletion>
 		</Paragraph>
 		<Paragraph>
 			<Text>

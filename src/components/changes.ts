@@ -5,7 +5,7 @@ import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { Text } from './Text.ts';
 
-export type TextChangeChild = Text;
+export type TextDeletionChild = Text | TextDeletion | TextAddition;
 
 export type TextChangeProps = {
 	id: number;
@@ -32,8 +32,8 @@ function textChangeFromNode(node: Node) {
 	} as TextChangeProps & { children: Node[] };
 }
 
-export class TextDeletion extends Component<TextChangeProps, TextChangeChild> {
-	public static readonly children: string[] = [Text.name];
+export class TextDeletion extends Component<TextChangeProps, TextDeletionChild> {
+	public static readonly children: string[] = [Text.name, this.name, 'TextAddition'];
 	public static readonly mixed: boolean = false;
 
 	public toNode(ancestry: ComponentAncestor[]): Node {
@@ -61,13 +61,15 @@ export class TextDeletion extends Component<TextChangeProps, TextChangeChild> {
 		const { children, ...props } = textChangeFromNode(node);
 		return new TextDeletion(
 			props,
-			...createChildComponentsFromNodes<TextChangeChild>(this.children, children),
+			...createChildComponentsFromNodes<TextDeletionChild>(this.children, children),
 		);
 	}
 }
 
-export class TextAddition extends Component<TextChangeProps, TextChangeChild> {
-	public static readonly children: string[] = [Text.name];
+export type TextAdditionChild = Text | TextAddition | TextDeletion;
+
+export class TextAddition extends Component<TextChangeProps, TextAdditionChild> {
+	public static readonly children: string[] = [Text.name, this.name, TextDeletion.name];
 	public static readonly mixed: boolean = false;
 
 	public toNode(ancestry: ComponentAncestor[]): Node {
@@ -95,7 +97,7 @@ export class TextAddition extends Component<TextChangeProps, TextChangeChild> {
 		const { children, ...props } = textChangeFromNode(node);
 		return new TextAddition(
 			props,
-			...createChildComponentsFromNodes<TextChangeChild>(this.children, children),
+			...createChildComponentsFromNodes<TextDeletionChild>(this.children, children),
 		);
 	}
 }

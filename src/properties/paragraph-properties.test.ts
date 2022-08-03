@@ -3,10 +3,14 @@ import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.
 import { create } from '../util/dom.ts';
 import { hpt, twip } from '../util/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../util/namespaces.ts';
-import { Ppr, PprI } from './ppr.ts';
+import {
+	ParagraphProperties,
+	paragraphPropertiesFromNode,
+	paragraphPropertiesToNode,
+} from './paragraph-properties.ts';
 
 describe('Paragraph formatting', () => {
-	const parsedOnce = Ppr.fromNode(
+	const parsedOnce = paragraphPropertiesFromNode(
 		create(`
 			<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
 				<w:pStyle w:val="Header" />
@@ -22,7 +26,7 @@ describe('Paragraph formatting', () => {
 		`),
 	);
 
-	const hardcodedExpectation: PprI = {
+	const hardcodedExpectation: ParagraphProperties = {
 		alignment: null,
 		style: 'Header',
 		language: 'en-GB',
@@ -40,8 +44,8 @@ describe('Paragraph formatting', () => {
 		fontSize: hpt(19),
 	};
 
-	const parsedTwice = Ppr.fromNode(Ppr.toNode(parsedOnce));
-	(Object.keys(hardcodedExpectation) as Array<keyof PprI>).forEach((prop) => {
+	const parsedTwice = paragraphPropertiesFromNode(paragraphPropertiesToNode(parsedOnce));
+	(Object.keys(hardcodedExpectation) as Array<keyof ParagraphProperties>).forEach((prop) => {
 		it(prop, () => {
 			expect(parsedOnce[prop]).toEqual(parsedTwice[prop]);
 			// ps: The prop could fail to parse in the same way twice

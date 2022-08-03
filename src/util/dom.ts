@@ -11,6 +11,11 @@ import {
 
 import { evaluateXPathToFirstNode, INodesFactory, XQUERY_3_1_LANGUAGE } from './xquery.ts';
 
+/**
+ * All the known namespace URIs by their preferred prefix.
+ *
+ * @todo Cull the namespaces that are not used anywhere
+ */
 export const NamespaceUri = {
 	aink: 'http://schemas.microsoft.com/office/drawing/2016/ink',
 	am3d: 'http://schemas.microsoft.com/office/drawing/2017/model3d',
@@ -81,8 +86,9 @@ export function serialize(node: Node | Document) {
 }
 
 /**
- * PArse an XML string to DOM using Slimdom's own parser function, but with the "standard"
- * typing that Deno has for Node and Document.
+ * Parse an XML string to DOM using Slimdom's own parser function, but with the "standard"
+ * typing that Deno has for Node and Document -- so that type matching is not complicated further
+ * down the line.
  */
 export function parse(xml: string) {
 	return parseXmlDocument(xml) as unknown as Document;
@@ -90,10 +96,16 @@ export function parse(xml: string) {
 
 type UnknownObject = { [key: string]: unknown };
 
+/**
+ * Create a new XML DOM node using XQuery.
+ */
 export function create(query: string, variables?: UnknownObject, asDocument?: false): Node;
+/**
+ * Create a new XML DOM element using XQuery, and return it as a Document.
+ */
 export function create(query: string, variables: UnknownObject, asDocument: true): Document;
 /**
- * Create a new element using XQuery.
+ * Create a new XML DOM node using XQuery.
  *
  * For example:
  *   const el = create(`<derp>{$nerf}</derp>`, { nerf: 'skeet' });
@@ -119,12 +131,18 @@ export function create(
 	return node;
 }
 
+/**
+ * @deprecated This constant may be removed in the future. Use specific namespaces or `QNS` when you can.
+ */
 export const ALL_NAMESPACE_DECLARATIONS = Object.keys(NamespaceUri)
 	.map((prefix) => `xmlns:${prefix}="${NamespaceUri[prefix as keyof typeof NamespaceUri]}"`)
 	.join(' ');
 
-// const QXMLNS = 'Q{http://www.w3.org/2000/xmlns/}';
-
+/**
+ * Run an XQuery Update Facility expression, maybe even repeatedly, which can change an existing DOM.
+ *
+ * @deprecated Not used anywhere, may be removed in the future
+ */
 export async function xquf(dom: Node | Document, expression: string, times = 1) {
 	while (times-- > 0) {
 		executePendingUpdateList(

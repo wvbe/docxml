@@ -4,7 +4,7 @@ import { Relationships, RelationshipType } from './bundle/Relationships.ts';
 import { AnyXmlComponent } from './classes/XmlComponent.ts';
 import { ZipArchive } from './classes/ZipArchive.ts';
 import { Image } from './components/Image.ts';
-import { BundleFile } from './types.ts';
+import { BundleFile } from './enums.ts';
 
 export type Options = {
 	[key: string]: never;

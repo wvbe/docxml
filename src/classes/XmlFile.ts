@@ -1,4 +1,4 @@
-import { ContentType } from '../types.ts';
+import { ContentType } from '../enums.ts';
 import { parse } from '../util/dom.ts';
 import type { BinaryFile } from './BinaryFile.ts';
 import type { ZipArchive } from './ZipArchive.ts';

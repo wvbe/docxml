@@ -9,7 +9,7 @@ import { evaluateXPathToMap } from '../util/xquery.ts';
  * Serializes to the <w:rPr> element.
  *   https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_rPr_topic_ID0EIEKM.html
  */
-export type RprI = {
+export type TextProperties = {
 	color?: string | null;
 	verticalAlign?: 'baseline' | 'subscript' | 'superscript' | null;
 	isUnderlined?:
@@ -44,17 +44,12 @@ export type RprI = {
 	fontSize?: UniversalSize | null;
 };
 
-export class Rpr {
-	private constructor() {
-		throw new Error('This class is not meant to be instantiated');
+export function textPropertiesFromNode(node?: Node | null): TextProperties {
+	if (!node) {
+		return {};
 	}
-
-	public static fromNode(node?: Node | null): RprI {
-		if (!node) {
-			return {};
-		}
-		const data = evaluateXPathToMap(
-			`
+	const data = evaluateXPathToMap(
+		`
 				map {
 					"color": ./${QNS.w}color/@${QNS.w}val/string(),
 					"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
@@ -66,19 +61,19 @@ export class Rpr {
 					"fontSize": ./${QNS.w}sz/@${QNS.w}val/number()
 				}
 			`,
-			node,
-		);
+		node,
+	);
 
-		if (data.fontSize !== undefined && data.fontSize !== null) {
-			data.fontSize = hpt(data.fontSize);
-		}
-
-		return data;
+	if (data.fontSize !== undefined && data.fontSize !== null) {
+		data.fontSize = hpt(data.fontSize);
 	}
 
-	public static toNode(rpr: RprI = {}): Node {
-		return create(
-			`
+	return data;
+}
+
+export function textPropertiesToNode(data: TextProperties = {}): Node {
+	return create(
+		`
 				element ${QNS.w}rPr {
 					if ($color) then element ${QNS.w}color {
 						attribute ${QNS.w}val { $color }
@@ -100,16 +95,15 @@ export class Rpr {
 					} else ()
 				}
 			`,
-			{
-				color: rpr.color || null,
-				isUnderlined: rpr.isUnderlined === true ? 'single' : rpr.isUnderlined || null,
-				language: rpr.language || null,
-				isBold: rpr.isBold || false,
-				verticalAlign: rpr.verticalAlign || null,
-				isItalic: rpr.isItalic || false,
-				isSmallCaps: rpr.isSmallCaps || false,
-				fontSize: rpr.fontSize ? rpr.fontSize.hpt : null,
-			},
-		);
-	}
+		{
+			color: data.color || null,
+			isUnderlined: data.isUnderlined === true ? 'single' : data.isUnderlined || null,
+			language: data.language || null,
+			isBold: data.isBold || false,
+			verticalAlign: data.verticalAlign || null,
+			isItalic: data.isItalic || false,
+			isSmallCaps: data.isSmallCaps || false,
+			fontSize: data.fontSize ? data.fontSize.hpt : null,
+		},
+	);
 }

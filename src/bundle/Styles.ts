@@ -1,9 +1,21 @@
 import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
-import { Ppr, PprI } from '../shared/ppr.ts';
-import { Rpr, RprI } from '../shared/rpr.ts';
-import { Tblpr, TblprI } from '../shared/tblpr.ts';
-import { ContentType } from '../types.ts';
+import { ContentType } from '../enums.ts';
+import {
+	ParagraphProperties,
+	paragraphPropertiesFromNode,
+	paragraphPropertiesToNode,
+} from '../properties/paragraph-properties.ts';
+import {
+	TableProperties,
+	tablePropertiesFromNode,
+	tablePropertiesToNode,
+} from '../properties/table-properties.ts';
+import {
+	TextProperties,
+	textPropertiesFromNode,
+	textPropertiesToNode,
+} from '../properties/text-properties.ts';
 import { create } from '../util/dom.ts';
 import { createRandomId } from '../util/identifiers.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../util/namespaces.ts';
@@ -17,13 +29,13 @@ type StyleCommons = {
 };
 type ParagraphStyle = {
 	type: 'paragraph';
-	paragraphProperties?: PprI;
-	textProperties?: RprI;
+	paragraphProperties?: ParagraphProperties;
+	textProperties?: TextProperties;
 	tableProperties?: null;
 };
 type TableStyle = {
 	type: 'table';
-	tableProperties?: TblprI;
+	tableProperties?: TableProperties;
 	paragraphProperties?: null;
 	textProperties?: null;
 };
@@ -119,9 +131,11 @@ export class Styles extends XmlFile {
 				styles: this.styles.map(
 					({ paragraphProperties, textProperties, tableProperties, ...style }) => ({
 						...style,
-						ppr: Ppr.toNode(paragraphProperties as ParagraphStyle['paragraphProperties']),
-						rpr: Rpr.toNode(textProperties as ParagraphStyle['textProperties']),
-						tblpr: Tblpr.toNode(tableProperties as TableStyle['tableProperties']),
+						ppr: paragraphPropertiesToNode(
+							paragraphProperties as ParagraphStyle['paragraphProperties'],
+						),
+						rpr: textPropertiesToNode(textProperties as ParagraphStyle['textProperties']),
+						tblpr: tablePropertiesToNode(tableProperties as TableStyle['tableProperties']),
 					}),
 				),
 				latentStyles: this.latentStyles,
@@ -133,7 +147,7 @@ export class Styles extends XmlFile {
 	public add(properties: Omit<Style, 'id'> & { id?: string }) {
 		const style = {
 			...properties,
-			id: properties.id || properties.name?.replace(/[^a-zA-Z0-9]/g, '') || createRandomId(),
+			id: properties.id || properties.name?.replace(/[^a-zA-Z0-9]/g, '') || createRandomId('style'),
 		} as Style;
 		this.styles.push(style);
 		return style.id;
@@ -179,9 +193,9 @@ export class Styles extends XmlFile {
 		).forEach(({ ppr, rpr, tblpr, ...json }) =>
 			instance.add({
 				...json,
-				paragraphProperties: Ppr.fromNode(ppr),
-				textProperties: Rpr.fromNode(rpr),
-				tableProperties: Tblpr.fromNode(tblpr),
+				paragraphProperties: paragraphPropertiesFromNode(ppr),
+				textProperties: textPropertiesFromNode(rpr),
+				tableProperties: tablePropertiesFromNode(tblpr),
 			}),
 		);
 

@@ -1,5 +1,5 @@
 import { File } from '../bundle/Relationships.ts';
-import { ContentType } from '../types.ts';
+import { ContentType } from '../enums.ts';
 import { ZipArchive } from './ZipArchive.ts';
 
 type BinaryFileReader = () => Promise<Uint8Array>;

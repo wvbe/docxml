@@ -1,6 +1,6 @@
 import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
 import { ZipArchive } from '../../classes/ZipArchive.ts';
-import { ContentType } from '../../types.ts';
+import { ContentType } from '../../enums.ts';
 
 export class WebSettings extends UnhandledXmlFile {
 	public static contentType = ContentType.webSettings;

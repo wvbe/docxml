@@ -15,10 +15,20 @@ function publicApiForBundle(docx: Docx) {
 }
 
 export class Api<PropsGeneric extends { [key: string]: unknown }> {
+	/**
+	 * The JSX pragma.
+	 */
 	public readonly JSX = JSX;
+
+	/**
+	 * The JSX pragma.
+	 *
+	 * @deprecated If you can, use the instance JSX property.
+	 */
 	public static readonly JSX = JSX;
 
 	public readonly options: Options;
+
 	public readonly docx: Docx;
 
 	constructor(options: Options = {}) {

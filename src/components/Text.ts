@@ -1,5 +1,9 @@
 import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
-import { Rpr, RprI } from '../shared/rpr.ts';
+import {
+	TextProperties,
+	textPropertiesFromNode,
+	textPropertiesToNode,
+} from '../properties/text-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
@@ -8,7 +12,7 @@ import { Break } from './Break.ts';
 import { TextDeletion } from './changes.ts';
 import { Image } from './Image.ts';
 
-export type TextProps = RprI;
+export type TextProps = TextProperties;
 
 export type TextChild = string | Break | Image;
 
@@ -33,7 +37,7 @@ export class Text extends XmlComponent<TextProps, TextChild> {
 				}
 			`,
 			{
-				rpr: Rpr.toNode(this.props),
+				rpr: textPropertiesToNode(this.props),
 				children: this.children.map((child) => {
 					if (typeof child === 'string') {
 						return create(
@@ -73,7 +77,7 @@ export class Text extends XmlComponent<TextProps, TextChild> {
 			node,
 		) as { rpr: Node; children: Node[] };
 		return new Text(
-			Rpr.fromNode(rpr),
+			textPropertiesFromNode(rpr),
 			...createChildComponentsFromNodes<TextChild>(this.children, children),
 		);
 	}

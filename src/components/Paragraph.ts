@@ -1,6 +1,10 @@
 import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
-import { Ppr, PprI } from '../shared/ppr.ts';
-import { RprI } from '../shared/rpr.ts';
+import {
+	ParagraphProperties,
+	paragraphPropertiesFromNode,
+	paragraphPropertiesToNode,
+} from '../properties/paragraph-properties.ts';
+import { TextProperties } from '../properties/text-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { QNS } from '../util/namespaces.ts';
@@ -10,7 +14,7 @@ import { Text } from './Text.ts';
 
 export type ParagraphChild = Text | TextAddition | TextDeletion;
 
-export type ParagraphProps = PprI & RprI;
+export type ParagraphProps = ParagraphProperties & TextProperties;
 
 /**
  * http://officeopenxml.com/WPparagraph.php
@@ -29,7 +33,7 @@ export class Paragraph extends XmlComponent<ParagraphProps, ParagraphChild> {
 				}
 			`,
 			{
-				pPr: Ppr.toNode(this.props),
+				pPr: paragraphPropertiesToNode(this.props),
 				children: super.toNode(ancestry),
 			},
 		);
@@ -53,7 +57,7 @@ export class Paragraph extends XmlComponent<ParagraphProps, ParagraphChild> {
 
 		return new Paragraph(
 			{
-				...Ppr.fromNode(ppr),
+				...paragraphPropertiesFromNode(ppr),
 				...props,
 			},
 			...createChildComponentsFromNodes<ParagraphChild>(this.children, children),

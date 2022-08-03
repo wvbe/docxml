@@ -204,7 +204,7 @@ type TableBorder = {
 	type?: null | TableBorderType;
 };
 
-export type TblprI = {
+export type TableProperties = {
 	style?: string | null;
 	/**
 	 * @deprecated Use columnWidths instead
@@ -236,15 +236,10 @@ export type TblprI = {
 	};
 };
 
-export class Tblpr {
-	private constructor() {
-		throw new Error('This class is not meant to be instantiated');
-	}
-
-	public static fromNode(node?: Node | null): TblprI {
-		return node
-			? evaluateXPathToMap(
-					`
+export function tablePropertiesFromNode(node?: Node | null): TableProperties {
+	return node
+		? evaluateXPathToMap(
+				`
 						map {
 							"style": ./${QNS.w}tblStyle/@${QNS.w}val/string(),
 							"look": ./${QNS.w}tblLook/map {
@@ -269,14 +264,14 @@ export class Tblpr {
 							}
 						}
 					`,
-					node,
-			  )
-			: {};
-	}
+				node,
+		  )
+		: {};
+}
 
-	public static toNode(tblpr: TblprI = {}): Node {
-		return create(
-			`
+export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
+	return create(
+		`
 				element ${QNS.w}tblPr {
 					if ($style) then element ${QNS.w}tblStyle {
 						attribute ${QNS.w}val { $style }
@@ -304,30 +299,29 @@ export class Tblpr {
 
 				}
 			`,
-			{
-				style: tblpr.style || null,
-				look: tblpr.look || null,
-				width:
-					typeof tblpr.width === 'string' && tblpr.width.endsWith('%')
-						? { length: tblpr.width, unit: 'pct' }
-						: typeof tblpr.width === 'number'
-						? {
-								length: tblpr.width,
-								unit: 'dxa',
-						  }
-						: tblpr.width || null,
-				borders: tblpr.borders
+		{
+			style: tblpr.style || null,
+			look: tblpr.look || null,
+			width:
+				typeof tblpr.width === 'string' && tblpr.width.endsWith('%')
+					? { length: tblpr.width, unit: 'pct' }
+					: typeof tblpr.width === 'number'
 					? {
-							top: null,
-							left: null,
-							right: null,
-							bottom: null,
-							insideH: null,
-							insideV: null,
-							...tblpr.borders,
+							length: tblpr.width,
+							unit: 'dxa',
 					  }
-					: null,
-			},
-		);
-	}
+					: tblpr.width || null,
+			borders: tblpr.borders
+				? {
+						top: null,
+						left: null,
+						right: null,
+						bottom: null,
+						insideH: null,
+						insideV: null,
+						...tblpr.borders,
+				  }
+				: null,
+		},
+	);
 }

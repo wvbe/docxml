@@ -5,7 +5,7 @@ import { ZipArchive } from '../classes/ZipArchive.ts';
 import type { Document as DocumentComponent } from '../components/Document.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Table } from '../components/Table.ts';
-import { BundleFile, ContentType } from '../types.ts';
+import { BundleFile, ContentType } from '../enums.ts';
 import { create } from '../util/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../util/namespaces.ts';
 import { evaluateXPathToNodes } from '../util/xquery.ts';

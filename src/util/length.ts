@@ -10,6 +10,15 @@ export type UniversalSize = {
 	 */
 	emu: number;
 	hpt: number;
+	/**
+	 * OOXML uses 20th points sometimes, meaning that the "real" font size is actually 20 times smaller
+	 * than what you'd write in XML -- a value of "240" means 12pt in MS Word terms.
+	 *
+	 * Also known as 1/1440th of an inch.
+	 *
+	 * Also known as "twips" or ST_TwipsMeasure
+	 *   http://www.datypic.com/sc/ooxml/t-w_ST_TwipsMeasure.html
+	 */
 	twip: number;
 	cm: number;
 	inch: number;

@@ -1,5 +1,9 @@
 import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
-import { Tblpr, TblprI } from '../shared/tblpr.ts';
+import {
+	TableProperties,
+	tablePropertiesFromNode,
+	tablePropertiesToNode,
+} from '../properties/table-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
 import { create } from '../util/dom.ts';
 import { twip, UniversalSize } from '../util/length.ts';
@@ -10,7 +14,7 @@ import { Row } from './Row.ts';
 
 export type TableChild = Row;
 
-export type TableProps = TblprI & {
+export type TableProps = TableProperties & {
 	columnWidths?: null | UniversalSize[];
 };
 
@@ -33,7 +37,7 @@ export class Table extends XmlComponent<TableProps, TableChild> {
 				}
 			`,
 			{
-				tblPr: Tblpr.toNode(this.props),
+				tblPr: tablePropertiesToNode(this.props),
 				columnWidths: this.props.columnWidths?.length
 					? this.props.columnWidths.map((width) => width.twip)
 					: null,
@@ -62,7 +66,7 @@ export class Table extends XmlComponent<TableProps, TableChild> {
 		return new Table(
 			{
 				columnWidths: props.columnWidths.map((size: number) => twip(size)),
-				...Tblpr.fromNode(tblpr),
+				...tablePropertiesFromNode(tblpr),
 			},
 			...createChildComponentsFromNodes<TableChild>(this.children, children),
 		);

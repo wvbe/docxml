@@ -105,3 +105,26 @@ const style = api.styles.add({
 });
 <Paragraph style={style}>Text is shown as bold and italic</Paragraph>;
 ```
+
+# Differences with actual MS Word DOCX
+
+Obviously `docxml` is a TypeScript project, which is already very different from how you would normally interact
+with a DOCX document. More meaningfully however, `docxml` is meant to make writing DOCX _easier_. For example;
+
+- All sizes are of type `UniversalSize`, which means it doesn't matter wether you input them as points, centimeters,
+  inches, 1/2, 1/8th or 1/20th points, English Metric Units, and so on.
+- The JSX pragma will try to correct components that would lead to invalid XML structures, by splitting the parents of
+  invalidly placed components recursively until the new position is valid.
+- Some of the words have changed, generally speaking `docxml` is more verbose than the DOCX verbiage.
+- Generally speaking `docxml` prefers formal (JS) references over references-by-identifier. The identifiers are
+  generated for you when the `.docx` file is written.
+- Especially in tables and images, a lot of formatting details are automatically applied. In a lot of cases there
+ is no API _yet_ to change them.
+
+
+# For contributors
+
+```sh
+# Run all unit tests
+deno task test
+```

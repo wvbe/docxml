@@ -2,9 +2,9 @@ import { create } from '../util/dom.ts';
 import { twip, UniversalSize } from '../util/length.ts';
 import { QNS } from '../util/namespaces.ts';
 import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../util/xquery.ts';
-import { Rpr, RprI } from './rpr.ts';
+import { TextProperties, textPropertiesFromNode, textPropertiesToNode } from './text-properties.ts';
 
-type PprII = {
+type ParagraphPropertiesI = {
 	alignment?: 'left' | 'right' | 'center' | 'both' | null;
 	style?: string | null;
 	spacing?: null | {
@@ -31,104 +31,99 @@ type PprII = {
 				id: number;
 				author: string;
 				date: Date;
-		  } & Omit<PprI, 'change'>);
+		  } & Omit<ParagraphProperties, 'change'>);
 };
 
 /**
  * All the formatting properties that can be given to a paragraph, _including_ the text run formatting
  * and change tracking information.
  *
- * @note that there should be no naming collisions between PprI and RprI!
+ * @note that there should be no naming collisions between ParagraphProperties and TextProperties!
  *
  * Serializes to the <w:pPr> element.
  *   http://officeopenxml.com/WPparagraphProperties.php
  *   http://www.datypic.com/sc/ooxml/e-w_pPr-6.html
  */
-export type PprI = RprI & PprII;
+export type ParagraphProperties = TextProperties & ParagraphPropertiesI;
 
-export class Ppr {
-	private constructor() {
-		throw new Error('This class is not meant to be instantiated');
-	}
+export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProperties {
+	const data = node
+		? evaluateXPathToMap(
+				`
+			map {
+				"alignment": ${QNS.w}jc/@${QNS.w}val/string(),
+				"style": ${QNS.w}pStyle/@${QNS.w}val/string(),
 
-	public static fromNode(node?: Node | null): PprI {
-		const data = node
-			? evaluateXPathToMap(
-					`
-				map {
-					"alignment": ${QNS.w}jc/@${QNS.w}val/string(),
-					"style": ${QNS.w}pStyle/@${QNS.w}val/string(),
-
-					"spacing": ${QNS.w}spacing/map {
-						"before": @${QNS.w}before/number(),
-						"after": @${QNS.w}after/number(),
-						"line": @${QNS.w}line/number(),
-						"lineRule": @${QNS.w}lineRule/string(),
-						"afterAutoSpacing": @${QNS.w}afterAutoSpacing/ooxml:is-on-off-enabled(.),
-						"beforeAutoSpacing": @${QNS.w}beforeAutoSpacing/ooxml:is-on-off-enabled(.)
-					},
-					"indentation": ${QNS.w}ind/map {
-						"left": @${QNS.w}left/number(),
-						"leftChars": @${QNS.w}leftChars/number(),
-						"right": @${QNS.w}right/number(),
-						"rightChars": @${QNS.w}rightChars/number(),
-						"hanging": @${QNS.w}hanging/number(),
-						"hangingChars": @${QNS.w}hangingChars/number(),
-						"firstLine": @${QNS.w}firstLine/number(),
-						"firstLineChars": @${QNS.w}firstLineChars/number()
-					},
-					"change": ${QNS.w}pPrChange/map {
-						"id": @${QNS.w}id/string(),
-						"author": @${QNS.w}author/string(),
-						"date": @${QNS.w}date/string(),
-						"_node": ./${QNS.w}pPr
-					}
+				"spacing": ${QNS.w}spacing/map {
+					"before": @${QNS.w}before/number(),
+					"after": @${QNS.w}after/number(),
+					"line": @${QNS.w}line/number(),
+					"lineRule": @${QNS.w}lineRule/string(),
+					"afterAutoSpacing": @${QNS.w}afterAutoSpacing/ooxml:is-on-off-enabled(.),
+					"beforeAutoSpacing": @${QNS.w}beforeAutoSpacing/ooxml:is-on-off-enabled(.)
+				},
+				"indentation": ${QNS.w}ind/map {
+					"left": @${QNS.w}left/number(),
+					"leftChars": @${QNS.w}leftChars/number(),
+					"right": @${QNS.w}right/number(),
+					"rightChars": @${QNS.w}rightChars/number(),
+					"hanging": @${QNS.w}hanging/number(),
+					"hangingChars": @${QNS.w}hangingChars/number(),
+					"firstLine": @${QNS.w}firstLine/number(),
+					"firstLineChars": @${QNS.w}firstLineChars/number()
+				},
+				"change": ${QNS.w}pPrChange/map {
+					"id": @${QNS.w}id/string(),
+					"author": @${QNS.w}author/string(),
+					"date": @${QNS.w}date/string(),
+					"_node": ./${QNS.w}pPr
 				}
-			`,
-					node,
-			  ) || {}
-			: {};
+			}
+		`,
+				node,
+		  ) || {}
+		: {};
 
-		// Sad but necessary.
-		if (data.spacing?.before) {
-			data.spacing.before = twip(data.spacing.before);
-		}
-		if (data.spacing?.after) {
-			data.spacing.after = twip(data.spacing.after);
-		}
-		if (data.spacing?.line) {
-			data.spacing.line = twip(data.spacing.line);
-		}
-		if (data.indentation?.left) {
-			data.indentation.left = twip(data.indentation.left);
-		}
-		if (data.indentation?.right) {
-			data.indentation.right = twip(data.indentation.right);
-		}
-		if (data.indentation?.hanging) {
-			data.indentation.hanging = twip(data.indentation.hanging);
-		}
-		if (data.indentation?.firstLine) {
-			data.indentation.firstLine = twip(data.indentation.firstLine);
-		}
-
-		return {
-			...data,
-			...Rpr.fromNode(node && evaluateXPathToFirstNode(`./${QNS.w}rPr`, node)),
-			change: data.change
-				? {
-						...data.change,
-						date: new Date(data.change.date),
-						...this.fromNode(data.change._node),
-						_node: undefined,
-				  }
-				: null,
-		};
+	// Sad but necessary.
+	if (data.spacing?.before) {
+		data.spacing.before = twip(data.spacing.before);
+	}
+	if (data.spacing?.after) {
+		data.spacing.after = twip(data.spacing.after);
+	}
+	if (data.spacing?.line) {
+		data.spacing.line = twip(data.spacing.line);
+	}
+	if (data.indentation?.left) {
+		data.indentation.left = twip(data.indentation.left);
+	}
+	if (data.indentation?.right) {
+		data.indentation.right = twip(data.indentation.right);
+	}
+	if (data.indentation?.hanging) {
+		data.indentation.hanging = twip(data.indentation.hanging);
+	}
+	if (data.indentation?.firstLine) {
+		data.indentation.firstLine = twip(data.indentation.firstLine);
 	}
 
-	public static toNode(ppr: PprI = {}): Node {
-		return create(
-			`
+	return {
+		...data,
+		...textPropertiesFromNode(node && evaluateXPathToFirstNode(`./${QNS.w}rPr`, node)),
+		change: data.change
+			? {
+					...data.change,
+					date: new Date(data.change.date),
+					...paragraphPropertiesFromNode(data.change._node),
+					_node: undefined,
+			  }
+			: null,
+	};
+}
+
+export function paragraphPropertiesToNode(data: ParagraphProperties = {}): Node {
+	return create(
+		`
 				element ${QNS.w}pPr {
 					if (exists($style)) then element ${QNS.w}pStyle {
 						attribute ${QNS.w}val { $style }
@@ -195,37 +190,36 @@ export class Ppr {
 					} else ()
 				}
 			`,
-			{
-				style: ppr.style || null,
-				alignment: ppr.alignment || null,
-				indentation: ppr.indentation
-					? {
-							...ppr.indentation,
-							left: ppr.indentation.left?.twip || null,
-							right: ppr.indentation.right?.twip || null,
-							hanging: ppr.indentation.hanging?.twip || null,
-							firstLine: ppr.indentation.firstLine?.twip || null,
-					  }
-					: null,
-				spacing: ppr.spacing
-					? {
-							...ppr.spacing,
-							before: ppr.spacing.before?.twip || null,
-							after: ppr.spacing.after?.twip || null,
-							line: ppr.spacing.line?.twip || null,
-							lineRule: ppr.spacing.lineRule || null,
-					  }
-					: null,
-				change: ppr.change
-					? {
-							id: ppr.change.id,
-							author: ppr.change.author,
-							date: ppr.change.date.toISOString(),
-							node: this.toNode(ppr.change),
-					  }
-					: null,
-				rpr: Rpr.toNode(ppr),
-			},
-		);
-	}
+		{
+			style: data.style || null,
+			alignment: data.alignment || null,
+			indentation: data.indentation
+				? {
+						...data.indentation,
+						left: data.indentation.left?.twip || null,
+						right: data.indentation.right?.twip || null,
+						hanging: data.indentation.hanging?.twip || null,
+						firstLine: data.indentation.firstLine?.twip || null,
+				  }
+				: null,
+			spacing: data.spacing
+				? {
+						...data.spacing,
+						before: data.spacing.before?.twip || null,
+						after: data.spacing.after?.twip || null,
+						line: data.spacing.line?.twip || null,
+						lineRule: data.spacing.lineRule || null,
+				  }
+				: null,
+			change: data.change
+				? {
+						id: data.change.id,
+						author: data.change.author,
+						date: data.change.date.toISOString(),
+						node: paragraphPropertiesToNode(data.change),
+				  }
+				: null,
+			rpr: textPropertiesToNode(data),
+		},
+	);
 }

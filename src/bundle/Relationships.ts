@@ -3,7 +3,7 @@ import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
-import { ContentType } from '../types.ts';
+import { ContentType } from '../enums.ts';
 import { create } from '../util/dom.ts';
 import { createRandomId } from '../util/identifiers.ts';
 import { QNS } from '../util/namespaces.ts';
@@ -84,7 +84,7 @@ export class Relationships extends XmlFile {
 	 */
 	public add(type: RelationshipType, instance: File): string {
 		const meta: RelationshipMeta = {
-			id: createRandomId(),
+			id: createRandomId('relationship'),
 			type,
 			target: instance.location,
 			isExternal: false,

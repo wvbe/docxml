@@ -1,6 +1,6 @@
 import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
 import { ZipArchive } from '../../classes/ZipArchive.ts';
-import { ContentType } from '../../types.ts';
+import { ContentType } from '../../enums.ts';
 
 export class ExtendedProperties extends UnhandledXmlFile {
 	public static contentType = ContentType.extendedProperties;

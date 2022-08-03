@@ -5,6 +5,7 @@ import {
 	XmlComponentProps,
 } from '../classes/XmlComponent.ts';
 import { Text } from '../components/Text.ts';
+
 type QueuedComponent<C extends XmlComponent> = {
 	Component: XmlComponentClassDefinition<C>;
 	props: XmlComponentProps<C>;

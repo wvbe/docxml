@@ -1,16 +1,12 @@
-import { Relationships, RelationshipType } from '../bundle/Relationships.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';
-import {
-	AnyXmlComponentAncestor,
-	XmlComponent,
-	XmlComponentClassDefinition,
-} from '../classes/XmlComponent.ts';
-import { registerComponent } from '../util/components.ts';
-import { create } from '../util/dom.ts';
-import { createUniqueNumericIdentifier } from '../util/identifiers.ts';
-import { UniversalSize } from '../util/length.ts';
-import { NamespaceUri, QNS } from '../util/namespaces.ts';
-import { evaluateXPathToMap } from '../util/xquery.ts';
+import { Component, ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
+import { Relationships, RelationshipType } from '../files/Relationships.ts';
+import { registerComponent } from '../utilities/components.ts';
+import { create } from '../utilities/dom.ts';
+import { createUniqueNumericIdentifier } from '../utilities/identifiers.ts';
+import { UniversalSize } from '../utilities/length.ts';
+import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
 export type ImageChild = never;
 
@@ -25,7 +21,7 @@ export type ImageProps = {
 /**
  * http://www.datypic.com/sc/ooxml/e-w_br-1.html
  */
-export class Image extends XmlComponent<ImageProps, ImageChild> {
+export class Image extends Component<ImageProps, ImageChild> {
 	public static readonly children: string[] = [];
 
 	public static readonly mixed: boolean = false;
@@ -39,7 +35,7 @@ export class Image extends XmlComponent<ImageProps, ImageChild> {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toNode(_ancestry: AnyXmlComponentAncestor[]): Node {
+	public toNode(_ancestry: ComponentAncestor[]): Node {
 		if (!this.relationshipId) {
 			throw new Error('Cannot serialize an image outside the context of an OfficeDocument');
 		}
@@ -138,4 +134,4 @@ export class Image extends XmlComponent<ImageProps, ImageChild> {
 	}
 }
 
-registerComponent(Image as unknown as XmlComponentClassDefinition);
+registerComponent(Image as unknown as ComponentDefinition);

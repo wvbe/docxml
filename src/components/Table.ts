@@ -1,14 +1,14 @@
-import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
+import { Component, ComponentAncestor } from '../classes/Component.ts';
 import {
 	TableProperties,
 	tablePropertiesFromNode,
 	tablePropertiesToNode,
 } from '../properties/table-properties.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
-import { create } from '../util/dom.ts';
-import { twip, UniversalSize } from '../util/length.ts';
-import { QNS } from '../util/namespaces.ts';
-import { evaluateXPathToMap } from '../util/xquery.ts';
+import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import { create } from '../utilities/dom.ts';
+import { twip, UniversalSize } from '../utilities/length.ts';
+import { QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { Cell } from './Cell.ts';
 import { Row } from './Row.ts';
 
@@ -18,11 +18,11 @@ export type TableProps = TableProperties & {
 	columnWidths?: null | UniversalSize[];
 };
 
-export class Table extends XmlComponent<TableProps, TableChild> {
+export class Table extends Component<TableProps, TableChild> {
 	public static readonly children: string[] = [Row.name];
 	public static readonly mixed: boolean = false;
 
-	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
+	public toNode(ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}tbl {

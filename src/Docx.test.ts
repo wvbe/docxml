@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it, run } from 'https://deno.land/x/tincan
 
 import { Docx } from './Docx.ts';
 import { BundleFile } from './enums.ts';
-import { file } from './util/tests.ts';
+import { file } from './utilities/tests.ts';
 
 describe('Docx', () => {
 	let bundle: Docx;

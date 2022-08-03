@@ -1,9 +1,9 @@
-import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
-import { create } from '../util/dom.ts';
-import { cm } from '../util/length.ts';
-import { QNS } from '../util/namespaces.ts';
-import { evaluateXPathToMap } from '../util/xquery.ts';
+import { Component, ComponentAncestor } from '../classes/Component.ts';
+import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import { create } from '../utilities/dom.ts';
+import { cm } from '../utilities/length.ts';
+import { QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { Paragraph } from './Paragraph.ts';
 import { Table } from './Table.ts';
 
@@ -14,11 +14,11 @@ export type CellProps = {
 	rowSpan?: number | null;
 };
 
-export class Cell extends XmlComponent<CellProps, CellChild> {
+export class Cell extends Component<CellProps, CellChild> {
 	public static readonly children: string[] = ['Paragraph', 'Table'];
 	public static readonly mixed: boolean = false;
 
-	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
+	public toNode(ancestry: ComponentAncestor[]): Node {
 		const { width } = ancestry
 			.find((ancestor): ancestor is Table => ancestor instanceof Table)
 			?.getCellProperties(this) || { width: cm(0) };

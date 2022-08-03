@@ -5,11 +5,11 @@
 import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 import { expect } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { castRelationshipToClass } from '../bundle/index.ts';
-import { RelationshipType } from '../bundle/Relationships.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
 import { Docx } from '../Docx.ts';
+import { castRelationshipToClass } from '../files/index.ts';
+import { RelationshipType } from '../files/Relationships.ts';
 import { evaluateXPathToBoolean } from './xquery.ts';
 
 const ZIPS = new Map<string, ZipArchive>();

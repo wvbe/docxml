@@ -1,35 +1,39 @@
-import type { OfficeDocument } from '../bundle/OfficeDocument.ts';
-
-export type AnyXmlComponentAncestor = OfficeDocument | AnyXmlComponent;
+import type { OfficeDocument } from '../files/OfficeDocument.ts';
 
 /**
- * A component-like approach to DOCX body content, such as paragraphs, lists, list items, tables,
- * etc.
+ * An ancestor of a component at serialization time, or the OfficeDocument instance that is the
+ * parent of the top-most component.
+ *
+ * Having this ancestry allows context-aware serialization.
  */
-export type AnyXmlComponent = XmlComponent<{ [key: string]: unknown }, AnyXmlComponent | string>;
+export type ComponentAncestor = OfficeDocument | AnyComponent;
 
 /**
- * Utility type to retrieve the prop types of an XmlComponent
+ * Any component instance, uncaring of which one or which props/children it has. Knows nothing,
+ * assumes everything.
  */
-export type XmlComponentProps<ComponentGeneric extends XmlComponent | unknown> =
+export type AnyComponent = Component<{ [key: string]: unknown }, AnyComponent | string>;
+
+/**
+ * Utility type to retrieve the prop types of an Component
+ */
+export type ComponentProps<ComponentGeneric extends Component | unknown> =
 	// deno-lint-ignore no-explicit-any
-	ComponentGeneric extends XmlComponent<infer P, any> ? P : { [key: string]: never };
+	ComponentGeneric extends Component<infer P, any> ? P : { [key: string]: never };
 
 /**
- * Utility type to retrieve the children types of an XmlComponent
+ * Utility type to retrieve the children types of an Component
  */
-export type XmlComponentChild<ComponentGeneric extends XmlComponent | unknown> =
+export type ComponentChild<ComponentGeneric extends Component | unknown> =
 	// deno-lint-ignore no-explicit-any
-	ComponentGeneric extends XmlComponent<any, infer C> ? C : never;
+	ComponentGeneric extends Component<any, infer C> ? C : never;
 
 /**
  * The interface to which a class definition of an XML component must adhere -- ie.
- * it must have a `children` and `mixed` static property.
+ * it must have a `children` and `mixed` static properties.
  */
-export interface XmlComponentClassDefinition<
-	C extends AnyXmlComponent | unknown = AnyXmlComponent,
-> {
-	new (props: XmlComponentProps<C>, ...children: XmlComponentChild<C>[]): C;
+export interface ComponentDefinition<C extends AnyComponent | unknown = AnyComponent> {
+	new (props: ComponentProps<C>, ...children: ComponentChild<C>[]): C;
 	children: string[];
 	mixed: boolean;
 	matchesNode(node: Node): boolean;
@@ -40,11 +44,11 @@ export interface XmlComponentClassDefinition<
  * If an XML component is written to DOM, it could be represented by any node, or a flat string,
  * or multiple of them.
  */
-type XmlComponentNodes = string | Node | (string | Node)[];
+type ComponentNodes = string | Node | (string | Node)[];
 
-export class XmlComponent<
+export abstract class Component<
 	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
-	ChildGeneric extends AnyXmlComponent | string = never,
+	ChildGeneric extends AnyComponent | string = never,
 > {
 	/**
 	 * Informs the JSX pragma which child components are allowed in this component.
@@ -79,7 +83,7 @@ export class XmlComponent<
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public static fromNode(_node: Node): AnyXmlComponent {
+	public static fromNode(_node: Node): AnyComponent {
 		throw new Error('Not implemented');
 	}
 
@@ -89,10 +93,10 @@ export class XmlComponent<
 	 * By default, an XML component would serialize to its children and string contents -- like a
 	 * fragment. Most components have an override to use specific OOXML elememnts, such as <w:p>.
 	 */
-	public toNode(ancestry: Array<AnyXmlComponentAncestor>): XmlComponentNodes {
+	public toNode(ancestry: Array<ComponentAncestor>): ComponentNodes {
 		const anc = [this, ...ancestry];
 		return this.children.reduce<(string | Node)[]>((flat, child) => {
-			const s: XmlComponentNodes = typeof child === 'string' ? child : child.toNode(anc);
+			const s: ComponentNodes = typeof child === 'string' ? child : child.toNode(anc);
 			return Array.isArray(s) ? flat.concat(s) : [...flat, s];
 		}, []);
 	}

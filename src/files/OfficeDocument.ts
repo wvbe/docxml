@@ -6,9 +6,9 @@ import type { Document as DocumentComponent } from '../components/Document.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Table } from '../components/Table.ts';
 import { BundleFile, ContentType } from '../enums.ts';
-import { create } from '../util/dom.ts';
-import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../util/namespaces.ts';
-import { evaluateXPathToNodes } from '../util/xquery.ts';
+import { create } from '../utilities/dom.ts';
+import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import { File, Relationships, RelationshipType } from './Relationships.ts';
 import { Styles } from './Styles.ts';
 

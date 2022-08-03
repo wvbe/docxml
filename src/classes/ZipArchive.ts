@@ -1,6 +1,6 @@
 import { JSZip, readZip } from 'https://deno.land/x/jszip@0.11.0/mod.ts';
 
-import { parse, serialize } from '../util/dom.ts';
+import { parse, serialize } from '../utilities/dom.ts';
 
 export class ZipArchive {
 	public readonly location?: string;

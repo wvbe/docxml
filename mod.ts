@@ -9,5 +9,5 @@ export * from './src/components/Row.ts';
 export * from './src/components/Table.ts';
 export * from './src/components/Text.ts';
 export * from './src/Docx.ts';
-export * from './src/util/jsx.ts';
-export * from './src/util/length.ts';
+export * from './src/utilities/jsx.ts';
+export * from './src/utilities/length.ts';

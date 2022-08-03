@@ -4,10 +4,10 @@ import { BinaryFile } from '../classes/BinaryFile.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
 import { ContentType } from '../enums.ts';
-import { create } from '../util/dom.ts';
-import { createRandomId } from '../util/identifiers.ts';
-import { QNS } from '../util/namespaces.ts';
-import { evaluateXPathToArray } from '../util/xquery.ts';
+import { create } from '../utilities/dom.ts';
+import { createRandomId } from '../utilities/identifiers.ts';
+import { QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToArray } from '../utilities/xquery.ts';
 import { castRelationshipToClass } from './index.ts';
 
 export enum RelationshipType {

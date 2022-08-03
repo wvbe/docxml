@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { serialize } from '../util/dom.ts';
-import { archive } from '../util/tests.ts';
+import { serialize } from '../utilities/dom.ts';
+import { archive } from '../utilities/tests.ts';
 import { Relationships } from './Relationships.ts';
 
 describe('Relationships', () => {

@@ -1,5 +1,5 @@
-import { OfficeDocumentChild } from '../bundle/OfficeDocument.ts';
-import { XmlComponent } from '../classes/XmlComponent.ts';
+import { Component } from '../classes/Component.ts';
+import { OfficeDocumentChild } from '../files/OfficeDocument.ts';
 import { Paragraph } from './Paragraph.ts';
 import { Table } from './Table.ts';
 
@@ -10,7 +10,7 @@ export type DocumentProps = { [key: string]: never };
 /**
  * http://officeopenxml.com/WPDocument.php
  */
-export class Document extends XmlComponent<DocumentProps, DocumentChild> {
+export class Document extends Component<DocumentProps, DocumentChild> {
 	public static readonly children: string[] = [Paragraph.name, Table.name];
 	public static readonly mixed: boolean = false;
 

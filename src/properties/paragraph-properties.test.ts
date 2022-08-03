@@ -1,8 +1,8 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { create } from '../util/dom.ts';
-import { hpt, twip } from '../util/length.ts';
-import { ALL_NAMESPACE_DECLARATIONS } from '../util/namespaces.ts';
+import { create } from '../utilities/dom.ts';
+import { hpt, twip } from '../utilities/length.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import {
 	ParagraphProperties,
 	paragraphPropertiesFromNode,

@@ -1,9 +1,9 @@
 import { XmlFile } from '../../classes/XmlFile.ts';
 import { ZipArchive } from '../../classes/ZipArchive.ts';
 import { ContentType } from '../../enums.ts';
-import { create } from '../../util/dom.ts';
-import { ALL_NAMESPACE_DECLARATIONS } from '../../util/namespaces.ts';
-import { evaluateXPathToArray } from '../../util/xquery.ts';
+import { create } from '../../utilities/dom.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/namespaces.ts';
+import { evaluateXPathToArray } from '../../utilities/xquery.ts';
 
 export class CoreProperties extends XmlFile {
 	public static contentType = ContentType.coreProperties;

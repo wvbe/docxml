@@ -3,23 +3,23 @@ import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { JSX, Text } from '../../mod.ts';
-import { XmlComponent } from '../classes/XmlComponent.ts';
+import { Component } from '../classes/Component.ts';
 
 describe('JSX', () => {
-	class Comp extends XmlComponent<{ skeet: boolean; boop?: string }> {}
-	it('mount a simple XmlComponent', () => {
+	class Comp extends Component<{ skeet: boolean; boop?: string }> {}
+	it('mount a simple Component', () => {
 		// nb; removing the required prop `skeet` should give a TS warning
 		expect(<Comp skeet />).toEqual([new Comp({ skeet: true })]);
 	});
 });
 
 describe('JSX fixing', () => {
-	class Bar extends XmlComponent<{ [key: string]: never }, string> {
+	class Bar extends Component<{ [key: string]: never }, string> {
 		static children = [];
 		static mixed = true;
 	}
 
-	class Foo extends XmlComponent<{ [key: string]: never }, Text | Bar> {
+	class Foo extends Component<{ [key: string]: never }, Text | Bar> {
 		static children = [Text.name, Bar.name];
 		static false = true;
 	}

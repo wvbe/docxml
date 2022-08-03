@@ -16,10 +16,10 @@ import {
 	textPropertiesFromNode,
 	textPropertiesToNode,
 } from '../properties/text-properties.ts';
-import { create } from '../util/dom.ts';
-import { createRandomId } from '../util/identifiers.ts';
-import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../util/namespaces.ts';
-import { evaluateXPathToArray } from '../util/xquery.ts';
+import { create } from '../utilities/dom.ts';
+import { createRandomId } from '../utilities/identifiers.ts';
+import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToArray } from '../utilities/xquery.ts';
 
 type StyleCommons = {
 	id: string;

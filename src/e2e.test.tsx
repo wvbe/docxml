@@ -3,11 +3,11 @@ import { describe, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Document, JSX, Paragraph, Text } from '../mod.ts';
-import { RelationshipType } from './bundle/Relationships.ts';
 import { Docx } from './Docx.ts';
-import { twip } from './util/length.ts';
-import { QNS } from './util/namespaces.ts';
-import { expectDocumentToContain, expectDocxToContain } from './util/tests.ts';
+import { RelationshipType } from './files/Relationships.ts';
+import { twip } from './utilities/length.ts';
+import { QNS } from './utilities/namespaces.ts';
+import { expectDocumentToContain, expectDocxToContain } from './utilities/tests.ts';
 
 describe('End-to-end', () => {
 	describe('Text run formatting', () => {

@@ -1,14 +1,14 @@
-import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
+import { Component, ComponentAncestor } from '../classes/Component.ts';
 import {
 	ParagraphProperties,
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from '../properties/paragraph-properties.ts';
 import { TextProperties } from '../properties/text-properties.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
-import { create } from '../util/dom.ts';
-import { QNS } from '../util/namespaces.ts';
-import { evaluateXPathToMap } from '../util/xquery.ts';
+import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import { create } from '../utilities/dom.ts';
+import { QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { TextAddition, TextDeletion } from './changes.ts';
 import { Text } from './Text.ts';
 
@@ -19,11 +19,11 @@ export type ParagraphProps = ParagraphProperties & TextProperties;
 /**
  * http://officeopenxml.com/WPparagraph.php
  */
-export class Paragraph extends XmlComponent<ParagraphProps, ParagraphChild> {
+export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	public static readonly children: string[] = [Text.name, TextAddition.name, TextDeletion.name];
 	public static readonly mixed: boolean = false;
 
-	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
+	public toNode(ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}p {

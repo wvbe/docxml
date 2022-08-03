@@ -1,11 +1,11 @@
 import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.5/mod.ts';
 
-import type { XmlComponent } from './classes/XmlComponent.ts';
+import type { Component } from './classes/Component.ts';
 import { Docx, Options } from './Docx.ts';
-import { parse } from './util/dom.ts';
-import { JSX } from './util/jsx.ts';
+import { parse } from './utilities/dom.ts';
+import { JSX } from './utilities/jsx.ts';
 
-type RuleResult = XmlComponent | string | null | Array<RuleResult>;
+type RuleResult = Component | string | null | Array<RuleResult>;
 
 function publicApiForBundle(docx: Docx) {
 	return {
@@ -63,7 +63,7 @@ export class Api<PropsGeneric extends { [key: string]: unknown }> {
 			...props,
 		});
 		const children = (Array.isArray(ast) ? ast : [ast]).filter(
-			(child): child is XmlComponent => child !== null && typeof child !== 'string',
+			(child): child is Component => child !== null && typeof child !== 'string',
 		);
 
 		// There is no guarantee that the rendering rules produce schema-valid XML.

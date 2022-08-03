@@ -1,10 +1,6 @@
-import type {
-	AnyXmlComponent,
-	XmlComponent,
-	XmlComponentClassDefinition,
-} from '../classes/XmlComponent.ts';
+import type { AnyComponent, Component, ComponentDefinition } from '../classes/Component.ts';
 
-const componentByName = new Map<string, XmlComponentClassDefinition>();
+const componentByName = new Map<string, ComponentDefinition>();
 
 /**
  * Register a component in such a way that it can be found by its name later.
@@ -13,21 +9,21 @@ const componentByName = new Map<string, XmlComponentClassDefinition>();
  * For example, Table --> Row --> Cell --> Table
  */
 export function registerComponent(
-	Component: // deno-lint-ignore no-explicit-any
-	| XmlComponentClassDefinition<XmlComponent<{ [key: string]: any }, any>>
+	component: // deno-lint-ignore no-explicit-any
+	| ComponentDefinition<Component<{ [key: string]: any }, any>>
 		// deno-lint-ignore no-explicit-any
-		| XmlComponentClassDefinition<XmlComponent<{ [key: string]: any }, never>>,
+		| ComponentDefinition<Component<{ [key: string]: any }, never>>,
 ) {
-	componentByName.set(Component.name, Component);
+	componentByName.set(component.name, component);
 }
 
-export function createChildComponentsFromNodes<T extends AnyXmlComponent | string>(
+export function createChildComponentsFromNodes<T extends AnyComponent | string>(
 	names: string[],
 	nodes: Node[],
 ): T[] {
 	const children = names
 		.map((name) => componentByName.get(name))
-		.filter((child): child is XmlComponentClassDefinition<Exclude<T, string>> => !!child);
+		.filter((child): child is ComponentDefinition<Exclude<T, string>> => !!child);
 	return nodes
 		.map(
 			(node) =>

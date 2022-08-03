@@ -1,12 +1,8 @@
-import {
-	AnyXmlComponentAncestor,
-	XmlComponent,
-	XmlComponentClassDefinition,
-} from '../classes/XmlComponent.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
-import { create } from '../util/dom.ts';
-import { QNS } from '../util/namespaces.ts';
-import { evaluateXPathToMap } from '../util/xquery.ts';
+import { Component, ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
+import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import { create } from '../utilities/dom.ts';
+import { QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { Text } from './Text.ts';
 
 export type TextChangeChild = Text;
@@ -36,11 +32,11 @@ function textChangeFromNode(node: Node) {
 	} as TextChangeProps & { children: Node[] };
 }
 
-export class TextDeletion extends XmlComponent<TextChangeProps, TextChangeChild> {
+export class TextDeletion extends Component<TextChangeProps, TextChangeChild> {
 	public static readonly children: string[] = [Text.name];
 	public static readonly mixed: boolean = false;
 
-	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
+	public toNode(ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}del {
@@ -70,11 +66,11 @@ export class TextDeletion extends XmlComponent<TextChangeProps, TextChangeChild>
 	}
 }
 
-export class TextAddition extends XmlComponent<TextChangeProps, TextChangeChild> {
+export class TextAddition extends Component<TextChangeProps, TextChangeChild> {
 	public static readonly children: string[] = [Text.name];
 	public static readonly mixed: boolean = false;
 
-	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
+	public toNode(ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}ins {
@@ -104,5 +100,5 @@ export class TextAddition extends XmlComponent<TextChangeProps, TextChangeChild>
 	}
 }
 
-registerComponent(TextAddition as unknown as XmlComponentClassDefinition);
-registerComponent(TextDeletion as unknown as XmlComponentClassDefinition);
+registerComponent(TextAddition as unknown as ComponentDefinition);
+registerComponent(TextDeletion as unknown as ComponentDefinition);

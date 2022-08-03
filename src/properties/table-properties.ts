@@ -1,7 +1,7 @@
 import { EightPoint } from '../types.ts';
-import { create } from '../util/dom.ts';
-import { NamespaceUri, QNS } from '../util/namespaces.ts';
-import { evaluateXPathToMap } from '../util/xquery.ts';
+import { create } from '../utilities/dom.ts';
+import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
 type TableBorderType =
 	| 'auto'

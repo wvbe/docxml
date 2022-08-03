@@ -1,10 +1,10 @@
-import { ContentTypes } from './bundle/ContentTypes.ts';
-import { OfficeDocument, OfficeDocumentChild } from './bundle/OfficeDocument.ts';
-import { Relationships, RelationshipType } from './bundle/Relationships.ts';
-import { AnyXmlComponent } from './classes/XmlComponent.ts';
+import { AnyComponent } from './classes/Component.ts';
 import { ZipArchive } from './classes/ZipArchive.ts';
 import { Image } from './components/Image.ts';
 import { BundleFile } from './enums.ts';
+import { ContentTypes } from './files/ContentTypes.ts';
+import { OfficeDocument, OfficeDocumentChild } from './files/OfficeDocument.ts';
+import { Relationships, RelationshipType } from './files/Relationships.ts';
 
 export type Options = {
 	[key: string]: never;
@@ -15,7 +15,7 @@ export type Options = {
  * some naming conventions.
  *
  * The files contained in a .docx archive are modelled as properties (recursive) using classes in
- * `src/bundle/`.
+ * `src/files/`.
  */
 export class Docx {
 	public readonly contentTypes: ContentTypes;
@@ -52,7 +52,7 @@ export class Docx {
 	public toArchive(): ZipArchive {
 		const styles = this.document.styles;
 		const relationships = this.document.relationships;
-		this.document.children.forEach(function walk(component: AnyXmlComponent | string) {
+		this.document.children.forEach(function walk(component: AnyComponent | string) {
 			if (typeof component === 'string') {
 				return;
 			}

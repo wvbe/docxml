@@ -1,7 +1,7 @@
-import { create } from '../util/dom.ts';
-import { hpt, UniversalSize } from '../util/length.ts';
-import { QNS } from '../util/namespaces.ts';
-import { evaluateXPathToMap } from '../util/xquery.ts';
+import { create } from '../utilities/dom.ts';
+import { hpt, UniversalSize } from '../utilities/length.ts';
+import { QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
 /**
  * All the formatting options that can be given on a text run (inline text).

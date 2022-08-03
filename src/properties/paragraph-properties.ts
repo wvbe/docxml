@@ -1,7 +1,7 @@
-import { create } from '../util/dom.ts';
-import { twip, UniversalSize } from '../util/length.ts';
-import { QNS } from '../util/namespaces.ts';
-import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../util/xquery.ts';
+import { create } from '../utilities/dom.ts';
+import { twip, UniversalSize } from '../utilities/length.ts';
+import { QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../utilities/xquery.ts';
 import { TextProperties, textPropertiesFromNode, textPropertiesToNode } from './text-properties.ts';
 
 type ParagraphPropertiesI = {

@@ -1,13 +1,13 @@
-import { AnyXmlComponentAncestor, XmlComponent } from '../classes/XmlComponent.ts';
+import { Component, ComponentAncestor } from '../classes/Component.ts';
 import {
 	TextProperties,
 	textPropertiesFromNode,
 	textPropertiesToNode,
 } from '../properties/text-properties.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../util/components.ts';
-import { create } from '../util/dom.ts';
-import { QNS } from '../util/namespaces.ts';
-import { evaluateXPathToMap } from '../util/xquery.ts';
+import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import { create } from '../utilities/dom.ts';
+import { QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { Break } from './Break.ts';
 import { TextDeletion } from './changes.ts';
 import { Image } from './Image.ts';
@@ -21,11 +21,11 @@ export type TextChild = string | Break | Image;
  *
  * http://officeopenxml.com/WPtext.php
  */
-export class Text extends XmlComponent<TextProps, TextChild> {
-	public static readonly children: string[] = [Break.name, Image.name];
+export class Text extends Component<TextProps, TextChild> {
+	public static readonly children: string[] = ['Break', 'Image'];
 	public static readonly mixed: boolean = true;
 
-	public toNode(ancestry: AnyXmlComponentAncestor[]): Node {
+	public toNode(ancestry: ComponentAncestor[]): Node {
 		const asTextDeletion = ancestry.some((ancestor) => ancestor instanceof TextDeletion);
 		const anc = [this, ...ancestry];
 		return create(

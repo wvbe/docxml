@@ -1,6 +1,17 @@
-import { registerXQueryModule } from 'https://esm.sh/fontoxpath@3.26.1';
+import {
+	registerCustomXPathFunction,
+	registerXQueryModule,
+} from 'https://esm.sh/fontoxpath@3.26.1';
 
+import { convert } from './length.ts';
 import { QNS } from './namespaces.ts';
+
+registerCustomXPathFunction(
+	{ namespaceURI: 'https://wybe.pizza/ns/ooxml', localName: 'universal-size' },
+	['xs:float', 'xs:string'],
+	'map(*)',
+	(_facade, value, unit) => convert(value, unit),
+);
 
 registerXQueryModule(`
 	module namespace ooxml = "https://wybe.pizza/ns/ooxml";

@@ -2,6 +2,7 @@ import { create } from '../utilities/dom.ts';
 import { twip, UniversalSize } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../utilities/xquery.ts';
+import { SectionProperties, sectionPropertiesToNode } from './section-properties.ts';
 import { TextProperties, textPropertiesFromNode, textPropertiesToNode } from './text-properties.ts';
 
 type ParagraphPropertiesI = {
@@ -121,7 +122,10 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 	};
 }
 
-export function paragraphPropertiesToNode(data: ParagraphProperties = {}): Node {
+export function paragraphPropertiesToNode(
+	data: ParagraphProperties = {},
+	sectionProperties: SectionProperties | null = null,
+): Node {
 	return create(
 		`
 				element ${QNS.w}pPr {
@@ -181,6 +185,7 @@ export function paragraphPropertiesToNode(data: ParagraphProperties = {}): Node 
 					} else (),
 
 					$rpr,
+					$sectpr,
 
 					if (exists($change)) then element ${QNS.w}pPrChange {
 						attribute ${QNS.w}id { $change('id') },
@@ -220,6 +225,7 @@ export function paragraphPropertiesToNode(data: ParagraphProperties = {}): Node 
 				  }
 				: null,
 			rpr: textPropertiesToNode(data),
+			sectpr: sectionProperties && sectionPropertiesToNode(sectionProperties),
 		},
 	);
 }

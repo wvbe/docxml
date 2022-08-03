@@ -1,5 +1,7 @@
 export type UniversalSize = {
-	// equals(n: number): boolean;
+	/**
+	 * Defined as 1/72th of an inch
+	 */
 	pt: number;
 	/**
 	 * Yes, some sizes in OOXML are defined as English Metric Units (EMU), defined as 1/360,000 of
@@ -20,60 +22,80 @@ export type UniversalSize = {
 	 *   http://www.datypic.com/sc/ooxml/t-w_ST_TwipsMeasure.html
 	 */
 	twip: number;
+	/**
+	 * The only unit of length that makes any actual sense
+	 */
 	cm: number;
+	/**
+	 * One inch is 2.54 centimeters
+	 */
 	inch: number;
 };
 
-function convertToUnit(points: number): UniversalSize {
+function _convert(points: number): UniversalSize {
 	return {
-		// equals: (pts: number) => points === pts,
 		pt: points,
 		emu: points * 12700,
 		hpt: points * 2,
 		twip: points * 20,
-		cm: points * 0.03527777776,
-		inch: points * 0.0138889,
+		inch: points * (1 / 72),
+		cm: points * (2.54 / 72),
 	};
 }
-
 /**
  * A length in points. Returns an object that converts this unit to any other unit.
  */
 export function pt(amount: number) {
-	return convertToUnit(amount);
+	return _convert(amount);
 }
 
 /**
  * A length in English metric units. Returns an object that converts this unit to any other unit.
  */
 export function emu(amount: number) {
-	return convertToUnit(amount / 12700);
+	return _convert(amount / 12700);
 }
 
 /**
  * A length in half-points. Returns an object that converts this unit to any other unit.
  */
 export function hpt(amount: number) {
-	return convertToUnit(amount / 2);
+	return _convert(amount / 2);
 }
 
 /**
  * A length in twentieth-points. Returns an object that converts this unit to any other unit.
  */
 export function twip(amount: number) {
-	return convertToUnit(amount / 20);
+	return _convert(amount / 20);
 }
 
 /**
  * A length in centimeters. Returns an object that converts this unit to any other unit.
  */
 export function cm(amount: number) {
-	return convertToUnit(amount / 0.03527777776);
+	return _convert(amount / (2.54 / 72));
 }
 
 /**
  * A length in inches. Returns an object that converts this unit to any other unit.
  */
 export function inch(amount: number) {
-	return convertToUnit(amount / 0.0138889);
+	return _convert(amount / (1 / 72));
+}
+
+const ingestors: { [unit: string]: (v: number) => UniversalSize } = {
+	cm,
+	pt,
+	hpt,
+	inch,
+	twip,
+	emu,
+};
+export function convert(value: number, unit: string) {
+	const ingestor = ingestors[unit];
+	if (!ingestor) {
+		throw new Error(`Unknown unit "${unit}"`);
+	}
+	return ingestor(value);
 }

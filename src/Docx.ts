@@ -122,7 +122,7 @@ export class Docx {
 
 	public static fromJsx(roots: OfficeDocumentChild[]) {
 		if (roots.length !== 1) {
-			console.error('Roots: ' + roots.map((r) => r.constructor.name).join(', '));
+			// console.error('Roots: ' + roots.map((r) => r.constructor.name).join(', '));
 			throw new Error(
 				`Found ${roots.length} root elements, but exactly 1 expected. This may be caused by invalid nesting that could not be repaired.`,
 			);

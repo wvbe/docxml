@@ -4,6 +4,7 @@ import {
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from '../properties/paragraph-properties.ts';
+import { SectionProperties } from '../properties/section-properties.ts';
 import { TextProperties } from '../properties/text-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
@@ -19,9 +20,15 @@ export type ParagraphProps = ParagraphProperties & TextProperties;
 /**
  * http://officeopenxml.com/WPparagraph.php
  */
+
 export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	public static readonly children: string[] = [Text.name, TextAddition.name, TextDeletion.name];
 	public static readonly mixed: boolean = false;
+	private sectionProperties: SectionProperties | null = null;
+
+	public setSectionProperties(properties?: SectionProperties | null) {
+		this.sectionProperties = properties || null;
+	}
 
 	public toNode(ancestry: ComponentAncestor[]): Node {
 		return create(
@@ -33,7 +40,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 				}
 			`,
 			{
-				pPr: paragraphPropertiesToNode(this.props),
+				pPr: paragraphPropertiesToNode(this.props, this.sectionProperties),
 				children: super.toNode(ancestry),
 			},
 		);

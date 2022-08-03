@@ -4,15 +4,17 @@ import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
 import type { Document as DocumentComponent } from '../components/Document.ts';
 import { Paragraph } from '../components/Paragraph.ts';
+import { Section } from '../components/Section.ts';
 import { Table } from '../components/Table.ts';
 import { BundleFile, ContentType } from '../enums.ts';
+import { createChildComponentsFromNodes } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import { File, Relationships, RelationshipType } from './Relationships.ts';
 import { Styles } from './Styles.ts';
 
-export type OfficeDocumentChild = Paragraph | Table | DocumentComponent;
+export type OfficeDocumentChild = Paragraph | Table | Section | DocumentComponent;
 
 export class OfficeDocument extends XmlFile {
 	public static contentType = ContentType.mainDocument;
@@ -92,18 +94,17 @@ export class OfficeDocument extends XmlFile {
 			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
 		);
 		const dom = await archive.readXml(location);
-		const children = evaluateXPathToNodes(`/*/${QNS.w}body/*`, dom)
-			.map((node) => {
-				switch (node.nodeName) {
-					case 'w:p':
-						return Paragraph.fromNode(node);
-					case 'w:tbl':
-						return Table.fromNode(node);
-					default:
-						return null;
-				}
-			})
-			.filter((x): x is Exclude<typeof x, null> => Boolean(x));
+
+		const sections = evaluateXPathToNodes(
+			`/*/${QNS.w}body/(${QNS.w}p/${QNS.w}pPr/${QNS.w}sectPr | ${QNS.w}sectPr)`,
+			dom,
+		);
+		const children = sections.length
+			? sections.map((node) => Section.fromNode(node))
+			: createChildComponentsFromNodes<Table | Paragraph>(
+					[Table.name, Paragraph.name],
+					evaluateXPathToNodes(`/*/${QNS.w}body/*`, dom),
+			  );
 		return new OfficeDocument(location, relationships, children);
 	}
 }

@@ -44,7 +44,8 @@ export interface ComponentDefinition<C extends AnyComponent | unknown = AnyCompo
  * If an XML component is written to DOM, it could be represented by any node, or a flat string,
  * or multiple of them.
  */
-type ComponentNodes = string | Node | (string | Node)[];
+type ComponentNode = string | Node;
+type ComponentNodes = ComponentNode | ComponentNode[];
 
 export abstract class Component<
 	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
@@ -87,6 +88,14 @@ export abstract class Component<
 		throw new Error('Not implemented');
 	}
 
+	protected childrenToNode(ancestry: Array<ComponentAncestor>): ComponentNode[] {
+		const anc = [this, ...ancestry];
+		return this.children.reduce<ComponentNode[]>((flat, child) => {
+			const s: ComponentNodes = typeof child === 'string' ? child : child.toNode(anc);
+			return Array.isArray(s) ? flat.concat(s) : [...flat, s];
+		}, []);
+	}
+
 	/**
 	 * Create a DOM node for this XML component, one that can be stringified to schema-valid OOXML.
 	 *
@@ -94,10 +103,6 @@ export abstract class Component<
 	 * fragment. Most components have an override to use specific OOXML elememnts, such as <w:p>.
 	 */
 	public toNode(ancestry: Array<ComponentAncestor>): ComponentNodes {
-		const anc = [this, ...ancestry];
-		return this.children.reduce<(string | Node)[]>((flat, child) => {
-			const s: ComponentNodes = typeof child === 'string' ? child : child.toNode(anc);
-			return Array.isArray(s) ? flat.concat(s) : [...flat, s];
-		}, []);
+		return this.childrenToNode(ancestry);
 	}
 }

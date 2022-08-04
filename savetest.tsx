@@ -199,6 +199,37 @@ api.document.set(
 				/>
 			</Text>
 		</Paragraph>
+		<Table style="TableGrid" columnWidths={[cm(3), cm(3), cm(3)]}>
+			<Row>
+				<Cell colSpan={2} rowSpan={2}>
+					<Paragraph>A1/B1/A2/B2</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>C1</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell rowSpan={2}>
+					<Paragraph>C2/C3</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell colSpan={2}>
+					<Paragraph>A3/B3</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>A4</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>B4</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>C4</Paragraph>
+				</Cell>
+			</Row>
+		</Table>
 	</Document>,
 );
 

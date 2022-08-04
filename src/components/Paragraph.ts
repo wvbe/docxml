@@ -41,7 +41,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 			`,
 			{
 				pPr: paragraphPropertiesToNode(this.props, this.sectionProperties),
-				children: super.toNode(ancestry),
+				children: this.childrenToNode(ancestry),
 			},
 		);
 	}

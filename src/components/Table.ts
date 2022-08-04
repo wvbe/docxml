@@ -8,6 +8,7 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { twip, UniversalSize } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
+import { TableGridModel } from '../utilities/tables.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { Cell } from './Cell.ts';
 import { Row } from './Row.ts';
@@ -22,26 +23,33 @@ export class Table extends Component<TableProps, TableChild> {
 	public static readonly children: string[] = [Row.name];
 	public static readonly mixed: boolean = false;
 
+	private _model: TableGridModel | null = null;
+	public get model() {
+		if (!this._model) {
+			this._model = new TableGridModel(this);
+		}
+		return this._model;
+	}
+
 	public toNode(ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}tbl {
-					$tblPr,
+					$tablePropertiesNode,
 					if (exists($columnWidths)) then element ${QNS.w}tblGrid {
 						for $columnWidth in array:flatten($columnWidths) return element ${QNS.w}gridCol {
 							attribute ${QNS.w}w { $columnWidth }
 						}
 					} else (),
-					for $child in $children
-						return $child
+					$children
 				}
 			`,
 			{
-				tblPr: tablePropertiesToNode(this.props),
+				tablePropertiesNode: tablePropertiesToNode(this.props),
 				columnWidths: this.props.columnWidths?.length
 					? this.props.columnWidths.map((width) => width.twip)
 					: null,
-				children: super.toNode(ancestry),
+				children: this.childrenToNode(ancestry),
 			},
 		);
 	}

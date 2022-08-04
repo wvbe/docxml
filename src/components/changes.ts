@@ -49,7 +49,7 @@ export class TextDeletion extends Component<TextChangeProps, TextDeletionChild> 
 			{
 				...this.props,
 				date: this.props.date.toISOString(),
-				children: super.toNode(ancestry),
+				children: this.childrenToNode(ancestry),
 			},
 		);
 	}
@@ -85,7 +85,7 @@ export class TextAddition extends Component<TextChangeProps, TextAdditionChild> 
 			{
 				...this.props,
 				date: this.props.date.toISOString(),
-				children: super.toNode(ancestry),
+				children: this.childrenToNode(ancestry),
 			},
 		);
 	}

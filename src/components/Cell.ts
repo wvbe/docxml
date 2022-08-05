@@ -1,4 +1,5 @@
-import { Component, ComponentAncestor } from '../classes/Component.ts';
+import type { ComponentAncestor } from '../classes/Component.ts';
+import { Component } from '../classes/Component.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
@@ -109,15 +110,37 @@ export class Cell extends Component<CellProps, CellChild> {
 	}
 
 	static fromNode(node: Node): Cell {
-		const { children } = evaluateXPathToMap(
+		const { children, ...props } = evaluateXPathToMap(
 			`
-				map {
+				let $colStart := ooxml:cell-column(.)
+
+				let $rowStart := count(../preceding-sibling::${QNS.w}tr)
+
+				let $firstNextRow := ../following-sibling::${QNS.w}tr[
+					child::${QNS.w}tc[ooxml:cell-column(.) = $colStart and not(
+						./${QNS.w}tcPr/${QNS.w}vMerge[
+							@${QNS.w}val = "continue" or
+							not(./@${QNS.w}val)
+						]
+					)]
+				][1]
+
+				let $rowEnd := if ($firstNextRow)
+					then count($firstNextRow/preceding-sibling::${QNS.w}tr)
+					else count(../../${QNS.w}tr) - 1
+
+				return map {
+					"colSpan": if (./${QNS.w}tcPr/${QNS.w}gridSpan)
+						then ./${QNS.w}tcPr/${QNS.w}gridSpan/@${QNS.w}val/number()
+						else 1,
+					"rowSpan": $rowEnd - $rowStart,
 					"children": array{ ./(${QNS.w}p) }
 				}
 			`,
 			node,
-		) as { children: Node[] };
-		return new Cell({}, ...createChildComponentsFromNodes<CellChild>(this.children, children));
+		) as CellProps & { children: Node[] };
+		return new Cell(props, ...createChildComponentsFromNodes<CellChild>(this.children, children));
 	}
 }
+
 registerComponent(Cell);

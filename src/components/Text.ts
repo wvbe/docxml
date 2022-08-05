@@ -1,3 +1,8 @@
+// Import without assignment ensures Deno does not tree-shake this component. To avoid circular
+// definitions, components register themselves in a side-effect of their module.
+import './Break.ts';
+import './Image.ts';
+
 import { Component, ComponentAncestor } from '../classes/Component.ts';
 import {
 	TextProperties,
@@ -8,9 +13,9 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { Break } from './Break.ts';
+import type { Break } from './Break.ts';
 import { TextDeletion } from './changes.ts';
-import { Image } from './Image.ts';
+import type { Image } from './Image.ts';
 
 export type TextProps = TextProperties;
 

@@ -22,16 +22,20 @@ export type { INodesFactory } from 'https://esm.sh/fontoxpath@3.26.1';
 
 export const XQUERY_3_1_LANGUAGE = _evaluateXPath.XQUERY_3_1_LANGUAGE;
 
-const moduleImports = {
-	ooxml: 'https://wybe.pizza/ns/ooxml',
+const OPTIONS = {
+	language: XQUERY_3_1_LANGUAGE,
+	moduleImports: {
+		ooxml: 'https://wybe.pizza/ns/ooxml',
+	},
 };
+
 export function evaluateXPath(
 	...[query, node, domFacade, variables, returnType, options]: Parameters<typeof _evaluateXPath>
 ) {
 	try {
 		return _evaluateXPath(query, node, domFacade, variables, returnType, {
 			...(options || {}),
-			moduleImports,
+			...OPTIONS,
 		});
 	} catch (error: unknown) {
 		// Rethrow because we're not interested in the fontoxpath stack itself.
@@ -45,7 +49,7 @@ export function evaluateXPathToArray(
 	try {
 		return _evaluateXPathToArray(query, node, domFacade, variables, {
 			...(options || {}),
-			moduleImports,
+			...OPTIONS,
 		});
 	} catch (error: unknown) {
 		// Rethrow because we're not interested in the fontoxpath stack itself.
@@ -59,7 +63,7 @@ export function evaluateXPathToMap(
 	try {
 		return _evaluateXPathToMap(query, node, domFacade, variables, {
 			...(options || {}),
-			moduleImports,
+			...OPTIONS,
 		});
 	} catch (error: unknown) {
 		// Rethrow because we're not interested in the fontoxpath stack itself.
@@ -73,7 +77,7 @@ export function evaluateXPathToFirstNode(
 	try {
 		return _evaluateXPathToFirstNode<Node>(query, node, domFacade, variables, {
 			...(options || {}),
-			moduleImports,
+			...OPTIONS,
 		});
 	} catch (error: unknown) {
 		// Rethrow because we're not interested in the fontoxpath stack itself.
@@ -87,7 +91,7 @@ export function evaluateXPathToNodes(
 	try {
 		return _evaluateXPathToNodes<Node>(query, node, domFacade, variables, {
 			...(options || {}),
-			moduleImports,
+			...OPTIONS,
 		});
 	} catch (error: unknown) {
 		// Rethrow because we're not interested in the fontoxpath stack itself.
@@ -101,7 +105,7 @@ export function evaluateXPathToBoolean(
 	try {
 		return _evaluateXPathToBoolean(query, node, domFacade, variables, {
 			...(options || {}),
-			moduleImports,
+			...OPTIONS,
 		});
 	} catch (error: unknown) {
 		// Rethrow because we're not interested in the fontoxpath stack itself.
@@ -115,7 +119,7 @@ export function evaluateXPathToNumber(
 	try {
 		return _evaluateXPathToNumber(query, node, domFacade, variables, {
 			...(options || {}),
-			moduleImports,
+			...OPTIONS,
 		});
 	} catch (error: unknown) {
 		// Rethrow because we're not interested in the fontoxpath stack itself.
@@ -129,7 +133,7 @@ export function evaluateXPathToString(
 	try {
 		return _evaluateXPathToString(query, node, domFacade, variables, {
 			...(options || {}),
-			moduleImports,
+			...OPTIONS,
 		});
 	} catch (error: unknown) {
 		// Rethrow because we're not interested in the fontoxpath stack itself.

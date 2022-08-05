@@ -1,3 +1,7 @@
+// Import without assignment ensures Deno does not tree-shake this component. To avoid circular
+// definitions, components register themselves in a side-effect of their module.
+import './Cell.ts';
+
 import {
 	AnyComponent,
 	Component,
@@ -8,7 +12,7 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { Cell } from './Cell.ts';
+import type { Cell } from './Cell.ts';
 import { Table } from './Table.ts';
 
 export type RowChild = Cell;
@@ -29,8 +33,7 @@ export class Row extends Component<RowProps, RowChild> {
 		return create(
 			`
 				element ${QNS.w}tr {
-					for $child in $children
-						return $child
+					$children
 				}
 			`,
 			{
@@ -52,7 +55,11 @@ export class Row extends Component<RowProps, RowChild> {
 		const { children } = evaluateXPathToMap(
 			`
 				map {
-					"children": array{ ./(${QNS.w}tc) }
+					"children": array{
+						./${QNS.w}tc[
+							not(./${QNS.w}tcPr/${QNS.w}vMerge/@${QNS.w}val = "continue")
+						]
+					}
 				}
 			`,
 			node,

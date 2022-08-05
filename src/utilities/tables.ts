@@ -8,7 +8,13 @@ function coord(x: number, y: number): CellCoordinate {
 }
 
 type CellInfo = {
+	/**
+	 * The Y coordinate of the top edge.
+	 */
 	row: number;
+	/**
+	 * The X coordinate of the left edge.
+	 */
 	column: number;
 	/**
 	 * @deprecated Can be replaced with cell.getRowSpan()
@@ -21,10 +27,17 @@ type CellInfo = {
 };
 
 /**
- * Only exported for test purposes
+ * A conceptual description of the table that makes it easier to reason about it.
  */
 export class TableGridModel {
+	/**
+	 * A map of which col/row coordinates are filled by a cell.
+	 */
 	private readonly occupation = new Map<CellCoordinate, Cell>();
+
+	/**
+	 * The coordinate and size information about a cell.
+	 */
 	private readonly cellNodes = new Map<Cell, CellInfo>();
 
 	public constructor(table: Table) {
@@ -77,6 +90,9 @@ export class TableGridModel {
 		return this.occupation.get(coord(column, row)) || null;
 	}
 
+	/**
+	 * Get the number of columns in a row, even if some cells span multiple columns.
+	 */
 	public getCellsInRow(row: number) {
 		// TODO could be simplified if we knew the table is rectangular
 		return (

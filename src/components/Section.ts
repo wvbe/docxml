@@ -1,4 +1,10 @@
-import { Component, ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
+// Import without assignment ensures Deno does not tree-shake this component. To avoid circular
+// definitions, components register themselves in a side-effect of their module.
+import './Paragraph.ts';
+import './Table.ts';
+
+import type { ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
+import { Component } from '../classes/Component.ts';
 import {
 	SectionProperties,
 	sectionPropertiesFromNode,

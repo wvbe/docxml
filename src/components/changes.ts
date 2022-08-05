@@ -1,9 +1,13 @@
+// Import without assignment ensures Deno does not tree-shake this component. To avoid circular
+// definitions, components register themselves in a side-effect of their module.
+import './Text.ts';
+
 import { Component, ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { Text } from './Text.ts';
+import type { Text } from './Text.ts';
 
 export type TextDeletionChild = Text | TextDeletion | TextAddition;
 
@@ -33,7 +37,7 @@ function textChangeFromNode(node: Node) {
 }
 
 export class TextDeletion extends Component<TextChangeProps, TextDeletionChild> {
-	public static readonly children: string[] = [Text.name, this.name, 'TextAddition'];
+	public static readonly children: string[] = ['Text', this.name, 'TextAddition'];
 	public static readonly mixed: boolean = false;
 
 	public toNode(ancestry: ComponentAncestor[]): Node {
@@ -69,7 +73,7 @@ export class TextDeletion extends Component<TextChangeProps, TextDeletionChild> 
 export type TextAdditionChild = Text | TextAddition | TextDeletion;
 
 export class TextAddition extends Component<TextChangeProps, TextAdditionChild> {
-	public static readonly children: string[] = [Text.name, this.name, TextDeletion.name];
+	public static readonly children: string[] = ['Text', this.name, TextDeletion.name];
 	public static readonly mixed: boolean = false;
 
 	public toNode(ancestry: ComponentAncestor[]): Node {

@@ -7,4 +7,5 @@
  */
 
 import { Docx } from './src/Docx.ts';
+
 console.dir(await Docx.fromArchive(Deno.args[0]), { depth: 50 });

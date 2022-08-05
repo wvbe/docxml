@@ -16,6 +16,16 @@ registerCustomXPathFunction(
 registerXQueryModule(`
 	module namespace ooxml = "https://wybe.pizza/ns/ooxml";
 
+	declare %public function ooxml:cell-column($cell) as xs:double {
+		sum(
+			$cell/preceding-sibling::${QNS.w}tc/(
+				if (./${QNS.w}tcPr/${QNS.w}gridSpan)
+					then number(./${QNS.w}tcPr/${QNS.w}gridSpan/@${QNS.w}val)
+					else 1
+			)
+		)
+	};
+
 	declare %public function ooxml:is-on-off-enabled($val) as xs:boolean {
 		$val = ("on", "true", "1")
 	};

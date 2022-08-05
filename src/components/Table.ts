@@ -1,17 +1,19 @@
-import { Component, ComponentAncestor } from '../classes/Component.ts';
-import {
-	TableProperties,
-	tablePropertiesFromNode,
-	tablePropertiesToNode,
-} from '../properties/table-properties.ts';
+// Import without assignment ensures Deno does not tree-shake this component. To avoid circular
+// definitions, components register themselves in a side-effect of their module.
+import './Row.ts';
+
+import type { ComponentAncestor } from '../classes/Component.ts';
+import { Component } from '../classes/Component.ts';
+import type { TableProperties } from '../properties/table-properties.ts';
+import { tablePropertiesFromNode, tablePropertiesToNode } from '../properties/table-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
-import { twip, UniversalSize } from '../utilities/length.ts';
+import type { UniversalSize } from '../utilities/length.ts';
+import { twip } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { TableGridModel } from '../utilities/tables.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { Cell } from './Cell.ts';
-import { Row } from './Row.ts';
+import type { Row } from './Row.ts';
 
 export type TableChild = Row;
 
@@ -20,7 +22,7 @@ export type TableProps = TableProperties & {
 };
 
 export class Table extends Component<TableProps, TableChild> {
-	public static readonly children: string[] = [Row.name];
+	public static readonly children: string[] = ['Row'];
 	public static readonly mixed: boolean = false;
 
 	private _model: TableGridModel | null = null;
@@ -78,75 +80,6 @@ export class Table extends Component<TableProps, TableChild> {
 			},
 			...createChildComponentsFromNodes<TableChild>(this.children, children),
 		);
-	}
-
-	/**
-	 * @deprecated unreliable function behavior, work in progress!
-	 */
-	public isRectangular() {
-		const rowWidths: number[] = [];
-		const colHeights: number[] = [];
-
-		for (let y = 0; y < this.children.length; y++) {
-			const row = this.children[y];
-			for (let x = 0; x < row.children.length; x++) {
-				const cell = row.children[x];
-				const rowSpans = cell.props.rowSpan || 1;
-				const colSpans = cell.props.colSpan || 1;
-
-				// Add to the total width of any row that this cell spans across
-				for (let rowSpanned = 0; rowSpanned < rowSpans; rowSpanned++) {
-					rowWidths[y + rowSpanned] =
-						rowWidths[y + rowSpanned] === undefined
-							? colSpans
-							: rowWidths[y + rowSpanned] + colSpans;
-				}
-
-				// Add to the total height of any column that this cell spans across
-				for (let colSpanned = 0; colSpanned < colSpans; colSpanned++) {
-					colHeights[x + colSpanned] =
-						colHeights[x + colSpanned] === undefined
-							? rowSpans
-							: colHeights[x + colSpanned] + rowSpans;
-				}
-			}
-		}
-
-		for (let i = 1; i < rowWidths.length; i++) {
-			if (rowWidths[i] !== rowWidths[i - 1]) {
-				throw new Error(
-					`Row ${i + 1} spans ${rowWidths[i]} grid columns, but expected ${rowWidths[i - 1]}`,
-				);
-			}
-		}
-
-		for (let i = 1; i < colHeights.length; i++) {
-			if (colHeights[i] !== colHeights[i - 1]) {
-				throw new Error(
-					`Column ${i + 1} spans ${colHeights[i]} grid rows, but expected ${colHeights[i - 1]}`,
-				);
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * @deprecated unreliable function behavior, work in progress!
-	 */
-	public getCellProperties(cell: Cell) {
-		const row = this.children.find((row) => row.children.includes(cell));
-		if (!row) {
-			throw new Error('Cell is not part of this table');
-		}
-		const nthColumn = row.children.indexOf(cell);
-		const width = (this.props.columnWidths || [])[nthColumn] || twip(0);
-
-		return {
-			width,
-			gridSpan: 1, // horizontal spanning, colSpan
-			vMerge: null,
-		};
 	}
 }
 registerComponent(Table);

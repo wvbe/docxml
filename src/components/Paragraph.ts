@@ -1,17 +1,23 @@
-import { Component, ComponentAncestor } from '../classes/Component.ts';
+// Import without assignment ensures Deno does not tree-shake this component. To avoid circular
+// definitions, components register themselves in a side-effect of their module.
+import './Text.ts';
+import './changes.ts';
+
+import type { ComponentAncestor } from '../classes/Component.ts';
+import { Component } from '../classes/Component.ts';
+import type { ParagraphProperties } from '../properties/paragraph-properties.ts';
 import {
-	ParagraphProperties,
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from '../properties/paragraph-properties.ts';
-import { SectionProperties } from '../properties/section-properties.ts';
-import { TextProperties } from '../properties/text-properties.ts';
+import type { SectionProperties } from '../properties/section-properties.ts';
+import type { TextProperties } from '../properties/text-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { TextAddition, TextDeletion } from './changes.ts';
-import { Text } from './Text.ts';
+import type { TextAddition, TextDeletion } from './changes.ts';
+import type { Text } from './Text.ts';
 
 export type ParagraphChild = Text | TextAddition | TextDeletion;
 
@@ -22,7 +28,7 @@ export type ParagraphProps = ParagraphProperties & TextProperties;
  */
 
 export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
-	public static readonly children: string[] = [Text.name, TextAddition.name, TextDeletion.name];
+	public static readonly children: string[] = ['Text', 'TextAddition', 'TextDeletion'];
 	public static readonly mixed: boolean = false;
 	private sectionProperties: SectionProperties | null = null;
 

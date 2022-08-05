@@ -15,15 +15,20 @@ export function registerComponent(
 		| ComponentDefinition<Component<{ [key: string]: any }, never>>,
 ) {
 	componentByName.set(component.name, component);
+	return component;
 }
 
 export function createChildComponentsFromNodes<T extends AnyComponent | string>(
 	names: string[],
 	nodes: Node[],
 ): T[] {
-	const children = names
-		.map((name) => componentByName.get(name))
-		.filter((child): child is ComponentDefinition<Exclude<T, string>> => !!child);
+	const children = names.map((name) => {
+		const component = componentByName.get(name);
+		if (!component) {
+			throw new Error(`Unknown component "${name}"`);
+		}
+		return component;
+	});
 	return nodes
 		.map(
 			(node) =>

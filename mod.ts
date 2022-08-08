@@ -1,4 +1,5 @@
 export { Api as default } from './src/Api.ts';
+export type { ComponentFunction } from './src/classes/Component.ts';
 export * from './src/components/Break.ts';
 export * from './src/components/Cell.ts';
 export * from './src/components/changes.ts';

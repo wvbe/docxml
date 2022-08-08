@@ -29,6 +29,12 @@ export type ComponentChild<ComponentGeneric extends Component | unknown> =
 	ComponentGeneric extends Component<any, infer C> ? C : never;
 
 /**
+ * A secret property with which we can test wether or not a Class (or "Function" in JS land)
+ * extends from Component
+ */
+const IS_COMPONENT = Symbol();
+
+/**
  * The interface to which a class definition of an XML component must adhere -- ie.
  * it must have a `children` and `mixed` static properties.
  */
@@ -38,7 +44,17 @@ export interface ComponentDefinition<C extends AnyComponent | unknown = AnyCompo
 	mixed: boolean;
 	matchesNode(node: Node): boolean;
 	fromNode(node: Node): C;
+	[IS_COMPONENT]: true;
 }
+
+/**
+ * A custom function which which native components can be composed into something more easily
+ * reusable.
+ */
+export type ComponentFunction<
+	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
+	ChildGeneric extends AnyComponent | string = never,
+> = (props: PropsGeneric & { children?: ChildGeneric | ChildGeneric[] }) => AnyComponent;
 
 /**
  * If an XML component is written to DOM, it could be represented by any node, or a flat string,
@@ -47,10 +63,17 @@ export interface ComponentDefinition<C extends AnyComponent | unknown = AnyCompo
 type ComponentNode = string | Node;
 type ComponentNodes = ComponentNode | ComponentNode[];
 
+// deno-lint-ignore no-explicit-any
+export function isComponentDefinition(Def: ComponentDefinition | any): Def is ComponentDefinition {
+	return Def && typeof Def === 'function' && Def[IS_COMPONENT] === true;
+}
+
 export abstract class Component<
 	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
 	ChildGeneric extends AnyComponent | string = never,
 > {
+	public static [IS_COMPONENT]: true = true;
+
 	/**
 	 * Informs the JSX pragma which child components are allowed in this component.
 	 * The JSX pragma can use this to attempt repairs at invalidly nested children.

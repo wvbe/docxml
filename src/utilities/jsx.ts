@@ -2,29 +2,28 @@ import {
 	Component,
 	ComponentChild,
 	ComponentDefinition,
+	ComponentFunction,
 	ComponentProps,
+	isComponentDefinition,
 } from '../classes/Component.ts';
 import { Text } from '../components/Text.ts';
 
 type QueuedComponent<C extends Component> = {
-	component: ComponentDefinition<C>;
+	component: ComponentComponentFunction<C> | ComponentDefinition<C>;
 	props: ComponentProps<C>;
 	children: ComponentChild<C>[];
 };
 
-// export function JSX<C extends Component>(
-// 	component: ComponentDefinition<C>,
-// 	props: ComponentProps<C>,
-// 	...children: ComponentChild<C>[]
-// ): C {
-// 	return new component(props, ...children);
-// }
+type ComponentComponentFunction<C extends Component> = ComponentFunction<
+	ComponentProps<C>,
+	ComponentChild<C>
+>;
 
 export function JSX<C extends Component>(
-	component: ComponentDefinition<C>,
+	component: ComponentComponentFunction<C> | ComponentDefinition<C>,
 	props: ComponentProps<C>,
 	...children: Array<ComponentChild<C> | Array<ComponentChild<C>>>
-): Array<C | ComponentChild<C>> {
+): Array<C | ComponentChild<C> | ReturnType<ComponentComponentFunction<C>>> {
 	return (
 		children
 			// Flatten the children, which may themselves have been wrapped in an array because they
@@ -36,10 +35,11 @@ export function JSX<C extends Component>(
 			// vertically inserted between
 			.reduce<Array<QueuedComponent<C> | ComponentChild<C>>>(
 				(nodes, child) => {
-					if (typeof child === 'string' && !component.mixed) {
+					if (typeof child === 'string' && isComponentDefinition(component) && !component.mixed) {
 						child = new Text({}, child) as ComponentChild<C>;
 					}
 					const isValid =
+						!isComponentDefinition(component) ||
 						(component.mixed && typeof child === 'string') ||
 						component.children.includes(child.constructor.name);
 					if (!isValid) {
@@ -74,8 +74,18 @@ export function JSX<C extends Component>(
 				if (node instanceof Component) {
 					return node as ComponentChild<C>;
 				}
-				return new component(node.props || {}, ...(node.children || []));
+				if (isComponentDefinition(component)) {
+					return new component(node.props || {}, ...(node.children || []));
+				} else {
+					const x = component({ ...props, children: node.children || [] });
+					return x;
+				}
 			})
+			// Flatten again, no telling what came out of a ComponentFunction
+			.reduce<Array<ReturnType<ComponentComponentFunction<C>> | ComponentChild<C>>>(
+				(flat, thing) => (Array.isArray(thing) ? [...flat, ...thing] : [...flat, thing]),
+				[],
+			)
 			.filter((node) => !(node.constructor === Text && !(node as Text).children.length))
 	);
 }

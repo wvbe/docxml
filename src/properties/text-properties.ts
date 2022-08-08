@@ -71,7 +71,19 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	return data;
 }
 
-export function textPropertiesToNode(data: TextProperties = {}): Node {
+export function textPropertiesToNode(data: TextProperties = {}): Node | null {
+	if (
+		!data.color &&
+		!data.isUnderlined &&
+		!data.language &&
+		!data.isBold &&
+		!data.verticalAlign &&
+		!data.isItalic &&
+		!data.isSmallCaps &&
+		!data.fontSize
+	) {
+		return null;
+	}
 	return create(
 		`
 				element ${QNS.w}rPr {

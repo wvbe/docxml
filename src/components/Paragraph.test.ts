@@ -72,11 +72,9 @@ describe('Paragraph with style change', () => {
 				<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					<pPr>
 						<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="StyleNew"/>
-						<rPr/>
 						<pPrChange xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:id="0" ns2:author="Wybe" ns2:date="${now.toISOString()}">
 							<pPr>
 								<pStyle ns2:val="StyleOld"/>
-							<rPr/>
 						</pPr>
 						</pPrChange>
 					</pPr>

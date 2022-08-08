@@ -8,4 +8,9 @@
 
 import { Docx } from './src/Docx.ts';
 
-console.dir(await Docx.fromArchive(Deno.args[0]), { depth: 50 });
+const docx = await Docx.fromArchive(Deno.args[0]);
+if (Deno.args.includes('--json')) {
+	console.log(JSON.stringify(docx.document.children, null, '\t'));
+} else {
+	console.dir(docx, { depth: 50 });
+}

@@ -37,7 +37,13 @@ function textChangeFromNode(node: Node) {
 }
 
 export class TextDeletion extends Component<TextChangeProps, TextDeletionChild> {
-	public static readonly children: string[] = ['Text', this.name, 'TextAddition'];
+	public static readonly children: string[] = [
+		'Text',
+		'TextAddition',
+		// Sometimes deletions nested into themselves work well? At other times, they don't.
+		// For safety, keep it disabled now (or put it behind a flag possibly)
+		// 'TextDeletion',
+	];
 	public static readonly mixed: boolean = false;
 
 	public toNode(ancestry: ComponentAncestor[]): Node {

@@ -49,7 +49,7 @@ export class Table extends Component<TableProps, TableChild> {
 			{
 				tablePropertiesNode: tablePropertiesToNode(this.props),
 				columnWidths: this.props.columnWidths?.length
-					? this.props.columnWidths.map((width) => width.twip)
+					? this.props.columnWidths.map((width) => Math.round(width.twip))
 					: null,
 				children: this.childrenToNode(ancestry),
 			},

@@ -31,7 +31,7 @@ describe('End-to-end', () => {
 				RelationshipType.officeDocument,
 				`
 					let $rpr := //${QNS.w}r[child::${QNS.w}t = "Normal text"]/${QNS.w}rPr
-					return $rpr/(not(${QNS.w}b) and not(${QNS.w}i))
+					return not($rpr)
 				`,
 			));
 

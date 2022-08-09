@@ -1,5 +1,5 @@
 import {
-	evaluateUpdatingExpression,
+	evaluateUpdatingExpressionSync,
 	executePendingUpdateList,
 } from 'https://esm.sh/fontoxpath@3.26.1';
 import {
@@ -141,13 +141,12 @@ export const ALL_NAMESPACE_DECLARATIONS = Object.keys(NamespaceUri)
 /**
  * Run an XQuery Update Facility expression, maybe even repeatedly, which can change an existing DOM.
  *
- * @deprecated Not used anywhere, may be removed in the future
+ * Updates by references, returns an empty promise.
  */
-export async function xquf(dom: Node | Document, expression: string, times = 1) {
+export function update(dom: Node | Document, expression: string, times = 1): void {
 	while (times-- > 0) {
 		executePendingUpdateList(
-			(await evaluateUpdatingExpression(expression, dom, null, {}, { debug: true }))
-				.pendingUpdateList,
+			evaluateUpdatingExpressionSync(expression, dom, null, {}, { debug: true }).pendingUpdateList,
 		);
 	}
 }

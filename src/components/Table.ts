@@ -1,6 +1,8 @@
 // Import without assignment ensures Deno does not tree-shake this component. To avoid circular
 // definitions, components register themselves in a side-effect of their module.
 import './Row.ts';
+import './RowAddition.ts';
+import './RowDeletion.ts';
 
 import type { ComponentAncestor } from '../classes/Component.ts';
 import { Component } from '../classes/Component.ts';
@@ -14,15 +16,17 @@ import { QNS } from '../utilities/namespaces.ts';
 import { TableGridModel } from '../utilities/tables.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import type { Row } from './Row.ts';
+import type { RowAddition } from './RowAddition.ts';
+import type { RowDeletion } from './RowDeletion.ts';
 
-export type TableChild = Row;
+export type TableChild = Row | RowAddition | RowDeletion;
 
 export type TableProps = TableProperties & {
 	columnWidths?: null | UniversalSize[];
 };
 
 export class Table extends Component<TableProps, TableChild> {
-	public static readonly children: string[] = ['Row'];
+	public static readonly children: string[] = ['Row', 'RowAddition', 'RowDeletion'];
 	public static readonly mixed: boolean = false;
 
 	private _model: TableGridModel | null = null;

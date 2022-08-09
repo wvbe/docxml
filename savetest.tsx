@@ -8,6 +8,8 @@ import API, {
 	Image,
 	Paragraph,
 	Row,
+	RowAddition,
+	RowDeletion,
 	Table,
 	Text,
 	TextAddition,
@@ -223,14 +225,62 @@ api.document.set(
 					<Paragraph>A4</Paragraph>
 				</Cell>
 				<Cell>
-					<Paragraph>B4</Paragraph>
+					<Paragraph>
+						<TextAddition author="Wybe the Second" date={new Date('2002-01-01')} id={31}>
+							C4
+						</TextAddition>
+					</Paragraph>
 				</Cell>
 				<Cell>
-					<Paragraph>C4</Paragraph>
+					<Paragraph>
+						<TextDeletion author="Wybe the Second" date={new Date('2002-01-01')} id={31}>
+							C4
+						</TextDeletion>
+					</Paragraph>
 				</Cell>
 			</Row>
+			<RowAddition author="Wybe the Second" date={new Date('2002-01-01')} id={31}>
+				<Cell>
+					<Paragraph>A5</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						<TextAddition author="Wybe the Second" date={new Date('2002-01-01')} id={31}>
+							C5
+						</TextAddition>
+					</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						<TextDeletion author="Wybe the Second" date={new Date('2002-01-01')} id={31}>
+							C5
+						</TextDeletion>
+					</Paragraph>
+				</Cell>
+			</RowAddition>
+			<RowDeletion author="Wybe the Second" date={new Date('2002-01-01')} id={31}>
+				<Cell>
+					<Paragraph>A6</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						<TextAddition author="Wybe the Second" date={new Date('2002-01-01')} id={31}>
+							C6
+						</TextAddition>
+					</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						<TextDeletion author="Wybe the Second" date={new Date('2002-01-01')} id={31}>
+							C6
+						</TextDeletion>
+					</Paragraph>
+				</Cell>
+			</RowDeletion>
 		</Table>
 	</Document>,
 );
+
+console.dir(api.document.children, { depth: 50 });
 
 api.docx.toArchive().toFile('y.docx');

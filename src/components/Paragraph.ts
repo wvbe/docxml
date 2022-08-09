@@ -1,7 +1,8 @@
 // Import without assignment ensures Deno does not tree-shake this component. To avoid circular
 // definitions, components register themselves in a side-effect of their module.
 import './Text.ts';
-import './changes.ts';
+import './TextAddition.ts';
+import './TextDeletion.ts';
 
 import type { ComponentAncestor } from '../classes/Component.ts';
 import { Component } from '../classes/Component.ts';
@@ -16,8 +17,9 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import type { TextAddition, TextDeletion } from './changes.ts';
 import type { Text } from './Text.ts';
+import type { TextAddition } from './TextAddition.ts';
+import type { TextDeletion } from './TextDeletion.ts';
 
 export type ParagraphChild = Text | TextAddition | TextDeletion;
 

@@ -72,6 +72,7 @@ export abstract class Component<
 	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
 	ChildGeneric extends AnyComponent | string = never,
 > {
+	// eslint-disable-next-line @typescript-eslint/prefer-as-const
 	public static [IS_COMPONENT]: true = true;
 
 	/**

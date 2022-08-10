@@ -35,6 +35,9 @@ export class Text extends Component<TextProps, TextChild> {
 	public static readonly children: string[] = ['Break', 'Image'];
 	public static readonly mixed: boolean = true;
 
+	/**
+	 * Creates an XML DOM node for this component instance.
+	 */
 	public toNode(ancestry: ComponentAncestor[]): Node {
 		const asTextDeletion = ancestry.some((ancestor) => ancestor instanceof TextDeletion);
 		const anc = [this, ...ancestry];
@@ -66,10 +69,16 @@ export class Text extends Component<TextProps, TextChild> {
 		);
 	}
 
+	/**
+	 * Asserts whether or not a given XML node correlates with this component.
+	 */
 	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:r';
 	}
 
+	/**
+	 * Instantiate this component from the XML in an existing DOCX file.
+	 */
 	static fromNode(node: Node): Text {
 		const { children, rpr } = evaluateXPathToMap(
 			`

@@ -54,42 +54,42 @@ function _convert(points: number): Length {
 /**
  * Converts points to any of the other units of length.
  */
-export function pt(amount: number) {
+export function pt(amount: number): Length {
 	return _convert(amount);
 }
 
 /**
  * Converts English metric units to any of the other units of length.
  */
-export function emu(amount: number) {
+export function emu(amount: number): Length {
 	return _convert(amount / 12700);
 }
 
 /**
  * Converts half-points to any of the other units of length.
  */
-export function hpt(amount: number) {
+export function hpt(amount: number): Length {
 	return _convert(amount / 2);
 }
 
 /**
  * Converts twentieth-points to any of the other units of length.
  */
-export function twip(amount: number) {
+export function twip(amount: number): Length {
 	return _convert(amount / 20);
 }
 
 /**
  * Converts centimeters to any of the other units of length.
  */
-export function cm(amount: number) {
+export function cm(amount: number): Length {
 	return _convert(amount / (2.54 / 72));
 }
 
 /**
  * Converts inches to any of the other units of length.
  */
-export function inch(amount: number) {
+export function inch(amount: number): Length {
 	return _convert(amount / (1 / 72));
 }
 

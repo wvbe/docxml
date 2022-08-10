@@ -82,10 +82,16 @@ export class Row extends Component<RowProps, RowChild> {
 	public static readonly children: string[] = ['Cell'];
 	public static readonly mixed: boolean = false;
 
+	/**
+	 * Creates an XML DOM node for this component instance.
+	 */
 	public toNode(ancestry: ComponentAncestor[]): Node {
 		return createNodeFromRow(this, ancestry);
 	}
 
+	/**
+	 * Asserts whether or not a given XML node correlates with this component.
+	 */
 	static matchesNode(node: Node): boolean {
 		return evaluateXPathToBoolean(
 			`
@@ -97,6 +103,9 @@ export class Row extends Component<RowProps, RowChild> {
 		);
 	}
 
+	/**
+	 * Instantiate this component from the XML in an existing DOCX file.
+	 */
 	static fromNode(node: Node): Row {
 		const { children, ...props } = parsePropsAndChildNodes(node);
 		return new Row(props, ...createChildComponentsFromNodes<RowChild>(this.children, children));

@@ -23,11 +23,17 @@ export class Document extends Component<DocumentProps, DocumentChild> {
 	public static readonly children: string[] = [Paragraph.name, Table.name];
 	public static readonly mixed: boolean = false;
 
+	/**
+	 * Asserts whether or not a given XML node correlates with this component.
+	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	static matchesNode(_node: Node) {
 		return false;
 	}
 
+	/**
+	 * Instantiate this component from the XML in an existing DOCX file.
+	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	static fromNode(_node: Node): Document {
 		throw new Error(`Cannot fromNode a <Document> component.`);

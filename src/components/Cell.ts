@@ -30,6 +30,9 @@ export class Cell extends Component<CellProps, CellChild> {
 	public static readonly children: string[] = ['Paragraph', 'Table'];
 	public static readonly mixed: boolean = false;
 
+	/**
+	 * Creates an XML DOM node for this component instance.
+	 */
 	public toNode(ancestry: ComponentAncestor[]): Node {
 		const table = ancestry.find((ancestor): ancestor is Table => ancestor instanceof Table);
 		if (!table) {
@@ -117,10 +120,16 @@ export class Cell extends Component<CellProps, CellChild> {
 		return this.props.rowSpan || 1;
 	}
 
+	/**
+	 * Asserts whether or not a given XML node correlates with this component.
+	 */
 	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:tc';
 	}
 
+	/**
+	 * Instantiate this component from the XML in an existing DOCX file.
+	 */
 	static fromNode(node: Node): Cell {
 		const { children, ...props } = evaluateXPathToMap(
 			`

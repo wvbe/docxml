@@ -29,6 +29,9 @@ export class TextAddition extends Component<TextAdditionProps, TextAdditionChild
 	public static readonly children: string[] = ['Text', this.name, 'TextDeletion'];
 	public static readonly mixed: boolean = false;
 
+	/**
+	 * Creates an XML DOM node for this component instance.
+	 */
 	public toNode(ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
@@ -47,10 +50,16 @@ export class TextAddition extends Component<TextAdditionProps, TextAdditionChild
 		);
 	}
 
+	/**
+	 * Asserts whether or not a given XML node correlates with this component.
+	 */
 	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:ins';
 	}
 
+	/**
+	 * Instantiate this component from the XML in an existing DOCX file.
+	 */
 	static fromNode(node: Node): TextAddition {
 		const props = getChangeInformation(node);
 		return new TextAddition(

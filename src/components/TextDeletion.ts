@@ -35,6 +35,9 @@ export class TextDeletion extends Component<TextDeletionProps, TextDeletionChild
 	];
 	public static readonly mixed: boolean = false;
 
+	/**
+	 * Creates an XML DOM node for this component instance.
+	 */
 	public toNode(ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
@@ -53,10 +56,16 @@ export class TextDeletion extends Component<TextDeletionProps, TextDeletionChild
 		);
 	}
 
+	/**
+	 * Asserts whether or not a given XML node correlates with this component.
+	 */
 	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:del';
 	}
 
+	/**
+	 * Instantiate this component from the XML in an existing DOCX file.
+	 */
 	static fromNode(node: Node): TextDeletion {
 		const props = getChangeInformation(node);
 		return new TextDeletion(

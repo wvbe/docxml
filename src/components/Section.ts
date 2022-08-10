@@ -38,6 +38,9 @@ export class Section extends Component<SectionProps, SectionChild> {
 	public static readonly children: string[] = ['Paragraph', 'Table'];
 	public static readonly mixed: boolean = false;
 
+	/**
+	 * Creates an XML DOM node for this component instance.
+	 */
 	public toNode(ancestry: ComponentAncestor[]) {
 		const parent = ancestry[0];
 		if (!parent) {
@@ -60,10 +63,16 @@ export class Section extends Component<SectionProps, SectionChild> {
 		return this.childrenToNode(ancestry);
 	}
 
+	/**
+	 * Asserts whether or not a given XML node correlates with this component.
+	 */
 	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:sectPr';
 	}
 
+	/**
+	 * Instantiate this component from the XML in an existing DOCX file.
+	 */
 	static fromNode(node: Node): Section {
 		const { children } = evaluateXPathToMap(
 			`

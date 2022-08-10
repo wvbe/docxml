@@ -44,6 +44,9 @@ export class Image extends Component<ImageProps, ImageChild> {
 		);
 	}
 
+	/**
+	 * Creates an XML DOM node for this component instance.
+	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public toNode(_ancestry: ComponentAncestor[]): Node {
 		if (!this.relationshipId) {
@@ -125,10 +128,16 @@ export class Image extends Component<ImageProps, ImageChild> {
 		);
 	}
 
+	/**
+	 * Asserts whether or not a given XML node correlates with this component.
+	 */
 	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:graphic';
 	}
 
+	/**
+	 * Instantiate this component from the XML in an existing DOCX file.
+	 */
 	static fromNode(node: Node): Image {
 		return new Image(
 			evaluateXPathToMap(

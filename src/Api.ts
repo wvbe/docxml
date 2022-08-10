@@ -17,7 +17,7 @@ function publicApiForBundle(docx: Docx) {
 /**
  * The top-level configuration API for creating a new transformation of your XML input to a valid
  * OOXML `.docx` file. Its properties and methods provide convenient access to registering transformation
- * rules ({@link Api.match}) or more fine-grained control of the contents of the DOCX.
+ * rules ({@link Api#match}) or more fine-grained control of the contents of the DOCX.
  *
  * Uses {@link Docx} to describe the product DOCX file.
  */

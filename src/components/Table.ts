@@ -46,6 +46,9 @@ export class Table extends Component<TableProps, TableChild> {
 		return this._model;
 	}
 
+	/**
+	 * Creates an XML DOM node for this component instance.
+	 */
 	public toNode(ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
@@ -69,10 +72,16 @@ export class Table extends Component<TableProps, TableChild> {
 		);
 	}
 
+	/**
+	 * Asserts whether or not a given XML node correlates with this component.
+	 */
 	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:tbl';
 	}
 
+	/**
+	 * Instantiate this component from the XML in an existing DOCX file.
+	 */
 	static fromNode(node: Node): Table {
 		const { children, tblpr, ...props } = evaluateXPathToMap(
 			`

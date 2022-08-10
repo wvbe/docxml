@@ -19,6 +19,12 @@ type ComponentComponentFunction<C extends Component> = ComponentFunction<
 	ComponentChild<C>
 >;
 
+/**
+ * The JSX pragma with which you can write `<Paragraph>` instead of `new Paragraph({})`.
+ *
+ * Also exposed as the `JSX` prop on the (static) class as well as instance of this library's top-
+ * level API -- see also {@link Api}.
+ */
 export function JSX<C extends Component>(
 	component: ComponentComponentFunction<C> | ComponentDefinition<C>,
 	props: ComponentProps<C>,

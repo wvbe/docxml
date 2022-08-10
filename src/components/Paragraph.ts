@@ -44,6 +44,9 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		this.sectionProperties = properties || null;
 	}
 
+	/**
+	 * Creates an XML DOM node for this component instance.
+	 */
 	public toNode(ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
@@ -60,10 +63,16 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		);
 	}
 
+	/**
+	 * Asserts whether or not a given XML node correlates with this component.
+	 */
 	static matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:p';
 	}
 
+	/**
+	 * Instantiate this component from the XML in an existing DOCX file.
+	 */
 	static fromNode(node: Node): Paragraph {
 		const { children, ppr, ...props } = evaluateXPathToMap(
 			`

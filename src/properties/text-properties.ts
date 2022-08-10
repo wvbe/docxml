@@ -1,5 +1,5 @@
 import { create } from '../utilities/dom.ts';
-import { hpt, UniversalSize } from '../utilities/length.ts';
+import { hpt, Length } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
@@ -41,7 +41,7 @@ export type TextProperties = {
 	/**
 	 * In twentieth points
 	 */
-	fontSize?: UniversalSize | null;
+	fontSize?: Length | null;
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {

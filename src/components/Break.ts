@@ -5,15 +5,22 @@ import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
+/**
+ * A type describing the components accepted as children of {@link Break}.
+ */
 export type BreakChild = never;
 
+/**
+ * A type describing the props accepted by {@link Break}.
+ */
 export type BreakProps = {
 	type?: 'page' | 'column' | 'textWrapping' | null;
 	clear?: 'left' | 'right' | 'all' | 'none' | null;
 };
 
 /**
- * http://www.datypic.com/sc/ooxml/e-w_br-1.html
+ * A component that represents a line break, page break or section break in a DOCX document. Place
+ * this in one of the `<Text>`, `<TextAddition>` or `<TextDeletion>` components.
  */
 export class Break extends Component<BreakProps, BreakChild> {
 	public static readonly children: string[] = [];

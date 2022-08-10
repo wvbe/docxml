@@ -13,10 +13,20 @@ import { evaluateXPathToBoolean, evaluateXPathToFirstNode } from '../utilities/x
 import type { RowChild } from './Row.ts';
 import { createNodeFromRow, parsePropsAndChildNodes, Row } from './Row.ts';
 
+/**
+ * A type describing the components accepted as children of {@link RowDeletion}.
+ */
 export type RowDeletionChild = RowChild;
 
+/**
+ * A type describing the props accepted by {@link RowDeletion}.
+ */
 export type RowDeletionProps = ChangeInformation;
 
+/**
+ * A component that represents a change-tracked table row that was deleted. Works the same way as
+ * a normal row, but requires some props describing the change.
+ */
 export class RowDeletion extends Component<RowDeletionProps, RowDeletionChild> {
 	public static readonly children: string[] = Row.children;
 	public static readonly mixed: boolean = Row.mixed;

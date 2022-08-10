@@ -21,14 +21,20 @@ import type { Text } from './Text.ts';
 import type { TextAddition } from './TextAddition.ts';
 import type { TextDeletion } from './TextDeletion.ts';
 
+/**
+ * A type describing the components accepted as children of {@link Paragraph}.
+ */
 export type ParagraphChild = Text | TextAddition | TextDeletion;
 
+/**
+ * A type describing the props accepted by {@link Paragraph}.
+ */
 export type ParagraphProps = ParagraphProperties & TextProperties;
 
 /**
- * http://officeopenxml.com/WPparagraph.php
+ * A component that represents a paragraph in your DOCX document, which is one of the most
+ * widely used components and the most likely to contain a style rule or other.
  */
-
 export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	public static readonly children: string[] = ['Text', 'TextAddition', 'TextDeletion'];
 	public static readonly mixed: boolean = false;
@@ -79,4 +85,5 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		);
 	}
 }
+
 registerComponent(Paragraph);

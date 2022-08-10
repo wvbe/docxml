@@ -6,30 +6,30 @@ import { ContentTypes } from './files/ContentTypes.ts';
 import { OfficeDocument, OfficeDocumentChild } from './files/OfficeDocument.ts';
 import { Relationships, RelationshipType } from './files/Relationships.ts';
 
-export type Options = {
-	[key: string]: never;
-};
-
 /**
  * Represents the .docx file, which is essentially a ZIP archive with a bunch of XML files and
  * some naming conventions.
  *
- * The files contained in a .docx archive are modelled as properties (recursive) using classes in
- * `src/files/`.
+ * An instance of this class can access other classes that represent the various XML files in a
+ * DOCX archive, such as `ContentTypes.xml`, `word/document.xml`, and `_rels/.rels`.
  */
 export class Docx {
+	/**
+	 * The utility function dealing with the XML for recording content types. Every DOCX file has
+	 * exactly one of these.
+	 */
 	public readonly contentTypes: ContentTypes;
 
+	/**
+	 * The utility function dealing with the top-level XML file for recording relationships. Other
+	 * relationships may have their own relationship XMLs.
+	 */
 	public readonly relationships: Relationships;
 
-	private readonly options: Options;
-
 	private constructor(
-		options: Options,
 		contentTypes = new ContentTypes(BundleFile.contentTypes),
 		relationships = new Relationships(BundleFile.relationships),
 	) {
-		this.options = options;
 		this.contentTypes = contentTypes;
 		this.relationships = relationships;
 
@@ -38,6 +38,10 @@ export class Docx {
 
 	// Also not enumerable
 	private _officeDocument: OfficeDocument | null = null;
+
+	/**
+	 * A short-cut to the relationship that represents visible document content.
+	 */
 	public get document() {
 		// @TODO Invalidate the cached _officeDocument whenever that relationship changes.
 		if (!this._officeDocument) {
@@ -49,6 +53,9 @@ export class Docx {
 		return this._officeDocument;
 	}
 
+	/**
+	 * Create a ZIP archive, which is the handler for `.docx` files as a ZIP archive.
+	 */
 	public toArchive(): ZipArchive {
 		const styles = this.document.styles;
 		const relationships = this.document.relationships;
@@ -87,30 +94,34 @@ export class Docx {
 	}
 
 	/**
-	 * Instantiate this class by looking at the DOCX archive for it.
+	 * Instantiate this class by giving it a `.docx` file if it is already loaded as a {@link ZipArchive} instance.
 	 */
-	public static async fromArchive(archive: ZipArchive, options?: Options): Promise<Docx>;
-	public static async fromArchive(location: string, options?: Options): Promise<Docx>;
-	public static async fromArchive(
-		locationOrZipArchive: string | ZipArchive,
-		options: Options = {},
-	): Promise<Docx> {
+	public static async fromArchive(archive: ZipArchive): Promise<Docx>;
+
+	/**
+	 * Instantiate this class by pointing at a `.docx` file location.
+	 */
+	public static async fromArchive(location: string): Promise<Docx>;
+
+	/**
+	 * Instantiate this class by referencing an existing `.docx` archive.
+	 */
+	public static async fromArchive(locationOrZipArchive: string | ZipArchive): Promise<Docx> {
 		const archive =
 			typeof locationOrZipArchive === 'string'
 				? await ZipArchive.fromFile(locationOrZipArchive)
 				: locationOrZipArchive;
 		return new Docx(
-			options,
 			await ContentTypes.fromArchive(archive, BundleFile.contentTypes),
 			await Relationships.fromArchive(archive, BundleFile.relationships),
 		);
 	}
 
 	/**
-	 * Create an empty bundle, and populate it with the minimum viable contents
+	 * Create an empty DOCX, and populate it with the minimum viable contents to appease MS Word.
 	 */
-	public static fromNothing(options: Options = {}) {
-		const bundle = new Docx(options);
+	public static fromNothing() {
+		const bundle = new Docx();
 
 		bundle.relationships.add(
 			RelationshipType.officeDocument,
@@ -120,6 +131,10 @@ export class Docx {
 		return bundle;
 	}
 
+	/**
+	 * Create a new DOCX with contents composed by this library's components. Needs a single JSX component
+	 * as root, for example `<Document>`, `<Section>` or `<Paragragh>`.
+	 */
 	public static fromJsx(roots: OfficeDocumentChild[]) {
 		if (roots.length !== 1) {
 			// console.error('Roots: ' + roots.map((r) => r.constructor.name).join(', '));

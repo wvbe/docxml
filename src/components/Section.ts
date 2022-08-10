@@ -16,10 +16,24 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { Paragraph } from './Paragraph.ts';
 import type { Table } from './Table.ts';
 
+/**
+ * A type describing the components accepted as children of {@link Section}.
+ */
 export type SectionChild = Paragraph | Table;
 
+/**
+ * A type describing the props accepted by {@link Section}.
+ */
 export type SectionProps = SectionProperties;
 
+/**
+ * A component that represents a DOCX section, which could have its own page sizing options and so
+ * on.
+ *
+ * In normal OOXML this information belongs at either the end of the document, or inside the
+ * formatting options of the last paragraph belonging to that section. This component will smooth
+ * that over in such a way that you can simply put `<Paragraph>` (etc.) inside `<Section>`.
+ */
 export class Section extends Component<SectionProps, SectionChild> {
 	public static readonly children: string[] = ['Paragraph', 'Table'];
 	public static readonly mixed: boolean = false;

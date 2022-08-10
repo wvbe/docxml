@@ -17,8 +17,14 @@ import type { RowAddition } from './RowAddition.ts';
 import type { RowDeletion } from './RowDeletion.ts';
 import { Table } from './Table.ts';
 
+/**
+ * A type describing the components accepted as children of {@link Row}.
+ */
 export type RowChild = Cell;
 
+/**
+ * A type describing the props accepted by {@link Row}.
+ */
 export type RowProps = { [key: string]: never };
 
 /**
@@ -69,6 +75,9 @@ export function createNodeFromRow(
 	);
 }
 
+/**
+ * A component that represents a table row.
+ */
 export class Row extends Component<RowProps, RowChild> {
 	public static readonly children: string[] = ['Cell'];
 	public static readonly mixed: boolean = false;
@@ -93,4 +102,5 @@ export class Row extends Component<RowProps, RowChild> {
 		return new Row(props, ...createChildComponentsFromNodes<RowChild>(this.children, children));
 	}
 }
+
 registerComponent(Row as unknown as ComponentDefinition);

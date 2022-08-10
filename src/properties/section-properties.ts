@@ -1,5 +1,5 @@
 import { create } from '../utilities/dom.ts';
-import { hpt, UniversalSize } from '../utilities/length.ts';
+import { hpt, Length } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
@@ -10,8 +10,8 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
  *   https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_rPr_topic_ID0EIEKM.html
  */
 export type SectionProperties = {
-	pageWidth?: null | UniversalSize;
-	pageHeight?: null | UniversalSize;
+	pageWidth?: null | Length;
+	pageHeight?: null | Length;
 	pageOrientation?: null | 'landscape' | 'portrait';
 };
 

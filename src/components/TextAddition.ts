@@ -12,10 +12,19 @@ import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import type { Text } from './Text.ts';
 import type { TextDeletion } from './TextDeletion.ts';
 
-export type TextAdditionProps = ChangeInformation;
-
+/**
+ * A type describing the components accepted as children of {@link TextAddition}.
+ */
 export type TextAdditionChild = Text | TextAddition | TextDeletion;
 
+/**
+ * A type describing the props accepted by {@link TextAddition}.
+ */
+export type TextAdditionProps = ChangeInformation;
+
+/**
+ * A component that represents a change-tracked text that was inserted.
+ */
 export class TextAddition extends Component<TextAdditionProps, TextAdditionChild> {
 	public static readonly children: string[] = ['Text', this.name, 'TextDeletion'];
 	public static readonly mixed: boolean = false;

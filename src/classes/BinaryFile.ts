@@ -4,6 +4,10 @@ import { ZipArchive } from './ZipArchive.ts';
 
 type BinaryFileReader = () => Promise<Uint8Array>;
 
+/**
+ * A utility class that represents a binary file inside the DOCX archive -- currently used for
+ * images.
+ */
 export class BinaryFile {
 	public readonly location: string;
 

@@ -10,7 +10,7 @@ import type { TableProperties } from '../properties/table-properties.ts';
 import { tablePropertiesFromNode, tablePropertiesToNode } from '../properties/table-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
-import type { UniversalSize } from '../utilities/length.ts';
+import type { Length } from '../utilities/length.ts';
 import { twip } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { TableGridModel } from '../utilities/tables.ts';
@@ -19,12 +19,21 @@ import type { Row } from './Row.ts';
 import type { RowAddition } from './RowAddition.ts';
 import type { RowDeletion } from './RowDeletion.ts';
 
+/**
+ * A type describing the components accepted as children of {@link Table}.
+ */
 export type TableChild = Row | RowAddition | RowDeletion;
 
+/**
+ * A type describing the props accepted by {@link Table}.
+ */
 export type TableProps = TableProperties & {
-	columnWidths?: null | UniversalSize[];
+	columnWidths?: null | Length[];
 };
 
+/**
+ * A component that represents a table.
+ */
 export class Table extends Component<TableProps, TableChild> {
 	public static readonly children: string[] = ['Row', 'RowAddition', 'RowDeletion'];
 	public static readonly mixed: boolean = false;
@@ -86,4 +95,5 @@ export class Table extends Component<TableProps, TableChild> {
 		);
 	}
 }
+
 registerComponent(Table);

@@ -17,14 +17,19 @@ import type { Break } from './Break.ts';
 import type { Image } from './Image.ts';
 import { TextDeletion } from './TextDeletion.ts';
 
-export type TextProps = TextProperties;
-
+/**
+ * A type describing the components accepted as children of {@link Text}.
+ */
 export type TextChild = string | Break | Image;
 
 /**
- * Text run
- *
- * http://officeopenxml.com/WPtext.php
+ * A type describing the props accepted by {@link Text}.
+ */
+export type TextProps = TextProperties;
+
+/**
+ * A component that represents text. All inline formatting options, such as bold/italic/underline,
+ * are in fact different props or styles on the `<Text>` component.
  */
 export class Text extends Component<TextProps, TextChild> {
 	public static readonly children: string[] = ['Break', 'Image'];
@@ -87,4 +92,5 @@ export class Text extends Component<TextProps, TextChild> {
 		);
 	}
 }
+
 registerComponent(Text);

@@ -7,13 +7,25 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { Paragraph } from './Paragraph.ts';
 import { Table } from './Table.ts';
 
+/**
+ * A type describing the components accepted as children of {@link Cell}.
+ */
 export type CellChild = Paragraph;
 
+/**
+ * A type describing the props accepted by {@link Cell}.
+ */
 export type CellProps = {
 	colSpan?: number | null;
 	rowSpan?: number | null;
 };
 
+/**
+ * A component that represents a table cell.
+ *
+ * For MS Word to be happy any cell needs to have a paragraph as the last child. This component will
+ * quietly fix that for you if you don't have a paragraph there already.
+ */
 export class Cell extends Component<CellProps, CellChild> {
 	public static readonly children: string[] = ['Paragraph', 'Table'];
 	public static readonly mixed: boolean = false;

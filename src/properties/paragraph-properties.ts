@@ -1,5 +1,5 @@
 import { create } from '../utilities/dom.ts';
-import { twip, UniversalSize } from '../utilities/length.ts';
+import { Length, twip } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../utilities/xquery.ts';
 import { SectionProperties, sectionPropertiesToNode } from './section-properties.ts';
@@ -9,21 +9,21 @@ type ParagraphPropertiesI = {
 	alignment?: 'left' | 'right' | 'center' | 'both' | null;
 	style?: string | null;
 	spacing?: null | {
-		before?: UniversalSize | null;
-		after?: UniversalSize | null;
-		line?: UniversalSize | null;
+		before?: Length | null;
+		after?: Length | null;
+		line?: Length | null;
 		lineRule?: 'atLeast' | 'exactly' | 'auto' | null;
 		afterAutoSpacing?: boolean | null;
 		beforeAutoSpacing?: boolean | null;
 	};
 	indentation?: null | {
-		left?: UniversalSize | null;
+		left?: Length | null;
 		leftChars?: number | null;
-		right?: UniversalSize | null;
+		right?: Length | null;
 		rightChars?: number | null;
-		hanging?: UniversalSize | null;
+		hanging?: Length | null;
 		hangingChars?: number | null;
-		firstLine?: UniversalSize | null;
+		firstLine?: Length | null;
 		firstLineChars?: number | null;
 	};
 	change?:

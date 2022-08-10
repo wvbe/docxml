@@ -6,22 +6,30 @@ import { RelationshipType } from '../files/Relationships.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { createUniqueNumericIdentifier } from '../utilities/identifiers.ts';
-import type { UniversalSize } from '../utilities/length.ts';
+import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
+/**
+ * A type describing the components accepted as children of {@link Image}.
+ */
 export type ImageChild = never;
 
+/**
+ * A type describing the props accepted by {@link Image}.
+ */
 export type ImageProps = {
 	data: Promise<Uint8Array>;
 	title?: null | string;
 	alt?: null | string;
-	width: UniversalSize;
-	height: UniversalSize;
+	width: Length;
+	height: Length;
 };
 
 /**
- * http://www.datypic.com/sc/ooxml/e-w_br-1.html
+ * A component that represents an image in your DOCX document. You can create a new image by
+ * passing any promise to an `Uint8Array` into the `data` prop, eg. get it from your file system
+ * or from a web request.
  */
 export class Image extends Component<ImageProps, ImageChild> {
 	public static readonly children: string[] = [];

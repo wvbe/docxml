@@ -111,7 +111,7 @@ const style = api.styles.add({
 Obviously `docxml` is a TypeScript project, which is already very different from how you would normally interact
 with a DOCX document. More meaningfully however, `docxml` is meant to make writing DOCX _easier_. For example;
 
-- All sizes are of type `UniversalSize`, which means it doesn't matter wether you input them as points, centimeters,
+- All sizes are of type `Length`, which means it doesn't matter wether you input them as points, centimeters,
   inches, 1/2, 1/8th or 1/20th points, English Metric Units, and so on.
 - The JSX pragma will try to correct components that would lead to invalid XML structures, by splitting the parents of
   invalidly placed components recursively until the new position is valid.

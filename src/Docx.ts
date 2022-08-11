@@ -1,19 +1,41 @@
-import { AnyComponent } from './classes/Component.ts';
+import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.5/mod.ts';
+
+import type { AnyComponent } from './classes/Component.ts';
+import type { Component } from './classes/Component.ts';
 import { ZipArchive } from './classes/ZipArchive.ts';
 import { Image } from './components/Image.ts';
 import { BundleFile } from './enums.ts';
 import { ContentTypes } from './files/ContentTypes.ts';
-import { OfficeDocument, OfficeDocumentChild } from './files/OfficeDocument.ts';
+import type { OfficeDocumentChild } from './files/OfficeDocument.ts';
+import { OfficeDocument } from './files/OfficeDocument.ts';
 import { Relationships, RelationshipType } from './files/Relationships.ts';
+import { parse } from './utilities/dom.ts';
+import { JSX } from './utilities/jsx.ts';
+
+type RuleResult = Component | string | null | Array<RuleResult>;
 
 /**
- * Represents the .docx file, which is essentially a ZIP archive with a bunch of XML files and
- * some naming conventions.
+ * Represents the DOCX file as a whole, and collates other responsibilities together. Provides
+ * access to DOCX content types ({@link ContentTypes}), relationships ({@link Relationships}),
+ * the document itself ({@link OfficeDocument}).
  *
  * An instance of this class can access other classes that represent the various XML files in a
  * DOCX archive, such as `ContentTypes.xml`, `word/document.xml`, and `_rels/.rels`.
  */
-export class Docx {
+export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: string]: never }> {
+	/**
+	 * The JSX pragma.
+	 */
+	public readonly JSX = JSX;
+
+	/**
+	 * The JSX pragma.
+	 *
+	 * @deprecated This static property may be removed in the future since it does not have the context of
+	 * a DOCX. If you can, use the instance JSX property. If you cannot, submit an issue.
+	 */
+	public static readonly JSX = JSX;
+
 	/**
 	 * The utility function dealing with the XML for recording content types. Every DOCX file has
 	 * exactly one of these.
@@ -26,14 +48,27 @@ export class Docx {
 	 */
 	public readonly relationships: Relationships;
 
-	private constructor(
+	protected constructor(
 		contentTypes = new ContentTypes(BundleFile.contentTypes),
 		relationships = new Relationships(BundleFile.relationships),
+		rules: GenericRenderer<RuleResult, { document: OfficeDocument } & PropsGeneric> | null = null,
 	) {
+		Object.defineProperty(this, '_renderer', { enumerable: false });
+		Object.defineProperty(this, '_officeDocument', { enumerable: false });
+
 		this.contentTypes = contentTypes;
 		this.relationships = relationships;
 
-		Object.defineProperty(this, '_officeDocument', { enumerable: false });
+		if (rules) {
+			this._renderer.merge(rules);
+		}
+
+		if (!this.relationships.hasType(RelationshipType.officeDocument)) {
+			this.relationships.add(
+				RelationshipType.officeDocument,
+				new OfficeDocument(BundleFile.mainDocument),
+			);
+		}
 	}
 
 	// Also not enumerable
@@ -96,22 +131,28 @@ export class Docx {
 	/**
 	 * Instantiate this class by giving it a `.docx` file if it is already loaded as a {@link ZipArchive} instance.
 	 */
-	public static async fromArchive(archive: ZipArchive): Promise<Docx>;
+	public static async fromArchive<
+		PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
+	>(archive: ZipArchive): Promise<Docx<PropsGeneric>>;
 
 	/**
 	 * Instantiate this class by pointing at a `.docx` file location.
 	 */
-	public static async fromArchive(location: string): Promise<Docx>;
+	public static async fromArchive<
+		PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
+	>(location: string): Promise<Docx<PropsGeneric>>;
 
 	/**
 	 * Instantiate this class by referencing an existing `.docx` archive.
 	 */
-	public static async fromArchive(locationOrZipArchive: string | ZipArchive): Promise<Docx> {
+	public static async fromArchive<
+		PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
+	>(locationOrZipArchive: string | ZipArchive): Promise<Docx<PropsGeneric>> {
 		const archive =
 			typeof locationOrZipArchive === 'string'
 				? await ZipArchive.fromFile(locationOrZipArchive)
 				: locationOrZipArchive;
-		return new Docx(
+		return new Docx<PropsGeneric>(
 			await ContentTypes.fromArchive(archive, BundleFile.contentTypes),
 			await Relationships.fromArchive(archive, BundleFile.relationships),
 		);
@@ -120,15 +161,10 @@ export class Docx {
 	/**
 	 * Create an empty DOCX, and populate it with the minimum viable contents to appease MS Word.
 	 */
-	public static fromNothing() {
-		const bundle = new Docx();
-
-		bundle.relationships.add(
-			RelationshipType.officeDocument,
-			new OfficeDocument(BundleFile.mainDocument),
-		);
-
-		return bundle;
+	public static fromNothing<
+		PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
+	>() {
+		return new Docx<PropsGeneric>();
 	}
 
 	/**
@@ -145,5 +181,61 @@ export class Docx {
 		const bundle = Docx.fromNothing();
 		bundle.document.set(roots[0]);
 		return bundle;
+	}
+
+	/**
+	 * The XML renderer instance containing translation rules, going from your XML to this library's
+	 * OOXML components.
+	 */
+	private readonly _renderer = new GenericRenderer<
+		RuleResult,
+		{ document: OfficeDocument } & PropsGeneric
+	>();
+
+	/**
+	 * Add an XML translation rule, applied to an element that matches the given XPath test.
+	 *
+	 * If an element matches multiple rules, the rule with the most specific XPath test wins.
+	 */
+	public withXmlRule(xPathTest: string, transformer: Parameters<typeof this._renderer.add>[1]) {
+		this._renderer.add(xPathTest, transformer);
+		return this;
+	}
+
+	public fromXml(xml: string, props: PropsGeneric) {
+		if (!this._renderer.length) {
+			throw new Error(
+				'No XML transformation rules were configured, creating a DOCX from XML is therefore not possible.',
+			);
+		}
+
+		const ast = this._renderer.render(parse(xml), {
+			document: this.document,
+			...props,
+		});
+		const children = (Array.isArray(ast) ? ast : [ast]).filter(
+			(child): child is Component => child !== null && typeof child !== 'string',
+		);
+
+		// There is no guarantee that the rendering rules produce schema-valid XML.
+		// @TODO implement some kind of an errr-out mechanism
+
+		this.document.set(children);
+
+		return this;
+	}
+
+	/**
+	 * Clone a new instance of {@link Docx} including all existing relationships, media, and XML transformation rules.
+	 */
+	public async clone(): Promise<Docx<PropsGeneric>> {
+		// Clone the DOCX styles (etc.) to a new instance that we can mess with
+		// @TODO find a cheaper way to clone a Docx instance.
+		const docx = await Docx.fromArchive<PropsGeneric>(this.toArchive());
+
+		// Clone rendering rules
+		docx._renderer.merge(this._renderer);
+
+		return docx;
 	}
 }

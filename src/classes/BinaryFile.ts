@@ -11,11 +11,11 @@ type BinaryFileReader = () => Promise<Uint8Array>;
 export class BinaryFile {
 	public readonly location: string;
 
-	private readonly reader: BinaryFileReader;
+	private readonly _reader: BinaryFileReader;
 
 	protected constructor(location: string, reader: BinaryFileReader) {
 		this.location = location;
-		this.reader = reader;
+		this._reader = reader;
 	}
 
 	/**
@@ -54,7 +54,7 @@ export class BinaryFile {
 	}
 
 	public toUint8Array(): Promise<Uint8Array> {
-		return this.reader();
+		return this._reader();
 	}
 
 	/**

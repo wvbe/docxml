@@ -34,14 +34,16 @@ export type ParagraphProps = ParagraphProperties & TextProperties;
 /**
  * A component that represents a paragraph in your DOCX document, which is one of the most
  * widely used components and the most likely to contain a style rule or other.
+ *
+ * A paragraph is a block-level element and contains text and inlines, see also {@link Text}.
  */
 export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	public static readonly children: string[] = ['Text', 'TextAddition', 'TextDeletion'];
 	public static readonly mixed: boolean = false;
-	private sectionProperties: SectionProperties | null = null;
+	private _sectionProperties: SectionProperties | null = null;
 
 	public setSectionProperties(properties?: SectionProperties | null) {
-		this.sectionProperties = properties || null;
+		this._sectionProperties = properties || null;
 	}
 
 	/**
@@ -57,7 +59,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 				}
 			`,
 			{
-				pPr: paragraphPropertiesToNode(this.props, this.sectionProperties),
+				pPr: paragraphPropertiesToNode(this.props, this._sectionProperties),
 				children: this.childrenToNode(ancestry),
 			},
 		);

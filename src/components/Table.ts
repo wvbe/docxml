@@ -38,13 +38,13 @@ export class Table extends Component<TableProps, TableChild> {
 	public static readonly children: string[] = ['Row', 'RowAddition', 'RowDeletion'];
 	public static readonly mixed: boolean = false;
 
-	private _model: TableGridModel | null = null;
-	public get model() {
-		if (!this._model) {
-			this._model = new TableGridModel(this);
-		}
-		return this._model;
-	}
+	/**
+	 * A conceptual description of how the cells, columns, rows and spans of this table make sense.
+	 *
+	 * Exposed so it can be accessed by {@link Row} and {@link Cell} descendants, but not meant
+	 * to be used otherwise.
+	 */
+	public readonly model = new TableGridModel(this);
 
 	/**
 	 * Creates an XML DOM node for this component instance.

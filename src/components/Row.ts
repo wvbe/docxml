@@ -28,7 +28,9 @@ export type RowChild = Cell;
 export type RowProps = { [key: string]: never };
 
 /**
- * For reuse between Row, RowAddition and RowDeletion
+ * For drying some logic between {@link Row}, {@link RowAddition} and {@link RowDeletion}
+ *
+ * Parses the children (and no props yet) from an existing XML node.
  */
 export function parsePropsAndChildNodes(node: Node) {
 	return evaluateXPathToMap(
@@ -46,7 +48,9 @@ export function parsePropsAndChildNodes(node: Node) {
 }
 
 /**
- * For reuse between Row, RowAddition and RowDeletion
+ * For drying some logic between {@link Row}, {@link RowAddition} and {@link RowDeletion}
+ *
+ * Creates an XML node for a given row.
  */
 export function createNodeFromRow(
 	row: Row | RowAddition | RowDeletion,

@@ -17,6 +17,8 @@ Or it can be used to convert any XML to DOCX:
 // TODO example code
 ```
 
+For the latest and greatest API documentation please go to https://doc.deno.land/https://deno.land/x/docxml/mod.ts
+
 # Formatting options
 
 ## Paragraph formatting

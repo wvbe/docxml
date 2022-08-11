@@ -33,7 +33,7 @@ export class ZipArchive {
 	}
 
 	public async asUint8Array(): Promise<Uint8Array> {
-		for await (const { location, promise } of this.promisedBinaryFiles) {
+		for await (const { location, promise } of this._promises) {
 			this.zip.addFile(location, await promise);
 		}
 		return this.zip.generateAsync({ type: 'uint8array' });
@@ -69,7 +69,7 @@ export class ZipArchive {
 		this.zip.addFile(location, contents);
 		return this;
 	}
-	private readonly promisedBinaryFiles: { location: string; promise: Promise<Uint8Array> }[] = [];
+	private readonly _promises: { location: string; promise: Promise<Uint8Array> }[] = [];
 
 	/**
 	 * Create a new text file in the DOCX archive.
@@ -79,7 +79,7 @@ export class ZipArchive {
 	 * output time (see also ZipArchive#toUint8Array).
 	 */
 	public addBinaryFile(location: string, promised: Promise<Uint8Array>): this {
-		this.promisedBinaryFiles.push({ location, promise: promised });
+		this._promises.push({ location, promise: promised });
 		return this;
 	}
 

@@ -33,29 +33,29 @@ export class TableGridModel {
 	/**
 	 * A map of which col/row coordinates are filled by a cell.
 	 */
-	private readonly occupation = new Map<CellCoordinate, Cell>();
+	private readonly _occupancy = new Map<CellCoordinate, Cell>();
 
 	/**
 	 * The coordinate and size information about a cell.
 	 */
-	private readonly cellNodes = new Map<Cell, CellInfo>();
+	private readonly _info = new Map<Cell, CellInfo>();
 
 	public constructor(table: Table) {
 		table.children.forEach((row, rowIndex) => {
 			row.children.forEach((cell) => {
-				const colIndex = this.getFirstAvailableColumnOnRow(rowIndex);
+				const colIndex = this._getFirstAvailableColumnOnRow(rowIndex);
 				for (let y = rowIndex; y < rowIndex + cell.getRowSpan(); y++) {
 					for (let x = colIndex; x < colIndex + cell.getColSpan(); x++) {
 						const key = coord(x, y);
-						if (this.occupation.has(key)) {
+						if (this._occupancy.has(key)) {
 							// This should never happen so long as the colspans/rowspans make sense.
 							throw new Error(`Cell ${x},${y} already occupied.`);
 						}
-						this.occupation.set(key, cell);
+						this._occupancy.set(key, cell);
 					}
 				}
-				if (!this.cellNodes.has(cell)) {
-					this.cellNodes.set(cell, {
+				if (!this._info.has(cell)) {
+					this._info.set(cell, {
 						row: rowIndex,
 						column: colIndex,
 						rowspan: cell.getRowSpan(),
@@ -69,8 +69,8 @@ export class TableGridModel {
 	/**
 	 * Return the zero-based column number of the first unfilled cell on the given row
 	 */
-	private getFirstAvailableColumnOnRow(y: number) {
-		const columnsOccupied = Array.from(this.occupation.keys())
+	private _getFirstAvailableColumnOnRow(y: number) {
+		const columnsOccupied = Array.from(this._occupancy.keys())
 			.filter((key) => key.endsWith(`,${y}`))
 			.map((key) => parseInt(key.split(',')[0], 10))
 			.sort();
@@ -87,7 +87,7 @@ export class TableGridModel {
 	 * into account.
 	 */
 	public getNodeAtCell(column: number, row: number) {
-		return this.occupation.get(coord(column, row)) || null;
+		return this._occupancy.get(coord(column, row)) || null;
 	}
 
 	/**
@@ -96,7 +96,7 @@ export class TableGridModel {
 	public getCellsInRow(row: number) {
 		// TODO could be simplified if we knew the table is rectangular
 		return (
-			Array.from(this.occupation.keys())
+			Array.from(this._occupancy.keys())
 				.filter((key) => key.endsWith(`,${row}`))
 				.map((key) => key.split(',').map((n) => parseInt(n, 10)))
 				.sort((a, b) => a[0] - b[0])
@@ -110,7 +110,7 @@ export class TableGridModel {
 	 * cels into account.
 	 */
 	public getCellInfo(cell: Cell): CellInfo {
-		const info = this.cellNodes.get(cell);
+		const info = this._info.get(cell);
 		if (!info) {
 			throw new Error(`The given cell does not exist in this table`);
 		}

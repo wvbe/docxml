@@ -50,12 +50,12 @@ export class Relationships extends XmlFile {
 	/**
 	 * All relationship data
 	 */
-	private meta: Array<RelationshipMeta>;
+	private _meta: Array<RelationshipMeta>;
 
 	/**
 	 * Class instances of all relationships that are not "external"
 	 */
-	private instances: Map<string, File>;
+	private _instances: Map<string, File>;
 
 	public constructor(
 		location: string,
@@ -63,8 +63,8 @@ export class Relationships extends XmlFile {
 		instances = new Map<string, File>(),
 	) {
 		super(location);
-		this.meta = meta;
-		this.instances = instances;
+		this._meta = meta;
+		this._instances = instances;
 	}
 
 	/**
@@ -72,11 +72,11 @@ export class Relationships extends XmlFile {
 	 * of relationship it is.
 	 */
 	public find<R extends File = File>(cb: (meta: RelationshipMeta) => boolean): R | null {
-		const id = this.meta.find(cb)?.id;
+		const id = this._meta.find(cb)?.id;
 		if (!id) {
 			return null;
 		}
-		return (this.instances.get(id) as R) || null;
+		return (this._instances.get(id) as R) || null;
 	}
 
 	/**
@@ -90,9 +90,13 @@ export class Relationships extends XmlFile {
 			isExternal: false,
 			isBinary: type === RelationshipType.image,
 		};
-		this.meta.push(meta);
-		this.instances.set(meta.id, instance);
+		this._meta.push(meta);
+		this._instances.set(meta.id, instance);
 		return meta.id;
+	}
+
+	public hasType(type: RelationshipType) {
+		return this._meta.some((meta) => meta.type === type);
 	}
 
 	public ensureRelationship<C extends File>(type: RelationshipType, createInstance: () => C): C {
@@ -123,7 +127,7 @@ export class Relationships extends XmlFile {
 				}
 			`,
 			{
-				relationships: this.meta.map((meta) => ({
+				relationships: this._meta.map((meta) => ({
 					...meta,
 					target: path.relative(path.dirname(path.dirname(this.location)), meta.target),
 				})),
@@ -134,7 +138,7 @@ export class Relationships extends XmlFile {
 
 	public getRelated(): File[] {
 		const related: File[] = [this];
-		this.instances.forEach((inst) => {
+		this._instances.forEach((inst) => {
 			if (inst.isEmpty()) {
 				// Empty styles.xml? No thank you!
 				return;

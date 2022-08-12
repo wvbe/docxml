@@ -213,9 +213,20 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 			document: this.document,
 			...props,
 		});
-		const children = (Array.isArray(ast) ? ast : [ast]).filter(
-			(child): child is Component => child !== null && typeof child !== 'string',
-		);
+		const children = (Array.isArray(ast) ? ast : [ast]).reduce<Component[]>(function flatten(
+			flat,
+			child,
+		): Component[] {
+			if (child === null || typeof child === 'string') {
+				return flat;
+			}
+			if (Array.isArray(child)) {
+				return [...flat, ...child.reduce(flatten, [])];
+			}
+			flat.push(child);
+			return flat;
+		},
+		[]);
 
 		// There is no guarantee that the rendering rules produce schema-valid XML.
 		// @TODO implement some kind of an errr-out mechanism

@@ -5,7 +5,15 @@ import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../utilities/xquer
 import { SectionProperties, sectionPropertiesToNode } from './section-properties.ts';
 import { TextProperties, textPropertiesFromNode, textPropertiesToNode } from './text-properties.ts';
 
-type ParagraphPropertiesI = {
+/**
+ * All the formatting properties that can be given to a paragraph, _including_ the text run formatting
+ * and change tracking information.
+ *
+ * Serializes to the <w:pPr> element.
+ *   http://officeopenxml.com/WPparagraphProperties.php
+ *   http://www.datypic.com/sc/ooxml/e-w_pPr-6.html
+ */
+export type ParagraphProperties = TextProperties & {
 	alignment?: 'left' | 'right' | 'center' | 'both' | null;
 	style?: string | null;
 	spacing?: null | {
@@ -34,18 +42,6 @@ type ParagraphPropertiesI = {
 				date: Date;
 		  } & Omit<ParagraphProperties, 'change'>);
 };
-
-/**
- * All the formatting properties that can be given to a paragraph, _including_ the text run formatting
- * and change tracking information.
- *
- * @note that there should be no naming collisions between ParagraphProperties and TextProperties!
- *
- * Serializes to the <w:pPr> element.
- *   http://officeopenxml.com/WPparagraphProperties.php
- *   http://www.datypic.com/sc/ooxml/e-w_pPr-6.html
- */
-export type ParagraphProperties = TextProperties & ParagraphPropertiesI;
 
 export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProperties {
 	const data = node

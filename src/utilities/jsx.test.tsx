@@ -1,8 +1,8 @@
-/** @jsx JSX */
+/** @jsx jsx */
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { JSX, Text } from '../../mod.ts';
+import { jsx, Text } from '../../mod.ts';
 import { Component } from '../classes/Component.ts';
 
 describe('JSX', () => {

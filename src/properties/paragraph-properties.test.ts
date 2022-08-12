@@ -3,11 +3,9 @@ import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.
 import { create } from '../utilities/dom.ts';
 import { hpt, twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
-import {
-	ParagraphProperties,
-	paragraphPropertiesFromNode,
-	paragraphPropertiesToNode,
-} from './paragraph-properties.ts';
+import type { ParagraphProperties } from './paragraph-properties.ts';
+import { paragraphPropertiesFromNode, paragraphPropertiesToNode } from './paragraph-properties.ts';
+import type { TextProperties } from './text-properties.ts';
 
 describe('Paragraph formatting', () => {
 	const parsedOnce = paragraphPropertiesFromNode(
@@ -26,7 +24,7 @@ describe('Paragraph formatting', () => {
 		`),
 	);
 
-	const hardcodedExpectation: ParagraphProperties = {
+	const hardcodedExpectation: ParagraphProperties & TextProperties = {
 		alignment: null,
 		style: 'Header',
 		language: 'en-GB',

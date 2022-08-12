@@ -10,7 +10,7 @@ import type { OfficeDocumentChild } from './files/OfficeDocument.ts';
 import { OfficeDocument } from './files/OfficeDocument.ts';
 import { Relationships, RelationshipType } from './files/Relationships.ts';
 import { parse } from './utilities/dom.ts';
-import { JSX } from './utilities/jsx.ts';
+import { jsx } from './utilities/jsx.ts';
 
 type RuleResult = Component | string | null | Array<RuleResult>;
 
@@ -26,7 +26,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	/**
 	 * The JSX pragma.
 	 */
-	public readonly JSX = JSX;
+	public readonly jsx = jsx;
 
 	/**
 	 * The JSX pragma.
@@ -34,7 +34,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * @deprecated This static property may be removed in the future since it does not have the context of
 	 * a DOCX. If you can, use the instance JSX property. If you cannot, submit an issue.
 	 */
-	public static readonly JSX = JSX;
+	public static readonly jsx = jsx;
 
 	/**
 	 * The utility function dealing with the XML for recording content types. Every DOCX file has
@@ -169,7 +169,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 
 	/**
 	 * Create a new DOCX with contents composed by this library's components. Needs a single JSX component
-	 * as root, for example `<Document>`, `<Section>` or `<Paragragh>`.
+	 * as root, for example `<Section>` or `<Paragragh>`.
 	 */
 	public static fromJsx(roots: OfficeDocumentChild[]) {
 		if (roots.length !== 1) {

@@ -1,8 +1,8 @@
-/** @jsx JSX */
+/** @jsx jsx */
 import { describe, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Docx, { Document, JSX, Paragraph, Text, twip } from '../mod.ts';
+import Docx, { jsx, Paragraph, Section, Text, twip } from '../mod.ts';
 import { RelationshipType } from './files/Relationships.ts';
 import { QNS } from './utilities/namespaces.ts';
 import { expectDocumentToContain, expectDocxToContain } from './utilities/tests.ts';
@@ -10,7 +10,7 @@ import { expectDocumentToContain, expectDocxToContain } from './utilities/tests.
 describe('End-to-end', () => {
 	describe('Text run formatting', () => {
 		const docx = Docx.fromJsx(
-			<Document>
+			<Section>
 				<Paragraph>
 					<Text>Normal text</Text>
 					<Text color="red">Colored text</Text>
@@ -20,7 +20,7 @@ describe('End-to-end', () => {
 					<Text isUnderlined="wave">Underlined wave text</Text>
 					<Text language="nl-NL">Buitenlandse tekst</Text>
 				</Paragraph>
-			</Document>,
+			</Section>,
 		);
 
 		it('Unformatted', () =>
@@ -97,7 +97,7 @@ describe('End-to-end', () => {
 		const name = docx.document.styles.add({
 			type: 'paragraph',
 			id: 'test',
-			paragraphProperties: {
+			paragraph: {
 				indentation: {
 					firstLine: twip(420),
 				},

@@ -9,11 +9,13 @@ export type Length = {
 	/**
 	 * Points.
 	 *
-	 * Defined as 1/72th of an inch
+	 * Defined as 1/72th of an inch.
 	 */
 	pt: number;
 	/**
 	 * English metric units.
+	 *
+	 * Defined as 1/360000th of a centimeter.
 	 */
 	emu: number;
 	/**

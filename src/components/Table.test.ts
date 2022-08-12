@@ -1,4 +1,4 @@
-/** @jsx JSX */
+/** @jsx jsx */
 
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 

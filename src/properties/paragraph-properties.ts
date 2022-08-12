@@ -6,14 +6,13 @@ import { SectionProperties, sectionPropertiesToNode } from './section-properties
 import { TextProperties, textPropertiesFromNode, textPropertiesToNode } from './text-properties.ts';
 
 /**
- * All the formatting properties that can be given to a paragraph, _including_ the text run formatting
- * and change tracking information.
+ * All the formatting properties that can be given to a paragraph.
  *
  * Serializes to the <w:pPr> element.
  *   http://officeopenxml.com/WPparagraphProperties.php
  *   http://www.datypic.com/sc/ooxml/e-w_pPr-6.html
  */
-export type ParagraphProperties = TextProperties & {
+export type ParagraphProperties = {
 	alignment?: 'left' | 'right' | 'center' | 'both' | null;
 	style?: string | null;
 	spacing?: null | {
@@ -119,7 +118,7 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 }
 
 export function paragraphPropertiesToNode(
-	data: ParagraphProperties = {},
+	data: ParagraphProperties & TextProperties = {},
 	sectionProperties: SectionProperties | null = null,
 ): Node {
 	return create(

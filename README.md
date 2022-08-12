@@ -2,8 +2,8 @@ This is a [Deno](https://deno.land) module for making `.docx` files.
 
 It can be used to create a `.docx` using components, for example:
 
-```ts
-/** @jsx Docx.JSX */
+```tsx
+/** @jsx Docx.jsx */
 import Docx, { Paragraph } from 'https://deno.land/x/docxml/mod.ts';
 
 Docx.fromJsx(<Paragraph>This is the simplest document you could make.</Paragraph>)
@@ -13,8 +13,8 @@ Docx.fromJsx(<Paragraph>This is the simplest document you could make.</Paragraph
 
 Or it can be used to convert any XML to DOCX:
 
-```ts
-/** @jsx Docx.JSX */
+```tsx
+/** @jsx Docx.jsx */
 import Docx, { Paragraph, Text } from 'https://deno.land/x/docxml/mod.ts';
 
 Docx.fromNothing()
@@ -51,7 +51,7 @@ Paragraph styles may be applied via different ways;
 // As a style:
 const style = api.styles.add({
 	type: 'paragraph',
-	paragraphProperties: {
+	paragraph: {
 		alignment: 'center',
 	},
 });
@@ -80,10 +80,10 @@ const style = api.styles.add({
 // As a style:
 const style = api.styles.add({
 	type: 'paragraph',
-	textProperties: {
+	text: {
 		isItalic: true,
 	},
-	paragraphProperties: {
+	paragraph: {
 		isBold: true,
 	},
 });
@@ -98,7 +98,8 @@ with a DOCX document. More meaningfully however, `docxml` is meant to make writi
 - All sizes are of type `Length`, which means it doesn't matter wether you input them as points, centimeters,
   inches, 1/2, 1/8th or 1/20th points, English Metric Units, and so on.
 - The JSX pragma will try to correct components that would lead to invalid XML structures, by splitting the parents of
-  invalidly placed components recursively until the new position is valid.
+  invalidly placed components recursively until the new position is valid. Moreover, string content in unexpected places
+  is automatically wrapped in `<Text>` when using JSX.
 - Some of the words have changed, generally speaking `docxml` is more verbose than the DOCX verbiage.
 - Generally speaking `docxml` prefers formal (JS) references over references-by-identifier. The identifiers are
   generated for you when the `.docx` file is written.

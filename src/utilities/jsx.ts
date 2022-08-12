@@ -22,10 +22,10 @@ type ComponentComponentFunction<C extends Component> = ComponentFunction<
 /**
  * The JSX pragma with which you can write `<Paragraph>` instead of `new Paragraph({})`.
  *
- * Also exposed as the `JSX` prop on the (static) class as well as instance of this library's top-
+ * Also exposed as the `jsx` prop on the (static) class as well as instance of this library's top-
  * level API -- see also {@link Api}.
  */
-export function JSX<C extends Component>(
+export function jsx<C extends Component>(
 	component: ComponentComponentFunction<C> | ComponentDefinition<C>,
 	props: ComponentProps<C>,
 	...children: Array<ComponentChild<C> | Array<ComponentChild<C>>>
@@ -95,6 +95,3 @@ export function JSX<C extends Component>(
 			.filter((node) => !(node.constructor === Text && !(node as Text).children.length))
 	);
 }
-
-// @TODO this should give code intelligence, and currently it doesn't:
-//JSX(Text, { });

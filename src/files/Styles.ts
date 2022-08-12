@@ -29,15 +29,15 @@ type StyleCommons = {
 };
 type ParagraphStyle = {
 	type: 'paragraph';
-	paragraphProperties?: ParagraphProperties;
-	textProperties?: TextProperties;
-	tableProperties?: null;
+	paragraph?: ParagraphProperties & TextProperties;
+	text?: TextProperties;
+	table?: null;
 };
 type TableStyle = {
 	type: 'table';
-	tableProperties?: TableProperties;
-	paragraphProperties?: null;
-	textProperties?: null;
+	table?: TableProperties;
+	paragraph?: null;
+	text?: null;
 };
 
 type Style = StyleCommons & (ParagraphStyle | TableStyle);
@@ -128,16 +128,12 @@ export class Styles extends XmlFile {
 				</w:styles>
 			`,
 			{
-				styles: this._styles.map(
-					({ paragraphProperties, textProperties, tableProperties, ...style }) => ({
-						...style,
-						ppr: paragraphPropertiesToNode(
-							paragraphProperties as ParagraphStyle['paragraphProperties'],
-						),
-						rpr: textPropertiesToNode(textProperties as ParagraphStyle['textProperties']),
-						tblpr: tablePropertiesToNode(tableProperties as TableStyle['tableProperties']),
-					}),
-				),
+				styles: this._styles.map(({ paragraph, text, table, ...style }) => ({
+					...style,
+					ppr: paragraphPropertiesToNode(paragraph as ParagraphStyle['paragraph']),
+					rpr: textPropertiesToNode(text as ParagraphStyle['text']),
+					tblpr: tablePropertiesToNode(table as TableStyle['table']),
+				})),
 				latentStyles: this._latentStyles,
 			},
 			true,
@@ -193,9 +189,9 @@ export class Styles extends XmlFile {
 		).forEach(({ ppr, rpr, tblpr, ...json }) =>
 			instance.add({
 				...json,
-				paragraphProperties: paragraphPropertiesFromNode(ppr),
-				textProperties: textPropertiesFromNode(rpr),
-				tableProperties: tablePropertiesFromNode(tblpr),
+				paragraph: paragraphPropertiesFromNode(ppr),
+				text: textPropertiesFromNode(rpr),
+				table: tablePropertiesFromNode(tblpr),
 			}),
 		);
 

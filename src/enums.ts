@@ -5,6 +5,7 @@ export enum BundleFile {
 	// All other bundle file names are determined by _rels/.rels. What follows are some
 	// sensible/conventional defaults:
 
+	comments = 'word/comments.xml',
 	coreProperties = 'docProps/core.xml',
 	mainDocument = 'word/document.xml',
 	styles = 'word/styles.xml',
@@ -29,7 +30,7 @@ export enum ContentType {
 	styles = 'application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml',
 	theme = 'application/vnd.openxmlformats-officedocument.theme+xml',
 	webSettings = 'application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml',
-
+	comments = 'application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml',
 	// Binary content types
 	jpeg = 'image/jpeg',
 }

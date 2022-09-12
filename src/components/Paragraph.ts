@@ -3,6 +3,8 @@
 import './Text.ts';
 import './TextAddition.ts';
 import './TextDeletion.ts';
+import './CommentRangeStart.ts';
+import './CommentRangeEnd.ts';
 
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import { type ParagraphProperties } from '../properties/paragraph-properties.ts';
@@ -16,6 +18,8 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import { type CommentRangeEnd } from './CommentRangeEnd.ts';
+import { type CommentRangeStart } from './CommentRangeStart.ts';
 import { type Text } from './Text.ts';
 import { type TextAddition } from './TextAddition.ts';
 import { type TextDeletion } from './TextDeletion.ts';
@@ -23,7 +27,12 @@ import { type TextDeletion } from './TextDeletion.ts';
 /**
  * A type describing the components accepted as children of {@link Paragraph}.
  */
-export type ParagraphChild = Text | TextAddition | TextDeletion;
+export type ParagraphChild =
+	| Text
+	| TextAddition
+	| TextDeletion
+	| CommentRangeStart
+	| CommentRangeEnd;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
@@ -37,10 +46,21 @@ export type ParagraphProps = ParagraphProperties & TextProperties;
  * A paragraph is a block-level element and contains text and inlines, see also {@link Text}.
  */
 export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
-	public static readonly children: string[] = ['Text', 'TextAddition', 'TextDeletion'];
+	public static readonly children: string[] = [
+		'Text',
+		'TextAddition',
+		'TextDeletion',
+		'CommentRangeStart',
+		'CommentRangeEnd',
+	];
 	public static readonly mixed: boolean = false;
 	private _sectionProperties: SectionProperties | null = null;
 
+	/**
+	 * Set properties to the section that this paragraph is supposed to represent. Not intended to be
+	 * called manually. Only here because OOXML somehow decided that a section is defined in the last
+	 * paragraph of it, rather than as an element of its own.
+	 */
 	public setSectionProperties(properties?: SectionProperties | null) {
 		this._sectionProperties = properties || null;
 	}
@@ -80,7 +100,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 				map {
 					"ppr": ./${QNS.w}pPr,
 					"style": ./${QNS.w}pPr/${QNS.w}pStyle/@${QNS.w}val/string(),
-					"children": array{ ./(${QNS.w}r | ${QNS.w}del | ${QNS.w}ins) }
+					"children": array{ ./(${QNS.w}r | ${QNS.w}del | ${QNS.w}ins | ${QNS.w}commentRangeStart | ${QNS.w}commentRangeEnd) }
 				}
 			`,
 			node,

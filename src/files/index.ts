@@ -1,5 +1,6 @@
 import { UnhandledXmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
+import { Comments } from './Comments.ts';
 import { OfficeDocument } from './OfficeDocument.ts';
 import { RelationshipMeta, RelationshipType } from './Relationships.ts';
 import { Styles } from './Styles.ts';
@@ -43,6 +44,8 @@ export function castRelationshipToClass(
 			return Settings.fromArchive(archive, meta.target);
 		case RelationshipType.styles:
 			return Styles.fromArchive(archive, meta.target);
+		case RelationshipType.comments:
+			return Comments.fromArchive(archive, meta.target);
 		case RelationshipType.theme:
 			return Theme.fromArchive(archive, meta.target);
 		case RelationshipType.webSettings:
@@ -50,6 +53,8 @@ export function castRelationshipToClass(
 
 		case RelationshipType.customXml:
 		case RelationshipType.people:
+		case RelationshipType.commentIds:
+		case RelationshipType.commentsExtended:
 			return UnhandledXmlFile.fromArchive(archive, meta.target);
 
 		case RelationshipType.attachedTemplate:

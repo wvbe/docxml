@@ -25,7 +25,9 @@ export enum RelationshipType {
 	webSettings = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/webSettings',
 	customXml = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml',
 	people = 'http://schemas.microsoft.com/office/2011/relationships/people',
-
+	comments = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments',
+	commentIds = 'http://schemas.microsoft.com/office/2016/09/relationships/commentsIds',
+	commentsExtended = 'http://schemas.microsoft.com/office/2011/relationships/commentsExtended',
 	image = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
 
 	/**

@@ -12,12 +12,7 @@ const componentByName = new Map<string, ComponentDefinition>();
  * This helps avoid circular dependencies in components that can be a descendant of themselves.
  * For example, Table --> Row --> Cell --> Table
  */
-export function registerComponent(
-	component: // deno-lint-ignore no-explicit-any
-	| ComponentDefinition<Component<{ [key: string]: any }, any>>
-		// deno-lint-ignore no-explicit-any
-		| ComponentDefinition<Component<{ [key: string]: any }, never>>,
-) {
+export function registerComponent<C extends AnyComponent>(component: ComponentDefinition<C>) {
 	componentByName.set(component.name, component);
 	return component;
 }

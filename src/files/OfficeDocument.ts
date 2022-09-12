@@ -10,6 +10,7 @@ import { createChildComponentsFromNodes } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
+import { Comments } from './Comments.ts';
 import { File, Relationships, RelationshipType } from './Relationships.ts';
 import { Styles } from './Styles.ts';
 
@@ -49,6 +50,17 @@ export class OfficeDocument extends XmlFile {
 			);
 		}
 		return this._styles;
+	}
+
+	private _comments: Comments | null = null;
+	public get comments() {
+		if (!this._comments) {
+			this._comments = this.relationships.ensureRelationship(
+				RelationshipType.comments,
+				() => new Comments(BundleFile.comments),
+			);
+		}
+		return this._comments;
 	}
 
 	protected toNode(): Document {

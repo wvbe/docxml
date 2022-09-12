@@ -13,8 +13,8 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import type { Break } from './Break.ts';
-import type { Image } from './Image.ts';
+import { type Break } from './Break.ts';
+import { type Image } from './Image.ts';
 import { TextDeletion } from './TextDeletion.ts';
 
 /**

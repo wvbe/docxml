@@ -12,9 +12,9 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToBoolean, evaluateXPathToMap } from '../utilities/xquery.ts';
-import type { Cell } from './Cell.ts';
-import type { RowAddition } from './RowAddition.ts';
-import type { RowDeletion } from './RowDeletion.ts';
+import { type Cell } from './Cell.ts';
+import { type RowAddition } from './RowAddition.ts';
+import { type RowDeletion } from './RowDeletion.ts';
 import { Table } from './Table.ts';
 
 /**

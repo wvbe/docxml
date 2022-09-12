@@ -1,12 +1,15 @@
 import { BinaryFile } from '../classes/BinaryFile.ts';
-import type { ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
-import { Component } from '../classes/Component.ts';
+import {
+	type ComponentAncestor,
+	type ComponentDefinition,
+	Component,
+} from '../classes/Component.ts';
 import { Relationships } from '../files/Relationships.ts';
 import { RelationshipType } from '../files/Relationships.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { createUniqueNumericIdentifier } from '../utilities/identifiers.ts';
-import type { Length } from '../utilities/length.ts';
+import { type Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 

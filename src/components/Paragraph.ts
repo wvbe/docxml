@@ -4,22 +4,21 @@ import './Text.ts';
 import './TextAddition.ts';
 import './TextDeletion.ts';
 
-import type { ComponentAncestor } from '../classes/Component.ts';
-import { Component } from '../classes/Component.ts';
-import type { ParagraphProperties } from '../properties/paragraph-properties.ts';
+import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { type ParagraphProperties } from '../properties/paragraph-properties.ts';
 import {
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from '../properties/paragraph-properties.ts';
-import type { SectionProperties } from '../properties/section-properties.ts';
-import type { TextProperties } from '../properties/text-properties.ts';
+import { type SectionProperties } from '../properties/section-properties.ts';
+import { type TextProperties } from '../properties/text-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import type { Text } from './Text.ts';
-import type { TextAddition } from './TextAddition.ts';
-import type { TextDeletion } from './TextDeletion.ts';
+import { type Text } from './Text.ts';
+import { type TextAddition } from './TextAddition.ts';
+import { type TextDeletion } from './TextDeletion.ts';
 
 /**
  * A type describing the components accepted as children of {@link Paragraph}.

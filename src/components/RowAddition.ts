@@ -4,14 +4,12 @@
  */
 
 import { Component, ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
-import type { ChangeInformation } from '../utilities/changes.ts';
-import { getChangeInformation } from '../utilities/changes.ts';
+import { type ChangeInformation, getChangeInformation } from '../utilities/changes.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToBoolean, evaluateXPathToFirstNode } from '../utilities/xquery.ts';
-import type { RowChild } from './Row.ts';
-import { createNodeFromRow, parsePropsAndChildNodes, Row } from './Row.ts';
+import { type RowChild, createNodeFromRow, parsePropsAndChildNodes, Row } from './Row.ts';
 
 /**
  * A type describing the components accepted as children of {@link RowAddition}.

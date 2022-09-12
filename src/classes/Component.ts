@@ -1,4 +1,4 @@
-import type { OfficeDocument } from '../files/OfficeDocument.ts';
+import { type OfficeDocument } from '../files/OfficeDocument.ts';
 
 /**
  * An ancestor of a component at serialization time, or the OfficeDocument instance that is the

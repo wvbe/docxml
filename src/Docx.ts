@@ -1,13 +1,11 @@
 import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.5/mod.ts';
 
-import type { AnyComponent } from './classes/Component.ts';
-import type { Component } from './classes/Component.ts';
+import { type AnyComponent, type Component } from './classes/Component.ts';
 import { ZipArchive } from './classes/ZipArchive.ts';
 import { Image } from './components/Image.ts';
 import { BundleFile } from './enums.ts';
 import { ContentTypes } from './files/ContentTypes.ts';
-import type { OfficeDocumentChild } from './files/OfficeDocument.ts';
-import { OfficeDocument } from './files/OfficeDocument.ts';
+import { type OfficeDocumentChild, OfficeDocument } from './files/OfficeDocument.ts';
 import { Relationships, RelationshipType } from './files/Relationships.ts';
 import { parse } from './utilities/dom.ts';
 import { jsx } from './utilities/jsx.ts';
@@ -203,13 +201,17 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	}
 
 	public fromXml(xml: string, props: PropsGeneric) {
+		return this.fromDom(parse(xml), props);
+	}
+
+	public fromDom(dom: Document, props: PropsGeneric) {
 		if (!this._renderer.length) {
 			throw new Error(
 				'No XML transformation rules were configured, creating a DOCX from XML is therefore not possible.',
 			);
 		}
 
-		const ast = this._renderer.render(parse(xml), {
+		const ast = this._renderer.render(dom, {
 			document: this.document,
 			...props,
 		});
@@ -231,7 +233,8 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		// There is no guarantee that the rendering rules produce schema-valid XML.
 		// @TODO implement some kind of an errr-out mechanism
 
-		this.document.set(children);
+		// @TODO validate that the children are correct?
+		this.document.set(children as OfficeDocumentChild[]);
 
 		return this;
 	}

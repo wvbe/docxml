@@ -4,20 +4,21 @@ import './Row.ts';
 import './RowAddition.ts';
 import './RowDeletion.ts';
 
-import type { ComponentAncestor } from '../classes/Component.ts';
-import { Component } from '../classes/Component.ts';
-import type { TableProperties } from '../properties/table-properties.ts';
-import { tablePropertiesFromNode, tablePropertiesToNode } from '../properties/table-properties.ts';
+import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import {
+	type TableProperties,
+	tablePropertiesFromNode,
+	tablePropertiesToNode,
+} from '../properties/table-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
-import type { Length } from '../utilities/length.ts';
-import { twip } from '../utilities/length.ts';
+import { type Length, twip } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { TableGridModel } from '../utilities/tables.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import type { Row } from './Row.ts';
-import type { RowAddition } from './RowAddition.ts';
-import type { RowDeletion } from './RowDeletion.ts';
+import { type Row } from './Row.ts';
+import { type RowAddition } from './RowAddition.ts';
+import { type RowDeletion } from './RowDeletion.ts';
 
 /**
  * A type describing the components accepted as children of {@link Table}.

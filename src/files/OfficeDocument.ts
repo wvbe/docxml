@@ -2,7 +2,6 @@ import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 
 import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
-import type { Document as DocumentComponent } from '../components/Document.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Section } from '../components/Section.ts';
 import { Table } from '../components/Table.ts';
@@ -14,7 +13,7 @@ import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import { File, Relationships, RelationshipType } from './Relationships.ts';
 import { Styles } from './Styles.ts';
 
-export type OfficeDocumentChild = Paragraph | Table | Section | DocumentComponent;
+export type OfficeDocumentChild = Paragraph | Table | Section;
 
 export class OfficeDocument extends XmlFile {
 	public static contentType = ContentType.mainDocument;

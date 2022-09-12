@@ -1,5 +1,4 @@
-import type { ComponentAncestor } from '../classes/Component.ts';
-import { Component } from '../classes/Component.ts';
+import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';

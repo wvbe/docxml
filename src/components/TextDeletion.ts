@@ -2,15 +2,18 @@
 // definitions, components register themselves in a side-effect of their module.
 import './Text.ts';
 
-import { Component, ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
-import type { ChangeInformation } from '../utilities/changes.ts';
-import { getChangeInformation } from '../utilities/changes.ts';
+import {
+	type ComponentAncestor,
+	type ComponentDefinition,
+	Component,
+} from '../classes/Component.ts';
+import { type ChangeInformation, getChangeInformation } from '../utilities/changes.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
-import type { Text } from './Text.ts';
-import type { TextAddition } from './TextAddition.ts';
+import { type Text } from './Text.ts';
+import { type TextAddition } from './TextAddition.ts';
 
 /**
  * A type describing the components accepted as children of {@link TextDeletion}.

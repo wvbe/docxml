@@ -3,8 +3,11 @@
 import './Paragraph.ts';
 import './Table.ts';
 
-import type { ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
-import { Component } from '../classes/Component.ts';
+import {
+	type ComponentAncestor,
+	type ComponentDefinition,
+	Component,
+} from '../classes/Component.ts';
 import {
 	SectionProperties,
 	sectionPropertiesFromNode,
@@ -14,7 +17,7 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { Paragraph } from './Paragraph.ts';
-import type { Table } from './Table.ts';
+import { type Table } from './Table.ts';
 
 /**
  * A type describing the components accepted as children of {@link Section}.

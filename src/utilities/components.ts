@@ -1,4 +1,8 @@
-import type { AnyComponent, Component, ComponentDefinition } from '../classes/Component.ts';
+import {
+	type AnyComponent,
+	type Component,
+	type ComponentDefinition,
+} from '../classes/Component.ts';
 
 const componentByName = new Map<string, ComponentDefinition>();
 

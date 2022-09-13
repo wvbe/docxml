@@ -4,6 +4,9 @@ export { Docx as default } from './src/Docx.ts';
 // Components
 export { Break } from './src/components/Break.ts';
 export { Cell } from './src/components/Cell.ts';
+export { Comment } from './src/components/Comment.ts';
+export { CommentRangeEnd } from './src/components/CommentRangeEnd.ts';
+export { CommentRangeStart } from './src/components/CommentRangeStart.ts';
 export { Image } from './src/components/Image.ts';
 export { Paragraph } from './src/components/Paragraph.ts';
 export { Row } from './src/components/Row.ts';

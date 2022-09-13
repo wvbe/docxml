@@ -87,6 +87,9 @@ export class OfficeDocument extends XmlFile {
 		this.children.push(...(Array.isArray(children) ? children : [children]));
 	}
 
+	/**
+	 * Set the contents of the document
+	 */
 	public set(children: OfficeDocumentChild | OfficeDocumentChild[]) {
 		this.children.splice(0, this.children.length);
 		this.append(children);

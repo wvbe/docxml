@@ -5,6 +5,7 @@ import './TextAddition.ts';
 import './TextDeletion.ts';
 import './CommentRangeStart.ts';
 import './CommentRangeEnd.ts';
+import './Comment.ts';
 
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import { type ParagraphProperties } from '../properties/paragraph-properties.ts';
@@ -18,6 +19,7 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import { type Comment } from './Comment.ts';
 import { type CommentRangeEnd } from './CommentRangeEnd.ts';
 import { type CommentRangeStart } from './CommentRangeStart.ts';
 import { type Text } from './Text.ts';
@@ -32,7 +34,8 @@ export type ParagraphChild =
 	| TextAddition
 	| TextDeletion
 	| CommentRangeStart
-	| CommentRangeEnd;
+	| CommentRangeEnd
+	| Comment;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
@@ -52,6 +55,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'TextDeletion',
 		'CommentRangeStart',
 		'CommentRangeEnd',
+		'Comment',
 	];
 	public static readonly mixed: boolean = false;
 	private _sectionProperties: SectionProperties | null = null;

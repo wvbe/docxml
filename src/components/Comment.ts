@@ -1,4 +1,5 @@
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { OfficeDocument } from '../files/OfficeDocument.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
@@ -27,12 +28,24 @@ export class Comment extends Component<CommentProps, CommentChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toNode(_ancestry: ComponentAncestor[]): Node {
+	public toNode(ancestry: ComponentAncestor[]): Node {
+		const doc = ancestry.find(
+			(ancestor): ancestor is OfficeDocument => ancestor instanceof OfficeDocument,
+		);
+		if (!doc || !doc.comments.has(this.props.id)) {
+			throw new Error(`Comment "${this.props.id}" does not exist`);
+		}
 		return create(
 			`
-				element ${QNS.w}commentRangeStart {
-					attribute ${QNS.w}id { $id }
+				element ${QNS.w}r {
+					element ${QNS.w}rPr {
+						element ${QNS.w}rStyle {
+							attribute ${QNS.w}val { "CommentReference" }
+						}
+					},
+					element ${QNS.w}commentReference {
+						attribute ${QNS.w}id { $id }
+					}
 				}
 			`,
 			{

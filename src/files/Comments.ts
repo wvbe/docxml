@@ -36,10 +36,6 @@ export class Comments extends XmlFile {
 
 	private readonly comments: Comment[] = [];
 
-	// public constructor(location: string) {
-	// 	super(location);
-	// }
-
 	public isEmpty() {
 		return !this.comments.length;
 	}
@@ -58,7 +54,7 @@ export class Comments extends XmlFile {
 								$comment('contents')
 							}
 					}
-				</w:styles>
+				</w:comments>
 			`,
 			{
 				comments: this.comments.map((comment) => ({
@@ -71,6 +67,11 @@ export class Comments extends XmlFile {
 		);
 	}
 
+	/**
+	 * Add a comment to the DOCX file and return its new identifier. You should reference this
+	 * identifier from the document using the {@link Comment}, {@link CommentRangeStart} and
+	 * {@link CommentRangeEnd} components.
+	 */
 	public add(meta: Omit<Comment, 'id' | 'contents'>, contents: Comment['contents']) {
 		const id = this.comments.length;
 		this.comments.push({
@@ -82,9 +83,16 @@ export class Comments extends XmlFile {
 	}
 
 	/**
+	 * Check whether or not a comment with the given identifier already exists.
+	 */
+	public has(id: number) {
+		return this.comments.some((comment) => comment.id === id);
+	}
+
+	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: ZipArchive, location: string): Promise<Styles> {
+	public static async fromArchive(archive: ZipArchive, location: string): Promise<Comments> {
 		const dom = await archive.readXml(location);
 
 		const instance = new Comments(location);

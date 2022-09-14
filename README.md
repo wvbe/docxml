@@ -22,7 +22,7 @@ Docx.fromNothing()
 	.withXmlRule('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>)
 	.withXmlRule('self::p', ({ traverse }) => <Paragraph>{traverse()}</Paragraph>)
 	.withXmlRule('self::strong', ({ traverse }) => <Text isBold>{traverse()}</Text>)
-	.fromXml(
+	.forXml(
 		`<html>
 			<body>
 				<p>This is a very simply <strong>XML transformation</strong>.</p>

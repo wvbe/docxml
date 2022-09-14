@@ -197,11 +197,11 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		return this;
 	}
 
-	public fromXml(xml: string, props: PropsGeneric) {
-		return this.fromDom(parse(xml), props);
+	public forXml(xml: string, props: PropsGeneric) {
+		return this.forDom(parse(xml), props);
 	}
 
-	public fromDom(dom: Document, props: PropsGeneric) {
+	public forDom(dom: Document, props: PropsGeneric) {
 		if (!this._renderer.length) {
 			throw new Error(
 				'No XML transformation rules were configured, creating a DOCX from XML is therefore not possible.',

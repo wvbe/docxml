@@ -1,5 +1,5 @@
 import { UnhandledXmlFile } from '../classes/XmlFile.ts';
-import { ZipArchive } from '../classes/ZipArchive.ts';
+import { Archive } from '../classes/Archive.ts';
 import { Comments } from './Comments.ts';
 import { OfficeDocument } from './OfficeDocument.ts';
 import { RelationshipMeta, RelationshipType } from './Relationships.ts';
@@ -20,7 +20,7 @@ import { WebSettings } from './wip/WebSettings.ts';
  * the content type instead.
  */
 export function castRelationshipToClass(
-	archive: ZipArchive,
+	archive: Archive,
 	meta: Pick<RelationshipMeta, 'type' | 'target'>,
 ) {
 	switch (meta.type) {

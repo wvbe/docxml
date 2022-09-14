@@ -1,7 +1,7 @@
 import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 
 import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
-import { ZipArchive } from '../../classes/ZipArchive.ts';
+import { Archive } from '../../classes/Archive.ts';
 import { ContentType } from '../../enums.ts';
 import { File, Relationships } from '../Relationships.ts';
 
@@ -22,7 +22,7 @@ export class Settings extends UnhandledXmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: ZipArchive, location: string): Promise<Settings> {
+	public static async fromArchive(archive: Archive, location: string): Promise<Settings> {
 		let relationships;
 
 		const relationshipsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;

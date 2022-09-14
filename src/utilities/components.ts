@@ -3,7 +3,10 @@ import { type AnyComponent, type ComponentDefinition } from '../classes/Componen
 const componentByName = new Map<string, ComponentDefinition>();
 
 /**
- * Register a component in such a way that it can be found by its name later.
+ * Register a component in such a way that it can be found by its name later. Uses the class
+ * name as unique key.
+ *
+ * @TODO test that this works well in minified JS
  *
  * This helps avoid circular dependencies in components that can be a descendant of themselves.
  * For example, Table --> Row --> Cell --> Table
@@ -13,6 +16,12 @@ export function registerComponent<C extends AnyComponent>(component: ComponentDe
 	return component;
 }
 
+/**
+ * Transforms a list of (OOXML) XML nodes to component instances based on a list of possible component
+ * names. The component names must have been registered before using {@link registerComponent}.
+ *
+ * This is useful for instantiating the children of a component based on an existing DOCX file.
+ */
 export function createChildComponentsFromNodes<T extends AnyComponent | string>(
 	names: string[],
 	nodes: Node[],

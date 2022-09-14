@@ -2,7 +2,7 @@ import { JSZip, readZip } from 'https://deno.land/x/jszip@0.11.0/mod.ts';
 
 import { parse, serialize } from '../utilities/dom.ts';
 
-export class ZipArchive {
+export class Archive {
 	public readonly location?: string;
 
 	/**
@@ -76,15 +76,15 @@ export class ZipArchive {
 	 *
 	 * In order to keep this method (and methods that use it, eg. Docx#toArchive) synchronous,
 	 * we're only writing a promise to memory for now and leave the asynchronous operations for
-	 * output time (see also ZipArchive#toUint8Array).
+	 * output time (see also Archive#toUint8Array).
 	 */
 	public addBinaryFile(location: string, promised: Promise<Uint8Array>): this {
 		this._promises.push({ location, promise: promised });
 		return this;
 	}
 
-	public static async fromFile(location: string): Promise<ZipArchive> {
-		return new ZipArchive(await readZip(location));
+	public static async fromFile(location: string): Promise<Archive> {
+		return new Archive(await readZip(location));
 	}
 
 	public async toFile(location: string): Promise<void> {

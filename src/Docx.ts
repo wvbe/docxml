@@ -1,7 +1,7 @@
 import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.5/mod.ts';
 
 import { type AnyComponent, type Component } from './classes/Component.ts';
-import { ZipArchive } from './classes/ZipArchive.ts';
+import { Archive } from './classes/Archive.ts';
 import { Image } from './components/Image.ts';
 import { BundleFile } from './enums.ts';
 import { ContentTypes } from './files/ContentTypes.ts';
@@ -89,7 +89,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	/**
 	 * Create a ZIP archive, which is the handler for `.docx` files as a ZIP archive.
 	 */
-	public toArchive(): ZipArchive {
+	public toArchive(): Archive {
 		const styles = this.document.styles;
 		const relationships = this.document.relationships;
 		this.document.children.forEach(function walk(component: AnyComponent | string) {
@@ -109,7 +109,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 			component.children.forEach(walk);
 		});
 
-		const archive = new ZipArchive();
+		const archive = new Archive();
 
 		this.relationships.toArchive(archive);
 
@@ -127,11 +127,11 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	}
 
 	/**
-	 * Instantiate this class by giving it a `.docx` file if it is already loaded as a {@link ZipArchive} instance.
+	 * Instantiate this class by giving it a `.docx` file if it is already loaded as a {@link Archive} instance.
 	 */
 	public static async fromArchive<
 		PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
-	>(archive: ZipArchive): Promise<Docx<PropsGeneric>>;
+	>(archive: Archive): Promise<Docx<PropsGeneric>>;
 
 	/**
 	 * Instantiate this class by pointing at a `.docx` file location.
@@ -145,10 +145,10 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 */
 	public static async fromArchive<
 		PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
-	>(locationOrZipArchive: string | ZipArchive): Promise<Docx<PropsGeneric>> {
+	>(locationOrZipArchive: string | Archive): Promise<Docx<PropsGeneric>> {
 		const archive =
 			typeof locationOrZipArchive === 'string'
-				? await ZipArchive.fromFile(locationOrZipArchive)
+				? await Archive.fromFile(locationOrZipArchive)
 				: locationOrZipArchive;
 		return new Docx<PropsGeneric>(
 			await ContentTypes.fromArchive(archive, BundleFile.contentTypes),

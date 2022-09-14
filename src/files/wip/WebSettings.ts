@@ -1,5 +1,5 @@
 import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
-import { ZipArchive } from '../../classes/ZipArchive.ts';
+import { Archive } from '../../classes/Archive.ts';
 import { ContentType } from '../../enums.ts';
 
 export class WebSettings extends UnhandledXmlFile {
@@ -8,7 +8,7 @@ export class WebSettings extends UnhandledXmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: ZipArchive, location: string): Promise<WebSettings> {
+	public static async fromArchive(archive: Archive, location: string): Promise<WebSettings> {
 		return new WebSettings(location, await archive.readText(location));
 	}
 }

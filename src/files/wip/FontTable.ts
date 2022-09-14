@@ -1,5 +1,5 @@
 import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
-import { ZipArchive } from '../../classes/ZipArchive.ts';
+import { Archive } from '../../classes/Archive.ts';
 import { ContentType } from '../../enums.ts';
 
 export class FontTable extends UnhandledXmlFile {
@@ -8,7 +8,7 @@ export class FontTable extends UnhandledXmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: ZipArchive, location: string): Promise<FontTable> {
+	public static async fromArchive(archive: Archive, location: string): Promise<FontTable> {
 		return new FontTable(location, await archive.readText(location));
 	}
 }

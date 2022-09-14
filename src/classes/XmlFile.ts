@@ -1,7 +1,7 @@
 import { ContentType } from '../enums.ts';
 import { parse } from '../utilities/dom.ts';
 import { type BinaryFile } from './BinaryFile.ts';
-import { type ZipArchive } from './ZipArchive.ts';
+import { type Archive } from './Archive.ts';
 
 export class XmlFile {
 	public static readonly contentType: ContentType = ContentType.xml;
@@ -51,7 +51,7 @@ export class XmlFile {
 	/**
 	 * Add all related files to the given archive.
 	 */
-	public toArchive(archive: ZipArchive): void {
+	public toArchive(archive: Archive): void {
 		this.getRelated().forEach((related) => {
 			if (related instanceof XmlFile) {
 				archive.addXmlFile(related.location, related.toNode());
@@ -64,7 +64,7 @@ export class XmlFile {
 	/**
 	 * Promise a new JS instance of this file based on the given archive.
 	 */
-	public static fromArchive(_archive: ZipArchive, location: string): Promise<XmlFile> {
+	public static fromArchive(_archive: Archive, location: string): Promise<XmlFile> {
 		return Promise.resolve(new XmlFile(location));
 	}
 }
@@ -81,7 +81,7 @@ export class UnhandledXmlFile extends XmlFile {
 		return parse(this._xml);
 	}
 
-	public static async fromArchive(archive: ZipArchive, location: string) {
+	public static async fromArchive(archive: Archive, location: string) {
 		return new UnhandledXmlFile(location, await archive.readText(location));
 	}
 }

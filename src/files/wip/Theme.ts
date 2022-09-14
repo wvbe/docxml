@@ -1,5 +1,5 @@
 import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
-import { ZipArchive } from '../../classes/ZipArchive.ts';
+import { Archive } from '../../classes/Archive.ts';
 import { ContentType } from '../../enums.ts';
 
 export class Theme extends UnhandledXmlFile {
@@ -8,7 +8,7 @@ export class Theme extends UnhandledXmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: ZipArchive, location: string): Promise<Theme> {
+	public static async fromArchive(archive: Archive, location: string): Promise<Theme> {
 		return new Theme(location, await archive.readText(location));
 	}
 }

@@ -1,6 +1,6 @@
 import { ContentType } from '../enums.ts';
 import { File } from '../files/Relationships.ts';
-import { ZipArchive } from './ZipArchive.ts';
+import { Archive } from './Archive.ts';
 
 type BinaryFileReader = () => Promise<Uint8Array>;
 
@@ -41,7 +41,7 @@ export class BinaryFile {
 		return false;
 	}
 
-	public static fromArchive(archive: ZipArchive, location: string): BinaryFile {
+	public static fromArchive(archive: Archive, location: string): BinaryFile {
 		return new BinaryFile(location, () => archive.readBinary(location));
 	}
 
@@ -60,7 +60,7 @@ export class BinaryFile {
 	/**
 	 * Add all related files to the given archive.
 	 */
-	public toArchive(archive: ZipArchive): void {
+	public toArchive(archive: Archive): void {
 		archive.addBinaryFile(this.location, this.toUint8Array());
 	}
 }

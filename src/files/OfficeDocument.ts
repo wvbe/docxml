@@ -1,7 +1,7 @@
 import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 
 import { XmlFile } from '../classes/XmlFile.ts';
-import { ZipArchive } from '../classes/ZipArchive.ts';
+import { Archive } from '../classes/Archive.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Section } from '../components/Section.ts';
 import { Table } from '../components/Table.ts';
@@ -102,7 +102,7 @@ export class OfficeDocument extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: ZipArchive, location: string): Promise<OfficeDocument> {
+	public static async fromArchive(archive: Archive, location: string): Promise<OfficeDocument> {
 		const relationships = await Relationships.fromArchive(
 			archive,
 			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,

@@ -2,7 +2,7 @@ import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 
 import { BinaryFile } from '../classes/BinaryFile.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
-import { ZipArchive } from '../classes/ZipArchive.ts';
+import { Archive } from '../classes/Archive.ts';
 import { ContentType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { createRandomId } from '../utilities/identifiers.ts';
@@ -150,14 +150,14 @@ export class Relationships extends XmlFile {
 		return related;
 	}
 
-	public toArchive(archive: ZipArchive): void {
+	public toArchive(archive: Archive): void {
 		super.toArchive(archive);
 	}
 
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: ZipArchive, location: string): Promise<Relationships> {
+	public static async fromArchive(archive: Archive, location: string): Promise<Relationships> {
 		const meta = evaluateXPathToArray(
 			`
 				array{/*/Relationship/map{

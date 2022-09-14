@@ -1,5 +1,5 @@
 import { XmlFile } from '../classes/XmlFile.ts';
-import { ZipArchive } from '../classes/ZipArchive.ts';
+import { Archive } from '../classes/Archive.ts';
 import { ContentType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
@@ -75,7 +75,7 @@ export class ContentTypes extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: ZipArchive, location: string) {
+	public static async fromArchive(archive: Archive, location: string) {
 		const dom = await archive.readXml(location);
 		const instance = new ContentTypes(location);
 

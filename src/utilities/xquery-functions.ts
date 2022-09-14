@@ -30,6 +30,7 @@ registerXQueryModule(`
 		$val = ("on", "true", "1")
 	};
 
+	(: @TODO Test this function :)
 	declare %public function ooxml:table-border($val) as map(*) {
 		$val/map {
 			"type": ./@${QNS.w}val/string(),
@@ -39,6 +40,7 @@ registerXQueryModule(`
 		}
 	};
 
+	(: @TODO Test this function :)
 	declare %public function ooxml:create-table-border($name as xs:QName, $obj as map(*)?) {
 		if (exists($obj)) then element {$name} {
 			if ($obj('type')) then attribute ${QNS.w}val { $obj('type') } else (),

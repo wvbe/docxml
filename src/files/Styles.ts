@@ -1,5 +1,5 @@
 import { XmlFile } from '../classes/XmlFile.ts';
-import { ZipArchive } from '../classes/ZipArchive.ts';
+import { Archive } from '../classes/Archive.ts';
 import { ContentType } from '../enums.ts';
 import {
 	ParagraphProperties,
@@ -167,7 +167,7 @@ export class Styles extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: ZipArchive, location: string): Promise<Styles> {
+	public static async fromArchive(archive: Archive, location: string): Promise<Styles> {
 		const dom = await archive.readXml(location);
 
 		const instance = new Styles(location);

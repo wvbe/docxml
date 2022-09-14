@@ -1,4 +1,5 @@
 import { type OfficeDocument } from '../files/OfficeDocument.ts';
+import { type Relationships } from '../files/Relationships.ts';
 
 /**
  * An ancestor of a component at serialization time, or the OfficeDocument instance that is the
@@ -100,6 +101,15 @@ export abstract class Component<
 	public constructor(props: PropsGeneric, ...children: ChildGeneric[]) {
 		this.props = props;
 		this.children = children;
+	}
+
+	/**
+	 * An event hook with which this component can ensure that the correct relationship type is
+	 * recorded to the relationship XML.
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public ensureRelationship(_relationships: Relationships) {
+		// no-op
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

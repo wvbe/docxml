@@ -1,7 +1,7 @@
 import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 
-import { XmlFile } from '../classes/XmlFile.ts';
 import { Archive } from '../classes/Archive.ts';
+import { XmlFile } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Section } from '../components/Section.ts';
 import { Table } from '../components/Table.ts';

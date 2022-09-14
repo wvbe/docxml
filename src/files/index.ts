@@ -1,5 +1,5 @@
-import { UnhandledXmlFile } from '../classes/XmlFile.ts';
 import { Archive } from '../classes/Archive.ts';
+import { UnhandledXmlFile } from '../classes/XmlFile.ts';
 import { Comments } from './Comments.ts';
 import { OfficeDocument } from './OfficeDocument.ts';
 import { RelationshipMeta, RelationshipType } from './Relationships.ts';

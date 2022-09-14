@@ -82,7 +82,6 @@ export class Image extends Component<ImageProps, ImageChild> {
 						(: nb: _Must_ be prefixed with "a" or MS Word will refuse to open :)
 						element ${QNS.a}graphic {
 							element ${QNS.a}graphicData {
-
 									attribute uri { "${NamespaceUri.pic}"},
 									element ${QNS.pic}pic {
 										element ${QNS.pic}nvPicPr {

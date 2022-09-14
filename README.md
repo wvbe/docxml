@@ -90,6 +90,43 @@ const style = api.styles.add({
 <Paragraph style={style}>Text is shown as bold and italic</Paragraph>;
 ```
 
+# Features
+
+To great or small extend, the following features work in the current version of `docxml`. Some items are not ticked off yet -- they are not available, but hopefully soon:
+
+**Custom styles:**
+- [x] Font size and color
+- [x] Bold, italic, underline styles
+- [x] Subscript, superscript, small caps
+- [x] Paragraph spacing and indentation
+- [x] Left/right/center/justified alignment
+- [ ] Aligning text on tabs
+- [ ] Font family
+
+**Tables:**
+- [x] Colspans and rowspans
+- [x] [Table borders](http://officeopenxml.com/WPtableBorders.php)
+- [x] [Conditional formatting](http://officeopenxml.com/WPtblLook.php)
+
+**Images:**
+- [x] From any `UInt8Array` source
+- [x] Alternative and title text
+- [x] Width and height
+
+**Sections:**
+- [x] Width and height
+- [x] Orientation
+
+**Comments:**
+- [x] Point comment
+- [x] Range comment
+- [ ] Comment reply
+
+**Change tracking:**
+- [x] Text additions and deletions
+- [x] Style changes
+- [x] Table row additions and deletions
+
 # Differences with actual MS Word DOCX
 
 Obviously `docxml` is a TypeScript project, which is already very different from how you would normally interact
@@ -100,6 +137,7 @@ with a DOCX document. More meaningfully however, `docxml` is meant to make writi
 - The JSX pragma will try to correct components that would lead to invalid XML structures, by splitting the parents of
   invalidly placed components recursively until the new position is valid. Moreover, string content in unexpected places
   is automatically wrapped in `<Text>` when using JSX.
+- Using the `<Image>` or `<Comment>` components will automatically create all required relationships etc.
 - Some of the words have changed, generally speaking `docxml` is more verbose than the DOCX verbiage.
 - Generally speaking `docxml` prefers formal (JS) references over references-by-identifier. The identifiers are
   generated for you when the `.docx` file is written.
@@ -112,4 +150,8 @@ with a DOCX document. More meaningfully however, `docxml` is meant to make writi
 ```sh
 # Run all unit tests
 deno task test
+
+
+# Run all linting
+deno task lint
 ```

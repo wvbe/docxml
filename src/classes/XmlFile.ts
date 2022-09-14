@@ -1,7 +1,7 @@
 import { ContentType } from '../enums.ts';
 import { parse } from '../utilities/dom.ts';
-import { type BinaryFile } from './BinaryFile.ts';
 import { type Archive } from './Archive.ts';
+import { type BinaryFile } from './BinaryFile.ts';
 
 export class XmlFile {
 	public static readonly contentType: ContentType = ContentType.xml;

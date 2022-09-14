@@ -1,8 +1,8 @@
 import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 
+import { Archive } from '../classes/Archive.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
-import { Archive } from '../classes/Archive.ts';
 import { ContentType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { createRandomId } from '../utilities/identifiers.ts';

@@ -1,5 +1,5 @@
-import { XmlFile } from '../classes/XmlFile.ts';
 import { Archive } from '../classes/Archive.ts';
+import { XmlFile } from '../classes/XmlFile.ts';
 import { ContentType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';

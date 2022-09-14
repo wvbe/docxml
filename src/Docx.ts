@@ -1,8 +1,7 @@
 import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.5/mod.ts';
 
-import { type AnyComponent, type Component } from './classes/Component.ts';
 import { Archive } from './classes/Archive.ts';
-import { Image } from './components/Image.ts';
+import { type AnyComponent, type Component } from './classes/Component.ts';
 import { BundleFile } from './enums.ts';
 import { ContentTypes } from './files/ContentTypes.ts';
 import { type OfficeDocumentChild, OfficeDocument } from './files/OfficeDocument.ts';
@@ -102,9 +101,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 				styles.ensureStyle(styleName);
 			}
 
-			if (component instanceof Image) {
-				component.ensureRelationship(relationships);
-			}
+			component.ensureRelationship(relationships);
 
 			component.children.forEach(walk);
 		});

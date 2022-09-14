@@ -1,7 +1,7 @@
 import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
 
-import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
 import { Archive } from '../../classes/Archive.ts';
+import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
 import { ContentType } from '../../enums.ts';
 import { File, Relationships } from '../Relationships.ts';
 

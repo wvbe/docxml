@@ -1,5 +1,5 @@
-import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
 import { Archive } from '../../classes/Archive.ts';
+import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
 import { ContentType } from '../../enums.ts';
 
 export class Header extends UnhandledXmlFile {

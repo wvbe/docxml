@@ -1,25 +1,8 @@
-import { AnyComponent } from '../classes/Component.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { ZipArchive } from '../classes/ZipArchive.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { ContentType } from '../enums.ts';
-import {
-	ParagraphProperties,
-	paragraphPropertiesFromNode,
-	paragraphPropertiesToNode,
-} from '../properties/paragraph-properties.ts';
-import {
-	TableProperties,
-	tablePropertiesFromNode,
-	tablePropertiesToNode,
-} from '../properties/table-properties.ts';
-import {
-	TextProperties,
-	textPropertiesFromNode,
-	textPropertiesToNode,
-} from '../properties/text-properties.ts';
 import { create } from '../utilities/dom.ts';
-import { createRandomId } from '../utilities/identifiers.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
 

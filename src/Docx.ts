@@ -247,7 +247,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		const docx = await Docx.fromArchive<PropsGeneric>(this.toArchive());
 
 		// Clone rendering rules
-		docx._renderer.merge(this.#renderer);
+		docx.#renderer.merge(this.#renderer);
 
 		return docx;
 	}

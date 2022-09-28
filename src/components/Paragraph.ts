@@ -58,7 +58,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'Comment',
 	];
 	public static readonly mixed: boolean = false;
-	private _sectionProperties: SectionProperties | null = null;
+	#sectionProperties: SectionProperties | null = null;
 
 	/**
 	 * Set properties to the section that this paragraph is supposed to represent. Not intended to be
@@ -66,7 +66,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	 * paragraph of it, rather than as an element of its own.
 	 */
 	public setSectionProperties(properties?: SectionProperties | null) {
-		this._sectionProperties = properties || null;
+		this.#sectionProperties = properties || null;
 	}
 
 	/**
@@ -82,7 +82,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 				}
 			`,
 			{
-				pPr: paragraphPropertiesToNode(this.props, this._sectionProperties),
+				pPr: paragraphPropertiesToNode(this.props, this.#sectionProperties),
 				children: this.childrenToNode(ancestry),
 			},
 		);

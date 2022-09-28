@@ -50,14 +50,11 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		relationships = new Relationships(BundleFile.relationships),
 		rules: GenericRenderer<RuleResult, { document: OfficeDocument } & PropsGeneric> | null = null,
 	) {
-		Object.defineProperty(this, '_renderer', { enumerable: false });
-		Object.defineProperty(this, '_officeDocument', { enumerable: false });
-
 		this.contentTypes = contentTypes;
 		this.relationships = relationships;
 
 		if (rules) {
-			this._renderer.merge(rules);
+			this.#renderer.merge(rules);
 		}
 
 		if (!this.relationships.hasType(RelationshipType.officeDocument)) {
@@ -69,20 +66,20 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	}
 
 	// Also not enumerable
-	private _officeDocument: OfficeDocument | null = null;
+	#officeDocument: OfficeDocument | null = null;
 
 	/**
 	 * A short-cut to the relationship that represents visible document content.
 	 */
 	public get document() {
 		// @TODO Invalidate the cached _officeDocument whenever that relationship changes.
-		if (!this._officeDocument) {
-			this._officeDocument = this.relationships.ensureRelationship(
+		if (!this.#officeDocument) {
+			this.#officeDocument = this.relationships.ensureRelationship(
 				RelationshipType.officeDocument,
 				() => new OfficeDocument(BundleFile.mainDocument),
 			);
 		}
-		return this._officeDocument;
+		return this.#officeDocument;
 	}
 
 	/**
@@ -182,7 +179,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * The XML renderer instance containing translation rules, going from your XML to this library's
 	 * OOXML components.
 	 */
-	private readonly _renderer = new GenericRenderer<
+	readonly #renderer = new GenericRenderer<
 		RuleResult,
 		{ document: OfficeDocument } & PropsGeneric
 	>();
@@ -192,8 +189,13 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 *
 	 * If an element matches multiple rules, the rule with the most specific XPath test wins.
 	 */
-	public withXmlRule(xPathTest: string, transformer: Parameters<typeof this._renderer.add>[1]) {
-		this._renderer.add(xPathTest, transformer);
+	public withXmlRule(
+		xPathTest: string,
+		transformer: Parameters<
+			GenericRenderer<RuleResult, { document: OfficeDocument } & PropsGeneric>['add']
+		>[1],
+	) {
+		this.#renderer.add(xPathTest, transformer);
 		return this;
 	}
 
@@ -202,13 +204,13 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	}
 
 	public forDom(dom: Document, props: PropsGeneric) {
-		if (!this._renderer.length) {
+		if (!this.#renderer.length) {
 			throw new Error(
 				'No XML transformation rules were configured, creating a DOCX from XML is therefore not possible.',
 			);
 		}
 
-		const ast = this._renderer.render(dom, {
+		const ast = this.#renderer.render(dom, {
 			document: this.document,
 			...props,
 		});
@@ -245,7 +247,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		const docx = await Docx.fromArchive<PropsGeneric>(this.toArchive());
 
 		// Clone rendering rules
-		docx._renderer.merge(this._renderer);
+		docx._renderer.merge(this.#renderer);
 
 		return docx;
 	}

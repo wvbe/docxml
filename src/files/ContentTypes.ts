@@ -16,7 +16,7 @@ type ContentTypeDefault = {
 };
 
 export class ContentTypes extends XmlFile {
-	public readonly defaults: Array<ContentTypeDefault> = [
+	readonly #defaults: Array<ContentTypeDefault> = [
 		{
 			extension: 'rels',
 			contentType: ContentType.rels,
@@ -26,26 +26,26 @@ export class ContentTypes extends XmlFile {
 			contentType: ContentType.xml,
 		},
 	];
-	public readonly overrides: Array<ContentTypeOverride> = [];
+	readonly #overrides: Array<ContentTypeOverride> = [];
 
 	public constructor(location: string) {
 		super(location);
 	}
 
 	public addDefault(extension: string, contentType: string | ContentType) {
-		const exists = this.defaults.findIndex((item) => item.extension === extension);
+		const exists = this.#defaults.findIndex((item) => item.extension === extension);
 		if (exists >= 0) {
-			this.defaults.splice(exists, 1);
+			this.#defaults.splice(exists, 1);
 		}
-		this.defaults.push({ extension, contentType });
+		this.#defaults.push({ extension, contentType });
 	}
 
 	public addOverride(partName: string, contentType: ContentType) {
-		const exists = this.overrides.findIndex((item) => item.partName === partName);
+		const exists = this.#overrides.findIndex((item) => item.partName === partName);
 		if (exists >= 0) {
-			this.overrides.splice(exists, 1);
+			this.#overrides.splice(exists, 1);
 		}
-		this.overrides.push({ partName, contentType });
+		this.#overrides.push({ partName, contentType });
 	}
 
 	protected toNode(): Document {
@@ -65,8 +65,8 @@ export class ContentTypes extends XmlFile {
 				}
 			`,
 			{
-				defaults: this.defaults,
-				overrides: this.overrides,
+				defaults: this.#defaults,
+				overrides: this.#overrides,
 			},
 			true,
 		);

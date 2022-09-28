@@ -70,15 +70,15 @@ export class XmlFile {
 }
 
 export class UnhandledXmlFile extends XmlFile {
-	private _xml: string;
+	#xml: string;
 
 	protected constructor(location: string, xml: string) {
 		super(location);
-		this._xml = xml;
+		this.#xml = xml;
 	}
 
 	protected toNode(): Document {
-		return parse(this._xml);
+		return parse(this.#xml);
 	}
 
 	public static async fromArchive(archive: Archive, location: string) {

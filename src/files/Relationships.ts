@@ -52,12 +52,12 @@ export class Relationships extends XmlFile {
 	/**
 	 * All relationship data
 	 */
-	private _meta: Array<RelationshipMeta>;
+	#meta: Array<RelationshipMeta>;
 
 	/**
 	 * Class instances of all relationships that are not "external"
 	 */
-	private _instances: Map<string, File>;
+	#instances: Map<string, File>;
 
 	public constructor(
 		location: string,
@@ -65,20 +65,33 @@ export class Relationships extends XmlFile {
 		instances = new Map<string, File>(),
 	) {
 		super(location);
-		this._meta = meta;
-		this._instances = instances;
+		this.#meta = meta;
+		this.#instances = instances;
 	}
+
+	// public toJSON() {
+	// 	return {
+	// 		meta: this.#meta.slice(),
+	// 		instances: Array.from(this.#instances.keys()).reduce<{ [id: string]: File }>(
+	// 			(json, key) => ({
+	// 				...json,
+	// 				[key]: this.#instances.get(key) as File,
+	// 			}),
+	// 			{},
+	// 		),
+	// 	};
+	// }
 
 	/**
 	 * Find a relationship instance (eg. a OfficeDocument) by its metadata. The metadata would tell you what type
 	 * of relationship it is.
 	 */
 	public find<R extends File = File>(cb: (meta: RelationshipMeta) => boolean): R | null {
-		const id = this._meta.find(cb)?.id;
+		const id = this.#meta.find(cb)?.id;
 		if (!id) {
 			return null;
 		}
-		return (this._instances.get(id) as R) || null;
+		return (this.#instances.get(id) as R) || null;
 	}
 
 	/**
@@ -92,13 +105,13 @@ export class Relationships extends XmlFile {
 			isExternal: false,
 			isBinary: type === RelationshipType.image,
 		};
-		this._meta.push(meta);
-		this._instances.set(meta.id, instance);
+		this.#meta.push(meta);
+		this.#instances.set(meta.id, instance);
 		return meta.id;
 	}
 
 	public hasType(type: RelationshipType) {
-		return this._meta.some((meta) => meta.type === type);
+		return this.#meta.some((meta) => meta.type === type);
 	}
 
 	public ensureRelationship<C extends File>(type: RelationshipType, createInstance: () => C): C {
@@ -129,7 +142,7 @@ export class Relationships extends XmlFile {
 				}
 			`,
 			{
-				relationships: this._meta.map((meta) => ({
+				relationships: this.#meta.map((meta) => ({
 					...meta,
 					target: path.relative(path.dirname(path.dirname(this.location)), meta.target),
 				})),
@@ -140,7 +153,7 @@ export class Relationships extends XmlFile {
 
 	public getRelated(): File[] {
 		const related: File[] = [this];
-		this._instances.forEach((inst) => {
+		this.#instances.forEach((inst) => {
 			if (inst.isEmpty()) {
 				// Empty styles.xml? No thank you!
 				return;

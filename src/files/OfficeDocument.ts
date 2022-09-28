@@ -40,31 +40,30 @@ export class OfficeDocument extends XmlFile {
 		});
 	}
 
-	private _styles: Styles | null = null;
+	#styles: Styles | null = null;
 	public get styles() {
 		// @TODO Invalidate the cached _styles whenever that relationship changes.
-		if (!this._styles) {
-			this._styles = this.relationships.ensureRelationship(
+		if (!this.#styles) {
+			this.#styles = this.relationships.ensureRelationship(
 				RelationshipType.styles,
 				() => new Styles(BundleFile.styles),
 			);
 		}
-		return this._styles;
+		return this.#styles;
 	}
 
-	private _comments: Comments | null = null;
+	#comments: Comments | null = null;
 	public get comments() {
-		if (!this._comments) {
-			this._comments = this.relationships.ensureRelationship(
+		if (!this.#comments) {
+			this.#comments = this.relationships.ensureRelationship(
 				RelationshipType.comments,
 				() => new Comments(BundleFile.comments),
 			);
 		}
-		return this._comments;
+		return this.#comments;
 	}
 
 	protected toNode(): Document {
-		// @TODO look at attribute w:document@mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh wp14"
 		return create(
 			`
 				<w:document ${ALL_NAMESPACE_DECLARATIONS}>

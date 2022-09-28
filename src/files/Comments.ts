@@ -50,6 +50,27 @@ export class Comments extends XmlFile {
 		);
 	}
 
+	public get(id: Comment['id']) {
+		return this.comments.find((c) => c.id === id);
+	}
+
+	public set(
+		id: Comment['id'],
+		meta: Omit<Comment, 'id' | 'contents'>,
+		contents: Comment['contents'],
+	): void {
+		const existing = this.get(id);
+		if (existing) {
+			Object.assign(existing, { ...meta, contents });
+		} else {
+			this.comments.push({
+				id,
+				...meta,
+				contents,
+			});
+		}
+	}
+
 	/**
 	 * Add a comment to the DOCX file and return its new identifier. You should reference this
 	 * identifier from the document using the {@link Comment}, {@link CommentRangeStart} and

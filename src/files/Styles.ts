@@ -57,8 +57,8 @@ type LatentStyle = {
 export class Styles extends XmlFile {
 	public static contentType = ContentType.styles;
 
-	private readonly _latentStyles: LatentStyle[] = [];
-	private readonly _styles: Style[] = [];
+	readonly #latentStyles: LatentStyle[] = [];
+	readonly #styles: Style[] = [];
 
 	public constructor(location: string) {
 		super(location);
@@ -75,7 +75,7 @@ export class Styles extends XmlFile {
 	}
 
 	public isEmpty() {
-		return !this._styles.length && !this._latentStyles.length;
+		return !this.#styles.length && !this.#latentStyles.length;
 	}
 
 	protected toNode(): Document {
@@ -128,13 +128,13 @@ export class Styles extends XmlFile {
 				</w:styles>
 			`,
 			{
-				styles: this._styles.map(({ paragraph, text, table, ...style }) => ({
+				styles: this.#styles.map(({ paragraph, text, table, ...style }) => ({
 					...style,
 					ppr: paragraphPropertiesToNode(paragraph as ParagraphStyle['paragraph']),
 					rpr: textPropertiesToNode(text as ParagraphStyle['text']),
 					tblpr: tablePropertiesToNode(table as TableStyle['table']),
 				})),
-				latentStyles: this._latentStyles,
+				latentStyles: this.#latentStyles,
 			},
 			true,
 		);
@@ -145,23 +145,23 @@ export class Styles extends XmlFile {
 			...properties,
 			id: properties.id || properties.name?.replace(/[^a-zA-Z0-9]/g, '') || createRandomId('style'),
 		} as Style;
-		this._styles.push(style);
+		this.#styles.push(style);
 		return style.id;
 	}
 
 	public addLatent(properties: LatentStyle) {
-		this._latentStyles.push(properties);
+		this.#latentStyles.push(properties);
 	}
 
 	public hasStyle(id: string) {
 		return (
-			this._styles.some((style) => style.id === id) ||
-			this._latentStyles.some((style) => style.name === id)
+			this.#styles.some((style) => style.id === id) ||
+			this.#latentStyles.some((style) => style.name === id)
 		);
 	}
 
 	public get(id: string) {
-		return this._styles.find((style) => style.id === id);
+		return this.#styles.find((style) => style.id === id);
 	}
 
 	/**

@@ -39,14 +39,14 @@ export class Image extends Component<ImageProps, ImageChild> {
 
 	public static readonly mixed: boolean = false;
 
-	private _relationshipId: string | null = null;
+	#relationshipId: string | null = null;
 
 	/**
 	 * An event hook with which this component can ensure that the correct relationship type is
 	 * recorded to the relationship XML.
 	 */
 	public ensureRelationship(relationships: Relationships) {
-		this._relationshipId = relationships.add(
+		this.#relationshipId = relationships.add(
 			RelationshipType.image,
 			BinaryFile.fromData(this.props.data, 'word/media/kees.jpeg'),
 		);
@@ -57,7 +57,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public toNode(_ancestry: ComponentAncestor[]): Node {
-		if (!this._relationshipId) {
+		if (!this.#relationshipId) {
 			throw new Error('Cannot serialize an image outside the context of an OfficeDocument');
 		}
 		return create(
@@ -126,7 +126,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 			`,
 			{
 				identifier: createUniqueNumericIdentifier(),
-				relationshipId: this._relationshipId,
+				relationshipId: this.#relationshipId,
 				width: Math.round(this.props.width.emu),
 				height: Math.round(this.props.height.emu),
 				name: this.props.title || '',

@@ -3,6 +3,7 @@ import { UnhandledXmlFile } from '../classes/XmlFile.ts';
 import { Comments } from './Comments.ts';
 import { OfficeDocument } from './OfficeDocument.ts';
 import { RelationshipMeta, RelationshipType } from './Relationships.ts';
+import { Settings } from './Settings.ts';
 import { Styles } from './Styles.ts';
 import { CoreProperties } from './wip/CoreProperties.ts';
 import { Endnotes } from './wip/Endnotes.ts';
@@ -11,7 +12,6 @@ import { FontTable } from './wip/FontTable.ts';
 import { Footer } from './wip/Footer.ts';
 import { Footnotes } from './wip/Footnotes.ts';
 import { Header } from './wip/Header.ts';
-import { Settings } from './wip/Settings.ts';
 import { Theme } from './wip/Theme.ts';
 import { WebSettings } from './wip/WebSettings.ts';
 

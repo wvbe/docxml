@@ -25,7 +25,7 @@ export type Length = {
 	 */
 	hpt: number;
 	/**
-	 * Twentieth of a point.
+	 * Twentieth of a point. Sometimes also called DXA.
 	 *
 	 * Defined as 1/20th of a point.
 	 */

@@ -9,6 +9,7 @@ export enum BundleFile {
 	coreProperties = 'docProps/core.xml',
 	mainDocument = 'word/document.xml',
 	styles = 'word/styles.xml',
+	settings = 'word/settings.xml',
 }
 
 export enum ContentType {

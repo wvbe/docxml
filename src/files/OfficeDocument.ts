@@ -12,6 +12,7 @@ import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import { Comments } from './Comments.ts';
 import { File, Relationships, RelationshipType } from './Relationships.ts';
+import { Settings } from './Settings.ts';
 import { Styles } from './Styles.ts';
 
 export type OfficeDocumentChild = Paragraph | Table | Section;
@@ -50,6 +51,18 @@ export class OfficeDocument extends XmlFile {
 			);
 		}
 		return this.#styles;
+	}
+
+	#settings: Settings | null = null;
+	public get settings() {
+		// @TODO Invalidate the cached _settings whenever that relationship changes.
+		if (!this.#settings) {
+			this.#settings = this.relationships.ensureRelationship(
+				RelationshipType.settings,
+				() => new Settings(BundleFile.settings),
+			);
+		}
+		return this.#settings;
 	}
 
 	#comments: Comments | null = null;

@@ -13,9 +13,9 @@ describe('Relationships', () => {
 		);
 	});
 
-	it('serializes correctly', () => {
+	it('serializes correctly', async () => {
 		// @TODO include an "external" relationship
-		expect(serialize(relationships.$$$toNode())).toBe(
+		expect(serialize(await relationships.$$$toNode())).toBe(
 			`
 				<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
 					<Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>

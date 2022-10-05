@@ -74,7 +74,7 @@ export async function archivedFile(
  *
  * May optimize for speed later
  */
-export function expectDocxToContain(
+export async function expectDocxToContain(
 	bundle: Docx,
 	relationshipType: RelationshipType,
 	test: string,
@@ -83,11 +83,11 @@ export function expectDocxToContain(
 	if (!document) {
 		throw new Error('$$$ Unknown relationship ' + relationshipType);
 	}
-	const dom = (document as XmlFile).$$$toNode();
+	const dom = await (document as XmlFile).$$$toNode();
 
 	return expect(evaluateXPathToBoolean(test, dom.documentElement)).toBeTruthy();
 }
-export function expectDocumentToContain(
+export async function expectDocumentToContain(
 	bundle: Docx,
 	relationshipType: RelationshipType,
 	test: string,
@@ -96,7 +96,7 @@ export function expectDocumentToContain(
 	if (!document) {
 		throw new Error('$$$ Unknown relationship ' + relationshipType);
 	}
-	const dom = (document as XmlFile).$$$toNode();
+	const dom = await (document as XmlFile).$$$toNode();
 
 	return expect(evaluateXPathToBoolean(test, dom.documentElement)).toBeTruthy();
 }

@@ -6,7 +6,10 @@ import './Table.ts';
 import {
 	type ComponentAncestor,
 	type ComponentDefinition,
+	AnyComponent,
 	Component,
+	ComponentNodes,
+	isComponentDefinition,
 } from '../classes/Component.ts';
 import {
 	SectionProperties,
@@ -44,15 +47,18 @@ export class Section extends Component<SectionProps, SectionChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(ancestry: ComponentAncestor[]) {
+	public async toNode(ancestry: ComponentAncestor[]): Promise<ComponentNodes> {
 		const parent = ancestry[0];
 		if (!parent) {
 			throw new Error(`Cannot serialize a section without parent context.`);
 		}
-		const isLastSection = parent.children[parent.children.length - 1] === this;
+		const siblings = isComponentDefinition(parent)
+			? (parent as AnyComponent).children
+			: await parent.children;
+		const isLastSection = siblings[siblings.length - 1] === this;
 
 		if (isLastSection) {
-			return [...this.childrenToNode(ancestry), sectionPropertiesToNode(this.props)];
+			return [...(await this.childrenToNode(ancestry)), sectionPropertiesToNode(this.props)];
 		}
 
 		const lastChild = this.children[this.children.length - 1];
@@ -63,7 +69,8 @@ export class Section extends Component<SectionProps, SectionChild> {
 			paragraph.setSectionProperties(this.props);
 			this.children.push(paragraph);
 		}
-		return this.childrenToNode(ancestry);
+		const nodes = await this.childrenToNode(ancestry);
+		return nodes;
 	}
 
 	/**

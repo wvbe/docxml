@@ -31,7 +31,7 @@ export class TextAddition extends Component<TextAdditionProps, TextAdditionChild
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(ancestry: ComponentAncestor[]): Node {
+	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
 				element ${QNS.w}ins {
@@ -44,7 +44,7 @@ export class TextAddition extends Component<TextAdditionProps, TextAdditionChild
 			{
 				...this.props,
 				date: this.props.date.toISOString(),
-				children: this.childrenToNode(ancestry),
+				children: await this.childrenToNode(ancestry),
 			},
 		);
 	}

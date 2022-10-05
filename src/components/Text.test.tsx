@@ -33,8 +33,8 @@ describe('Text', () => {
 		]);
 	});
 
-	it('serializes correctly', () => {
-		expect(serialize(text.toNode([]))).toBe(
+	it('serializes correctly', async () => {
+		expect(serialize(await text.toNode([]))).toBe(
 			`
 				<r xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					<rPr><b/></rPr>

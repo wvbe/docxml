@@ -11,7 +11,7 @@ type Comment = {
 	author: string;
 	initials: string;
 	date: Date;
-	contents: Paragraph[];
+	contents: Paragraph[] | Promise<Paragraph[]>;
 };
 
 export class Comments extends XmlFile {
@@ -23,7 +23,7 @@ export class Comments extends XmlFile {
 		return !this.comments.length;
 	}
 
-	protected toNode(): Document {
+	protected async toNode(): Promise<Document> {
 		return create(
 			`
 				<w:comments ${ALL_NAMESPACE_DECLARATIONS}>
@@ -40,11 +40,15 @@ export class Comments extends XmlFile {
 				</w:comments>
 			`,
 			{
-				comments: this.comments.map((comment) => ({
-					...comment,
-					date: comment.date.toISOString(),
-					contents: comment.contents.map((paragraph) => paragraph.toNode([])),
-				})),
+				comments: await Promise.all(
+					this.comments.map(async (comment) => ({
+						...comment,
+						date: comment.date.toISOString(),
+						contents: await Promise.all(
+							(await comment.contents).map((paragraph) => paragraph.toNode([])),
+						),
+					})),
+				),
 			},
 			true,
 		);

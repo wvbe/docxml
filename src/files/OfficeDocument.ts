@@ -17,22 +17,24 @@ import { Styles } from './Styles.ts';
 
 export type OfficeDocumentChild = Paragraph | Table | Section;
 
+export type OfficeDocumentRoot =
+	| OfficeDocumentChild
+	| OfficeDocumentChild[]
+	| Promise<OfficeDocumentChild[]>;
 export class OfficeDocument extends XmlFile {
 	public static contentType = ContentType.mainDocument;
 
 	public readonly relationships: Relationships;
-	public readonly children: OfficeDocumentChild[] = [];
+	#root: OfficeDocumentRoot | null = null;
 
 	public constructor(
 		location: string,
 		relationships = new Relationships(
 			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
 		),
-		children: OfficeDocumentChild[] = [],
 	) {
 		super(location);
 		this.relationships = relationships;
-		this.children = children;
 
 		// Some features don't work when there is no styles relationship (eg. change tracking styles).
 		// However, ensuring that object exists should be the responsibity of those features.
@@ -42,7 +44,11 @@ export class OfficeDocument extends XmlFile {
 	}
 
 	#styles: Styles | null = null;
-	public get styles() {
+
+	/**
+	 * The API representing "styles.xml" and all the text/paragraph/table styles associated with this document.
+	 */
+	public get styles(): Styles {
 		// @TODO Invalidate the cached _styles whenever that relationship changes.
 		if (!this.#styles) {
 			this.#styles = this.relationships.ensureRelationship(
@@ -54,7 +60,11 @@ export class OfficeDocument extends XmlFile {
 	}
 
 	#settings: Settings | null = null;
-	public get settings() {
+
+	/**
+	 * The API representing "settings.xml" and all the settings associated with this document.
+	 */
+	public get settings(): Settings {
 		// @TODO Invalidate the cached _settings whenever that relationship changes.
 		if (!this.#settings) {
 			this.#settings = this.relationships.ensureRelationship(
@@ -66,7 +76,11 @@ export class OfficeDocument extends XmlFile {
 	}
 
 	#comments: Comments | null = null;
-	public get comments() {
+
+	/**
+	 * The API representing "comments.xml" and all the comments associated with this document.
+	 */
+	public get comments(): Comments {
 		if (!this.#comments) {
 			this.#comments = this.relationships.ensureRelationship(
 				RelationshipType.comments,
@@ -76,7 +90,34 @@ export class OfficeDocument extends XmlFile {
 		return this.#comments;
 	}
 
-	protected toNode(): Document {
+	/**
+	 * The components normalized from #root, which is potentially arrayed, promised, array promised etc.
+	 */
+	public get children(): Promise<OfficeDocumentChild[]> {
+		if (!this.#root) {
+			throw new Error(`Document is empty!`);
+		}
+		return Promise.resolve(this.#root)
+			.then((root) => {
+				return Array.isArray(root) ? Promise.all(root) : [root];
+			})
+			.then((zz) =>
+				zz.reduce<Promise<OfficeDocumentChild[]>>(async function flatten(
+					flatPromise,
+					childPromise,
+				): Promise<OfficeDocumentChild[]> {
+					const child = await childPromise;
+					const flat = await flatPromise;
+					return Array.isArray(child)
+						? [...flat, ...(await child.reduce(flatten, Promise.resolve([])))]
+						: [...flat, child];
+				},
+				Promise.resolve([])),
+			);
+	}
+
+	protected async toNode(): Promise<Document> {
+		const children = await this.children;
 		return create(
 			`
 				<w:document ${ALL_NAMESPACE_DECLARATIONS}>
@@ -86,27 +127,25 @@ export class OfficeDocument extends XmlFile {
 				</w:document>
 			`,
 			{
-				children: this.children.map((child) => child.toNode([this])),
+				children: await Promise.all(children.map((child) => child.toNode([this]))),
 			},
 			true,
 		);
 	}
 
 	/**
-	 * Add content to the document body
+	 * Set the contents of the document
 	 */
-	public append(children: OfficeDocumentChild | OfficeDocumentChild[]) {
-		this.children.push(...(Array.isArray(children) ? children : [children]));
+	public set(root: OfficeDocumentRoot): void {
+		this.#root = root;
 	}
 
 	/**
-	 * Set the contents of the document
+	 * Get all XmlFile instances related to this one, including self. This helps the system
+	 * serialize itself back to DOCX fullly. Probably not useful for consumers of the library.
+	 *
+	 * By default only returns the instance itself but no other related instances.
 	 */
-	public set(children: OfficeDocumentChild | OfficeDocumentChild[]) {
-		this.children.splice(0, this.children.length);
-		this.append(children);
-	}
-
 	public getRelated(): File[] {
 		return [this, ...this.relationships.getRelated()];
 	}
@@ -119,18 +158,20 @@ export class OfficeDocument extends XmlFile {
 			archive,
 			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
 		);
+		const doc = new OfficeDocument(location, relationships);
 		const dom = await archive.readXml(location);
-
 		const sections = evaluateXPathToNodes(
 			`/*/${QNS.w}body/(${QNS.w}p/${QNS.w}pPr/${QNS.w}sectPr | ${QNS.w}sectPr)`,
 			dom,
 		);
-		const children = sections.length
-			? sections.map((node) => Section.fromNode(node))
-			: createChildComponentsFromNodes<Table | Paragraph>(
-					[Table.name, Paragraph.name],
-					evaluateXPathToNodes(`/*/${QNS.w}body/*`, dom),
-			  );
-		return new OfficeDocument(location, relationships, children);
+		doc.set(
+			sections.length
+				? sections.map((node) => Section.fromNode(node))
+				: createChildComponentsFromNodes<Table | Paragraph>(
+						[Table.name, Paragraph.name],
+						evaluateXPathToNodes(`/*/${QNS.w}body/*`, dom),
+				  ),
+		);
+		return doc;
 	}
 }

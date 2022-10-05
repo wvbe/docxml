@@ -33,8 +33,8 @@ describe('Paragraph from XML', () => {
 		expect(paragraph.children).toHaveLength(1);
 	});
 
-	it('serializes correctly', () => {
-		expect(serialize(paragraph.toNode([]))).toBe(
+	it('serializes correctly', async () => {
+		expect(serialize(await paragraph.toNode([]))).toBe(
 			`
 				<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					<pPr>
@@ -66,8 +66,8 @@ describe('Paragraph with style change', () => {
 			style: 'StyleOld',
 		},
 	});
-	it('serializes correctly', () => {
-		expect(serialize(paragraph.toNode([]))).toBe(
+	it('serializes correctly', async () => {
+		expect(serialize(await paragraph.toNode([]))).toBe(
 			`
 				<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					<pPr>

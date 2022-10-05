@@ -38,7 +38,7 @@ export class Text extends Component<TextProps, TextChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(ancestry: ComponentAncestor[]): Node {
+	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		const asTextDeletion = ancestry.some((ancestor) => ancestor instanceof TextDeletion);
 		const anc = [this, ...ancestry];
 		return create(
@@ -51,20 +51,22 @@ export class Text extends Component<TextProps, TextChild> {
 			`,
 			{
 				rpr: textPropertiesToNode(this.props),
-				children: this.children.map((child) => {
-					if (typeof child === 'string') {
-						return create(
-							`element ${QNS.w}${asTextDeletion ? 'delText' : 't'} {
+				children: await Promise.all(
+					this.children.map((child) => {
+						if (typeof child === 'string') {
+							return create(
+								`element ${QNS.w}${asTextDeletion ? 'delText' : 't'} {
 								attribute xml:space { "preserve" },
 								$text
 							}`,
-							{
-								text: child,
-							},
-						);
-					}
-					return child.toNode(anc);
-				}),
+								{
+									text: child,
+								},
+							);
+						}
+						return child.toNode(anc);
+					}),
+				),
 			},
 		);
 	}

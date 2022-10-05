@@ -1,15 +1,22 @@
 import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.5/mod.ts';
 
 import { Archive } from './classes/Archive.ts';
-import { type AnyComponent, type Component } from './classes/Component.ts';
+import { type Component } from './classes/Component.ts';
 import { BundleFile } from './enums.ts';
 import { ContentTypes } from './files/ContentTypes.ts';
-import { type OfficeDocumentChild, OfficeDocument } from './files/OfficeDocument.ts';
+import {
+	type OfficeDocumentChild,
+	OfficeDocument,
+	OfficeDocumentRoot,
+} from './files/OfficeDocument.ts';
 import { Relationships, RelationshipType } from './files/Relationships.ts';
+import { type SettingsI } from './files/Settings.ts';
 import { parse } from './utilities/dom.ts';
 import { jsx } from './utilities/jsx.ts';
 
-type RuleResult = Component | string | null | Array<RuleResult>;
+type SyncRuleResult = Component | string | null;
+type AsyncRuleResult = Promise<SyncRuleResult>;
+type RuleResult = SyncRuleResult | AsyncRuleResult | Array<RuleResult>;
 
 /**
  * Represents the DOCX file as a whole, and collates other responsibilities together. Provides
@@ -71,7 +78,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	/**
 	 * A short-cut to the relationship that represents visible document content.
 	 */
-	public get document() {
+	public get document(): OfficeDocument {
 		// @TODO Invalidate the cached _officeDocument whenever that relationship changes.
 		if (!this.#officeDocument) {
 			this.#officeDocument = this.relationships.ensureRelationship(
@@ -85,39 +92,55 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	/**
 	 * Create a ZIP archive, which is the handler for `.docx` files as a ZIP archive.
 	 */
-	public toArchive(): Archive {
+	public async toArchive(): Promise<Archive> {
 		const styles = this.document.styles;
 		const relationships = this.document.relationships;
-		this.document.children.forEach(function walk(component: AnyComponent | string) {
-			if (typeof component === 'string') {
-				return;
-			}
+		await Promise.all(
+			(
+				await this.document.children
+			).map(async function walk(componentPromise) {
+				const component = await componentPromise;
+				if (typeof component === 'string') {
+					return;
+				}
+				if (Array.isArray(component)) {
+					await Promise.all((component as OfficeDocumentChild[]).map(walk));
+					return;
+				}
 
-			const styleName = component.props.style as string;
-			if (styleName) {
-				styles.ensureStyle(styleName);
-			}
+				const styleName = (component.props as { style?: string }).style;
+				if (styleName) {
+					styles.ensureStyle(styleName);
+				}
 
-			component.ensureRelationship(relationships);
+				component.ensureRelationship(relationships);
 
-			component.children.forEach(walk);
-		});
+				await Promise.all((component.children as OfficeDocumentChild[]).map(walk));
+			}),
+		);
 
 		const archive = new Archive();
 
-		this.relationships.toArchive(archive);
-
 		// New relationships may be created as they are necessary for serializing content, eg. for
 		// images.
+		await this.relationships.addToArchive(archive);
 		this.relationships
 			.getRelated()
 			.filter((related) => !(related instanceof Relationships))
 			.forEach((related) => {
 				this.contentTypes.addOverride(related.location, related.contentType);
 			});
+		await this.contentTypes.addToArchive(archive);
 
-		this.contentTypes.toArchive(archive);
 		return archive;
+	}
+
+	/**
+	 * Convenience method to create a DOCX archive from the current document and write it to your disk.
+	 */
+	public async toFile(location: string): Promise<void> {
+		const archive = await this.toArchive();
+		return archive.toFile(location);
 	}
 
 	/**
@@ -163,16 +186,10 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * Create a new DOCX with contents composed by this library's components. Needs a single JSX component
 	 * as root, for example `<Section>` or `<Paragragh>`.
 	 */
-	public static fromJsx(roots: OfficeDocumentChild[]) {
-		if (roots.length !== 1) {
-			// console.error('Roots: ' + roots.map((r) => r.constructor.name).join(', '));
-			throw new Error(
-				`Found ${roots.length} root elements, but exactly 1 expected. This may be caused by invalid nesting that could not be repaired.`,
-			);
-		}
-		const bundle = Docx.fromNothing();
-		bundle.document.set(roots[0]);
-		return bundle;
+	public static fromJsx(roots: OfficeDocumentChild[] | Promise<OfficeDocumentChild[]>) {
+		const docx = Docx.fromNothing();
+		docx.document.set(roots);
+		return docx;
 	}
 
 	/**
@@ -194,16 +211,23 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		transformer: Parameters<
 			GenericRenderer<RuleResult, { document: OfficeDocument } & PropsGeneric>['add']
 		>[1],
-	) {
+	): this {
 		this.#renderer.add(xPathTest, transformer);
 		return this;
 	}
 
-	public forXml(xml: string, props: PropsGeneric) {
-		return this.forDom(parse(xml), props);
+	public withSettings(settingOverrides: Partial<SettingsI>): this {
+		Object.keys(settingOverrides).forEach((key) => {
+			const kkk = key as keyof SettingsI; // Happy now, TypeScript?
+			this.document.settings[kkk] = settingOverrides[kkk] as SettingsI[keyof SettingsI];
+		});
+		return this;
 	}
 
-	public forDom(dom: Document, props: PropsGeneric) {
+	public withXml(dom: string | Document, props: PropsGeneric): this {
+		if (typeof dom === 'string') {
+			dom = parse(dom);
+		}
 		if (!this.#renderer.length) {
 			throw new Error(
 				'No XML transformation rules were configured, creating a DOCX from XML is therefore not possible.',
@@ -214,26 +238,29 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 			document: this.document,
 			...props,
 		});
-		const children = (Array.isArray(ast) ? ast : [ast]).reduce<Component[]>(function flatten(
-			flat,
-			child,
-		): Component[] {
+
+		const root = [ast].reduce<Promise<Component[]>>(async function flatten(
+			flatPromise,
+			childPromise,
+		): Promise<Component[]> {
+			const flat = await flatPromise;
+			const child = await childPromise;
 			if (child === null || typeof child === 'string') {
 				return flat;
 			}
 			if (Array.isArray(child)) {
-				return [...flat, ...child.reduce(flatten, [])];
+				return [...flat, ...(await child.reduce(flatten, Promise.resolve([])))];
 			}
 			flat.push(child);
 			return flat;
 		},
-		[]);
+		Promise.resolve([]));
 
 		// There is no guarantee that the rendering rules produce schema-valid XML.
 		// @TODO implement some kind of an errr-out mechanism
 
 		// @TODO validate that the children are correct?
-		this.document.set(children as OfficeDocumentChild[]);
+		this.document.set(root as OfficeDocumentRoot);
 
 		return this;
 	}
@@ -244,7 +271,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	public async clone(): Promise<Docx<PropsGeneric>> {
 		// Clone the DOCX styles (etc.) to a new instance that we can mess with
 		// @TODO find a cheaper way to clone a Docx instance.
-		const docx = await Docx.fromArchive<PropsGeneric>(this.toArchive());
+		const docx = await Docx.fromArchive<PropsGeneric>(await this.toArchive());
 
 		// Clone rendering rules
 		docx.#renderer.merge(this.#renderer);

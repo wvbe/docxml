@@ -4,11 +4,11 @@ import { serialize } from '../../utilities/dom.ts';
 import { CoreProperties } from './CoreProperties.ts';
 
 describe('CoreProperties', () => {
-	it('serializes an empty instance correctly', () => {
+	it('serializes an empty instance correctly', async () => {
 		const now = new Date().toISOString();
 		const instance = new CoreProperties('');
 
-		expect(serialize(instance.$$$toNode())).toBe(
+		expect(serialize(await instance.$$$toNode())).toBe(
 			// It's more chatty than the original XML, but it is not incorrect.
 			// @TODO maybe report this to slimdom some time
 			`

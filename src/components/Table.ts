@@ -50,7 +50,7 @@ export class Table extends Component<TableProps, TableChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(ancestry: ComponentAncestor[]): Node {
+	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
 				element ${QNS.w}tbl {
@@ -68,7 +68,7 @@ export class Table extends Component<TableProps, TableChild> {
 				columnWidths: this.props.columnWidths?.length
 					? this.props.columnWidths.map((width) => Math.round(width.twip))
 					: null,
-				children: this.childrenToNode(ancestry),
+				children: await this.childrenToNode(ancestry),
 			},
 		);
 	}

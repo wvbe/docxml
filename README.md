@@ -7,7 +7,6 @@ It can be used to create a `.docx` using components, for example:
 import Docx, { Paragraph } from 'https://deno.land/x/docxml/mod.ts';
 
 Docx.fromJsx(<Paragraph>This is the simplest document you could make.</Paragraph>)
-	.toArchive()
 	.toFile('example-1.docx');
 ```
 
@@ -22,7 +21,7 @@ Docx.fromNothing()
 	.withXmlRule('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>)
 	.withXmlRule('self::p', ({ traverse }) => <Paragraph>{traverse()}</Paragraph>)
 	.withXmlRule('self::strong', ({ traverse }) => <Text isBold>{traverse()}</Text>)
-	.forXml(
+	.withXml(
 		`<html>
 			<body>
 				<p>This is a very simply <strong>XML transformation</strong>.</p>
@@ -30,7 +29,6 @@ Docx.fromNothing()
 		</html>`,
 		{},
 	)
-	.toArchive()
 	.toFile('example-2.docx');
 ```
 
@@ -49,7 +47,7 @@ Paragraph styles may be applied via different ways;
 
 ```tsx
 // As a style:
-const style = api.styles.add({
+const style = docx.styles.add({
 	type: 'paragraph',
 	paragraph: {
 		alignment: 'center',
@@ -78,7 +76,7 @@ const style = api.styles.add({
 
 ```tsx
 // As a style:
-const style = api.styles.add({
+const style = docx.styles.add({
 	type: 'paragraph',
 	text: {
 		isItalic: true,

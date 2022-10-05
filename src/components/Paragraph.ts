@@ -72,7 +72,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(ancestry: ComponentAncestor[]): Node {
+	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
 				element ${QNS.w}p {
@@ -83,7 +83,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 			`,
 			{
 				pPr: paragraphPropertiesToNode(this.props, this.#sectionProperties),
-				children: this.childrenToNode(ancestry),
+				children: await this.childrenToNode(ancestry),
 			},
 		);
 	}

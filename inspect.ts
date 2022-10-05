@@ -61,7 +61,7 @@ function jsxify(comp: AnyComponent): string[] {
 }
 
 if (Deno.args.includes('--json')) {
-	console.log(JSON.stringify(docx.document.children, null, '  '));
+	console.log(JSON.stringify(await docx.document.children, null, '  '));
 } else {
-	console.dir(jsxify(docx.document.children[0]).join('\n'), { depth: 50 });
+	console.dir(jsxify((await docx.document.children)[0]).join('\n'), { depth: 50 });
 }

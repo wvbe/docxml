@@ -7,9 +7,9 @@ import { Component } from '../classes/Component.ts';
 
 describe('JSX', () => {
 	class Comp extends Component<{ skeet: boolean; boop?: string }> {}
-	it('mount a simple Component', () => {
+	it('mount a simple Component', async () => {
 		// nb; removing the required prop `skeet` should give a TS warning
-		expect(<Comp skeet />).toEqual([new Comp({ skeet: true })]);
+		expect(await (<Comp skeet />)).toEqual([new Comp({ skeet: true })]);
 	});
 });
 
@@ -24,71 +24,83 @@ describe('JSX fixing', () => {
 		static false = true;
 	}
 
-	it('splits invalid node nesting', () => {
+	it('splits invalid node nesting', async () => {
 		expect(
-			<Foo>
-				<Bar>
-					a<Bar>b</Bar>c
-				</Bar>
-			</Foo>,
+			await (
+				<Foo>
+					<Bar>
+						a<Bar>b</Bar>c
+					</Bar>
+				</Foo>
+			),
 		).toEqual([new Foo({}, new Bar({}, 'a'), new Bar({}, 'b'), new Bar({}, 'c'))]);
 	});
 
-	it('splits invalid node nesting II', () => {
+	it('splits invalid node nesting II', async () => {
 		expect(
-			<Bar>
-				a<Bar>b</Bar>c
-			</Bar>,
+			await (
+				<Bar>
+					a<Bar>b</Bar>c
+				</Bar>
+			),
 		).toEqual([new Bar({}, 'a'), new Bar({}, 'b'), new Bar({}, 'c')]);
 	});
 
-	it('wraps stray text nodes in <Text>', () => {
-		expect(<Foo>bar</Foo>).toEqual(
-			<Foo>
-				<Text>bar</Text>
-			</Foo>,
+	it('wraps stray text nodes in <Text>', async () => {
+		expect(await (<Foo>bar</Foo>)).toEqual(
+			await (
+				<Foo>
+					<Text>bar</Text>
+				</Foo>
+			),
 		);
-		expect(<Foo>bar</Foo>).toEqual([new Foo({}, new Text({}, 'bar'))]);
+		expect(await (<Foo>bar</Foo>)).toEqual([new Foo({}, new Text({}, 'bar'))]);
 	});
 
-	it('cleans up empty <Text>', () => {
+	it('cleans up empty <Text>', async () => {
 		expect(
-			<Text>
-				<Text>bar</Text>
-			</Text>,
-		).toEqual(<Text>bar</Text>);
-	});
-
-	it('inherits formatting options onto <Text>', () => {
-		expect(
-			<Foo>
-				<Text isItalic isBold>
-					Beep
-					{
-						// JSX Keep this text node
-						' '
-					}
-					<Text>boop</Text>
-					{
-						// JSX Keep this text node
-						' '
-					}
-					baap
+			await (
+				<Text>
+					<Text>bar</Text>
 				</Text>
-			</Foo>,
+			),
+		).toEqual(await (<Text>bar</Text>));
+	});
+
+	it('inherits formatting options onto <Text>', async () => {
+		expect(
+			await (
+				<Foo>
+					<Text isItalic isBold>
+						Beep
+						{
+							// JSX Keep this text node
+							' '
+						}
+						<Text>boop</Text>
+						{
+							// JSX Keep this text node
+							' '
+						}
+						baap
+					</Text>
+				</Foo>
+			),
 		).toEqual(
-			<Foo>
-				<Text isItalic isBold>
-					Beep{' '}
-				</Text>
-				<Text isItalic isBold>
-					boop
-				</Text>
-				<Text isItalic isBold>
-					{' '}
-					baap
-				</Text>
-			</Foo>,
+			await (
+				<Foo>
+					<Text isItalic isBold>
+						Beep{' '}
+					</Text>
+					<Text isItalic isBold>
+						boop
+					</Text>
+					<Text isItalic isBold>
+						{' '}
+						baap
+					</Text>
+				</Foo>
+			),
 		);
 	});
 });

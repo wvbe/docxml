@@ -41,7 +41,7 @@ export class TextDeletion extends Component<TextDeletionProps, TextDeletionChild
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(ancestry: ComponentAncestor[]): Node {
+	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
 				element ${QNS.w}del {
@@ -54,7 +54,7 @@ export class TextDeletion extends Component<TextDeletionProps, TextDeletionChild
 			{
 				...this.props,
 				date: this.props.date.toISOString(),
-				children: this.childrenToNode(ancestry),
+				children: await this.childrenToNode(ancestry),
 			},
 		);
 	}

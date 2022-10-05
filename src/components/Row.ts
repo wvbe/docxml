@@ -52,10 +52,10 @@ export function parsePropsAndChildNodes(node: Node) {
  *
  * Creates an XML node for a given row.
  */
-export function createNodeFromRow(
+export async function createNodeFromRow(
 	row: Row | RowAddition | RowDeletion,
 	ancestry: ComponentAncestor[],
-): Node {
+): Promise<Node> {
 	const table = ancestry.find((ancestor): ancestor is Table => ancestor instanceof Table);
 	if (!table) {
 		throw new Error('A row cannot be rendered outside the context of a table');
@@ -69,12 +69,14 @@ export function createNodeFromRow(
 			}
 		`,
 		{
-			children: table.model.getCellsInRow(y).map((cell, x) => {
-				const info = table.model.getCellInfo(cell);
-				return info.column === x && info.row === y
-					? cell.toNode(anc)
-					: cell.toRepeatingNode(anc, x, y);
-			}),
+			children: await Promise.all(
+				table.model.getCellsInRow(y).map((cell, x) => {
+					const info = table.model.getCellInfo(cell);
+					return info.column === x && info.row === y
+						? cell.toNode(anc)
+						: cell.toRepeatingNode(anc, x, y);
+				}),
+			),
 		},
 	);
 }
@@ -89,8 +91,9 @@ export class Row extends Component<RowProps, RowChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(ancestry: ComponentAncestor[]): Node {
-		return createNodeFromRow(this, ancestry);
+	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+		const node = await createNodeFromRow(this, ancestry);
+		return node;
 	}
 
 	/**

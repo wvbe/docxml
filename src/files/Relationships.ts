@@ -151,6 +151,12 @@ export class Relationships extends XmlFile {
 		);
 	}
 
+	/**
+	 * Get all XmlFile instances related to this one, including self. This helps the system
+	 * serialize itself back to DOCX fullly. Probably not useful for consumers of the library.
+	 *
+	 * By default only returns the instance itself but no other related instances.
+	 */
 	public getRelated(): File[] {
 		const related: File[] = [this];
 		this.#instances.forEach((inst) => {
@@ -163,8 +169,8 @@ export class Relationships extends XmlFile {
 		return related;
 	}
 
-	public toArchive(archive: Archive): void {
-		super.toArchive(archive);
+	public async addToArchive(archive: Archive): Promise<void> {
+		await super.addToArchive(archive);
 	}
 
 	/**

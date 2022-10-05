@@ -58,11 +58,14 @@ export type ComponentFunction<
 > = (props: PropsGeneric & { children?: ChildGeneric | ChildGeneric[] }) => AnyComponent;
 
 /**
- * If an XML component is written to DOM, it could be represented by any node, or a flat string,
- * or multiple of them.
+ * A component serializes to a string, or to an XML DOM node.
  */
 type ComponentNode = string | Node;
-type ComponentNodes = ComponentNode | ComponentNode[];
+
+/**
+ * A component may serialize to one string/node, or multiple.
+ */
+export type ComponentNodes = ComponentNode | ComponentNode[];
 
 // deno-lint-ignore no-explicit-any
 export function isComponentDefinition(Def: ComponentDefinition | any): Def is ComponentDefinition {
@@ -122,12 +125,15 @@ export abstract class Component<
 		throw new Error('Not implemented');
 	}
 
-	protected childrenToNode(ancestry: Array<ComponentAncestor>): ComponentNode[] {
+	protected async childrenToNode(ancestry: Array<ComponentAncestor>): Promise<ComponentNode[]> {
 		const anc = [this, ...ancestry];
-		return this.children.reduce<ComponentNode[]>((flat, child) => {
-			const s: ComponentNodes = typeof child === 'string' ? child : child.toNode(anc);
-			return Array.isArray(s) ? flat.concat(s) : [...flat, s];
-		}, []);
+		const nodes = await Promise.all(
+			this.children.map((child) => (typeof child === 'string' ? child : child.toNode(anc))),
+		);
+		return nodes.reduce<ComponentNode[]>(
+			(flat, s) => (Array.isArray(s) ? flat.concat(s) : [...flat, s]),
+			[],
+		);
 	}
 
 	/**
@@ -136,7 +142,7 @@ export abstract class Component<
 	 * By default, an XML component would serialize to its children and string contents -- like a
 	 * fragment. Most components have an override to use specific OOXML elememnts, such as <w:p>.
 	 */
-	public toNode(ancestry: Array<ComponentAncestor>): ComponentNodes {
+	public toNode(ancestry: Array<ComponentAncestor>): ComponentNodes | Promise<ComponentNodes> {
 		return this.childrenToNode(ancestry);
 	}
 }

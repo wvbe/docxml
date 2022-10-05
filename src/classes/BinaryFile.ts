@@ -20,7 +20,7 @@ export class BinaryFile {
 
 	/**
 	 * Get all XmlFile instances related to this one, including self. This helps the system
-	 * serialize itself back to DOCX fullly.
+	 * serialize itself back to DOCX fullly. Probably not useful for consumers of the library.
 	 *
 	 * By default only returns the instance itself but no other related instances.
 	 */
@@ -60,7 +60,7 @@ export class BinaryFile {
 	/**
 	 * Add all related files to the given archive.
 	 */
-	public toArchive(archive: Archive): void {
+	public addToArchive(archive: Archive): void {
 		archive.addBinaryFile(this.location, this.toUint8Array());
 	}
 }

@@ -20,7 +20,7 @@ export class XmlFile {
 	 * Create a (slimdom) Document DOM for this XML file. This is useful for serializing it to string
 	 * and writing to a ZIP/DOCX archive later.
 	 */
-	protected toNode(): Document {
+	protected toNode(): Document | Promise<Document> {
 		throw new Error(`${this.constructor.name}#toNode() is not implemented`);
 	}
 
@@ -33,7 +33,7 @@ export class XmlFile {
 
 	/**
 	 * Get all XmlFile instances related to this one, including self. This helps the system
-	 * serialize itself back to DOCX fullly.
+	 * serialize itself back to DOCX fullly. Probably not useful for consumers of the library.
 	 *
 	 * By default only returns the instance itself but no other related instances.
 	 */
@@ -51,14 +51,16 @@ export class XmlFile {
 	/**
 	 * Add all related files to the given archive.
 	 */
-	public toArchive(archive: Archive): void {
-		this.getRelated().forEach((related) => {
-			if (related instanceof XmlFile) {
-				archive.addXmlFile(related.location, related.toNode());
-			} else {
-				related.toArchive(archive);
-			}
-		});
+	public async addToArchive(archive: Archive): Promise<void> {
+		await Promise.all(
+			this.getRelated().map(async (related) => {
+				if (related instanceof XmlFile) {
+					archive.addXmlFile(related.location, await related.toNode());
+				} else {
+					related.addToArchive(archive);
+				}
+			}),
+		);
 	}
 
 	/**

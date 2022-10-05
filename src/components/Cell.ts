@@ -32,17 +32,17 @@ export class Cell extends Component<CellProps, CellChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(ancestry: ComponentAncestor[]): Node {
+	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		const table = ancestry.find((ancestor): ancestor is Table => ancestor instanceof Table);
 		if (!table) {
 			throw new Error('A row cannot be rendered outside the context of a table');
 		}
 
-		const children = this.childrenToNode(ancestry) as Node[];
+		const children = (await this.childrenToNode(ancestry)) as Node[];
 		if (!(this.children[this.children.length - 1] instanceof Paragraph)) {
 			// Cells must always end with a paragraph, or MS Word will complain about
 			// file corruption.
-			children.push(new Paragraph({}).toNode([this, ...ancestry]));
+			children.push(await new Paragraph({}).toNode([this, ...ancestry]));
 		}
 
 		return create(

@@ -32,8 +32,8 @@ export class RowDeletion extends Component<RowDeletionProps, RowDeletionChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(ancestry: ComponentAncestor[]): Node {
-		const node = createNodeFromRow(this, ancestry);
+	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+		const node = await createNodeFromRow(this, ancestry);
 
 		let trPr = evaluateXPathToFirstNode(`./${QNS.w}trPr`, node);
 		if (!trPr) {

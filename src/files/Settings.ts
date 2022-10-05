@@ -8,15 +8,15 @@ import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { File, Relationships } from './Relationships.ts';
 
-type SettingsJson = {
+export type SettingsI = {
 	isTrackChangesEnabled: boolean;
 };
 
-const DEFAULT_SETTINGS: SettingsJson = {
+const DEFAULT_SETTINGS: SettingsI = {
 	isTrackChangesEnabled: false,
 };
 
-export class Settings extends XmlFile implements SettingsJson {
+export class Settings extends XmlFile implements SettingsI {
 	public static contentType = ContentType.settings;
 
 	public readonly relationships: Relationships;
@@ -28,7 +28,7 @@ export class Settings extends XmlFile implements SettingsJson {
 		relationships = new Relationships(
 			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
 		),
-		settings: SettingsJson = DEFAULT_SETTINGS,
+		settings: SettingsI = DEFAULT_SETTINGS,
 	) {
 		super(location);
 		this.relationships = relationships;
@@ -52,6 +52,12 @@ export class Settings extends XmlFile implements SettingsJson {
 		);
 	}
 
+	/**
+	 * Get all XmlFile instances related to this one, including self. This helps the system
+	 * serialize itself back to DOCX fullly. Probably not useful for consumers of the library.
+	 *
+	 * By default only returns the instance itself but no other related instances.
+	 */
 	public getRelated(): File[] {
 		return [this, ...this.relationships.getRelated()];
 	}
@@ -77,7 +83,7 @@ export class Settings extends XmlFile implements SettingsJson {
 				"isTrackChangesEnabled": ooxml:is-on-off-enabled(./${QNS.w}trackChanges/@${QNS.w}val)
 			}`,
 			await archive.readXml(location),
-		) as SettingsJson;
+		) as SettingsI;
 		return new Settings(
 			location,
 			relationships || new Relationships(relationshipsLocation),

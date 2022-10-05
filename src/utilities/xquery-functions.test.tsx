@@ -21,7 +21,7 @@ describe('XQuery functions', () => {
 
 	it('ooxml:cell-column', async () => {
 		// @TODO isolate this unit test from JSX and the Table/Row/Cell classes. Use OOXML for scaffolding instead.
-		const dom = await Docx.fromJsx(
+		const archive = await Docx.fromJsx(
 			<Table>
 				<Row>
 					<Cell />
@@ -29,9 +29,8 @@ describe('XQuery functions', () => {
 					<Cell />
 				</Row>
 			</Table>,
-		)
-			.toArchive()
-			.readXml('word/document.xml');
+		).toArchive();
+		const dom = await archive.readXml('word/document.xml');
 		expect(evaluateXPathToNumber(`ooxml:cell-column(//${QNS.w}tc[1])`, dom)).toBe(0);
 		expect(evaluateXPathToNumber(`ooxml:cell-column(//${QNS.w}tc[2])`, dom)).toBe(1);
 		expect(evaluateXPathToNumber(`ooxml:cell-column(//${QNS.w}tc[3])`, dom)).toBe(3);

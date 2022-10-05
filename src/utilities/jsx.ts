@@ -25,18 +25,28 @@ type ComponentComponentFunction<C extends Component> = ComponentFunction<
  * Also exposed as the `jsx` prop on the (static) class as well as instance of this library's top-
  * level API -- see also {@link Api}.
  */
-export function jsx<C extends Component>(
+export async function jsx<C extends Component>(
 	component: ComponentComponentFunction<C> | ComponentDefinition<C>,
 	props: ComponentProps<C>,
 	...children: Array<ComponentChild<C> | Array<ComponentChild<C>>>
-): Array<C | ComponentChild<C> | ReturnType<ComponentComponentFunction<C>>> {
+): Promise<Array<C | ComponentChild<C> | ReturnType<ComponentComponentFunction<C>>>> {
+	const flattenedChildren = await children
+		// Flatten the children, which may themselves have been wrapped in an array because they
+		// contained invalid children.
+		// Moreover, any component might at this point still be only the promise thereof. Resolve all.
+		.reduce<Promise<ComponentChild<C>[]>>(async function flatten(
+			flatPromise,
+			childPromise,
+		): Promise<ComponentChild<C>[]> {
+			const child = await childPromise;
+			const flat = await flatPromise;
+			return Array.isArray(child)
+				? [...flat, ...(await child.reduce(flatten, Promise.resolve([])))]
+				: [...flat, child];
+		},
+		Promise.resolve([]));
 	return (
-		children
-			// Flatten the children, which may themselves have been wrapped in an array because they
-			// contained invalid children:
-			.reduce<ComponentChild<C>[]>(function flatten(flat, child): ComponentChild<C>[] {
-				return Array.isArray(child) ? child.reduce(flatten, flat) : [...flat, child];
-			}, [])
+		flattenedChildren
 			// Add the node, if it is valid, or add the node split into pieces with the invalid children
 			// vertically inserted between
 			.reduce<Array<QueuedComponent<C> | ComponentChild<C>>>(

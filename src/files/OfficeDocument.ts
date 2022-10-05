@@ -95,7 +95,7 @@ export class OfficeDocument extends XmlFile {
 	 */
 	public get children(): Promise<OfficeDocumentChild[]> {
 		if (!this.#root) {
-			throw new Error(`Document is empty!`);
+			return Promise.resolve([]);
 		}
 		return Promise.resolve(this.#root)
 			.then((root) => {

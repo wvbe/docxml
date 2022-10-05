@@ -6,7 +6,7 @@ It can be used to create a `.docx` using components, for example:
 /** @jsx Docx.jsx */
 import Docx, { Paragraph } from 'https://deno.land/x/docxml/mod.ts';
 
-Docx.fromJsx(<Paragraph>This is the simplest document you could make.</Paragraph>)
+await Docx.fromJsx(<Paragraph>This is the simplest document you could make.</Paragraph>)
 	.toFile('example-1.docx');
 ```
 
@@ -16,7 +16,7 @@ Or it can be used to convert any XML to DOCX:
 /** @jsx Docx.jsx */
 import Docx, { Paragraph, Text } from 'https://deno.land/x/docxml/mod.ts';
 
-Docx.fromNothing()
+await Docx.fromNothing()
 	.withXmlRule('self::node()', ({ traverse }) => traverse('./*'))
 	.withXmlRule('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>)
 	.withXmlRule('self::p', ({ traverse }) => <Paragraph>{traverse()}</Paragraph>)

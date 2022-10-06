@@ -16,9 +16,9 @@ import {
 	evaluateXPathToNodes as _evaluateXPathToNodes,
 	evaluateXPathToNumber as _evaluateXPathToNumber,
 	evaluateXPathToString as _evaluateXPathToString,
-} from 'https://esm.sh/fontoxpath@3.27.1';
+} from 'https://esm.sh/fontoxpath@3.27.1?pin=v96';
 
-export type { INodesFactory } from 'https://esm.sh/fontoxpath@3.27.1';
+export type { INodesFactory } from 'https://esm.sh/fontoxpath@3.27.1?pin=v96';
 
 export const XQUERY_3_1_LANGUAGE = _evaluateXPath.XQUERY_3_1_LANGUAGE;
 

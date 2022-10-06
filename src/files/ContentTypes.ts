@@ -32,12 +32,27 @@ export class ContentTypes extends XmlFile {
 		super(location);
 	}
 
-	public addDefault(extension: string, contentType: string | ContentType) {
+	/**
+	 * Add a default content type association for a file extension.
+	 */
+	public addDefault(extension: string, contentType: string | ContentType): void {
 		const exists = this.#defaults.findIndex((item) => item.extension === extension);
 		if (exists >= 0) {
 			this.#defaults.splice(exists, 1);
 		}
 		this.#defaults.push({ extension, contentType });
+	}
+
+	/**
+	 * Add multiple default content type/file extension associations. Useful for cloning
+	 * an existing content type register.
+	 */
+	public addDefaults(defaults: Array<ContentTypeDefault>): void {
+		defaults.forEach(({ extension, contentType }) => this.addDefault(extension, contentType));
+	}
+
+	public get defaults(): Array<ContentTypeDefault> {
+		return this.#defaults;
 	}
 
 	public addOverride(partName: string, contentType: ContentType) {

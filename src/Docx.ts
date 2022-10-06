@@ -221,6 +221,17 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		return this;
 	}
 
+	/**
+	 * Add _all_ the XML translatiom rules from another set of translation rules. Useful for
+	 * cloning.
+	 */
+	private withXmlRules(
+		renderer: GenericRenderer<RuleResult, { document: OfficeDocument } & PropsGeneric>,
+	): this {
+		this.#renderer.merge(renderer);
+		return this;
+	}
+
 	public withSettings(settingOverrides: Partial<SettingsI>): this {
 		Object.keys(settingOverrides).forEach((key) => {
 			const kkk = key as keyof SettingsI; // Happy now, TypeScript?
@@ -271,16 +282,23 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	}
 
 	/**
-	 * Clone a new instance of {@link Docx} including all existing relationships, media, and XML transformation rules.
+	 * Clone some reusable configuration to a new instance of {@link Docx}:
+	 *
+	 * - XML rendering rules
+	 * - Settings
+	 * - Default content types
+	 *
+	 * Does _not_ clone other things, like:
+	 * - Not content
+	 * - Not content type overrides
+	 * - Not relationships
+	 * - Not anything else either
 	 */
-	public async clone(): Promise<Docx<PropsGeneric>> {
-		// Clone the DOCX styles (etc.) to a new instance that we can mess with
-		// @TODO find a cheaper way to clone a Docx instance.
-		const docx = await Docx.fromArchive<PropsGeneric>(await this.toArchive());
-
-		// Clone rendering rules
-		docx.#renderer.merge(this.#renderer);
-
-		return docx;
+	public clone(): Docx<PropsGeneric> {
+		const clone = Docx.fromNothing<PropsGeneric>();
+		clone.withXmlRules(this.#renderer);
+		clone.withSettings(this.document.settings);
+		clone.contentTypes.addDefaults(this.contentTypes.defaults);
+		return clone;
 	}
 }

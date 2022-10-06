@@ -21,7 +21,7 @@ export class Settings extends XmlFile implements SettingsI {
 
 	public readonly relationships: Relationships;
 
-	public isTrackChangesEnabled = false;
+	public isTrackChangesEnabled = DEFAULT_SETTINGS.isTrackChangesEnabled;
 
 	public constructor(
 		location: string,
@@ -33,6 +33,20 @@ export class Settings extends XmlFile implements SettingsI {
 		super(location);
 		this.relationships = relationships;
 		Object.assign(this, settings);
+	}
+
+	/**
+	 * Set a setting.
+	 */
+	public set(key: keyof SettingsI, value: SettingsI[typeof key]): void {
+		this[key] = value;
+	}
+
+	/**
+	 * Get a setting.
+	 */
+	public get(key: keyof SettingsI): SettingsI[typeof key] {
+		return this[key];
 	}
 
 	protected toNode(): Document {

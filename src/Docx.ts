@@ -95,6 +95,8 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	public async toArchive(): Promise<Archive> {
 		const styles = this.document.styles;
 		const relationships = this.document.relationships;
+
+		// Loop over all content to ensure styles are registered, relationships created etc.
 		await Promise.all(
 			(
 				await this.document.children
@@ -124,12 +126,15 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		// New relationships may be created as they are necessary for serializing content, eg. for
 		// images.
 		await this.relationships.addToArchive(archive);
-		this.relationships
-			.getRelated()
-			.filter((related) => !(related instanceof Relationships))
-			.forEach((related) => {
-				this.contentTypes.addOverride(related.location, related.contentType);
-			});
+
+		await Promise.all(
+			this.relationships
+				.getRelated()
+				.filter((related) => !(related instanceof Relationships))
+				.map(async (related) => {
+					this.contentTypes.addOverride(related.location, await related.contentType);
+				}),
+		);
 		await this.contentTypes.addToArchive(archive);
 
 		return archive;

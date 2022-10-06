@@ -8,7 +8,7 @@ import { Relationships } from '../files/Relationships.ts';
 import { RelationshipType } from '../files/Relationships.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
-import { createUniqueNumericIdentifier } from '../utilities/identifiers.ts';
+import { createRandomId, createUniqueNumericIdentifier } from '../utilities/identifiers.ts';
 import { type Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
@@ -48,7 +48,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 	public ensureRelationship(relationships: Relationships) {
 		this.#relationshipId = relationships.add(
 			RelationshipType.image,
-			BinaryFile.fromData(this.props.data, 'word/media/kees.jpeg'),
+			BinaryFile.fromData(this.props.data, `word/media/${createRandomId('img')}`),
 		);
 	}
 

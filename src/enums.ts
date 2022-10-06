@@ -32,6 +32,9 @@ export enum ContentType {
 	theme = 'application/vnd.openxmlformats-officedocument.theme+xml',
 	webSettings = 'application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml',
 	comments = 'application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml',
+
 	// Binary content types
 	jpeg = 'image/jpeg',
+	png = 'image/png',
+	gif = 'image/gif',
 }

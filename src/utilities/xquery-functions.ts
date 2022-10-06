@@ -1,7 +1,7 @@
 import {
 	registerCustomXPathFunction,
 	registerXQueryModule,
-} from 'https://esm.sh/fontoxpath@3.26.1';
+} from 'https://esm.sh/fontoxpath@3.27.1';
 
 import { convert } from './length.ts';
 import { QNS } from './namespaces.ts';

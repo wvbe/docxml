@@ -1,13 +1,13 @@
 import {
 	evaluateUpdatingExpressionSync,
 	executePendingUpdateList,
-} from 'https://esm.sh/fontoxpath@3.26.1';
+} from 'https://esm.sh/fontoxpath@3.27.1';
 import {
 	Document as SlimdomDocument,
 	Node as SlimdomNode,
 	parseXmlDocument,
 	serializeToWellFormedString,
-} from 'https://esm.sh/slimdom@4.0.1';
+} from 'https://esm.sh/slimdom@4.0.2';
 
 import { evaluateXPathToFirstNode, INodesFactory, XQUERY_3_1_LANGUAGE } from './xquery.ts';
 

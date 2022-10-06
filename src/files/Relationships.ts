@@ -1,4 +1,4 @@
-import * as path from 'https://deno.land/std@0.146.0/path/mod.ts';
+import * as path from 'https://deno.land/std@0.158.0/path/mod.ts';
 
 import { Archive } from '../classes/Archive.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';

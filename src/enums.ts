@@ -1,4 +1,4 @@
-export enum BundleFile {
+export enum FileLocation {
 	contentTypes = '[Content_Types].xml',
 	relationships = '_rels/.rels',
 
@@ -12,7 +12,7 @@ export enum BundleFile {
 	settings = 'word/settings.xml',
 }
 
-export enum ContentType {
+export enum FileMime {
 	// Extension defaults
 	rels = 'application/vnd.openxmlformats-package.relationships+xml',
 	xml = 'application/xml',

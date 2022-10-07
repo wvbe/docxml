@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { Docx } from './Docx.ts';
-import { BundleFile } from './enums.ts';
+import { FileLocation } from './enums.ts';
 import { file } from './utilities/tests.ts';
 
 describe('Docx', () => {
@@ -18,8 +18,8 @@ describe('Docx', () => {
 				.sort(),
 		).toEqual(
 			[
-				BundleFile.contentTypes,
-				BundleFile.relationships,
+				FileLocation.contentTypes,
+				FileLocation.relationships,
 
 				// Stuff referenced from any of the .rels files
 				'docProps/app.xml',

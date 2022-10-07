@@ -1,6 +1,6 @@
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
-import { ContentType } from '../enums.ts';
+import { FileMime } from '../enums.ts';
 import {
 	ParagraphProperties,
 	paragraphPropertiesFromNode,
@@ -55,7 +55,7 @@ type LatentStyle = {
 };
 
 export class Styles extends XmlFile {
-	public static contentType = ContentType.styles;
+	public static contentType = FileMime.styles;
 
 	readonly #latentStyles: LatentStyle[] = [];
 	readonly #styles: Style[] = [];
@@ -64,10 +64,16 @@ export class Styles extends XmlFile {
 		super(location);
 	}
 
-	public ensureStyle(styleName: string) {
-		if (styleName && !this.hasStyle(styleName)) {
+	/**
+	 * Ensure that a style with this identifier exists. If it doesn't already exist, an empty
+	 * (paragraph) style is added just in time.
+	 *
+	 * @deprecated This is probably an incorrect approach to fixing missing styles.
+	 */
+	public ensureStyle(id: string) {
+		if (id && !this.hasStyle(id)) {
 			this.add({
-				id: styleName,
+				id: id,
 				type: 'paragraph',
 				basedOn: 'Normal',
 			});
@@ -140,19 +146,50 @@ export class Styles extends XmlFile {
 		);
 	}
 
+	/**
+	 * Add a custom style to the available style palette. If it does not have an identifier already,
+	 * the system will propose an identifier based on the style name, or create a unique GUID. This
+	 * method throws when the identifier is not unique.
+	 */
 	public add(properties: Omit<Style, 'id'> & { id?: string }) {
+		const id =
+			properties.id || properties.name?.replace(/[^a-zA-Z0-9]/g, '') || createRandomId('style');
+		if (this.hasStyle(id)) {
+			throw new Error(`A style with identifier "${id}" already exists.`);
+		}
 		const style = {
 			...properties,
-			id: properties.id || properties.name?.replace(/[^a-zA-Z0-9]/g, '') || createRandomId('style'),
+			id,
 		} as Style;
 		this.#styles.push(style);
 		return style.id;
 	}
 
+	/**
+	 * Add several custom styles to the available palette. Useful for cloning the style configuration of
+	 * another DOCX.
+	 */
+	public addStyles(styles: Style[]) {
+		styles.forEach((style) => this.add(style));
+	}
+
+	/**
+	 * The list of custom styles. Does not include latent styles.
+	 */
+	public get styles(): Style[] {
+		return this.#styles;
+	}
+
+	/**
+	 * Adds a latent style, which means that the Word processor should determine its actual properties
+	 */
 	public addLatent(properties: LatentStyle) {
 		this.#latentStyles.push(properties);
 	}
 
+	/**
+	 * Checks wether a custom style or a latent style with this identifier already exists.
+	 */
 	public hasStyle(id: string) {
 		return (
 			this.#styles.some((style) => style.id === id) ||
@@ -160,6 +197,11 @@ export class Styles extends XmlFile {
 		);
 	}
 
+	/**
+	 * Gets the style data by its identifier.
+	 *
+	 * @deprecated Not sure what this is useful for any more.
+	 */
 	public get(id: string) {
 		return this.#styles.find((style) => style.id === id);
 	}

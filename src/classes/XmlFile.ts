@@ -1,10 +1,10 @@
-import { ContentType } from '../enums.ts';
+import { FileMime } from '../enums.ts';
 import { parse } from '../utilities/dom.ts';
 import { type Archive } from './Archive.ts';
 import { type BinaryFile } from './BinaryFile.ts';
 
 export class XmlFile {
-	public static readonly contentType: ContentType = ContentType.xml;
+	public static readonly contentType: FileMime = FileMime.xml;
 
 	public readonly location: string;
 
@@ -12,7 +12,7 @@ export class XmlFile {
 		this.location = location;
 	}
 
-	public get contentType(): ContentType {
+	public get contentType(): FileMime {
 		return (this.constructor as typeof XmlFile).contentType;
 	}
 

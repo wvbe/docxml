@@ -2,7 +2,7 @@ import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.5/mod.ts';
 
 import { Archive } from './classes/Archive.ts';
 import { type Component } from './classes/Component.ts';
-import { BundleFile } from './enums.ts';
+import { FileLocation } from './enums.ts';
 import { ContentTypes } from './files/ContentTypes.ts';
 import {
 	type OfficeDocumentChild,
@@ -53,8 +53,8 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	public readonly relationships: Relationships;
 
 	protected constructor(
-		contentTypes = new ContentTypes(BundleFile.contentTypes),
-		relationships = new Relationships(BundleFile.relationships),
+		contentTypes = new ContentTypes(FileLocation.contentTypes),
+		relationships = new Relationships(FileLocation.relationships),
 		rules: GenericRenderer<RuleResult, { document: OfficeDocument } & PropsGeneric> | null = null,
 	) {
 		this.contentTypes = contentTypes;
@@ -67,7 +67,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		if (!this.relationships.hasType(RelationshipType.officeDocument)) {
 			this.relationships.add(
 				RelationshipType.officeDocument,
-				new OfficeDocument(BundleFile.mainDocument),
+				new OfficeDocument(FileLocation.mainDocument),
 			);
 		}
 	}
@@ -83,7 +83,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		if (!this.#officeDocument) {
 			this.#officeDocument = this.relationships.ensureRelationship(
 				RelationshipType.officeDocument,
-				() => new OfficeDocument(BundleFile.mainDocument),
+				() => new OfficeDocument(FileLocation.mainDocument),
 			);
 		}
 		return this.#officeDocument;
@@ -173,8 +173,8 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 				? await Archive.fromFile(locationOrZipArchive)
 				: locationOrZipArchive;
 		return new Docx<PropsGeneric>(
-			await ContentTypes.fromArchive(archive, BundleFile.contentTypes),
-			await Relationships.fromArchive(archive, BundleFile.relationships),
+			await ContentTypes.fromArchive(archive, FileLocation.contentTypes),
+			await Relationships.fromArchive(archive, FileLocation.relationships),
 		);
 	}
 
@@ -232,6 +232,9 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		return this;
 	}
 
+	/**
+	 * A convenience method to set a few settings for the document.
+	 */
 	public withSettings(settingOverrides: Partial<SettingsI>): this {
 		Object.keys(settingOverrides).forEach((key) => {
 			const kkk = key as keyof SettingsI; // Happy now, TypeScript?
@@ -240,6 +243,10 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		return this;
 	}
 
+	/**
+	 * Set the document contents to the provided XML, transformed using the rules previously
+	 * registered through {@link Docx.withXmlRule}.
+	 */
 	public withXml(dom: string | Document, props: PropsGeneric): this {
 		if (typeof dom === 'string') {
 			dom = parse(dom);
@@ -287,6 +294,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * - XML rendering rules
 	 * - Settings
 	 * - Default content types
+	 * - Custom styles
 	 *
 	 * Does _not_ clone other things, like:
 	 * - Not content
@@ -299,6 +307,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		clone.withXmlRules(this.#renderer);
 		clone.withSettings(this.document.settings);
 		clone.contentTypes.addDefaults(this.contentTypes.defaults);
+		clone.document.styles.addStyles(this.document.styles.styles);
 		return clone;
 	}
 }

@@ -2,7 +2,7 @@ import * as path from 'https://deno.land/std@0.158.0/path/mod.ts';
 
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
-import { ContentType } from '../enums.ts';
+import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
@@ -17,7 +17,7 @@ const DEFAULT_SETTINGS: SettingsI = {
 };
 
 export class Settings extends XmlFile implements SettingsI {
-	public static contentType = ContentType.settings;
+	public static contentType = FileMime.settings;
 
 	public readonly relationships: Relationships;
 

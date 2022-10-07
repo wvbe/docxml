@@ -1,4 +1,4 @@
-import { ContentType } from '../enums.ts';
+import { FileMime } from '../enums.ts';
 import { File } from '../files/Relationships.ts';
 import { getMimeTypeForUint8Array } from '../utilities/mime-types.ts';
 import { Archive } from './Archive.ts';
@@ -11,11 +11,11 @@ type BinaryFileReader = () => Promise<Uint8Array>;
  */
 export class BinaryFile {
 	public readonly location: string;
-	public mime?: ContentType;
+	public mime?: FileMime;
 
 	readonly #reader: BinaryFileReader;
 
-	protected constructor(location: string, reader: BinaryFileReader, mime?: ContentType) {
+	protected constructor(location: string, reader: BinaryFileReader, mime?: FileMime) {
 		this.location = location;
 		this.mime = mime;
 		this.#reader = reader;
@@ -31,7 +31,7 @@ export class BinaryFile {
 		return [this];
 	}
 
-	public get contentType(): Promise<ContentType> {
+	public get contentType(): Promise<FileMime> {
 		if (this.mime) {
 			return Promise.resolve(this.mime);
 		}

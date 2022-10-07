@@ -1,12 +1,12 @@
 import { Archive } from '../../classes/Archive.ts';
 import { XmlFile } from '../../classes/XmlFile.ts';
-import { ContentType } from '../../enums.ts';
+import { FileMime } from '../../enums.ts';
 import { create } from '../../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../../utilities/xquery.ts';
 
 export class CoreProperties extends XmlFile {
-	public static contentType = ContentType.coreProperties;
+	public static contentType = FileMime.coreProperties;
 
 	public created: Date = new Date();
 	public creator: string | null = null;

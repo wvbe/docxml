@@ -1,9 +1,9 @@
 import { Archive } from '../../classes/Archive.ts';
 import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
-import { ContentType } from '../../enums.ts';
+import { FileMime } from '../../enums.ts';
 
 export class ExtendedProperties extends UnhandledXmlFile {
-	public static contentType = ContentType.extendedProperties;
+	public static contentType = FileMime.extendedProperties;
 
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.

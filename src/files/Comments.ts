@@ -1,7 +1,7 @@
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
-import { ContentType } from '../enums.ts';
+import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
@@ -15,7 +15,7 @@ type Comment = {
 };
 
 export class Comments extends XmlFile {
-	public static contentType = ContentType.comments;
+	public static contentType = FileMime.comments;
 
 	private readonly comments: Comment[] = [];
 

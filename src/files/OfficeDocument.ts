@@ -5,7 +5,7 @@ import { XmlFile } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Section } from '../components/Section.ts';
 import { Table } from '../components/Table.ts';
-import { BundleFile, ContentType } from '../enums.ts';
+import { FileLocation, FileMime } from '../enums.ts';
 import { createChildComponentsFromNodes } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
@@ -22,7 +22,7 @@ export type OfficeDocumentRoot =
 	| OfficeDocumentChild[]
 	| Promise<OfficeDocumentChild[]>;
 export class OfficeDocument extends XmlFile {
-	public static contentType = ContentType.mainDocument;
+	public static contentType = FileMime.mainDocument;
 
 	public readonly relationships: Relationships;
 	#root: OfficeDocumentRoot | null = null;
@@ -53,7 +53,7 @@ export class OfficeDocument extends XmlFile {
 		if (!this.#styles) {
 			this.#styles = this.relationships.ensureRelationship(
 				RelationshipType.styles,
-				() => new Styles(BundleFile.styles),
+				() => new Styles(FileLocation.styles),
 			);
 		}
 		return this.#styles;
@@ -69,7 +69,7 @@ export class OfficeDocument extends XmlFile {
 		if (!this.#settings) {
 			this.#settings = this.relationships.ensureRelationship(
 				RelationshipType.settings,
-				() => new Settings(BundleFile.settings),
+				() => new Settings(FileLocation.settings),
 			);
 		}
 		return this.#settings;
@@ -84,7 +84,7 @@ export class OfficeDocument extends XmlFile {
 		if (!this.#comments) {
 			this.#comments = this.relationships.ensureRelationship(
 				RelationshipType.comments,
-				() => new Comments(BundleFile.comments),
+				() => new Comments(FileLocation.comments),
 			);
 		}
 		return this.#comments;

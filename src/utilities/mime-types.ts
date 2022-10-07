@@ -6,18 +6,18 @@
  * https://github.com/Stuk/jszip/issues/626#issuecomment-639272737
  */
 
-import { ContentType } from '../enums.ts';
+import { FileMime } from '../enums.ts';
 
-function getMimeTypeFromHexSignature(signature: string): ContentType {
+function getMimeTypeFromHexSignature(signature: string): FileMime {
 	switch (signature) {
 		case 'FFD8FFDB':
 		case 'FFD8FFE0':
 		case 'FFD8FFE1':
-			return ContentType.jpeg;
+			return FileMime.jpeg;
 		case '89504E47':
-			return ContentType.png;
+			return FileMime.png;
 		case '47494638':
-			return ContentType.gif;
+			return FileMime.gif;
 		// case '25504446':
 		// 	return 'application/pdf';
 		// case '504B0304':

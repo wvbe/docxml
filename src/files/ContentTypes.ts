@@ -1,29 +1,29 @@
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
-import { ContentType } from '../enums.ts';
+import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
 
 type ContentTypeOverride = {
 	partName: string;
-	contentType: ContentType;
+	contentType: FileMime;
 };
 
 type ContentTypeDefault = {
 	extension: string;
-	contentType: string | ContentType;
+	contentType: string | FileMime;
 };
 
 export class ContentTypes extends XmlFile {
 	readonly #defaults: Array<ContentTypeDefault> = [
 		{
 			extension: 'rels',
-			contentType: ContentType.rels,
+			contentType: FileMime.rels,
 		},
 		{
 			extension: 'xml',
-			contentType: ContentType.xml,
+			contentType: FileMime.xml,
 		},
 	];
 	readonly #overrides: Array<ContentTypeOverride> = [];
@@ -35,7 +35,7 @@ export class ContentTypes extends XmlFile {
 	/**
 	 * Add a default content type association for a file extension.
 	 */
-	public addDefault(extension: string, contentType: string | ContentType): void {
+	public addDefault(extension: string, contentType: string | FileMime): void {
 		const exists = this.#defaults.findIndex((item) => item.extension === extension);
 		if (exists >= 0) {
 			this.#defaults.splice(exists, 1);
@@ -55,7 +55,7 @@ export class ContentTypes extends XmlFile {
 		return this.#defaults;
 	}
 
-	public addOverride(partName: string, contentType: ContentType) {
+	public addOverride(partName: string, contentType: FileMime) {
 		const exists = this.#overrides.findIndex((item) => item.partName === partName);
 		if (exists >= 0) {
 			this.#overrides.splice(exists, 1);

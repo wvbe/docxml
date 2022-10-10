@@ -5,16 +5,17 @@ import { parse, serialize } from '../utilities/dom.ts';
 export class Archive {
 	public readonly location?: string;
 
-	/**
-	 * @deprecated Try not to use this directly.
-	 */
-	public readonly zip: JSZip;
+	readonly #zip: JSZip;
 
 	constructor(zip?: JSZip) {
-		this.zip = zip || new JSZip();
-		Object.defineProperty(this, 'zip', {
-			enumerable: false,
-		});
+		this.#zip = zip || new JSZip();
+	}
+
+	/**
+	 * @deprecated For testing purposes only.
+	 */
+	get $fileNames() {
+		return this.#zip.files();
 	}
 
 	public readText(location: string): Promise<string> {
@@ -22,21 +23,21 @@ export class Archive {
 			location = location.substring(location.indexOf('/') + 1);
 		}
 		try {
-			return this.zip.file(location).async('string');
+			return this.#zip.file(location).async('string');
 		} catch (error: unknown) {
 			throw new Error(
 				`Could not read "${location}" from archive: ${
 					(error as Error).message
-				}. The only files in this archive are: ${Object.keys(this.zip.files()).join(', ')}`,
+				}. The only files in this archive are: ${Object.keys(this.#zip.files()).join(', ')}`,
 			);
 		}
 	}
 
 	public async asUint8Array(): Promise<Uint8Array> {
 		for await (const { location, promise } of this.#promises) {
-			this.zip.addFile(location, await promise);
+			this.#zip.addFile(location, await promise);
 		}
-		return this.zip.generateAsync({ type: 'uint8array' });
+		return this.#zip.generateAsync({ type: 'uint8array' });
 	}
 
 	public async readXml(location: string): Promise<Document> {
@@ -44,7 +45,7 @@ export class Archive {
 	}
 
 	public readBinary(location: string): Promise<Uint8Array> {
-		return this.zip.file(location).async('uint8array');
+		return this.#zip.file(location).async('uint8array');
 	}
 
 	/**
@@ -66,7 +67,7 @@ export class Archive {
 	 * Create a new text file in the DOCX archive.
 	 */
 	public addTextFile(location: string, contents: string): this {
-		this.zip.addFile(location, contents);
+		this.#zip.addFile(location, contents);
 		return this;
 	}
 	readonly #promises: { location: string; promise: Promise<Uint8Array> }[] = [];

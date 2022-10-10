@@ -210,13 +210,12 @@ export class Styles extends XmlFile {
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
 	public static async fromArchive(archive: Archive, location: string): Promise<Styles> {
-		const dom = await archive.readXml(location);
-
 		const instance = new Styles(location);
 
-		evaluateXPathToArray(
-			`
-				array { /*/${QNS.w}style[@${QNS.w}type = ("paragraph", "table") and @${QNS.w}styleId]/map {
+		const dom = await archive.readXml(location);
+		instance.addStyles(
+			evaluateXPathToArray(
+				`array { /*/${QNS.w}style[@${QNS.w}type = ("paragraph", "table") and @${QNS.w}styleId]/map {
 					"id": @${QNS.w}styleId/string(),
 					"type": @${QNS.w}type/string(),
 					"name": ./${QNS.w}name/@${QNS.w}val/string(),
@@ -225,16 +224,14 @@ export class Styles extends XmlFile {
 					"tblpr": ./${QNS.w}tblPr,
 					"ppr": ./${QNS.w}pPr,
 					"rpr": ./${QNS.w}rPr
-				}}
-			`,
-			dom,
-		).forEach(({ ppr, rpr, tblpr, ...json }) =>
-			instance.add({
+				}}`,
+				dom,
+			).map(({ ppr, rpr, tblpr, ...json }) => ({
 				...json,
 				paragraph: paragraphPropertiesFromNode(ppr),
 				text: textPropertiesFromNode(rpr),
 				table: tablePropertiesFromNode(tblpr),
-			}),
+			})),
 		);
 
 		evaluateXPathToArray(

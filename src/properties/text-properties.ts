@@ -85,28 +85,26 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 		return null;
 	}
 	return create(
-		`
-				element ${QNS.w}rPr {
-					if ($color) then element ${QNS.w}color {
-						attribute ${QNS.w}val { $color }
-					} else (),
-					if ($isUnderlined) then element ${QNS.w}u {
-						attribute ${QNS.w}val { $isUnderlined }
-					} else (),
-					if ($isBold) then element ${QNS.w}b {} else (),
-					if ($isItalic) then element ${QNS.w}i {} else (),
-					if ($isSmallCaps) then element ${QNS.w}smallCaps {} else (),
-					if ($verticalAlign) then element ${QNS.w}vertAlign {
-						attribute ${QNS.w}val { $verticalAlign }
-					} else (),
-					if ($language) then element ${QNS.w}lang {
-						attribute ${QNS.w}val { $language }
-					} else (),
-					if ($fontSize) then element ${QNS.w}sz {
-						attribute ${QNS.w}val { $fontSize }
-					} else ()
-				}
-			`,
+		`element ${QNS.w}rPr {
+			if ($color) then element ${QNS.w}color {
+				attribute ${QNS.w}val { $color }
+			} else (),
+			if ($isUnderlined) then element ${QNS.w}u {
+				attribute ${QNS.w}val { $isUnderlined }
+			} else (),
+			if ($isBold) then element ${QNS.w}b {} else (),
+			if ($isItalic) then element ${QNS.w}i {} else (),
+			if ($isSmallCaps) then element ${QNS.w}smallCaps {} else (),
+			if ($verticalAlign) then element ${QNS.w}vertAlign {
+				attribute ${QNS.w}val { $verticalAlign }
+			} else (),
+			if ($language) then element ${QNS.w}lang {
+				attribute ${QNS.w}val { $language }
+			} else (),
+			if ($fontSize) then element ${QNS.w}sz {
+				attribute ${QNS.w}val { $fontSize }
+			} else ()
+		}`,
 		{
 			color: data.color || null,
 			isUnderlined: data.isUnderlined === true ? 'single' : data.isUnderlined || null,

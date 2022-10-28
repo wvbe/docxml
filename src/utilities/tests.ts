@@ -3,13 +3,15 @@
  * All the helper functions for test purposes only.
  */
 import * as path from 'https://deno.land/std@0.158.0/path/mod.ts';
-import { expect } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect, it } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { serializeToWellFormedString } from 'https://esm.sh/v96/slimdom@4.0.2/dist/slimdom.d.ts';
 
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { Docx } from '../Docx.ts';
 import { castRelationshipToClass } from '../files/index.ts';
 import { RelationshipType } from '../files/Relationships.ts';
+import { create, serialize } from './dom.ts';
 import { evaluateXPathToBoolean } from './xquery.ts';
 
 const ZIPS = new Map<string, Archive>();
@@ -99,4 +101,47 @@ export async function expectDocumentToContain(
 	const dom = await (document as XmlFile).$$$toNode();
 
 	return expect(evaluateXPathToBoolean(test, dom.documentElement)).toBeTruthy();
+}
+
+/**
+ * Creates a small test suite to assert that an object can succesfully be parsed from XML, serialized
+ * to XML again and then parses a 2nd time to the same object as before.
+ *
+ * Succeeding this test means the two functions convert back-and-forth without loss of information.
+ */
+export function createXmlRoundRobinTest<ObjectShape extends { [key: string]: unknown }>(
+	fromNode: (n: Node | null) => ObjectShape,
+	toNode: (n: ObjectShape) => Node | null,
+) {
+	return function test(
+		/**
+		 * The XML that the system should be able to ingest.
+		 */
+		xml: string,
+		/**
+		 * The object parsed from XML.
+		 */
+		parsed: ObjectShape,
+	) {
+		const serializedOnce = create(xml);
+		const parsedOnce = fromNode(serializedOnce);
+		const serializedAgain = toNode(parsedOnce);
+		const parsedTwice = fromNode(serializedAgain);
+
+		// Usually fails strict string equals because of namespace declarations and shit:
+		// it('XML', () => {
+		// 	expect(serialize(serializedOnce)).toBe(serialize(serializedAgain));
+		// });
+
+		for (const prop in parsed) {
+			it(`.${String(prop)}`, () => {
+				// Assert that the parsed prop equals the expected
+				expect(parsedOnce[prop]).toEqual(parsed[prop]);
+
+				// Assert that serializing and parsing again will result in the same outcome
+				// nb: If this test fails there is probably a problem in paragraphPropertiesToNode()
+				expect(parsedOnce[prop]).toEqual(parsedTwice[prop]);
+			});
+		}
+	};
 }

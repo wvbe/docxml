@@ -2,6 +2,8 @@
 export { Docx as default } from './src/Docx.ts';
 
 // Components
+export { BookmarkRangeEnd } from './src/components/BookmarkRangeEnd.ts';
+export { BookmarkRangeStart } from './src/components/BookmarkRangeStart.ts';
 export { Break } from './src/components/Break.ts';
 export { Cell } from './src/components/Cell.ts';
 export { Comment } from './src/components/Comment.ts';
@@ -20,7 +22,7 @@ export { TextDeletion } from './src/components/TextDeletion.ts';
 
 // Utility functions
 export { jsx } from './src/utilities/jsx.ts';
-export { cm, emu, hpt, inch, pt, twip } from './src/utilities/length.ts';
+export { cm, emu, hpt, inch, opt, pt, twip } from './src/utilities/length.ts';
 
 // Types
 export type { ComponentFunction } from './src/classes/Component.ts';

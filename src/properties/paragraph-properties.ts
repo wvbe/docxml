@@ -14,6 +14,7 @@ import { TextProperties, textPropertiesFromNode, textPropertiesToNode } from './
  */
 export type ParagraphProperties = {
 	alignment?: 'left' | 'right' | 'center' | 'both' | null;
+	outlineLvl?: number | null;
 	style?: string | null;
 	spacing?: null | {
 		before?: Length | null;
@@ -48,6 +49,7 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 				`
 			map {
 				"alignment": ${QNS.w}jc/@${QNS.w}val/string(),
+				"outlineLvl": ${QNS.w}outlineLvl/@${QNS.w}val/number(),
 				"style": ${QNS.w}pStyle/@${QNS.w}val/string(),
 
 				"spacing": ${QNS.w}spacing/map {
@@ -130,6 +132,9 @@ export function paragraphPropertiesToNode(
 					if (exists($alignment)) then element ${QNS.w}jc {
 						attribute ${QNS.w}val { $alignment }
 					} else (),
+					if (exists($outlineLvl)) then element ${QNS.w}outlineLvl {
+						attribute ${QNS.w}val { $outlineLvl }
+					} else (),
 
 					if (exists($spacing)) then element ${QNS.w}spacing {
 						if (exists($spacing('before'))) then attribute ${QNS.w}before {
@@ -193,6 +198,8 @@ export function paragraphPropertiesToNode(
 		{
 			style: data.style || null,
 			alignment: data.alignment || null,
+			outlineLvl:
+				data.outlineLvl === null || data.outlineLvl === undefined ? null : data.outlineLvl,
 			indentation: data.indentation
 				? {
 						...data.indentation,

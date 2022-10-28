@@ -1,5 +1,6 @@
 import { EightPoint } from '../types.ts';
 import { create } from '../utilities/dom.ts';
+import { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
@@ -199,7 +200,7 @@ type TableBorderType =
 
 type TableBorder = {
 	color?: null | string;
-	width?: null | EightPoint;
+	width?: null | Length;
 	spacing?: null | number;
 	type?: null | TableBorderType;
 };
@@ -207,7 +208,7 @@ type TableBorder = {
 export type TableProperties = {
 	style?: string | null;
 	/**
-	 * @deprecated Use columnWidths instead
+	 * @deprecated Use columnWidths instead. Also, this API sucks.
 	 */
 	width?:
 		| null
@@ -218,6 +219,9 @@ export type TableProperties = {
 				length: '`${number}%' | string | number;
 				unit: null | 'nil' | 'auto' | 'dxa' | 'pct';
 		  };
+	/**
+	 * @todo rename to something more descriptive?
+	 */
 	look?: null | {
 		firstColumn?: null | boolean;
 		lastColumn?: null | boolean;
@@ -251,10 +255,10 @@ export function tablePropertiesFromNode(node?: Node | null): TableProperties {
 								"noVBand": ./@${QNS.w}noVBand/ooxml:is-on-off-enabled(.)
 							},
 							"borders": ./${QNS.w}tblBorders/map {
-								"left": ./${QNS.w}left/ooxml:table-border(.),
-								"right": ./${QNS.w}right/ooxml:table-border(.),
 								"top": ./${QNS.w}top/ooxml:table-border(.),
+								"right": ./${QNS.w}right/ooxml:table-border(.),
 								"bottom": ./${QNS.w}bottom/ooxml:table-border(.),
+								"left": ./${QNS.w}left/ooxml:table-border(.),
 								"insideH": ./${QNS.w}insideH/ooxml:table-border(.),
 								"insideV": ./${QNS.w}insideV/ooxml:table-border(.)
 							},
@@ -290,9 +294,9 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 					} else (),
 					if (exists($borders)) then element ${QNS.w}tblBorders {
 						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
+						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
 						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
 						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
-						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
 						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
 						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
 					} else ()

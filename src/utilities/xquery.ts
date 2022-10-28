@@ -5,8 +5,6 @@
  * tell you where the query was run from.
  */
 // Import the file that registers custom XPath functions to the fontoxpath global;
-import './xquery-functions.ts';
-
 import {
 	evaluateXPath as _evaluateXPath,
 	evaluateXPathToArray as _evaluateXPathToArray,
@@ -18,6 +16,8 @@ import {
 	evaluateXPathToString as _evaluateXPathToString,
 } from 'https://esm.sh/fontoxpath@3.27.1?pin=v96';
 
+import { PIZZA_SPACE } from './xquery-functions.ts';
+
 export type { INodesFactory } from 'https://esm.sh/fontoxpath@3.27.1?pin=v96';
 
 export const XQUERY_3_1_LANGUAGE = _evaluateXPath.XQUERY_3_1_LANGUAGE;
@@ -25,7 +25,7 @@ export const XQUERY_3_1_LANGUAGE = _evaluateXPath.XQUERY_3_1_LANGUAGE;
 const OPTIONS = {
 	language: XQUERY_3_1_LANGUAGE,
 	moduleImports: {
-		ooxml: 'https://wybe.pizza/ns/ooxml',
+		ooxml: PIZZA_SPACE,
 	},
 };
 

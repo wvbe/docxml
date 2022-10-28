@@ -1,11 +1,15 @@
 // Import without assignment ensures Deno does not tree-shake this component. To avoid circular
 // definitions, components register themselves in a side-effect of their module.
+//
+// Add items to this list that would otherwise only be depended on as a type definition.
 import './Text.ts';
 import './TextAddition.ts';
 import './TextDeletion.ts';
 import './CommentRangeStart.ts';
 import './CommentRangeEnd.ts';
 import './Comment.ts';
+import './BookmarkRangeStart.ts';
+import './BookmarkRangeEnd.ts';
 
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import { type ParagraphProperties } from '../properties/paragraph-properties.ts';
@@ -19,6 +23,8 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import { type BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
+import { type BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import { type Comment } from './Comment.ts';
 import { type CommentRangeEnd } from './CommentRangeEnd.ts';
 import { type CommentRangeStart } from './CommentRangeStart.ts';
@@ -35,7 +41,9 @@ export type ParagraphChild =
 	| TextDeletion
 	| CommentRangeStart
 	| CommentRangeEnd
-	| Comment;
+	| Comment
+	| BookmarkRangeStart
+	| BookmarkRangeEnd;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.

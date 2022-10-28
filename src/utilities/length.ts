@@ -24,6 +24,14 @@ export type Length = {
 	 * Defined as 1/2nd of a point.
 	 */
 	hpt: number;
+
+	/**
+	 * 1/8th points.
+	 *
+	 * Defined as 1/8th of a point.
+	 */
+	opt: number;
+
 	/**
 	 * Twentieth of a point. Sometimes also called DXA.
 	 *
@@ -47,6 +55,7 @@ function _convert(points: number): Length {
 		pt: points,
 		emu: points * 12700,
 		hpt: points * 2,
+		opt: points * 8,
 		twip: points * 20,
 		inch: points * (1 / 72),
 		cm: points * (2.54 / 72),
@@ -75,6 +84,13 @@ export function hpt(amount: number): Length {
 }
 
 /**
+ * Converts 8th-points to any of the other units of length.
+ */
+export function opt(amount: number): Length {
+	return _convert(amount / 8);
+}
+
+/**
  * Converts twentieth-points to any of the other units of length.
  */
 export function twip(amount: number): Length {
@@ -99,6 +115,7 @@ const ingestors: { [unit: string]: (v: number) => Length } = {
 	cm,
 	pt,
 	hpt,
+	opt,
 	inch,
 	twip,
 	emu,

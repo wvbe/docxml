@@ -6,15 +6,17 @@ import {
 import { convert } from './length.ts';
 import { QNS } from './namespaces.ts';
 
+export const PIZZA_SPACE = 'https://wybe.pizza/ns/ooxml';
+
 registerCustomXPathFunction(
-	{ namespaceURI: 'https://wybe.pizza/ns/ooxml', localName: 'universal-size' },
+	{ namespaceURI: PIZZA_SPACE, localName: 'universal-size' },
 	['xs:float', 'xs:string'],
 	'map(*)',
 	(_facade, value, unit) => convert(value, unit),
 );
 
 registerXQueryModule(`
-	module namespace ooxml = "https://wybe.pizza/ns/ooxml";
+	module namespace ooxml = "${PIZZA_SPACE}";
 
 	declare %public function ooxml:cell-column($cell) as xs:double {
 		sum(
@@ -34,8 +36,10 @@ registerXQueryModule(`
 	declare %public function ooxml:table-border($val) as map(*) {
 		$val/map {
 			"type": ./@${QNS.w}val/string(),
+			"width": if (exists(./@${QNS.w}sz))
+				then ooxml:universal-size(./@${QNS.w}sz, 'opt')
+				else (),
 			"spacing": ./@${QNS.w}space/number(),
-			"width": ./@${QNS.w}sz/number(),
 			"color": ./@${QNS.w}color/string()
 		}
 	};
@@ -44,7 +48,7 @@ registerXQueryModule(`
 	declare %public function ooxml:create-table-border($name as xs:QName, $obj as map(*)?) {
 		if (exists($obj)) then element {$name} {
 			if ($obj('type')) then attribute ${QNS.w}val { $obj('type') } else (),
-			if ($obj('width')) then attribute ${QNS.w}sz { $obj('width') } else (),
+			if (exists($obj('width'))) then attribute ${QNS.w}sz { $obj('width')('opt') } else (),
 			if ($obj('spacing')) then attribute ${QNS.w}space { $obj('spacing') } else (),
 			if ($obj('color')) then attribute ${QNS.w}color { $obj('color') } else ()
 		} else ()

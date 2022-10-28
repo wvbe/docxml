@@ -4,14 +4,13 @@
  */
 import * as path from 'https://deno.land/std@0.158.0/path/mod.ts';
 import { expect, it } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
-import { serializeToWellFormedString } from 'https://esm.sh/v96/slimdom@4.0.2/dist/slimdom.d.ts';
 
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { Docx } from '../Docx.ts';
 import { castRelationshipToClass } from '../files/index.ts';
 import { RelationshipType } from '../files/Relationships.ts';
-import { create, serialize } from './dom.ts';
+import { create } from './dom.ts';
 import { evaluateXPathToBoolean } from './xquery.ts';
 
 const ZIPS = new Map<string, Archive>();

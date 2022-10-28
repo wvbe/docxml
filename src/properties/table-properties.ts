@@ -1,4 +1,3 @@
-import { EightPoint } from '../types.ts';
 import { create } from '../utilities/dom.ts';
 import { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';

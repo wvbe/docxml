@@ -62,6 +62,7 @@ describe('JSX fixing', () => {
 			await (
 				<Text>
 					<Text>bar</Text>
+					<Text />
 				</Text>
 			),
 		).toEqual(await (<Text>bar</Text>));

@@ -43,6 +43,11 @@ export type ParagraphProperties = {
 		  } & Omit<ParagraphProperties, 'change'>);
 };
 
+/**
+ * @todo Not combine paragraph and text styles into one object -- it causes collisions for properties like "style"
+ *
+ * @deprecated Careful!
+ */
 export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProperties {
 	const data = node
 		? evaluateXPathToMap(
@@ -51,7 +56,6 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 				"alignment": ${QNS.w}jc/@${QNS.w}val/string(),
 				"outlineLvl": ${QNS.w}outlineLvl/@${QNS.w}val/number(),
 				"style": ${QNS.w}pStyle/@${QNS.w}val/string(),
-
 				"spacing": ${QNS.w}spacing/map {
 					"before": @${QNS.w}before/number(),
 					"after": @${QNS.w}after/number(),

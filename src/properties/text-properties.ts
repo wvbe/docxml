@@ -10,6 +10,7 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
  *   https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_rPr_topic_ID0EIEKM.html
  */
 export type TextProperties = {
+	style?: string | null;
 	color?: string | null;
 	verticalAlign?: 'baseline' | 'subscript' | 'superscript' | null;
 	isUnderlined?:
@@ -51,6 +52,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	const data = evaluateXPathToMap(
 		`
 				map {
+					"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
 					"color": ./${QNS.w}color/@${QNS.w}val/string(),
 					"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
 					"isBold": boolean(./${QNS.w}b),
@@ -73,6 +75,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 
 export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 	if (
+		!data.style &&
 		!data.color &&
 		!data.isUnderlined &&
 		!data.language &&
@@ -86,6 +89,9 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 	}
 	return create(
 		`element ${QNS.w}rPr {
+			if ($style) then element ${QNS.w}rStyle {
+				attribute ${QNS.w}val { $style }
+			} else (),
 			if ($color) then element ${QNS.w}color {
 				attribute ${QNS.w}val { $color }
 			} else (),
@@ -106,6 +112,7 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 			} else ()
 		}`,
 		{
+			style: data.style || null,
 			color: data.color || null,
 			isUnderlined: data.isUnderlined === true ? 'single' : data.isUnderlined || null,
 			language: data.language || null,

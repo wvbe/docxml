@@ -1,6 +1,7 @@
 import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.5/mod.ts';
 
 import { Archive } from './classes/Archive.ts';
+import { Bookmarks } from './classes/Bookmarks.ts';
 import { type Component } from './classes/Component.ts';
 import { FileLocation } from './enums.ts';
 import { ContentTypes } from './files/ContentTypes.ts';
@@ -12,6 +13,7 @@ import {
 import { Relationships, RelationshipType } from './files/Relationships.ts';
 import { type SettingsI } from './files/Settings.ts';
 import { parse } from './utilities/dom.ts';
+import { createRandomId } from './utilities/identifiers.ts';
 import { jsx } from './utilities/jsx.ts';
 
 type SyncRuleResult = Component | string | null;
@@ -51,6 +53,8 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * relationships may have their own relationship XMLs.
 	 */
 	public readonly relationships: Relationships;
+
+	public readonly bookmarks = new Bookmarks();
 
 	protected constructor(
 		contentTypes = new ContentTypes(FileLocation.contentTypes),

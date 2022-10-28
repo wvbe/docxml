@@ -8,9 +8,11 @@ import './TextDeletion.ts';
 import './CommentRangeStart.ts';
 import './CommentRangeEnd.ts';
 import './Comment.ts';
+import './Hyperlink.ts';
 import './BookmarkRangeStart.ts';
 import './BookmarkRangeEnd.ts';
 
+import { type Hyperlink } from '../../mod.ts';
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import { type ParagraphProperties } from '../properties/paragraph-properties.ts';
 import {
@@ -43,7 +45,8 @@ export type ParagraphChild =
 	| CommentRangeEnd
 	| Comment
 	| BookmarkRangeStart
-	| BookmarkRangeEnd;
+	| BookmarkRangeEnd
+	| Hyperlink;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
@@ -58,12 +61,15 @@ export type ParagraphProps = ParagraphProperties & TextProperties;
  */
 export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	public static readonly children: string[] = [
+		'BookmarkRangeEnd',
+		'BookmarkRangeStart',
+		'Comment',
+		'CommentRangeEnd',
+		'CommentRangeStart',
+		'Hyperlink',
 		'Text',
 		'TextAddition',
 		'TextDeletion',
-		'CommentRangeStart',
-		'CommentRangeEnd',
-		'Comment',
 	];
 	public static readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;

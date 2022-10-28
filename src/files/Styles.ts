@@ -33,14 +33,20 @@ type ParagraphStyle = {
 	text?: TextProperties;
 	table?: null;
 };
+type CharacterStyle = {
+	type: 'character';
+	paragraph?: null;
+	text?: TextProperties;
+	table?: null;
+};
 type TableStyle = {
 	type: 'table';
-	table?: TableProperties;
 	paragraph?: null;
 	text?: null;
+	table?: TableProperties;
 };
 
-type Style = StyleCommons & (ParagraphStyle | TableStyle);
+type Style = StyleCommons & (CharacterStyle | ParagraphStyle | TableStyle);
 
 /**
  * https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_lsdException_topic_ID0EX4NT.html
@@ -87,52 +93,50 @@ export class Styles extends XmlFile {
 	protected toNode(): Document {
 		// @TODO look at attribute w:document@mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh wp14"
 		return create(
-			`
-				<w:styles ${ALL_NAMESPACE_DECLARATIONS}>
-					{
-						if (count($latentStyles) > 0) then element ${QNS.w}latentStyles {
-							attribute ${QNS.w}defLockedState { "0" },
-							attribute ${QNS.w}defUIPriority { "99" },
-							attribute ${QNS.w}defSemiHidden { "0" },
-							attribute ${QNS.w}defUnhideWhenUsed { "0" },
-							attribute ${QNS.w}defQFormat { "0" },
-							attribute ${QNS.w}count { count($latentStyles) },
-							for $latentStyle in array:flatten($latentStyles)
-								return element ${QNS.w}lsdException {
-									attribute ${QNS.w}name { $latentStyle('name') },
-									if (exists($latentStyle('locked')))
-										then attribute ${QNS.w}locked { $latentStyle('locked') }
-										else (),
-									if (exists($latentStyle('uiPriority')))
-										then attribute ${QNS.w}uiPriority { $latentStyle('uiPriority') }
-										else (),
-									if (exists($latentStyle('semiHidden')))
-										then attribute ${QNS.w}semiHidden { $latentStyle('semiHidden') }
-										else (),
-									if (exists($latentStyle('unhideWhenUsed')))
-										then attribute ${QNS.w}unhideWhenUsed { $latentStyle('unhideWhenUsed') }
-										else (),
-									if (exists($latentStyle('qFormat')))
-										then attribute ${QNS.w}qFormat { $latentStyle('qFormat') }
-										else ()
-								}
-						} else (),
-						for $style in array:flatten($styles)
-							return <w:style>
-								{
-									attribute ${QNS.w}type { $style('type') },
-									attribute ${QNS.w}styleId { $style('id') },
-									if ($style('isDefault')) then attribute ${QNS.w}default {"1"} else (),
-									if ($style('name')) then <w:name w:val="{$style('name')}" /> else (),
-									if ($style('basedOn')) then <w:basedOn w:val="{$style('basedOn')}" /> else (),
-									if ($style('tblpr')) then $style('tblpr') else (),
-									if ($style('ppr')) then $style('ppr') else (),
-									if ($style('rpr')) then $style('rpr') else ()
-								}
-							</w:style>
-					}
-				</w:styles>
-			`,
+			`<w:styles ${ALL_NAMESPACE_DECLARATIONS}>
+				{
+					if (count($latentStyles) > 0) then element ${QNS.w}latentStyles {
+						attribute ${QNS.w}defLockedState { "0" },
+						attribute ${QNS.w}defUIPriority { "99" },
+						attribute ${QNS.w}defSemiHidden { "0" },
+						attribute ${QNS.w}defUnhideWhenUsed { "0" },
+						attribute ${QNS.w}defQFormat { "0" },
+						attribute ${QNS.w}count { count($latentStyles) },
+						for $latentStyle in array:flatten($latentStyles)
+							return element ${QNS.w}lsdException {
+								attribute ${QNS.w}name { $latentStyle('name') },
+								if (exists($latentStyle('locked')))
+									then attribute ${QNS.w}locked { $latentStyle('locked') }
+									else (),
+								if (exists($latentStyle('uiPriority')))
+									then attribute ${QNS.w}uiPriority { $latentStyle('uiPriority') }
+									else (),
+								if (exists($latentStyle('semiHidden')))
+									then attribute ${QNS.w}semiHidden { $latentStyle('semiHidden') }
+									else (),
+								if (exists($latentStyle('unhideWhenUsed')))
+									then attribute ${QNS.w}unhideWhenUsed { $latentStyle('unhideWhenUsed') }
+									else (),
+								if (exists($latentStyle('qFormat')))
+									then attribute ${QNS.w}qFormat { $latentStyle('qFormat') }
+									else ()
+							}
+					} else (),
+					for $style in array:flatten($styles)
+						return <w:style>
+							{
+								attribute ${QNS.w}type { $style('type') },
+								attribute ${QNS.w}styleId { $style('id') },
+								if ($style('isDefault')) then attribute ${QNS.w}default {"1"} else (),
+								if ($style('name')) then <w:name w:val="{$style('name')}" /> else (),
+								if ($style('basedOn')) then <w:basedOn w:val="{$style('basedOn')}" /> else (),
+								if ($style('tblpr')) then $style('tblpr') else (),
+								if ($style('ppr')) then $style('ppr') else (),
+								if ($style('rpr')) then $style('rpr') else ()
+							}
+						</w:style>
+				}
+			</w:styles>`,
 			{
 				styles: this.#styles.map(({ paragraph, text, table, ...style }) => ({
 					...style,
@@ -215,7 +219,7 @@ export class Styles extends XmlFile {
 		const dom = await archive.readXml(location);
 		instance.addStyles(
 			evaluateXPathToArray(
-				`array { /*/${QNS.w}style[@${QNS.w}type = ("paragraph", "table") and @${QNS.w}styleId]/map {
+				`array { /*/${QNS.w}style[@${QNS.w}type = ("paragraph", "table", "character") and @${QNS.w}styleId]/map {
 					"id": @${QNS.w}styleId/string(),
 					"type": @${QNS.w}type/string(),
 					"name": ./${QNS.w}name/@${QNS.w}val/string(),

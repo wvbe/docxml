@@ -13,7 +13,6 @@ import {
 import { Relationships, RelationshipType } from './files/Relationships.ts';
 import { type SettingsI } from './files/Settings.ts';
 import { parse } from './utilities/dom.ts';
-import { createRandomId } from './utilities/identifiers.ts';
 import { jsx } from './utilities/jsx.ts';
 
 type SyncRuleResult = Component | string | null;

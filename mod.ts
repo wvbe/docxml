@@ -6,8 +6,8 @@ export {
 	type AnyStyle,
 	type CharacterStyle,
 	type ParagraphStyle,
-	type StyleDefinition,
 	type TableStyle,
+	Styles,
 } from './src/files/Styles.ts';
 export * from './src/properties.ts';
 export * from './src/utilities.ts';

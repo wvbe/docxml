@@ -44,14 +44,14 @@ export type TableStyle = {
 
 export type AnyStyle = CharacterStyle | ParagraphStyle | TableStyle;
 
-export type StyleDefinition<S extends AnyStyle> = {
+type StyleDefinition<S extends AnyStyle> = {
 	id: string;
 	name?: string | null;
 	basedOn?: string | null;
 	isDefault?: boolean | null;
 } & S;
 
-export type Style = StyleDefinition<AnyStyle>;
+type Style = StyleDefinition<AnyStyle>;
 
 /**
  * https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_lsdException_topic_ID0EX4NT.html

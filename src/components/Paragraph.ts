@@ -20,7 +20,6 @@ import {
 	paragraphPropertiesToNode,
 } from '../properties/paragraph-properties.ts';
 import { type SectionProperties } from '../properties/section-properties.ts';
-import { type TextProperties } from '../properties/text-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';

@@ -36,20 +36,21 @@ describe('Paragraph from XML', () => {
 	it('serializes correctly', async () => {
 		expect(serialize(await paragraph.toNode([]))).toBe(
 			`
-				<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-					<pPr>
-						<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="Header"/>
-						<rPr>
-							<lang xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:val="en-GB"/>
-						</rPr>
-					</pPr>
-					<r>
-						<rPr>
-							<lang xmlns:ns3="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns3:val="nl-NL"/>
-						</rPr>
-						<t xml:space="preserve">My custom template</t>
-					</r>
-				</p>
+			<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+				<pPr>
+					<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="Header"/>
+					<rPr>
+						<rStyle xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:val="Header"/>
+						<lang xmlns:ns3="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns3:val="en-GB"/>
+					</rPr>
+				</pPr>
+				<r>
+					<rPr>
+						<lang xmlns:ns4="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns4:val="nl-NL"/>
+					</rPr>
+					<t xml:space="preserve">My custom template</t>
+				</r>
+			</p>
 			`.replace(/\n|\t/g, ''),
 		);
 	});
@@ -72,9 +73,15 @@ describe('Paragraph with style change', () => {
 				<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					<pPr>
 						<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="StyleNew"/>
-						<pPrChange xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:id="0" ns2:author="Wybe" ns2:date="${now.toISOString()}">
+						<rPr>
+							<rStyle xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:val="StyleNew"/>
+						</rPr>
+						<pPrChange xmlns:ns3="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns3:id="0" ns3:author="Wybe" ns3:date="${now.toISOString()}">
 							<pPr>
-								<pStyle ns2:val="StyleOld"/>
+								<pStyle ns3:val="StyleOld"/>
+								<rPr>
+									<rStyle ns3:val="StyleOld"/>
+								</rPr>
 						</pPr>
 						</pPrChange>
 					</pPr>

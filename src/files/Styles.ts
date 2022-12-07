@@ -21,32 +21,37 @@ import { createRandomId } from '../utilities/identifiers.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
 
-type StyleCommons = {
-	id: string;
-	name?: string | null;
-	basedOn?: string | null;
-	isDefault?: boolean | null;
-};
-type ParagraphStyle = {
+export type ParagraphStyle = {
 	type: 'paragraph';
 	paragraph?: ParagraphProperties & TextProperties;
 	text?: TextProperties;
 	table?: null;
 };
-type CharacterStyle = {
+
+export type CharacterStyle = {
 	type: 'character';
 	paragraph?: null;
 	text?: TextProperties;
 	table?: null;
 };
-type TableStyle = {
+
+export type TableStyle = {
 	type: 'table';
 	paragraph?: null;
 	text?: null;
 	table?: TableProperties;
 };
 
-type Style = StyleCommons & (CharacterStyle | ParagraphStyle | TableStyle);
+export type AnyStyle = CharacterStyle | ParagraphStyle | TableStyle;
+
+export type StyleDefinition<S extends AnyStyle> = {
+	id: string;
+	name?: string | null;
+	basedOn?: string | null;
+	isDefault?: boolean | null;
+} & S;
+
+export type Style = StyleDefinition<AnyStyle>;
 
 /**
  * https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_lsdException_topic_ID0EX4NT.html

@@ -31,7 +31,10 @@ describe('Paragraph formatting', () => {
 		</w:pPr>`,
 		{
 			alignment: null,
+
+			// This test fails due to a naming collision with the "style" property on TextProperties
 			style: 'Header',
+
 			language: 'en-GB',
 			outlineLvl: 3,
 			isBold: true,

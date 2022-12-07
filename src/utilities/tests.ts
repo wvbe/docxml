@@ -116,13 +116,13 @@ export function createXmlRoundRobinTest<ObjectShape extends { [key: string]: unk
 		/**
 		 * The XML that the system should be able to ingest.
 		 */
-		xml: string,
+		xmlSource: string,
 		/**
 		 * The object parsed from XML.
 		 */
-		parsed: ObjectShape,
+		parsedExpectation: ObjectShape,
 	) {
-		const serializedOnce = create(xml);
+		const serializedOnce = create(xmlSource);
 		const parsedOnce = fromNode(serializedOnce);
 		const serializedAgain = toNode(parsedOnce);
 		const parsedTwice = fromNode(serializedAgain);
@@ -132,10 +132,10 @@ export function createXmlRoundRobinTest<ObjectShape extends { [key: string]: unk
 		// 	expect(serialize(serializedOnce)).toBe(serialize(serializedAgain));
 		// });
 
-		for (const prop in parsed) {
+		for (const prop in parsedExpectation) {
 			it(`.${String(prop)}`, () => {
 				// Assert that the parsed prop equals the expected
-				expect(parsedOnce[prop]).toEqual(parsed[prop]);
+				expect(parsedOnce[prop]).toEqual(parsedExpectation[prop]);
 
 				// Assert that serializing and parsing again will result in the same outcome
 				// nb: If this test fails there is probably a problem in paragraphPropertiesToNode()

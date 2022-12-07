@@ -26,7 +26,8 @@ describe('Paragraph from XML', () => {
 
 	it('parses props correctly', () => {
 		expect(paragraph.props.style).toBe('Header');
-		expect(paragraph.props.language).toBe('en-GB');
+		console.log(paragraph.props);
+		expect(paragraph.props.pilcrow?.language).toBe('en-GB');
 	});
 
 	it('parses children correctly', () => {
@@ -40,13 +41,12 @@ describe('Paragraph from XML', () => {
 				<pPr>
 					<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="Header"/>
 					<rPr>
-						<rStyle xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:val="Header"/>
-						<lang xmlns:ns3="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns3:val="en-GB"/>
+						<lang xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:val="en-GB"/>
 					</rPr>
 				</pPr>
 				<r>
 					<rPr>
-						<lang xmlns:ns4="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns4:val="nl-NL"/>
+						<lang xmlns:ns3="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns3:val="nl-NL"/>
 					</rPr>
 					<t xml:space="preserve">My custom template</t>
 				</r>
@@ -73,15 +73,9 @@ describe('Paragraph with style change', () => {
 				<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					<pPr>
 						<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="StyleNew"/>
-						<rPr>
-							<rStyle xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:val="StyleNew"/>
-						</rPr>
-						<pPrChange xmlns:ns3="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns3:id="0" ns3:author="Wybe" ns3:date="${now.toISOString()}">
+						<pPrChange xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:id="0" ns2:author="Wybe" ns2:date="${now.toISOString()}">
 							<pPr>
-								<pStyle ns3:val="StyleOld"/>
-								<rPr>
-									<rStyle ns3:val="StyleOld"/>
-								</rPr>
+								<pStyle ns2:val="StyleOld"/>
 						</pPr>
 						</pPrChange>
 					</pPr>

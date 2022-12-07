@@ -8,9 +8,8 @@ import {
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from './paragraph-properties.ts';
-import { type TextProperties } from './text-properties.ts';
 
-const test = createXmlRoundRobinTest<ParagraphProperties & TextProperties>(
+const test = createXmlRoundRobinTest<ParagraphProperties>(
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 );
@@ -35,11 +34,7 @@ describe('Paragraph formatting', () => {
 			// This test fails due to a naming collision with the "style" property on TextProperties
 			style: 'Header',
 
-			language: 'en-GB',
 			outlineLvl: 3,
-			isBold: true,
-			isItalic: true,
-			verticalAlign: 'subscript',
 			spacing: {
 				before: null,
 				after: twip(200),
@@ -48,7 +43,17 @@ describe('Paragraph formatting', () => {
 				afterAutoSpacing: null,
 				beforeAutoSpacing: null,
 			},
-			fontSize: hpt(19),
+			pilcrow: {
+				style: null,
+				color: null,
+				isUnderlined: null,
+				isBold: true,
+				isItalic: true,
+				isSmallCaps: false,
+				verticalAlign: 'subscript',
+				language: 'en-GB',
+				fontSize: hpt(19),
+			},
 		},
 	);
 

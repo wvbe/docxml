@@ -23,7 +23,7 @@ import { evaluateXPathToArray } from '../utilities/xquery.ts';
 
 export type ParagraphStyle = {
 	type: 'paragraph';
-	paragraph?: ParagraphProperties & TextProperties;
+	paragraph?: ParagraphProperties;
 	text?: TextProperties;
 	table?: null;
 };

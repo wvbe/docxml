@@ -50,8 +50,15 @@ export type ParagraphChild =
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
+ *
+ * These are pretty much all the formatting options for paragraphs, but "flattening" the text formatting
+ * that is normally under its "text" property. All formatting properties are accepted as a paragraph
+ * prop directly.
+ *
+ * The "style" option, which is part of both paragraph- and text properties, is always
+ * set to the _paragraph_ style -- the _text_ style is ignored.
  */
-export type ParagraphProps = ParagraphProperties & TextProperties;
+export type ParagraphProps = ParagraphProperties;
 
 /**
  * A component that represents a paragraph in your DOCX document, which is one of the most

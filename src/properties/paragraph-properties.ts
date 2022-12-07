@@ -41,6 +41,11 @@ export type ParagraphProperties = {
 				author: string;
 				date: Date;
 		  } & Omit<ParagraphProperties, 'change'>);
+
+	/**
+	 * Formatting of the pilcrow signn
+	 */
+	pilcrow?: TextProperties | null;
 };
 
 /**
@@ -109,9 +114,10 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 		data.indentation.firstLine = twip(data.indentation.firstLine);
 	}
 
+	const rpr = node && evaluateXPathToFirstNode(`./${QNS.w}rPr`, node);
 	return {
 		...data,
-		...textPropertiesFromNode(node && evaluateXPathToFirstNode(`./${QNS.w}rPr`, node)),
+		pilcrow: rpr ? textPropertiesFromNode(rpr) : null,
 		change: data.change
 			? {
 					...data.change,
@@ -124,7 +130,7 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 }
 
 export function paragraphPropertiesToNode(
-	data: ParagraphProperties & TextProperties = {},
+	data: ParagraphProperties = {},
 	sectionProperties: SectionProperties | null = null,
 ): Node {
 	return create(
@@ -230,7 +236,7 @@ export function paragraphPropertiesToNode(
 						node: paragraphPropertiesToNode(data.change),
 				  }
 				: null,
-			rpr: textPropertiesToNode(data),
+			rpr: textPropertiesToNode(data.pilcrow || undefined),
 			sectpr: sectionProperties && sectionPropertiesToNode(sectionProperties),
 		},
 	);

@@ -24,6 +24,7 @@ export enum RelationshipType {
 	footnotes = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes',
 	header = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/header',
 	image = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
+	numbering = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering',
 	officeDocument = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument',
 	people = 'http://schemas.microsoft.com/office/2011/relationships/people',
 	settings = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings',

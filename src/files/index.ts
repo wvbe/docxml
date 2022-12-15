@@ -55,6 +55,7 @@ export function castRelationshipToClass(
 		case RelationshipType.people:
 		case RelationshipType.commentIds:
 		case RelationshipType.commentsExtended:
+		case RelationshipType.customProperties:
 			return UnhandledXmlFile.fromArchive(archive, meta.target);
 
 		case RelationshipType.attachedTemplate:

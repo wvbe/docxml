@@ -11,24 +11,25 @@ import { evaluateXPathToArray } from '../utilities/xquery.ts';
 import { castRelationshipToClass } from './index.ts';
 
 export enum RelationshipType {
+	commentIds = 'http://schemas.microsoft.com/office/2016/09/relationships/commentsIds',
+	comments = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments',
+	commentsExtended = 'http://schemas.microsoft.com/office/2011/relationships/commentsExtended',
 	coreProperties = 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties',
+	customProperties = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties',
+	customXml = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml',
 	endnotes = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/endnotes',
 	extendedProperties = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties',
 	fontTable = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/fontTable',
 	footer = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer',
 	footnotes = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes',
 	header = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/header',
+	image = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
 	officeDocument = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument',
+	people = 'http://schemas.microsoft.com/office/2011/relationships/people',
 	settings = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings',
 	styles = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
 	theme = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme',
 	webSettings = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/webSettings',
-	customXml = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml',
-	people = 'http://schemas.microsoft.com/office/2011/relationships/people',
-	comments = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments',
-	commentIds = 'http://schemas.microsoft.com/office/2016/09/relationships/commentsIds',
-	commentsExtended = 'http://schemas.microsoft.com/office/2011/relationships/commentsExtended',
-	image = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
 
 	/**
 	 * @deprecated This is an external relationship, which are not implemneted yet

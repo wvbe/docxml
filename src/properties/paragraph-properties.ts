@@ -48,11 +48,6 @@ export type ParagraphProperties = {
 	pilcrow?: TextProperties | null;
 };
 
-/**
- * @todo Not combine paragraph and text styles into one object -- it causes collisions for properties like "style"
- *
- * @deprecated Careful!
- */
 export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProperties {
 	const data = node
 		? evaluateXPathToMap(
@@ -135,76 +130,76 @@ export function paragraphPropertiesToNode(
 ): Node {
 	return create(
 		`
-				element ${QNS.w}pPr {
-					if (exists($style)) then element ${QNS.w}pStyle {
-						attribute ${QNS.w}val { $style }
-					} else (),
-					if (exists($alignment)) then element ${QNS.w}jc {
-						attribute ${QNS.w}val { $alignment }
-					} else (),
-					if (exists($outlineLvl)) then element ${QNS.w}outlineLvl {
-						attribute ${QNS.w}val { $outlineLvl }
-					} else (),
+			element ${QNS.w}pPr {
+				if (exists($style)) then element ${QNS.w}pStyle {
+					attribute ${QNS.w}val { $style }
+				} else (),
+				if (exists($alignment)) then element ${QNS.w}jc {
+					attribute ${QNS.w}val { $alignment }
+				} else (),
+				if (exists($outlineLvl)) then element ${QNS.w}outlineLvl {
+					attribute ${QNS.w}val { $outlineLvl }
+				} else (),
 
-					if (exists($spacing)) then element ${QNS.w}spacing {
-						if (exists($spacing('before'))) then attribute ${QNS.w}before {
-							$spacing('before')
-						} else (),
-						if (exists($spacing('after'))) then attribute ${QNS.w}after {
-							$spacing('after')
-						} else (),
-						if (exists($spacing('line'))) then attribute ${QNS.w}line {
-							$spacing('line')
-						} else (),
-						if (exists($spacing('lineRule'))) then attribute ${QNS.w}lineRule {
-							$spacing('lineRule')
-						} else (),
-						if (exists($spacing('afterAutoSpacing'))) then attribute ${QNS.w}afterAutoSpacing {
-							$spacing('afterAutoSpacing')
-						} else (),
-						if (exists($spacing('beforeAutoSpacing'))) then attribute ${QNS.w}beforeAutoSpacing {
-							$spacing('beforeAutoSpacing')
-						} else ()
+				if (exists($spacing)) then element ${QNS.w}spacing {
+					if (exists($spacing('before'))) then attribute ${QNS.w}before {
+						$spacing('before')
 					} else (),
-
-					if (exists($indentation)) then element ${QNS.w}ind {
-						if (exists($indentation('left'))) then attribute ${QNS.w}left {
-							$indentation('left')
-						} else (),
-						if (exists($indentation('leftChars'))) then attribute ${QNS.w}leftChars {
-							$indentation('leftChars')
-						} else (),
-						if (exists($indentation('right'))) then attribute ${QNS.w}right {
-							$indentation('right')
-						} else (),
-						if (exists($indentation('rightChars'))) then attribute ${QNS.w}rightChars {
-							$indentation('rightChars')
-						} else (),
-						if (exists($indentation('hanging'))) then attribute ${QNS.w}hanging {
-							$indentation('hanging')
-						} else (),
-						if (exists($indentation('hangingChars'))) then attribute ${QNS.w}hangingChars {
-							$indentation('hangingChars')
-						} else (),
-						if (exists($indentation('firstLine'))) then attribute ${QNS.w}firstLine {
-							$indentation('firstLine')
-						} else (),
-						if (exists($indentation('firstLineChars'))) then attribute ${QNS.w}firstLineChars {
-							$indentation('firstLineChars')
-						} else ()
+					if (exists($spacing('after'))) then attribute ${QNS.w}after {
+						$spacing('after')
 					} else (),
-
-					$rpr,
-					$sectpr,
-
-					if (exists($change)) then element ${QNS.w}pPrChange {
-						attribute ${QNS.w}id { $change('id') },
-						attribute ${QNS.w}author { $change('author') },
-						attribute ${QNS.w}date { $change('date') },
-						$change('node')
+					if (exists($spacing('line'))) then attribute ${QNS.w}line {
+						$spacing('line')
+					} else (),
+					if (exists($spacing('lineRule'))) then attribute ${QNS.w}lineRule {
+						$spacing('lineRule')
+					} else (),
+					if (exists($spacing('afterAutoSpacing'))) then attribute ${QNS.w}afterAutoSpacing {
+						$spacing('afterAutoSpacing')
+					} else (),
+					if (exists($spacing('beforeAutoSpacing'))) then attribute ${QNS.w}beforeAutoSpacing {
+						$spacing('beforeAutoSpacing')
 					} else ()
-				}
-			`,
+				} else (),
+
+				if (exists($indentation)) then element ${QNS.w}ind {
+					if (exists($indentation('left'))) then attribute ${QNS.w}left {
+						$indentation('left')
+					} else (),
+					if (exists($indentation('leftChars'))) then attribute ${QNS.w}leftChars {
+						$indentation('leftChars')
+					} else (),
+					if (exists($indentation('right'))) then attribute ${QNS.w}right {
+						$indentation('right')
+					} else (),
+					if (exists($indentation('rightChars'))) then attribute ${QNS.w}rightChars {
+						$indentation('rightChars')
+					} else (),
+					if (exists($indentation('hanging'))) then attribute ${QNS.w}hanging {
+						$indentation('hanging')
+					} else (),
+					if (exists($indentation('hangingChars'))) then attribute ${QNS.w}hangingChars {
+						$indentation('hangingChars')
+					} else (),
+					if (exists($indentation('firstLine'))) then attribute ${QNS.w}firstLine {
+						$indentation('firstLine')
+					} else (),
+					if (exists($indentation('firstLineChars'))) then attribute ${QNS.w}firstLineChars {
+						$indentation('firstLineChars')
+					} else ()
+				} else (),
+
+				$rpr,
+				$sectpr,
+
+				if (exists($change)) then element ${QNS.w}pPrChange {
+					attribute ${QNS.w}id { $change('id') },
+					attribute ${QNS.w}author { $change('author') },
+					attribute ${QNS.w}date { $change('date') },
+					$change('node')
+				} else ()
+			}
+		`,
 		{
 			style: data.style || null,
 			alignment: data.alignment || null,

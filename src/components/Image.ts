@@ -22,7 +22,7 @@ export type ImageChild = never;
  * A type describing the props accepted by {@link Image}.
  */
 export type ImageProps = {
-	data: Promise<Uint8Array>;
+	data: Uint8Array | Promise<Uint8Array>;
 	title?: null | string;
 	alt?: null | string;
 	width: Length;

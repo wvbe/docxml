@@ -255,9 +255,9 @@ export function tablePropertiesFromNode(node?: Node | null): TableProperties {
 							},
 							"borders": ./${QNS.w}tblBorders/map {
 								"top": ./${QNS.w}top/ooxml:table-border(.),
-								"right": ./${QNS.w}right/ooxml:table-border(.),
-								"bottom": ./${QNS.w}bottom/ooxml:table-border(.),
 								"left": ./${QNS.w}left/ooxml:table-border(.),
+								"bottom": ./${QNS.w}bottom/ooxml:table-border(.),
+								"right": ./${QNS.w}right/ooxml:table-border(.),
 								"insideH": ./${QNS.w}insideH/ooxml:table-border(.),
 								"insideV": ./${QNS.w}insideV/ooxml:table-border(.)
 							},
@@ -292,10 +292,11 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 						if ($look('noVBand')) then attribute ${QNS.w}noVBand { "1"}  else ()
 					} else (),
 					if (exists($borders)) then element ${QNS.w}tblBorders {
+						(: In sequence order: :)
 						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
-						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
-						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
 						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
+						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
+						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
 						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
 						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
 					} else ()
@@ -318,8 +319,8 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 				? {
 						top: null,
 						left: null,
-						right: null,
 						bottom: null,
+						right: null,
 						insideH: null,
 						insideV: null,
 						...tblpr.borders,

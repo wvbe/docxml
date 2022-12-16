@@ -133,11 +133,12 @@ export class Styles extends XmlFile {
 								attribute ${QNS.w}type { $style('type') },
 								attribute ${QNS.w}styleId { $style('id') },
 								if ($style('isDefault')) then attribute ${QNS.w}default {"1"} else (),
+
 								if ($style('name')) then <w:name w:val="{$style('name')}" /> else (),
 								if ($style('basedOn')) then <w:basedOn w:val="{$style('basedOn')}" /> else (),
-								if ($style('tblpr')) then $style('tblpr') else (),
 								if ($style('ppr')) then $style('ppr') else (),
-								if ($style('rpr')) then $style('rpr') else ()
+								if ($style('rpr')) then $style('rpr') else (),
+								if ($style('tblpr')) then $style('tblpr') else ()
 							}
 						</w:style>
 				}

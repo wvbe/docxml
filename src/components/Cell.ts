@@ -66,7 +66,9 @@ export class Cell extends Component<CellProps, CellChild> {
 			`,
 			{
 				children,
-				width: table.props.columnWidths?.[table.model.getCellInfo(this).column]?.twip || 0,
+				width: Math.round(
+					table.props.columnWidths?.[table.model.getCellInfo(this).column]?.twip || 0,
+				),
 				colSpan: this.getColSpan(),
 				rowSpan: this.getRowSpan(),
 			},

@@ -16,12 +16,7 @@ import { evaluateXPathToBoolean } from './xquery.ts';
 const ZIPS = new Map<string, Archive>();
 
 export function file(absolutePathFromProjectDir: string) {
-	return path.resolve(
-		new URL('.', import.meta.url).pathname,
-		'..',
-		'..',
-		absolutePathFromProjectDir,
-	);
+	return path.resolve(absolutePathFromProjectDir);
 }
 
 /**

@@ -9,7 +9,7 @@ import { Table } from './Table.ts';
 /**
  * A type describing the components accepted as children of {@link Cell}.
  */
-export type CellChild = Paragraph;
+export type CellChild = Paragraph | Table;
 
 /**
  * A type describing the props accepted by {@link Cell}.

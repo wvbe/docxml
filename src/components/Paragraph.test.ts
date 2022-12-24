@@ -26,7 +26,6 @@ describe('Paragraph from XML', () => {
 
 	it('parses props correctly', () => {
 		expect(paragraph.props.style).toBe('Header');
-		console.log(paragraph.props);
 		expect(paragraph.props.pilcrow?.language).toBe('en-GB');
 	});
 

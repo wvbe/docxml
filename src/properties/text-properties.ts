@@ -33,16 +33,18 @@ export type TextProperties = {
 		| 'wave'
 		| 'wavyHeavy'
 		| 'wavyDouble'
-		| 'none'
-		| null;
+		| 'none';
 	isBold?: boolean | null;
 	isItalic?: boolean | null;
 	isSmallCaps?: boolean | null;
 	language?: string | null;
-	/**
-	 * In twentieth points
-	 */
 	fontSize?: Length | null;
+	isStrike?: boolean | null;
+	font?: {
+		cs?: string | null;
+		ascii?: string | null;
+		hAnsi?: string | null;
+	} | null;
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
@@ -51,18 +53,24 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	}
 	const data = evaluateXPathToMap(
 		`
-				map {
-					"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
-					"color": ./${QNS.w}color/@${QNS.w}val/string(),
-					"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
-					"isBold": boolean(./${QNS.w}b),
-					"isItalic": boolean(./${QNS.w}i),
-					"isSmallCaps": boolean(./${QNS.w}smallCaps),
-					"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
-					"language": ./${QNS.w}lang/@${QNS.w}val/string(),
-					"fontSize": ./${QNS.w}sz/@${QNS.w}val/number()
+			map {
+				"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
+				"color": ./${QNS.w}color/@${QNS.w}val/string(),
+				"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
+				"isBold": boolean(./${QNS.w}b),
+				"isItalic": boolean(./${QNS.w}i),
+				"isSmallCaps": boolean(./${QNS.w}smallCaps),
+				"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
+				"language": ./${QNS.w}lang/@${QNS.w}val/string(),
+				"fontSize": ./${QNS.w}sz/@${QNS.w}val/number(),
+				"isStrike": boolean(./${QNS.w}strike),
+				"font": ./${QNS.w}rFonts/map {
+					"cs": @${QNS.w}cs/string(),
+					"ascii": @${QNS.w}ascii/string(),
+					"hAnsi": @${QNS.w}hAnsi/string()
 				}
-			`,
+			}
+		`,
 		node,
 	);
 
@@ -83,7 +91,9 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 		!data.verticalAlign &&
 		!data.isItalic &&
 		!data.isSmallCaps &&
-		!data.fontSize
+		!data.fontSize &&
+		!data.isStrike &&
+		!data.font
 	) {
 		return null;
 	}
@@ -109,6 +119,19 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 			} else (),
 			if ($fontSize) then element ${QNS.w}sz {
 				attribute ${QNS.w}val { $fontSize }
+			} else (),
+			if ($isStrike) then element ${QNS.w}strike {} else (),
+
+			if (exists($font)) then element ${QNS.w}rFonts {
+				if (exists($font('cs'))) then attribute ${QNS.w}cs {
+					$font('cs')
+				} else (),
+				if (exists($font('ascii'))) then attribute ${QNS.w}ascii {
+					$font('ascii')
+				} else (),
+				if (exists($font('hAnsi'))) then attribute ${QNS.w}hAnsi {
+					$font('hAnsi')
+				} else ()
 			} else ()
 		}`,
 		{
@@ -121,6 +144,15 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 			isItalic: data.isItalic || false,
 			isSmallCaps: data.isSmallCaps || false,
 			fontSize: data.fontSize ? data.fontSize.hpt : null,
+			isStrike: data.isStrike || false,
+			font: data.font
+				? {
+						...data.font,
+						cs: data.font.cs || null,
+						ascii: data.font.ascii || null,
+						hAnsi: data.font.hAnsi || null,
+				  }
+				: null,
 		},
 	);
 }

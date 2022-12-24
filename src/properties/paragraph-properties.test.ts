@@ -53,6 +53,8 @@ describe('Paragraph formatting', () => {
 				verticalAlign: 'subscript',
 				language: 'en-GB',
 				fontSize: hpt(19),
+				isStrike: false,
+				font: null,
 			},
 		},
 	);

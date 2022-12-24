@@ -22,6 +22,7 @@ describe('Text formatting', () => {
 			<w:vertAlign w:val="subscript" />
 			<w:lang w:val="en-GB" />
 			<w:sz w:val="19" />
+			<w:rFonts w:cs="Tahoma" w:ascii="Arial" w:hAnsi="Courier New" />
 		</w:rPr>`,
 		{
 			color: 'red',
@@ -32,6 +33,11 @@ describe('Text formatting', () => {
 			verticalAlign: 'subscript',
 			language: 'en-GB',
 			fontSize: hpt(19),
+			font: {
+				cs: 'Tahoma',
+				ascii: 'Arial',
+				hAnsi: 'Courier New',
+			},
 		},
 	);
 });

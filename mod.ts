@@ -42,9 +42,9 @@ export { jsx } from './src/utilities/jsx.ts';
 export { type Length, cm, emu, hpt, inch, opt, pt, twip } from './src/utilities/length.ts';
 
 // Archive component types
-export { type Comments as DocxComments } from './src/files/Comments.ts';
-export { type ContentTypes as DocxContentTypes } from './src/files/ContentTypes.ts';
-export { type OfficeDocument as DocxDocument } from './src/files/OfficeDocument.ts';
-export { type Relationships as DocxRelationships } from './src/files/Relationships.ts';
-export { type Settings as DocxSettings } from './src/files/Settings.ts';
-export { type Styles as DocxStyles } from './src/files/Styles.ts';
+export { type Comments as CommentsXml } from './src/files/Comments.ts';
+export { type ContentTypes as ContentTypesXml } from './src/files/ContentTypes.ts';
+export { type OfficeDocument as DocumentXml } from './src/files/OfficeDocument.ts';
+export { type Relationships as RelationshipsXml } from './src/files/Relationships.ts';
+export { type Settings as SettingsXml } from './src/files/Settings.ts';
+export { type Styles as StylesXml } from './src/files/Styles.ts';

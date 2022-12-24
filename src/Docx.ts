@@ -305,7 +305,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * - Not relationships
 	 * - Not anything else either
 	 */
-	public clone(): Docx<PropsGeneric> {
+	public cloneAsEmptyTemplate(): Docx<PropsGeneric> {
 		const clone = Docx.fromNothing<PropsGeneric>();
 		clone.withXmlRules(this.#renderer);
 		clone.withSettings(this.document.settings);

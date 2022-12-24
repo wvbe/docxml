@@ -21,37 +21,33 @@ import { createRandomId } from '../utilities/identifiers.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
 
-export type ParagraphStyle = {
+type ParagraphStyle = {
 	type: 'paragraph';
 	paragraph?: ParagraphProperties;
 	text?: TextProperties;
 	table?: null;
 };
 
-export type CharacterStyle = {
+type CharacterStyle = {
 	type: 'character';
 	paragraph?: null;
 	text?: TextProperties;
 	table?: null;
 };
 
-export type TableStyle = {
+type TableStyle = {
 	type: 'table';
 	paragraph?: null;
 	text?: null;
 	table?: TableProperties;
 };
 
-export type AnyStyle = CharacterStyle | ParagraphStyle | TableStyle;
-
-type StyleDefinition<S extends AnyStyle> = {
+export type AnyStyleDefinition = {
 	id: string;
 	name?: string | null;
 	basedOn?: string | null;
 	isDefault?: boolean | null;
-} & S;
-
-type Style = StyleDefinition<AnyStyle>;
+} & (CharacterStyle | ParagraphStyle | TableStyle);
 
 /**
  * https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_lsdException_topic_ID0EX4NT.html
@@ -69,7 +65,7 @@ export class Styles extends XmlFile {
 	public static contentType = FileMime.styles;
 
 	readonly #latentStyles: LatentStyle[] = [];
-	readonly #styles: Style[] = [];
+	readonly #styles: AnyStyleDefinition[] = [];
 
 	public constructor(location: string) {
 		super(location);
@@ -161,7 +157,7 @@ export class Styles extends XmlFile {
 	 * the system will propose an identifier based on the style name, or create a unique GUID. This
 	 * method throws when the identifier is not unique.
 	 */
-	public add(properties: Omit<Style, 'id'> & { id?: string }) {
+	public add(properties: Omit<AnyStyleDefinition, 'id'> & { id?: string }) {
 		const id =
 			properties.id || properties.name?.replace(/[^a-zA-Z0-9]/g, '') || createRandomId('style');
 		if (this.hasStyle(id)) {
@@ -170,7 +166,7 @@ export class Styles extends XmlFile {
 		const style = {
 			...properties,
 			id,
-		} as Style;
+		} as AnyStyleDefinition;
 		this.#styles.push(style);
 		return style.id;
 	}
@@ -179,14 +175,14 @@ export class Styles extends XmlFile {
 	 * Add several custom styles to the available palette. Useful for cloning the style configuration of
 	 * another DOCX.
 	 */
-	public addStyles(styles: Style[]) {
+	public addStyles(styles: AnyStyleDefinition[]) {
 		styles.forEach((style) => this.add(style));
 	}
 
 	/**
 	 * The list of custom styles. Does not include latent styles.
 	 */
-	public get styles(): Style[] {
+	public get styles(): AnyStyleDefinition[] {
 		return this.#styles;
 	}
 

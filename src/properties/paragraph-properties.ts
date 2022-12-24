@@ -16,15 +16,15 @@ export type ParagraphProperties = {
 	alignment?: 'left' | 'right' | 'center' | 'both' | null;
 	outlineLvl?: number | null;
 	style?: string | null;
-	spacing?: null | {
+	spacing?: {
 		before?: Length | null;
 		after?: Length | null;
 		line?: Length | null;
 		lineRule?: 'atLeast' | 'exactly' | 'auto' | null;
 		afterAutoSpacing?: boolean | null;
 		beforeAutoSpacing?: boolean | null;
-	};
-	indentation?: null | {
+	} | null;
+	indentation?: {
 		left?: Length | null;
 		leftChars?: number | null;
 		right?: Length | null;
@@ -33,7 +33,12 @@ export type ParagraphProperties = {
 		hangingChars?: number | null;
 		firstLine?: Length | null;
 		firstLineChars?: number | null;
-	};
+		// MSWORD 2010
+		start?: Length | null;
+		startChars?: number | null;
+		end?: Length | null;
+		endChars?: number | null;
+	} | null;
 	change?:
 		| null
 		| ({
@@ -72,7 +77,11 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 					"hanging": @${QNS.w}hanging/number(),
 					"hangingChars": @${QNS.w}hangingChars/number(),
 					"firstLine": @${QNS.w}firstLine/number(),
-					"firstLineChars": @${QNS.w}firstLineChars/number()
+					"firstLineChars": @${QNS.w}firstLineChars/number(),
+					"start": @${QNS.w}start/number(),
+					"startChars": @${QNS.w}startChars/number(),
+					"end": @${QNS.w}end/number(),
+					"endChars": @${QNS.w}endChars/number()
 				},
 				"change": ${QNS.w}pPrChange/map {
 					"id": @${QNS.w}id/string(),
@@ -107,6 +116,12 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 	}
 	if (data.indentation?.firstLine) {
 		data.indentation.firstLine = twip(data.indentation.firstLine);
+	}
+	if (data.indentation?.start) {
+		data.indentation.start = twip(data.indentation.start);
+	}
+	if (data.indentation?.end) {
+		data.indentation.end = twip(data.indentation.end);
 	}
 
 	const rpr = node && evaluateXPathToFirstNode(`./${QNS.w}rPr`, node);
@@ -186,6 +201,18 @@ export function paragraphPropertiesToNode(
 					} else (),
 					if (exists($indentation('firstLineChars'))) then attribute ${QNS.w}firstLineChars {
 						$indentation('firstLineChars')
+					} else (),
+					if (exists($indentation('start'))) then attribute ${QNS.w}start {
+						$indentation('start')
+					} else (),
+					if (exists($indentation('startChars'))) then attribute ${QNS.w}startChars {
+						$indentation('startChars')
+					} else (),
+					if (exists($indentation('end'))) then attribute ${QNS.w}end {
+						$indentation('end')
+					} else (),
+					if (exists($indentation('endChars'))) then attribute ${QNS.w}endChars {
+						$indentation('endChars')
 					} else ()
 				} else (),
 
@@ -212,6 +239,8 @@ export function paragraphPropertiesToNode(
 						right: data.indentation.right?.twip || null,
 						hanging: data.indentation.hanging?.twip || null,
 						firstLine: data.indentation.firstLine?.twip || null,
+						start: data.indentation.start?.twip || null,
+						end: data.indentation.end?.twip || null,
 				  }
 				: null,
 			spacing: data.spacing

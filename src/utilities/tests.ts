@@ -2,7 +2,7 @@
  * @file
  * All the helper functions for test purposes only.
  */
-import * as path from 'https://deno.land/std@0.158.0/path/mod.ts';
+import * as path from 'https://deno.land/std@0.170.0/path/mod.ts';
 import { expect, it } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { Archive } from '../classes/Archive.ts';

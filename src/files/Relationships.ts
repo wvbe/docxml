@@ -1,4 +1,4 @@
-import { posix as path } from 'https://deno.land/std@0.158.0/path/mod.ts';
+import { posix as path } from 'https://deno.land/std@0.170.0/path/mod.ts';
 
 import { Archive } from '../classes/Archive.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';

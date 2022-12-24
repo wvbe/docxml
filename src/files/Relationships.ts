@@ -1,4 +1,4 @@
-import * as path from 'https://deno.land/std@0.158.0/path/mod.ts';
+import { posix as path } from 'https://deno.land/std@0.158.0/path/mod.ts';
 
 import { Archive } from '../classes/Archive.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';
@@ -191,9 +191,7 @@ export class Relationships extends XmlFile {
 			await archive.readXml(location),
 		).map((meta) => ({
 			...meta,
-			target: meta.isExternal
-				? meta.target
-				: path.posix.join(path.posix.dirname(location), '..', meta.target),
+			target: meta.isExternal ? meta.target : path.join(path.dirname(location), '..', meta.target),
 			isBinary: meta.type === RelationshipType.image,
 		})) as RelationshipMeta[];
 

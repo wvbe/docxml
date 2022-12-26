@@ -40,11 +40,14 @@ export type TextProperties = {
 	language?: string | null;
 	fontSize?: Length | null;
 	isStrike?: boolean | null;
-	font?: {
-		cs?: string | null;
-		ascii?: string | null;
-		hAnsi?: string | null;
-	} | null;
+	font?:
+		| string
+		| {
+				cs?: string | null;
+				ascii?: string | null;
+				hAnsi?: string | null;
+		  }
+		| null;
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
@@ -145,14 +148,16 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 			isSmallCaps: data.isSmallCaps || false,
 			fontSize: data.fontSize ? data.fontSize.hpt : null,
 			isStrike: data.isStrike || false,
-			font: data.font
-				? {
-						...data.font,
-						cs: data.font.cs || null,
-						ascii: data.font.ascii || null,
-						hAnsi: data.font.hAnsi || null,
-				  }
-				: null,
+			font:
+				typeof data.font === 'string'
+					? { cs: data.font, ascii: data.font, hAnsi: data.font }
+					: data.font
+					? {
+							cs: data.font.cs || null,
+							ascii: data.font.ascii || null,
+							hAnsi: data.font.hAnsi || null,
+					  }
+					: null,
 		},
 	);
 }

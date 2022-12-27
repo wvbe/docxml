@@ -1,15 +1,15 @@
-import { createRandomId } from '../utilities/identifiers.ts';
-
 export class Bookmarks {
 	#bookmarks = new Map<number, string | null>();
 
+	/**
+	 * Get the first numeric identifier that is not already taken.
+	 */
 	#getNextAvailableIdentifier() {
-		for (let i = 1; i < this.#bookmarks.size; i++) {
-			if (!this.#bookmarks.has(i)) {
-				return i;
-			}
+		let i = 0;
+		while (this.#bookmarks.has(i)) {
+			i++;
 		}
-		return this.#bookmarks.size + 1;
+		return i;
 	}
 
 	/**
@@ -26,11 +26,16 @@ export class Bookmarks {
 
 	/**
 	 * Create a unique ID and name for a new bookmark.
+	 *
+	 * @remarks
+	 * Not using a GUID because this causes Word to not make the link clickable. A much shorter
+	 * identifier works as expected.
 	 */
 	public create() {
 		const id = this.#getNextAvailableIdentifier();
-		const name = createRandomId('bookmark');
+		const name = `__docxml_bookmark_${id}`;
 		this.registerIdentifier(id);
+		console.error('Created', id, name);
 		return { id, name };
 	}
 }

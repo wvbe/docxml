@@ -30,11 +30,9 @@ export class BookmarkRangeEnd extends Component<BookmarkRangeEndProps, BookmarkR
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public toNode(_ancestry: ComponentAncestor[]): Node {
 		return create(
-			`
-				element ${QNS.w}bookmarkEnd {
-					attribute ${QNS.w}id { $id }
-				}
-			`,
+			`element ${QNS.w}bookmarkEnd {
+				attribute ${QNS.w}id { $id }
+			}`,
 			{
 				id: this.props.id,
 			},
@@ -54,11 +52,9 @@ export class BookmarkRangeEnd extends Component<BookmarkRangeEndProps, BookmarkR
 	static fromNode(node: Node): BookmarkRangeEnd {
 		return new BookmarkRangeEnd(
 			evaluateXPathToMap(
-				`
-					map {
-						"id": ./@${QNS.w}id/number()
-					}
-				`,
+				`map {
+					"id": ./@${QNS.w}id/number()
+				}`,
 				node,
 			) as BookmarkRangeEndProps,
 		);

@@ -34,12 +34,10 @@ export class BookmarkRangeStart extends Component<
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public toNode(_ancestry: ComponentAncestor[]): Node {
 		return create(
-			`
-				element ${QNS.w}bookmarkStart {
-					attribute ${QNS.w}id { $id },
-					attribute ${QNS.w}name { $name }
-				}
-			`,
+			`element ${QNS.w}bookmarkStart {
+				attribute ${QNS.w}id { $id },
+				attribute ${QNS.w}name { $name }
+			}`,
 			{
 				id: this.props.id,
 				name: this.props.name,
@@ -60,12 +58,10 @@ export class BookmarkRangeStart extends Component<
 	static fromNode(node: Node): BookmarkRangeStart {
 		return new BookmarkRangeStart(
 			evaluateXPathToMap(
-				`
-					map {
-						"id": ./@${QNS.w}id/number(),
-						"name": ./@${QNS.w}name/string()
-					}
-				`,
+				`map {
+					"id": ./@${QNS.w}id/number(),
+					"name": ./@${QNS.w}name/string()
+				}`,
 				node,
 			) as BookmarkRangeStartProps,
 		);

@@ -2,6 +2,7 @@
 // definitions, components register themselves in a side-effect of their module.
 import './Break.ts';
 import './Image.ts';
+import './Tab.ts';
 
 import { Component, ComponentAncestor } from '../classes/Component.ts';
 import {
@@ -15,12 +16,13 @@ import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { type Break } from './Break.ts';
 import { type Image } from './Image.ts';
+import { type Tab } from './Tab.ts';
 import { TextDeletion } from './TextDeletion.ts';
 
 /**
  * A type describing the components accepted as children of {@link Text}.
  */
-export type TextChild = string | Break | Image;
+export type TextChild = string | Break | Tab | Image;
 
 /**
  * A type describing the props accepted by {@link Text}.
@@ -32,7 +34,7 @@ export type TextProps = TextProperties;
  * are in fact different props or styles on the `<Text>` component.
  */
 export class Text extends Component<TextProps, TextChild> {
-	public static readonly children: string[] = ['Break', 'Image'];
+	public static readonly children: string[] = ['Break', 'Image', 'Tab'];
 	public static readonly mixed: boolean = true;
 
 	/**

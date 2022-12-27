@@ -35,7 +35,6 @@ export class Bookmarks {
 		const id = this.#getNextAvailableIdentifier();
 		const name = `__docxml_bookmark_${id}`;
 		this.registerIdentifier(id);
-		console.error('Created', id, name);
 		return { id, name };
 	}
 }

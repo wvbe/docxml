@@ -2,13 +2,29 @@
 export { Docx as default } from './src/Docx.ts';
 
 // Content components
-export { BookmarkRangeEnd } from './src/components/BookmarkRangeEnd.ts';
-export { BookmarkRangeStart } from './src/components/BookmarkRangeStart.ts';
+export {
+	type BookmarkRangeEndChild,
+	type BookmarkRangeEndProps,
+	BookmarkRangeEnd,
+} from './src/components/BookmarkRangeEnd.ts';
+export {
+	type BookmarkRangeStartChild,
+	type BookmarkRangeStartProps,
+	BookmarkRangeStart,
+} from './src/components/BookmarkRangeStart.ts';
 export { type BreakChild, type BreakProps, Break } from './src/components/Break.ts';
 export { type CellChild, type CellProps, Cell } from './src/components/Cell.ts';
-export { Comment } from './src/components/Comment.ts';
-export { CommentRangeEnd } from './src/components/CommentRangeEnd.ts';
-export { CommentRangeStart } from './src/components/CommentRangeStart.ts';
+export { type CommentChild, type CommentProps, Comment } from './src/components/Comment.ts';
+export {
+	type CommentRangeEndChild,
+	type CommentRangeEndProps,
+	CommentRangeEnd,
+} from './src/components/CommentRangeEnd.ts';
+export {
+	type CommentRangeStartChild,
+	type CommentRangeStartProps,
+	CommentRangeStart,
+} from './src/components/CommentRangeStart.ts';
 export { type HyperlinkChild, type HyperlinkProps, Hyperlink } from './src/components/Hyperlink.ts';
 export { type ImageChild, type ImageProps, Image } from './src/components/Image.ts';
 export { type ParagraphChild, type ParagraphProps, Paragraph } from './src/components/Paragraph.ts';
@@ -24,6 +40,7 @@ export {
 	RowDeletion,
 } from './src/components/RowDeletion.ts';
 export { type SectionChild, type SectionProps, Section } from './src/components/Section.ts';
+export { type TabChild, type TabProps, Tab } from './src/components/Tab.ts';
 export { type TableChild, type TableProps, Table } from './src/components/Table.ts';
 export { type TextChild, type TextProps, Text } from './src/components/Text.ts';
 export {

@@ -6,7 +6,8 @@ It can be used to create a `.docx` using components, for example:
 /** @jsx Docx.jsx */
 import Docx, { Paragraph } from 'https://deno.land/x/docxml/mod.ts';
 
-await Docx.fromJsx(<Paragraph>This is the simplest document you could make.</Paragraph>)
+await Docx
+    .fromJsx(<Paragraph>This is the simplest document you could make.</Paragraph>)
     .toFile('example-1.docx');
 ```
 
@@ -98,15 +99,15 @@ To great or small extend, the following features work in the current version of 
 
 **Custom styles:**
 - [x] Font size and color
-- [x] Bold, italic, underline styles
+- [x] Bold, italic, underline styles, strike-through
 - [x] Subscript, superscript, small caps
 - [x] Paragraph spacing and indentation
 - [x] Left/right/center/justified alignment
 - [ ] Aligning text on tabs
-- [ ] Font family
+- [x] Font family
 
 **References:**
-- [ ] Cross references
+- [x] Cross references
 - [ ] Table of contents
 
 **Tables:**

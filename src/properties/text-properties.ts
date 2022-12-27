@@ -36,6 +36,7 @@ export type TextProperties = {
 		| 'none';
 	isBold?: boolean | null;
 	isItalic?: boolean | null;
+	isCaps?: boolean | null;
 	isSmallCaps?: boolean | null;
 	language?: string | null;
 	fontSize?: Length | null;
@@ -63,6 +64,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"isBold": boolean(./${QNS.w}b),
 				"isItalic": boolean(./${QNS.w}i),
 				"isSmallCaps": boolean(./${QNS.w}smallCaps),
+				"isCaps": boolean(./${QNS.w}caps),
 				"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
 				"language": ./${QNS.w}lang/@${QNS.w}val/string(),
 				"fontSize": ./${QNS.w}sz/@${QNS.w}val/number(),
@@ -94,6 +96,7 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 		!data.verticalAlign &&
 		!data.isItalic &&
 		!data.isSmallCaps &&
+		!data.isCaps &&
 		!data.fontSize &&
 		!data.isStrike &&
 		!data.font
@@ -114,6 +117,7 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 			if ($isBold) then element ${QNS.w}b {} else (),
 			if ($isItalic) then element ${QNS.w}i {} else (),
 			if ($isSmallCaps) then element ${QNS.w}smallCaps {} else (),
+			if ($isCaps) then element ${QNS.w}caps {} else (),
 			if ($verticalAlign) then element ${QNS.w}vertAlign {
 				attribute ${QNS.w}val { $verticalAlign }
 			} else (),
@@ -146,11 +150,16 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 			verticalAlign: data.verticalAlign || null,
 			isItalic: data.isItalic || false,
 			isSmallCaps: data.isSmallCaps || false,
+			isCaps: data.isCaps || false,
 			fontSize: data.fontSize ? data.fontSize.hpt : null,
 			isStrike: data.isStrike || false,
 			font:
 				typeof data.font === 'string'
-					? { cs: data.font, ascii: data.font, hAnsi: data.font }
+					? {
+							cs: data.font,
+							ascii: data.font,
+							hAnsi: data.font,
+					  }
 					: data.font
 					? {
 							cs: data.font.cs || null,

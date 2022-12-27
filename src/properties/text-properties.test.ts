@@ -19,6 +19,7 @@ describe('Text formatting', () => {
 			<w:b />
 			<w:i />
 			<w:smallCaps />
+			<w:caps />
 			<w:vertAlign w:val="subscript" />
 			<w:lang w:val="en-GB" />
 			<w:sz w:val="19" />
@@ -30,6 +31,7 @@ describe('Text formatting', () => {
 			isBold: true,
 			isItalic: true,
 			isSmallCaps: true,
+			isCaps: true,
 			verticalAlign: 'subscript',
 			language: 'en-GB',
 			fontSize: hpt(19),

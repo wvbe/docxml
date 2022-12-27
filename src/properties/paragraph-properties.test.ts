@@ -50,6 +50,7 @@ describe('Paragraph formatting', () => {
 				isBold: true,
 				isItalic: true,
 				isSmallCaps: false,
+				isCaps: false,
 				verticalAlign: 'subscript',
 				language: 'en-GB',
 				fontSize: hpt(19),

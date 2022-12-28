@@ -1,6 +1,6 @@
 import { describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { hpt, twip } from '../utilities/length.ts';
+import { hpt, pt, twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { createXmlRoundRobinTest } from '../utilities/tests.ts';
 import {
@@ -20,6 +20,9 @@ describe('Paragraph formatting', () => {
 			<w:pStyle w:val="Header" />
 			<w:spacing w:after="200" w:line="276" w:lineRule="auto" />
 			<w:outlineLvl w:val="3" />
+			<w:pBdr>
+				<w:top w:val="single" w:sz="24" w:space="1" w:color="FF0000" />
+			</w:pBdr>
 			<w:rPr>
 				<w:b />
 				<w:vertAlign w:val="subscript" />
@@ -42,6 +45,18 @@ describe('Paragraph formatting', () => {
 				lineRule: 'auto',
 				afterAutoSpacing: null,
 				beforeAutoSpacing: null,
+			},
+			borders: {
+				top: {
+					type: 'single',
+					width: pt(3),
+					spacing: 1,
+					color: 'FF0000',
+				},
+				left: null,
+				bottom: null,
+				right: null,
+				between: null,
 			},
 			pilcrow: {
 				style: null,

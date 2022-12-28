@@ -33,7 +33,7 @@ registerXQueryModule(`
 	};
 
 	(: @TODO Test this function :)
-	declare %public function ooxml:table-border($val) as map(*) {
+	declare %public function ooxml:border($val) as map(*) {
 		$val/map {
 			"type": ./@${QNS.w}val/string(),
 			"width": if (exists(./@${QNS.w}sz))
@@ -45,7 +45,7 @@ registerXQueryModule(`
 	};
 
 	(: @TODO Test this function :)
-	declare %public function ooxml:create-table-border($name as xs:QName, $obj as map(*)?) {
+	declare %public function ooxml:create-border-element($name as xs:QName, $obj as map(*)?) {
 		if (exists($obj)) then element {$name} {
 			if ($obj('type')) then attribute ${QNS.w}val { $obj('type') } else (),
 			if (exists($obj('width'))) then attribute ${QNS.w}sz { $obj('width')('opt') } else (),

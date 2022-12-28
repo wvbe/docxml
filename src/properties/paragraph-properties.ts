@@ -1,9 +1,39 @@
 import { create } from '../utilities/dom.ts';
 import { Length, twip } from '../utilities/length.ts';
-import { QNS } from '../utilities/namespaces.ts';
+import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../utilities/xquery.ts';
 import { SectionProperties, sectionPropertiesToNode } from './section-properties.ts';
+import { Border } from './shared-properties.ts';
 import { TextProperties, textPropertiesFromNode, textPropertiesToNode } from './text-properties.ts';
+
+type ParagraphBorderType =
+	| 'single'
+	| 'dashDotStroked'
+	| 'dashed'
+	| 'dashSmallGap'
+	| 'dotDash'
+	| 'dotDotDash'
+	| 'dotted'
+	| 'double'
+	| 'doubleWave'
+	| 'inset'
+	| 'nil'
+	| 'none'
+	| 'outset'
+	| 'thick'
+	| 'thickThinLargeGap'
+	| 'thickThinMediumGap'
+	| 'thickThinSmallGap'
+	| 'thinThickLargeGap'
+	| 'thinThickMediumGap'
+	| 'thinThickSmallGap'
+	| 'thinThickThinLargeGap'
+	| 'thinThickThinMediumGap'
+	| 'thinThickThinSmallGap'
+	| 'threeDEmboss'
+	| 'threeDEngrave'
+	| 'triple'
+	| 'wave';
 
 /**
  * All the formatting properties that can be given to a paragraph.
@@ -33,12 +63,19 @@ export type ParagraphProperties = {
 		hangingChars?: number | null;
 		firstLine?: Length | null;
 		firstLineChars?: number | null;
-		// MSWORD 2010
+		// MSWORD 2010:
 		start?: Length | null;
 		startChars?: number | null;
 		end?: Length | null;
 		endChars?: number | null;
 	} | null;
+	borders?: null | {
+		top?: null | Border<ParagraphBorderType>;
+		left?: null | Border<ParagraphBorderType>;
+		bottom?: null | Border<ParagraphBorderType>;
+		right?: null | Border<ParagraphBorderType>;
+		between?: null | Border<ParagraphBorderType>;
+	};
 	change?:
 		| null
 		| ({
@@ -82,6 +119,13 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 					"startChars": @${QNS.w}startChars/number(),
 					"end": @${QNS.w}end/number(),
 					"endChars": @${QNS.w}endChars/number()
+				},
+				"borders": ./${QNS.w}pBdr/map {
+					"top": ./${QNS.w}top/ooxml:border(.),
+					"left": ./${QNS.w}left/ooxml:border(.),
+					"bottom": ./${QNS.w}bottom/ooxml:border(.),
+					"right": ./${QNS.w}right/ooxml:border(.),
+					"between": ./${QNS.w}between/ooxml:border(.)
 				},
 				"change": ${QNS.w}pPrChange/map {
 					"id": @${QNS.w}id/string(),
@@ -216,6 +260,15 @@ export function paragraphPropertiesToNode(
 					} else ()
 				} else (),
 
+				if (exists($borders)) then element ${QNS.w}pBdr {
+					(: In sequence order: :)
+					ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
+					ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
+					ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
+					ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
+					ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "between"), $borders('between'))
+				} else (),
+
 				$rpr,
 				$sectpr,
 
@@ -250,6 +303,16 @@ export function paragraphPropertiesToNode(
 						after: data.spacing.after?.twip || null,
 						line: data.spacing.line?.twip || null,
 						lineRule: data.spacing.lineRule || null,
+				  }
+				: null,
+			borders: data.borders
+				? {
+						top: null,
+						left: null,
+						bottom: null,
+						right: null,
+						between: null,
+						...data.borders,
 				  }
 				: null,
 			change: data.change

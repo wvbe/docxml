@@ -1,7 +1,7 @@
 import { create } from '../utilities/dom.ts';
-import { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import { Border } from './shared-properties.ts';
 
 type TableBorderType =
 	| 'auto'
@@ -197,13 +197,6 @@ type TableBorderType =
 	| 'zigZag'
 	| 'zigZagStitch';
 
-type TableBorder = {
-	color?: null | string;
-	width?: null | Length;
-	spacing?: null | number;
-	type?: null | TableBorderType;
-};
-
 export type TableProperties = {
 	style?: string | null;
 	/**
@@ -230,12 +223,12 @@ export type TableProperties = {
 		noVBand?: null | boolean;
 	};
 	borders?: null | {
-		top?: null | TableBorder;
-		left?: null | TableBorder;
-		bottom?: null | TableBorder;
-		right?: null | TableBorder;
-		insideH?: null | TableBorder;
-		insideV?: null | TableBorder;
+		top?: null | Border<TableBorderType>;
+		left?: null | Border<TableBorderType>;
+		bottom?: null | Border<TableBorderType>;
+		right?: null | Border<TableBorderType>;
+		insideH?: null | Border<TableBorderType>;
+		insideV?: null | Border<TableBorderType>;
 	};
 };
 
@@ -254,12 +247,12 @@ export function tablePropertiesFromNode(node?: Node | null): TableProperties {
 								"noVBand": ./@${QNS.w}noVBand/ooxml:is-on-off-enabled(.)
 							},
 							"borders": ./${QNS.w}tblBorders/map {
-								"top": ./${QNS.w}top/ooxml:table-border(.),
-								"left": ./${QNS.w}left/ooxml:table-border(.),
-								"bottom": ./${QNS.w}bottom/ooxml:table-border(.),
-								"right": ./${QNS.w}right/ooxml:table-border(.),
-								"insideH": ./${QNS.w}insideH/ooxml:table-border(.),
-								"insideV": ./${QNS.w}insideV/ooxml:table-border(.)
+								"top": ./${QNS.w}top/ooxml:border(.),
+								"left": ./${QNS.w}left/ooxml:border(.),
+								"bottom": ./${QNS.w}bottom/ooxml:border(.),
+								"right": ./${QNS.w}right/ooxml:border(.),
+								"insideH": ./${QNS.w}insideH/ooxml:border(.),
+								"insideV": ./${QNS.w}insideV/ooxml:border(.)
 							},
 							"width": ./${QNS.w}tblW/map {
 								"length": ./@${QNS.w}val/string(),
@@ -293,12 +286,12 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 					} else (),
 					if (exists($borders)) then element ${QNS.w}tblBorders {
 						(: In sequence order: :)
-						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
-						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
-						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
-						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
-						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
-						ooxml:create-table-border(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
+						ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
+						ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
+						ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
+						ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
+						ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
+						ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
 					} else ()
 
 				}

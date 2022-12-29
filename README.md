@@ -112,6 +112,7 @@ To great or small extend, the following features work in the current version of 
 
 **Tables:**
 - [x] Colspans and rowspans
+- [x] Cell borders
 - [x] [Table borders](http://officeopenxml.com/WPtableBorders.php)
 - [x] [Conditional formatting](http://officeopenxml.com/WPtblLook.php)
 

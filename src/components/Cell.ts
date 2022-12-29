@@ -1,4 +1,8 @@
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import {
+	type TableCellProperties,
+	tableCellPropertiesToNode,
+} from '../properties/table-cell-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
@@ -14,10 +18,7 @@ export type CellChild = Paragraph | Table;
 /**
  * A type describing the props accepted by {@link Cell}.
  */
-export type CellProps = {
-	colSpan?: number | null;
-	rowSpan?: number | null;
-};
+export type CellProps = Omit<TableCellProperties, 'width'>;
 
 /**
  * A component that represents a table cell.
@@ -46,31 +47,22 @@ export class Cell extends Component<CellProps, CellChild> {
 		}
 
 		return create(
-			`
-				element ${QNS.w}tc {
-					element ${QNS.w}tcPr {
-						element ${QNS.w}tcW {
-							attribute ${QNS.w}w { $width },
-							attribute ${QNS.w}type { "dxa" }
-						},
-						if ($colSpan > 1) then element ${QNS.w}gridSpan {
-							attribute ${QNS.w}val { $colSpan }
-						} else (),
-						if ($rowSpan > 1) then element ${QNS.w}vMerge {
-							attribute ${QNS.w}val { "restart" }
-						} else ()
-					},
-					for $child in $children
-						return $child
-				}
-			`,
+			`element ${QNS.w}tc {
+				$tcPr,
+				for $child in $children
+					return $child
+			}`,
 			{
-				children,
-				width: Math.round(
-					table.props.columnWidths?.[table.model.getCellInfo(this).column]?.twip || 0,
+				tcPr: tableCellPropertiesToNode(
+					{
+						colSpan: this.getColSpan(),
+						rowSpan: this.getRowSpan(),
+						width: table.props.columnWidths?.[table.model.getCellInfo(this).column] || null,
+						...this.props,
+					},
+					false,
 				),
-				colSpan: this.getColSpan(),
-				rowSpan: this.getRowSpan(),
+				children,
 			},
 		);
 	}
@@ -89,26 +81,20 @@ export class Cell extends Component<CellProps, CellChild> {
 		}
 
 		return create(
-			`
-				element ${QNS.w}tc {
-					element ${QNS.w}tcPr {
-						element ${QNS.w}tcW {
-							attribute ${QNS.w}w { $width },
-							attribute ${QNS.w}type { "dxa" }
-						},
-						if ($colSpan > 1) then element ${QNS.w}gridSpan {
-							attribute ${QNS.w}val { $colSpan }
-						} else (),
-						element ${QNS.w}vMerge {
-							attribute ${QNS.w}val { "continue" }
-						}
-					},
-					element ${QNS.w}p {}
-				}
-			`,
+			`element ${QNS.w}tc {
+				$tcPr,
+				element ${QNS.w}p {}
+			}`,
 			{
-				width: table.props.columnWidths?.[info.column]?.twip || 0,
-				colSpan: this.getColSpan(),
+				tcPr: tableCellPropertiesToNode(
+					{
+						width: table.props.columnWidths?.[info.column] || null,
+						colSpan: this.getColSpan(),
+						rowSpan: null,
+						...this.props,
+					},
+					true,
+				),
 			},
 		);
 	}

@@ -39,7 +39,9 @@ registerXQueryModule(`
 			"width": if (exists(./@${QNS.w}sz))
 				then ooxml:universal-size(./@${QNS.w}sz, 'opt')
 				else (),
-			"spacing": ./@${QNS.w}space/number(),
+			"spacing": if (exists(./@${QNS.w}space))
+				then ./@${QNS.w}space/number()
+				else (),
 			"color": ./@${QNS.w}color/string()
 		}
 	};
@@ -49,7 +51,7 @@ registerXQueryModule(`
 		if (exists($obj)) then element {$name} {
 			if ($obj('type')) then attribute ${QNS.w}val { $obj('type') } else (),
 			if (exists($obj('width'))) then attribute ${QNS.w}sz { $obj('width')('opt') } else (),
-			if ($obj('spacing')) then attribute ${QNS.w}space { $obj('spacing') } else (),
+			if (exists($obj('spacing'))) then attribute ${QNS.w}space { $obj('spacing') } else (),
 			if ($obj('color')) then attribute ${QNS.w}color { $obj('color') } else ()
 		} else ()
 	};

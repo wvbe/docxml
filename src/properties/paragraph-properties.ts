@@ -1,39 +1,14 @@
 import { create } from '../utilities/dom.ts';
-import { Length, twip } from '../utilities/length.ts';
+import { type Length, twip } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../utilities/xquery.ts';
-import { SectionProperties, sectionPropertiesToNode } from './section-properties.ts';
-import { Border } from './shared-properties.ts';
-import { TextProperties, textPropertiesFromNode, textPropertiesToNode } from './text-properties.ts';
-
-type ParagraphBorderType =
-	| 'single'
-	| 'dashDotStroked'
-	| 'dashed'
-	| 'dashSmallGap'
-	| 'dotDash'
-	| 'dotDotDash'
-	| 'dotted'
-	| 'double'
-	| 'doubleWave'
-	| 'inset'
-	| 'nil'
-	| 'none'
-	| 'outset'
-	| 'thick'
-	| 'thickThinLargeGap'
-	| 'thickThinMediumGap'
-	| 'thickThinSmallGap'
-	| 'thinThickLargeGap'
-	| 'thinThickMediumGap'
-	| 'thinThickSmallGap'
-	| 'thinThickThinLargeGap'
-	| 'thinThickThinMediumGap'
-	| 'thinThickThinSmallGap'
-	| 'threeDEmboss'
-	| 'threeDEngrave'
-	| 'triple'
-	| 'wave';
+import { type SectionProperties, sectionPropertiesToNode } from './section-properties.ts';
+import { type Border, type LineBorderType } from './shared-properties.ts';
+import {
+	type TextProperties,
+	textPropertiesFromNode,
+	textPropertiesToNode,
+} from './text-properties.ts';
 
 /**
  * All the formatting properties that can be given to a paragraph.
@@ -70,11 +45,11 @@ export type ParagraphProperties = {
 		endChars?: number | null;
 	} | null;
 	borders?: null | {
-		top?: null | Border<ParagraphBorderType>;
-		left?: null | Border<ParagraphBorderType>;
-		bottom?: null | Border<ParagraphBorderType>;
-		right?: null | Border<ParagraphBorderType>;
-		between?: null | Border<ParagraphBorderType>;
+		top?: null | Border<LineBorderType>;
+		left?: null | Border<LineBorderType>;
+		bottom?: null | Border<LineBorderType>;
+		right?: null | Border<LineBorderType>;
+		between?: null | Border<LineBorderType>;
 	};
 	change?:
 		| null

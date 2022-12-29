@@ -111,15 +111,20 @@ export function createXmlRoundRobinTest<ObjectShape extends { [key: string]: unk
 		/**
 		 * The XML that the system should be able to ingest.
 		 */
-		xmlSource: string,
+		xmlSource: Node | string,
 		/**
 		 * The object parsed from XML.
 		 */
 		parsedExpectation: ObjectShape,
 	) {
-		const serializedOnce = create(xmlSource);
+		const serializedOnce = typeof xmlSource === 'string' ? create(xmlSource) : xmlSource;
 		const parsedOnce = fromNode(serializedOnce);
 		const serializedAgain = toNode(parsedOnce);
+		if (typeof xmlSource !== 'string') {
+			xmlSource.parentElement?.insertBefore(serializedAgain as Node, xmlSource);
+			xmlSource.parentElement?.removeChild(xmlSource);
+		}
+
 		const parsedTwice = fromNode(serializedAgain);
 
 		// Usually fails strict string equals because of namespace declarations and shit:

@@ -84,6 +84,10 @@ export class Archive {
 		return this;
 	}
 
+	public static async fromUInt8Array(data: Uint8Array) {
+		return new Archive(await new JSZip().loadAsync(data));
+	}
+
 	public static async fromFile(location: string): Promise<Archive> {
 		return new Archive(await readZip(location));
 	}

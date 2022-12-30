@@ -159,6 +159,15 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	>(archive: Archive): Promise<Docx<PropsGeneric>>;
 
 	/**
+	 * Instantiate this class by giving it a `.docx` file loaded as a byte array.
+	 */
+	public static async fromArchive<
+		PropsGeneric extends { [key: string]: unknown } = {
+			[key: string]: never;
+		},
+	>(data: Uint8Array): Promise<Docx<PropsGeneric>>;
+
+	/**
 	 * Instantiate this class by pointing at a `.docx` file location.
 	 */
 	public static async fromArchive<
@@ -169,11 +178,15 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * Instantiate this class by referencing an existing `.docx` archive.
 	 */
 	public static async fromArchive<
-		PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
-	>(locationOrZipArchive: string | Archive): Promise<Docx<PropsGeneric>> {
+		PropsGeneric extends { [key: string]: unknown } = {
+			[key: string]: never;
+		},
+	>(locationOrZipArchive: string | Archive | Uint8Array): Promise<Docx<PropsGeneric>> {
 		const archive =
 			typeof locationOrZipArchive === 'string'
 				? await Archive.fromFile(locationOrZipArchive)
+				: locationOrZipArchive instanceof Uint8Array
+				? await Archive.fromUInt8Array(locationOrZipArchive)
 				: locationOrZipArchive;
 		return new Docx<PropsGeneric>(
 			await ContentTypes.fromArchive(archive, FileLocation.contentTypes),

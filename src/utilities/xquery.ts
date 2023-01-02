@@ -57,14 +57,14 @@ export function evaluateXPathToArray(
 	}
 }
 
-export function evaluateXPathToMap(
+export function evaluateXPathToMap<P = any>(
 	...[query, node, domFacade, variables, options]: Parameters<typeof _evaluateXPathToMap>
 ) {
 	try {
 		return _evaluateXPathToMap(query, node, domFacade, variables, {
 			...(options || {}),
 			...OPTIONS,
-		});
+		}) as P;
 	} catch (error: unknown) {
 		// Rethrow because we're not interested in the fontoxpath stack itself.
 		throw new Error((error as Error).message);

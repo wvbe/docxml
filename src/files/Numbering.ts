@@ -11,7 +11,34 @@ type AbstractNumbering = {
 	type: 'hybridMultilevel' | 'singleLevel' | 'multilevel' | null;
 	levels: Array<{
 		start: number | null;
-		format: 'decimal' | 'lowerLetter' | null;
+		format:
+			| 'bullet'
+			// the cardinal text of the run language. (In English, One, Two, Three, etc.):
+			| 'cardinalText'
+			// Set of symbols from the Chicago Manual of Style. (e.g., *, †, ‡, §):
+			| 'chicago'
+			// decimal numbering (1, 2, 3, 4, etc.):
+			| 'decimal'
+			// decimal number enclosed in a circle:
+			| 'decimalEnclosedCircle'
+			// decimal number followed by a period:
+			| 'decimalEnclosedFullstop'
+			// decimal number enclosed in parentheses:
+			| 'decimalEnclosedParen'
+			// decimal number but with a zero added to numbers 1 through 9:
+			| 'decimalZero'
+			// based on the run language (e.g., a, b, c, etc.). Letters repeat for values greater than the size of the alphabet:
+			| 'lowerLetter'
+			// lowercase Roman numerals (i, ii, iii, iv, etc.):
+			| 'lowerRoman'
+			// ordinal text of the run laguage. (In English, First, Second, Third, etc.):
+			| 'ordinalText'
+			// based on the run language (e.g., A, B, C, etc.). Letters repeat for values greater than the size of the alphabet:
+			| 'upperLetter'
+			// uppercase Roman numerals (I, II, III, IV, etc.):
+			| 'upperRoman'
+			| 'none'
+			| null;
 		text: string | null;
 		alignment: 'left' | 'right' | 'center' | 'both' | null;
 	}>;

@@ -61,6 +61,7 @@ export { type Length, cm, emu, hpt, inch, opt, pt, twip } from './src/utilities/
 // Archive component types
 export { type Comments as CommentsXml } from './src/files/Comments.ts';
 export { type ContentTypes as ContentTypesXml } from './src/files/ContentTypes.ts';
+export { type Numbering as NumberingXml } from './src/files/Numbering.ts';
 export { type OfficeDocument as DocumentXml } from './src/files/OfficeDocument.ts';
 export { type Relationships as RelationshipsXml } from './src/files/Relationships.ts';
 export { type Settings as SettingsXml } from './src/files/Settings.ts';

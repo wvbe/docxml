@@ -1,5 +1,7 @@
 /deno.lock
-/examples
+/examples/feature--*
+/examples/readme--*
+/examples/usage--*
 /node_modules
 package-lock.json
 .DS_Store

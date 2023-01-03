@@ -57,13 +57,13 @@ export class BookmarkRangeStart extends Component<
 	 */
 	static fromNode(node: Node): BookmarkRangeStart {
 		return new BookmarkRangeStart(
-			evaluateXPathToMap(
+			evaluateXPathToMap<BookmarkRangeStartProps>(
 				`map {
 					"id": ./@${QNS.w}id/number(),
 					"name": ./@${QNS.w}name/string()
 				}`,
 				node,
-			) as BookmarkRangeStartProps,
+			),
 		);
 	}
 }

@@ -85,19 +85,19 @@ export class Settings extends XmlFile implements SettingsI {
 		const relationshipsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
 		try {
 			relationships = await Relationships.fromArchive(archive, relationshipsLocation);
-		} catch (error: unknown) {
-			console.error(
-				'Warning, relationships could not be resolved\n' +
-					((error as Error).stack || (error as Error).message),
-			);
+		} catch (_error: unknown) {
+			// console.error(
+			// 	'Warning, relationships could not be resolved\n' +
+			// 		((error as Error).stack || (error as Error).message),
+			// );
 		}
 
-		const settings = evaluateXPathToMap(
+		const settings = evaluateXPathToMap<SettingsI>(
 			`/${QNS.w}settings/map {
 				"isTrackChangesEnabled": ooxml:is-on-off-enabled(./${QNS.w}trackChanges/@${QNS.w}val)
 			}`,
 			await archive.readXml(location),
-		) as SettingsI;
+		);
 		return new Settings(
 			location,
 			relationships || new Relationships(relationshipsLocation),

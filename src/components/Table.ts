@@ -84,7 +84,11 @@ export class Table extends Component<TableProps, TableChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static fromNode(node: Node): Table {
-		const { children, tblpr, ...props } = evaluateXPathToMap(
+		const { children, tblpr, ...props } = evaluateXPathToMap<{
+			tblpr: Node;
+			children: Node[];
+			columnWidths: number[];
+		}>(
 			`
 				map {
 					"tblpr": ./${QNS.w}tblPr,
@@ -95,7 +99,7 @@ export class Table extends Component<TableProps, TableChild> {
 				}
 			`,
 			node,
-		) as { tblpr: Node; children: Node[]; columnWidths: number[] };
+		);
 		return new Table(
 			{
 				columnWidths: props.columnWidths.map((size: number) => twip(size)),

@@ -1,6 +1,7 @@
 import { Archive } from '../classes/Archive.ts';
 import { UnhandledXmlFile } from '../classes/XmlFile.ts';
 import { Comments } from './Comments.ts';
+import { Numbering } from './Numbering.ts';
 import { OfficeDocument } from './OfficeDocument.ts';
 import { RelationshipMeta, RelationshipType } from './Relationships.ts';
 import { Settings } from './Settings.ts';
@@ -50,13 +51,14 @@ export function castRelationshipToClass(
 			return Theme.fromArchive(archive, meta.target);
 		case RelationshipType.webSettings:
 			return WebSettings.fromArchive(archive, meta.target);
+		case RelationshipType.numbering:
+			return Numbering.fromArchive(archive, meta.target);
 
 		case RelationshipType.customXml:
 		case RelationshipType.people:
 		case RelationshipType.commentIds:
 		case RelationshipType.commentsExtended:
 		case RelationshipType.customProperties:
-		case RelationshipType.numbering:
 			return UnhandledXmlFile.fromArchive(archive, meta.target);
 
 		case RelationshipType.attachedTemplate:

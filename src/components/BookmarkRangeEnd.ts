@@ -51,12 +51,12 @@ export class BookmarkRangeEnd extends Component<BookmarkRangeEndProps, BookmarkR
 	 */
 	static fromNode(node: Node): BookmarkRangeEnd {
 		return new BookmarkRangeEnd(
-			evaluateXPathToMap(
+			evaluateXPathToMap<BookmarkRangeEndProps>(
 				`map {
 					"id": ./@${QNS.w}id/number()
 				}`,
 				node,
-			) as BookmarkRangeEndProps,
+			),
 		);
 	}
 }

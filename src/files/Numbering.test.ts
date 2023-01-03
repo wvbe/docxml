@@ -58,7 +58,7 @@ describe('Numbering', () => {
 						<w:lvlJc w:val="left"/>
 					</w:lvl>
 				</w:abstractNum>
-				<w:num w:numId="0">
+				<w:num w:numId="1">
 					<w:abstractNumId w:val="0"/>
 				</w:num>
 			</w:numbering>`.replace(/\t|\n/g, ''),

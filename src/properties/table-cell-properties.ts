@@ -28,7 +28,7 @@ export type TableCellProperties = {
 
 export function tableCellPropertiesFromNode(node?: Node | null): TableCellProperties {
 	return node
-		? evaluateXPathToMap(
+		? evaluateXPathToMap<TableCellProperties>(
 				`
 				let $colStart := ooxml:cell-column(.)
 

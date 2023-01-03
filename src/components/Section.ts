@@ -84,7 +84,7 @@ export class Section extends Component<SectionProps, SectionChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static fromNode(node: Node): Section {
-		const { children } = evaluateXPathToMap(
+		const { children } = evaluateXPathToMap<{ children: Node[] }>(
 			`
 				map {
 					"children": array{
@@ -106,7 +106,7 @@ export class Section extends Component<SectionProps, SectionChild> {
 				}
 			`,
 			node,
-		) as { children: Node[] };
+		);
 
 		return new Section(
 			sectionPropertiesFromNode(node),

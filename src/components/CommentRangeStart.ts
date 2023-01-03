@@ -53,14 +53,14 @@ export class CommentRangeStart extends Component<CommentRangeStartProps, Comment
 	 */
 	static fromNode(node: Node): CommentRangeStart {
 		return new CommentRangeStart(
-			evaluateXPathToMap(
+			evaluateXPathToMap<CommentRangeStartProps>(
 				`
 					map {
 						"id": ./@${QNS.w}id/number()
 					}
 				`,
 				node,
-			) as CommentRangeStartProps,
+			),
 		);
 	}
 }

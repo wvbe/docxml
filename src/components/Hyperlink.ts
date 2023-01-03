@@ -60,13 +60,13 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static fromNode(node: Node): Hyperlink {
-		const { children, ...props } = evaluateXPathToMap(
+		const { children, ...props } = evaluateXPathToMap<HyperlinkProps & { children: Node[] }>(
 			`map {
 				"anchor": ./@${QNS.w}anchor/string(),
 				"tooltip": ./@${QNS.w}tooltip/string()
 			}`,
 			node,
-		) as HyperlinkProps & { children: Node[] };
+		);
 		return new Hyperlink(
 			props,
 			...createChildComponentsFromNodes<HyperlinkChild>(this.children, children),

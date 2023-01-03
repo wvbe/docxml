@@ -3,8 +3,13 @@
  * these identifiers increment and don't collide.
  */
 export class NumberMap<Generic> extends Map<number, Generic> {
+	#start: number;
+	constructor(start = 0) {
+		super();
+		this.#start = start;
+	}
 	public getNextAvailableKey(): number {
-		let i = 0;
+		let i = this.#start;
 		while (this.has(i)) {
 			++i;
 		}

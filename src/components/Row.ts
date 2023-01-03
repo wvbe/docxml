@@ -33,7 +33,7 @@ export type RowProps = { [key: string]: never };
  * Parses the children (and no props yet) from an existing XML node.
  */
 export function parsePropsAndChildNodes(node: Node) {
-	return evaluateXPathToMap(
+	return evaluateXPathToMap<RowProps & { children: Node[] }>(
 		`
 			map {
 				"children": array{
@@ -44,7 +44,7 @@ export function parsePropsAndChildNodes(node: Node) {
 			}
 		`,
 		node,
-	) as RowProps & { children: Node[] };
+	);
 }
 
 /**

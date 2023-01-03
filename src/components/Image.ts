@@ -147,7 +147,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 */
 	static fromNode(node: Node): Image {
 		return new Image(
-			evaluateXPathToMap(
+			evaluateXPathToMap<ImageProps>(
 				`
 					map {
 						"type": ./@${QNS.w}type/string(),
@@ -155,7 +155,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 					}
 				`,
 				node,
-			) as ImageProps,
+			),
 		);
 	}
 }

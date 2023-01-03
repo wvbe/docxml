@@ -11,6 +11,7 @@ import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import { Comments } from './Comments.ts';
+import { Numbering } from './Numbering.ts';
 import { File, Relationships, RelationshipType } from './Relationships.ts';
 import { Settings } from './Settings.ts';
 import { Styles } from './Styles.ts';
@@ -90,6 +91,21 @@ export class OfficeDocument extends XmlFile {
 		return this.#comments;
 	}
 
+	#numbering: Numbering | null = null;
+
+	/**
+	 * The API representing "numbering.xml" and all the numbering styles/schemes
+	 */
+	public get numbering(): Numbering {
+		if (!this.#numbering) {
+			this.#numbering = this.relationships.ensureRelationship(
+				RelationshipType.numbering,
+				() => new Numbering(FileLocation.numbering),
+			);
+		}
+		return this.#numbering;
+	}
+
 	/**
 	 * The components normalized from #root, which is potentially arrayed, promised, array promised etc.
 	 */
@@ -143,8 +159,6 @@ export class OfficeDocument extends XmlFile {
 	/**
 	 * Get all XmlFile instances related to this one, including self. This helps the system
 	 * serialize itself back to DOCX fullly. Probably not useful for consumers of the library.
-	 *
-	 * By default only returns the instance itself but no other related instances.
 	 */
 	public getRelated(): File[] {
 		return [this, ...this.relationships.getRelated()];

@@ -25,10 +25,21 @@ type ConcreteNumbering = {
 };
 
 export class Numbering extends XmlFile {
-	public static contentType = FileMime.comments;
+	public static contentType = FileMime.numbering;
 
-	private readonly abstracts = new NumberMap<AbstractNumbering>();
-	private readonly concretes = new NumberMap<ConcreteNumbering>();
+	/**
+	 * The abstract numbering rules.
+	 *
+	 * Each item correlates with <w:abstractNum>
+	 */
+	private readonly abstracts = new NumberMap<AbstractNumbering>(0);
+
+	/**
+	 * Concrete numbering rules, the ones that are directly associated with zero or more paragraphs.
+	 *
+	 * Each item correlates with <w:num>
+	 */
+	private readonly concretes = new NumberMap<ConcreteNumbering>(1);
 
 	public isEmpty() {
 		return !this.abstracts.size;

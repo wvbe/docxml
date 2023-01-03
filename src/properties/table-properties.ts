@@ -40,7 +40,7 @@ export type TableProperties = {
 
 export function tablePropertiesFromNode(node?: Node | null): TableProperties {
 	return node
-		? evaluateXPathToMap(
+		? evaluateXPathToMap<TableProperties>(
 				`
 						map {
 							"style": ./${QNS.w}tblStyle/@${QNS.w}val/string(),

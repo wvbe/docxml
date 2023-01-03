@@ -57,7 +57,7 @@ export function evaluateXPathToArray(
 	}
 }
 
-export function evaluateXPathToMap<P = any>(
+export function evaluateXPathToMap<P = Record<string, unknown>>(
 	...[query, node, domFacade, variables, options]: Parameters<typeof _evaluateXPathToMap>
 ) {
 	try {

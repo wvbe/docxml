@@ -8,8 +8,9 @@ export enum FileLocation {
 	comments = 'word/comments.xml',
 	coreProperties = 'docProps/core.xml',
 	mainDocument = 'word/document.xml',
-	styles = 'word/styles.xml',
+	numbering = 'word/numbering.xml',
 	settings = 'word/settings.xml',
+	styles = 'word/styles.xml',
 }
 
 export enum FileMime {
@@ -32,6 +33,7 @@ export enum FileMime {
 	theme = 'application/vnd.openxmlformats-officedocument.theme+xml',
 	webSettings = 'application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml',
 	comments = 'application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml',
+	numbering = 'application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml',
 
 	// Binary content types
 	jpeg = 'image/jpeg',

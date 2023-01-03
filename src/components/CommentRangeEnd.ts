@@ -53,14 +53,14 @@ export class CommentRangeEnd extends Component<CommentRangeEndProps, CommentRang
 	 */
 	static fromNode(node: Node): CommentRangeEnd {
 		return new CommentRangeEnd(
-			evaluateXPathToMap(
+			evaluateXPathToMap<CommentRangeEndProps>(
 				`
 					map {
 						"id": ./@${QNS.w}id/number()
 					}
 				`,
 				node,
-			) as CommentRangeEndProps,
+			),
 		);
 	}
 }

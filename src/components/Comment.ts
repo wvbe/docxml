@@ -66,14 +66,14 @@ export class Comment extends Component<CommentProps, CommentChild> {
 	 */
 	static fromNode(node: Node): Comment {
 		return new Comment(
-			evaluateXPathToMap(
+			evaluateXPathToMap<CommentProps>(
 				`
 					map {
 						"id": ./@${QNS.w}id/number()
 					}
 				`,
 				node,
-			) as CommentProps,
+			),
 		);
 	}
 }

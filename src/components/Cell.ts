@@ -118,7 +118,7 @@ export class Cell extends Component<CellProps, CellChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static fromNode(node: Node): Cell {
-		const { children, ...props } = evaluateXPathToMap(
+		const { children, ...props } = evaluateXPathToMap<CellProps & { children: Node[] }>(
 			`
 				let $colStart := ooxml:cell-column(.)
 
@@ -146,7 +146,7 @@ export class Cell extends Component<CellProps, CellChild> {
 				}
 			`,
 			node,
-		) as CellProps & { children: Node[] };
+		);
 		return new Cell(props, ...createChildComponentsFromNodes<CellChild>(this.children, children));
 	}
 }

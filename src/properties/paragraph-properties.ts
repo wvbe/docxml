@@ -51,6 +51,10 @@ export type ParagraphProperties = {
 		right?: null | Border<LineBorderType>;
 		between?: null | Border<LineBorderType>;
 	};
+	listItem?: null | {
+		numbering?: null | number;
+		depth?: null | number;
+	};
 	change?:
 		| null
 		| ({
@@ -67,7 +71,8 @@ export type ParagraphProperties = {
 
 export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProperties {
 	const data = node
-		? evaluateXPathToMap(
+		? // deno-lint-ignore no-explicit-any
+		  evaluateXPathToMap<any>(
 				`
 			map {
 				"alignment": ${QNS.w}jc/@${QNS.w}val/string(),
@@ -101,6 +106,10 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 					"bottom": ./${QNS.w}bottom/ooxml:border(.),
 					"right": ./${QNS.w}right/ooxml:border(.),
 					"between": ./${QNS.w}between/ooxml:border(.)
+				},
+				"listItem": ./${QNS.w}numPr/map {
+					"numbering": ./${QNS.w}numId/@${QNS.w}val/number(),
+					"depth": ./${QNS.w}ilvl/@${QNS.w}val/number()
 				},
 				"change": ${QNS.w}pPrChange/map {
 					"id": @${QNS.w}id/string(),
@@ -167,6 +176,14 @@ export function paragraphPropertiesToNode(
 			element ${QNS.w}pPr {
 				if (exists($style)) then element ${QNS.w}pStyle {
 					attribute ${QNS.w}val { $style }
+				} else (),
+				if (exists($listItem)) then element ${QNS.w}numPr {
+					if (exists($listItem('numbering'))) then element ${QNS.w}numId {
+						attribute ${QNS.w}val { $listItem('numbering') }
+					} else (),
+					if (exists($listItem('depth'))) then element ${QNS.w}ilvl {
+						attribute ${QNS.w}val { $listItem('depth') }
+					} else ()
 				} else (),
 				if (exists($alignment)) then element ${QNS.w}jc {
 					attribute ${QNS.w}val { $alignment }
@@ -290,6 +307,7 @@ export function paragraphPropertiesToNode(
 						...data.borders,
 				  }
 				: null,
+			listItem: data.listItem || null,
 			change: data.change
 				? {
 						id: data.change.id,

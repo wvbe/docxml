@@ -57,13 +57,11 @@ export class Break extends Component<BreakProps, BreakChild> {
 	 */
 	static fromNode(node: Node): Break {
 		return new Break(
-			evaluateXPathToMap(
-				`
-					map {
-						"type": ./@${QNS.w}type/string(),
-						"clear": ./@${QNS.w}clear/string()
-					}
-				`,
+			evaluateXPathToMap<BreakProps>(
+				`map {
+					"type": ./@${QNS.w}type/string(),
+					"clear": ./@${QNS.w}clear/string()
+				}`,
 				node,
 			),
 		);

@@ -115,7 +115,11 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static fromNode(node: Node): Paragraph {
-		const { children, ppr, ...props } = evaluateXPathToMap(
+		const { children, ppr, ...props } = evaluateXPathToMap<{
+			ppr: Node;
+			children: Node[];
+			style?: string;
+		}>(
 			`
 				map {
 					"ppr": ./${QNS.w}pPr,
@@ -124,7 +128,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 				}
 			`,
 			node,
-		) as { ppr: Node; children: Node[]; style?: string };
+		);
 
 		return new Paragraph(
 			{

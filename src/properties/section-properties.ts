@@ -1,5 +1,5 @@
 import { create } from '../utilities/dom.ts';
-import { hpt, Length } from '../utilities/length.ts';
+import { Length } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
@@ -19,35 +19,27 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 	if (!node) {
 		return {};
 	}
-	const data = evaluateXPathToMap(
-		`
-				map {
-					"pageWidth": ./${QNS.w}pgSz/@${QNS.w}w/ooxml:universal-size(., 'twip'),
-					"pageHeight": ./${QNS.w}pgSz/@${QNS.w}h/ooxml:universal-size(., 'twip'),
-					"pageOrientation": ./${QNS.w}pgSz/@${QNS.w}orient/string()
-				}
-			`,
+	const data = evaluateXPathToMap<SectionProperties>(
+		`map {
+			"pageWidth": ./${QNS.w}pgSz/@${QNS.w}w/ooxml:universal-size(., 'twip'),
+			"pageHeight": ./${QNS.w}pgSz/@${QNS.w}h/ooxml:universal-size(., 'twip'),
+			"pageOrientation": ./${QNS.w}pgSz/@${QNS.w}orient/string()
+		}`,
 		node,
 	);
-
-	if (data.fontSize !== undefined && data.fontSize !== null) {
-		data.fontSize = hpt(data.fontSize);
-	}
 
 	return data;
 }
 
 export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 	return create(
-		`
-			element ${QNS.w}sectPr {
-				if (exists($pageWidth) or exists($pageHeight) or $pageOrientation) then element ${QNS.w}pgSz {
-					if (exists($pageWidth)) then attribute ${QNS.w}w { $pageWidth('twip') } else (),
-					if (exists($pageHeight)) then attribute ${QNS.w}h { $pageHeight('twip') } else (),
-					if ($pageOrientation) then attribute ${QNS.w}orient { $pageOrientation } else ()
-				} else ()
-			}
-		`,
+		`element ${QNS.w}sectPr {
+			if (exists($pageWidth) or exists($pageHeight) or $pageOrientation) then element ${QNS.w}pgSz {
+				if (exists($pageWidth)) then attribute ${QNS.w}w { $pageWidth('twip') } else (),
+				if (exists($pageHeight)) then attribute ${QNS.w}h { $pageHeight('twip') } else (),
+				if ($pageOrientation) then attribute ${QNS.w}orient { $pageOrientation } else ()
+			} else ()
+		}`,
 		{
 			pageWidth: data.pageWidth || null,
 			pageHeight: data.pageHeight || null,

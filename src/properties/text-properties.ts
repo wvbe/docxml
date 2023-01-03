@@ -1,5 +1,5 @@
 import { create } from '../utilities/dom.ts';
-import { hpt, Length } from '../utilities/length.ts';
+import { Length } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
@@ -55,7 +55,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	if (!node) {
 		return {};
 	}
-	const data = evaluateXPathToMap(
+	return evaluateXPathToMap<TextProperties>(
 		`
 			map {
 				"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
@@ -67,7 +67,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"isCaps": boolean(./${QNS.w}caps),
 				"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
 				"language": ./${QNS.w}lang/@${QNS.w}val/string(),
-				"fontSize": ./${QNS.w}sz/@${QNS.w}val/number(),
+				"fontSize": ./${QNS.w}sz/@${QNS.w}val/ooxml:universal-size(xs:float(.), "hpt"),
 				"isStrike": boolean(./${QNS.w}strike),
 				"font": ./${QNS.w}rFonts/map {
 					"cs": @${QNS.w}cs/string(),
@@ -78,12 +78,6 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		`,
 		node,
 	);
-
-	if (data.fontSize !== undefined && data.fontSize !== null) {
-		data.fontSize = hpt(data.fontSize);
-	}
-
-	return data;
 }
 
 export function textPropertiesToNode(data: TextProperties = {}): Node | null {

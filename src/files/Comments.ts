@@ -1,4 +1,5 @@
 import { Archive } from '../classes/Archive.ts';
+import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { FileMime } from '../enums.ts';
@@ -17,10 +18,10 @@ type Comment = {
 export class Comments extends XmlFile {
 	public static contentType = FileMime.comments;
 
-	private readonly comments: Comment[] = [];
+	private readonly comments = new NumberMap<Comment>();
 
 	public isEmpty() {
-		return !this.comments.length;
+		return !this.comments.size;
 	}
 
 	protected async toNode(): Promise<Document> {
@@ -41,7 +42,7 @@ export class Comments extends XmlFile {
 			`,
 			{
 				comments: await Promise.all(
-					this.comments.map(async (comment) => ({
+					this.comments.array().map(async (comment) => ({
 						...comment,
 						date: comment.date.toISOString(),
 						contents: await Promise.all(
@@ -54,10 +55,16 @@ export class Comments extends XmlFile {
 		);
 	}
 
-	public get(id: Comment['id']) {
-		return this.comments.find((c) => c.id === id);
+	/**
+	 * @deprecated Will be deprecated as a public API in the next breaking release.
+	 */
+	public get(id: Comment['id']): Comment | undefined {
+		return this.comments.get(id);
 	}
 
+	/**
+	 * @deprecated Will be deprecated as a public API in the next breaking release.
+	 */
 	public set(
 		id: Comment['id'],
 		meta: Omit<Comment, 'id' | 'contents'>,
@@ -67,7 +74,7 @@ export class Comments extends XmlFile {
 		if (existing) {
 			Object.assign(existing, { ...meta, contents });
 		} else {
-			this.comments.push({
+			this.comments.set(id, {
 				id,
 				...meta,
 				contents,
@@ -81,8 +88,8 @@ export class Comments extends XmlFile {
 	 * {@link CommentRangeEnd} components.
 	 */
 	public add(meta: Omit<Comment, 'id' | 'contents'>, contents: Comment['contents']) {
-		const id = this.comments.length;
-		this.comments.push({
+		const id = this.comments.getNextAvailableKey();
+		this.comments.set(id, {
 			id,
 			...meta,
 			contents,
@@ -92,9 +99,11 @@ export class Comments extends XmlFile {
 
 	/**
 	 * Check whether or not a comment with the given identifier already exists.
+	 *
+	 * @deprecated Will be deprecated as a public API in the next breaking release.
 	 */
 	public has(id: number) {
-		return this.comments.some((comment) => comment.id === id);
+		return this.comments.has(id);
 	}
 
 	/**

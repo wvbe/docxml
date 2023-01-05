@@ -1,3 +1,4 @@
+import { type Footer, type Header } from '../files/HeaderFooter.ts';
 import { type OfficeDocument } from '../files/OfficeDocument.ts';
 import { type Relationships } from '../files/Relationships.ts';
 
@@ -7,7 +8,7 @@ import { type Relationships } from '../files/Relationships.ts';
  *
  * Having this ancestry allows context-aware serialization.
  */
-export type ComponentAncestor = OfficeDocument | AnyComponent;
+export type ComponentAncestor = OfficeDocument | Header | Footer | AnyComponent;
 
 /**
  * Any component instance, uncaring of which one or which props/children it has. Knows nothing,

@@ -31,4 +31,26 @@ describe('Section formatting', () => {
 	);
 });
 
+describe('Section header/footer references', () => {
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:headerReference r:id="test1" w:type="default" />
+			<w:headerReference r:id="test2" w:type="first" />
+			<w:headerReference r:id="test3" w:type="even" />
+		</w:sectPr>`,
+		{
+			headers: {
+				first: 'test2',
+				even: 'test3',
+				odd: 'test1',
+			},
+			footers: {
+				first: null,
+				even: null,
+				odd: null,
+			},
+		},
+	);
+});
+
 run();

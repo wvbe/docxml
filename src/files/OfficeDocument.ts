@@ -11,6 +11,7 @@ import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import { Comments } from './Comments.ts';
+import { type HeaderFooterRoot, Footer, Header } from './HeaderFooter.ts';
 import { Numbering } from './Numbering.ts';
 import { File, Relationships, RelationshipType } from './Relationships.ts';
 import { Settings } from './Settings.ts';
@@ -114,11 +115,9 @@ export class OfficeDocument extends XmlFile {
 			return Promise.resolve([]);
 		}
 		return Promise.resolve(this.#root)
-			.then((root) => {
-				return Array.isArray(root) ? Promise.all(root) : [root];
-			})
-			.then((zz) =>
-				zz.reduce<Promise<OfficeDocumentChild[]>>(async function flatten(
+			.then((root) => (Array.isArray(root) ? Promise.all(root) : [root]))
+			.then((roots) =>
+				roots.reduce<Promise<OfficeDocumentChild[]>>(async function flatten(
 					flatPromise,
 					childPromise,
 				): Promise<OfficeDocumentChild[]> {
@@ -163,6 +162,22 @@ export class OfficeDocument extends XmlFile {
 	public getRelated(): File[] {
 		return [this, ...this.relationships.getRelated()];
 	}
+
+	public readonly headers = {
+		add: (location: string, root: HeaderFooterRoot) => {
+			const inst = new Header(location);
+			inst.set(root);
+			return this.relationships.add(RelationshipType.header, inst);
+		},
+	};
+
+	public readonly footers = {
+		add: (location: string, root: HeaderFooterRoot) => {
+			const inst = new Footer(location);
+			inst.set(root);
+			return this.relationships.add(RelationshipType.footer, inst);
+		},
+	};
 
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.

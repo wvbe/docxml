@@ -1,6 +1,7 @@
 import { Archive } from '../classes/Archive.ts';
 import { UnhandledXmlFile } from '../classes/XmlFile.ts';
 import { Comments } from './Comments.ts';
+import { Footer, Header } from './HeaderFooter.ts';
 import { Numbering } from './Numbering.ts';
 import { OfficeDocument } from './OfficeDocument.ts';
 import { RelationshipMeta, RelationshipType } from './Relationships.ts';
@@ -10,9 +11,7 @@ import { CoreProperties } from './wip/CoreProperties.ts';
 import { Endnotes } from './wip/Endnotes.ts';
 import { ExtendedProperties } from './wip/ExtendedProperties.ts';
 import { FontTable } from './wip/FontTable.ts';
-import { Footer } from './wip/Footer.ts';
 import { Footnotes } from './wip/Footnotes.ts';
-import { Header } from './wip/Header.ts';
 import { Theme } from './wip/Theme.ts';
 import { WebSettings } from './wip/WebSettings.ts';
 

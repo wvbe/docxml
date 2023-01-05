@@ -105,6 +105,7 @@ To great or small extend, the following features work in the current version of 
 - [x] Left/right/center/justified alignment
 - [ ] Aligning text on tabs
 - [x] Font family
+- [ ] Embed TTF in the DOCX file
 
 **References:**
 - [x] Cross references

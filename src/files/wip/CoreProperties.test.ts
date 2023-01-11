@@ -8,7 +8,7 @@ describe('CoreProperties', () => {
 		const now = new Date().toISOString();
 		const instance = new CoreProperties('');
 
-		expect(serialize(await instance.$$$toNode())).toBe(
+		expect(serialize(await instance.$$$toNode()).replace(/(.\d{3})(?=Z)/g, '')).toBe(
 			// It's more chatty than the original XML, but it is not incorrect.
 			// @TODO maybe report this to slimdom some time
 			`
@@ -22,7 +22,9 @@ describe('CoreProperties', () => {
 					<dcterms:created xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="dcterms:W3CDTF">${now}</dcterms:created>
 					<dcterms:modified xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="dcterms:W3CDTF">${now}</dcterms:modified>
 				</cp:coreProperties>
-			`.replace(/\n|\t/g, ''),
+			`
+				.replace(/\n|\t/g, '')
+				.replace(/(.\d{3})(?=Z)/g, ''),
 		);
 	});
 });

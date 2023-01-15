@@ -1,8 +1,18 @@
 # DOCX Markup Language
 
-This is a [Deno](https://deno.land) module for making `.docx` files from scratch or from an existing DOCX/DOTX template. It will probably be [published for NodeJS soon™ too](https://github.com/wvbe/docxml/issues/8).
+This is a [Deno](https://deno.land) module for making `.docx` files from scratch or from an existing DOCX/DOTX template.
+It will probably be [published for NodeJS soon™ too](https://github.com/wvbe/docxml/issues/8).
 
-`docxml` is designed to be used in vanilla JavaScript using class instances, or using JSX if you're on Deno or want to use a transpiler like Babel:
+You could use `docxml` to:
+
+- Create an MS Word file without ever opening MS Word
+- Create a parameterized template file, and render it to DOCX with your data parameters
+- Convert JSON, XML or other data structures to DOCX
+- Parse content from an existing DOCX file
+- Extract style definitions from a DOTX/DOCX file
+
+`docxml` is designed to be used in vanilla JavaScript using class component instances, or using JSX if you're on Deno or
+want to use NodeJS and a transpiler like Babel:
 
 ```ts
 const para = new Paragraph(
@@ -20,7 +30,7 @@ const para = (
 );
 ```
 
-[👉 More on using class instances](https://github.com/wvbe/docxml/wiki/Get-started#using-jsx)
+[👉 More on using class components](https://github.com/wvbe/docxml/wiki/Get-started#components)
 
 [👉 More on using JSX](https://github.com/wvbe/docxml/wiki/Get-started#using-jsx)
 
@@ -28,11 +38,13 @@ const para = (
 to transform from an XML document. Both modes work equally well with vanilla JS or JSX.
 
 ```tsx
-await Docx.fromJsx(
-	<Paragraph alignment="center">
-		<Text>I want a cookie</Text>
-	</Paragraph>,
-).toFile('example-1.docx');
+await Docx
+	.fromJsx(
+		<Paragraph alignment="center">
+			<Text>I want a cookie</Text>
+		</Paragraph>,
+	)
+	.toFile('example-1.docx');
 ```
 
 ```tsx
@@ -59,12 +71,14 @@ await Docx.fromNothing()
 
 # Features
 
-To great or small extend, the following features work in the current version of `docxml`. Some items are not ticked off yet -- they are not available, but hopefully soon.
+To great or small extend, the following features work in the current version of `docxml`. Some items are not ticked off
+yet -- they are not available, but hopefully soon.
 
 [👉 See code examples of some or the more intricate features](https://github.com/wvbe/docxml/wiki/Examples)
 
 **API features:**
 
+- [x] 100% typed
 - [x] Asynchronous components
 - [x] Component composition
 
@@ -75,9 +89,11 @@ To great or small extend, the following features work in the current version of 
 - [x] Subscript, superscript, small caps
 - [x] Paragraph spacing and indentation
 - [x] Left/right/center/justified alignment
+- [x] Numbering
 - [ ] Aligning text on tabs
 - [x] Font family
 - [ ] Embed TTF in the DOCX file
+
 
 **References:**
 
@@ -101,6 +117,7 @@ To great or small extend, the following features work in the current version of 
 
 - [x] Width and height
 - [x] Orientation
+- [x] Page headers & footers
 
 **Comments:**
 
@@ -135,7 +152,13 @@ to OOXML. For example;
 
 # For contributors
 
+This project uses unit tests and linting for quality control. To lint, both Deno's own linting as well as ESLint are used.
+Please run both of the following commands to ensure that a GitHub Action does not fail later.
+
 ```sh
+# Once
+npm install
+
 # Run all unit tests
 deno task test
 

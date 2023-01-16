@@ -90,7 +90,7 @@ export class Cell extends Component<CellProps, CellChild> {
 					{
 						width: table.props.columnWidths?.[info.column] || null,
 						colSpan: this.getColSpan(),
-						rowSpan: null,
+						rowSpan: this.getRowSpan(),
 						...this.props,
 					},
 					true,

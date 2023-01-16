@@ -50,13 +50,14 @@ export function tableCellPropertiesFromNode(node?: Node | null): TableCellProper
 				let $rowEnd := if ($firstNextRow)
 					then count($firstNextRow/preceding-sibling::${QNS.w}tr)
 					else count(../../../${QNS.w}tr)
-				(: NB; Used to -1 the "else" scenario :)
 
 				return map {
 					"colSpan": if (./${QNS.w}gridSpan)
 						then ./${QNS.w}gridSpan/@${QNS.w}val/number()
 						else 1,
-					"rowSpan": $rowEnd - $rowStart,
+					"rowSpan": if ($rowEnd != $rowStart)
+						then $rowEnd - $rowStart
+						else 1,
 					"borders": ./${QNS.w}tcBorders/map {
 						"top": ./${QNS.w}top/ooxml:border(.),
 						"start": ./${QNS.w}start/ooxml:border(.),

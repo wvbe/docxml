@@ -1,7 +1,7 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { serialize } from '../utilities/dom.ts';
-import { Styles } from './Styles.ts';
+import { parse, serialize } from '../utilities/dom.ts';
+import { AnyStyleDefinition, Styles } from './Styles.ts';
 
 describe('Styles', () => {
 	it('Serializes paragraph styles correctly', async () => {
@@ -51,7 +51,8 @@ describe('Styles', () => {
 				},
 			},
 		});
-		expect(serialize(await stylesXml.$$$toNode())).toBe(
+		const node = await stylesXml.$$$toNode();
+		expect(serialize(node)).toBe(
 			`<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 				<w:latentStyles w:defLockedState="0" w:defUIPriority="99" w:defSemiHidden="0" w:defUnhideWhenUsed="0" w:defQFormat="0" w:count="1"/>
 				<w:style w:type="table" w:styleId="test">
@@ -71,6 +72,14 @@ describe('Styles', () => {
 				</w:style>
 			</w:styles>`.replace(/\n|\t/g, ''),
 		);
+
+		const reparsed = (await Styles.fromDom(node, 'derp')).get('test');
+		expect(reparsed?.table?.conditions?.lastCol?.cells?.borders?.top).toEqual({
+			type: null,
+			width: null,
+			spacing: null,
+			color: '000000',
+		});
 	});
 });
 

@@ -228,14 +228,8 @@ export class Styles extends XmlFile {
 		return this.#styles.find((style) => style.id === id);
 	}
 
-	/**
-	 * Instantiate this class by looking at the DOCX XML for it.
-	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<Styles> {
+	public static fromDom(dom: Document, location: string): Styles {
 		const instance = new Styles(location);
-
-		const dom = await archive.readXml(location);
-
 		// Warning! Untyped objects
 		instance.addStyles(
 			evaluateXPathToArray(
@@ -246,7 +240,7 @@ export class Styles extends XmlFile {
 					"basedOn": ./${QNS.w}basedOn/@${QNS.w}val/string(),
 					"isDefault": @${QNS.w}default/ooxml:is-on-off-enabled(.),
 					"tblpr": ./${QNS.w}tblPr,
-					"tblStylePr": array{ ./${QNS.w}tblStyleRr },
+					"tblStylePr": array{ ./${QNS.w}tblStylePr },
 					"ppr": ./${QNS.w}pPr,
 					"rpr": ./${QNS.w}rPr
 				}}`,
@@ -258,7 +252,17 @@ export class Styles extends XmlFile {
 				table: {
 					...tablePropertiesFromNode(tblpr),
 					...(tblStylePr.length
-						? { conditions: tblStylePr.map(tableConditionalPropertiesFromNode) }
+						? {
+								conditions: (
+									tblStylePr.map(tableConditionalPropertiesFromNode) as TableConditionalProperties[]
+								).reduce(
+									(m, { type, ...style }) =>
+										Object.assign(m, {
+											[type]: style,
+										}),
+									{},
+								),
+						  }
 						: {}),
 				},
 			})),
@@ -278,5 +282,13 @@ export class Styles extends XmlFile {
 		).forEach((json) => instance.addLatent(json));
 
 		return instance;
+	}
+
+	/**
+	 * Instantiate this class by looking at the DOCX XML for it.
+	 */
+	public static async fromArchive(archive: Archive, location: string): Promise<Styles> {
+		const dom = await archive.readXml(location);
+		return this.fromDom(dom, location);
 	}
 }

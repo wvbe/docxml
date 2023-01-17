@@ -27,16 +27,6 @@ describe('Table formatting', () => {
 				w:noHBand="1"
 				w:noVBand="1"
 			/>
-			<w:tcPr>
-				<w:tcW w:w="1701" w:type="dxa" />
-				<w:tcBorders>
-					<w:top w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
-					<w:start w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
-					<w:bottom w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
-					<w:end w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
-					<w:tl2br w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
-				</w:tcBorders>
-			</w:tcPr>
 			<w:tblBorders>
 				<w:top w:sz="8" w:space="1" w:color="red" />
 				<w:right w:val="seattle" w:space="1" w:color="red" />
@@ -63,45 +53,6 @@ describe('Table formatting', () => {
 				left: { type: 'dashed', width: hpt(2), spacing: 1, color: null },
 				insideH: { type: 'heartBalloon', width: twip(20), spacing: 1, color: 'red' },
 				insideV: null,
-			},
-			cells: {
-				colSpan: 1,
-				rowSpan: 1,
-				borders: {
-					top: {
-						type: 'double',
-						width: opt(24),
-						spacing: 0,
-						color: 'FF0000',
-					},
-					start: {
-						type: 'double',
-						width: opt(24),
-						spacing: 0,
-						color: 'FF0000',
-					},
-					bottom: {
-						type: 'double',
-						width: opt(24),
-						spacing: 0,
-						color: 'FF0000',
-					},
-					end: {
-						type: 'double',
-						width: opt(24),
-						spacing: 0,
-						color: 'FF0000',
-					},
-					tl2br: {
-						type: 'double',
-						width: opt(24),
-						spacing: 0,
-						color: 'FF0000',
-					},
-					tr2bl: null,
-					insideH: null,
-					insideV: null,
-				},
 			},
 		},
 	);

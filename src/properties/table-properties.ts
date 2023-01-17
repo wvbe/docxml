@@ -2,11 +2,6 @@ import { create } from '../utilities/dom.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { type ArtBorderType, type Border, type LineBorderType } from './shared-properties.ts';
-import {
-	TableCellProperties,
-	tableCellPropertiesFromNode,
-	tableCellPropertiesToNode,
-} from './table-cell-properties.ts';
 
 export type TableProperties = {
 	style?: string | null;
@@ -41,12 +36,11 @@ export type TableProperties = {
 		insideH?: null | Border<LineBorderType | ArtBorderType>;
 		insideV?: null | Border<LineBorderType | ArtBorderType>;
 	};
-	cells?: null | TableCellProperties;
 };
 
 export function tablePropertiesFromNode(node: Node | null): TableProperties {
-	const { tcPr, ...properties } = node
-		? evaluateXPathToMap<Omit<TableProperties, 'cells'> & { tcPr?: Element }>(
+	const properties = node
+		? evaluateXPathToMap<TableProperties>(
 				`map {
 					"style": ./${QNS.w}tblStyle/@${QNS.w}val/string(),
 					"look": ./${QNS.w}tblLook/map {
@@ -68,16 +62,11 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 					"width": ./${QNS.w}tblW/map {
 						"length": ./@${QNS.w}val/string(),
 						"unit": ./@${QNS.w}type/string()
-					},
-					"tcPr": ./${QNS.w}tcPr
+					}
 				}`,
 				node,
 		  )
-		: { tcPr: null };
-
-	if (tcPr) {
-		(properties as TableProperties).cells = tableCellPropertiesFromNode(tcPr);
-	}
+		: {};
 
 	return properties;
 }
@@ -108,8 +97,7 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
 				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
 				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
-			} else (),
-			$tcPr
+			} else ()
 		}`,
 		{
 			style: tblpr.style || null,
@@ -134,7 +122,6 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 						...tblpr.borders,
 				  }
 				: null,
-			tcPr: tblpr.cells ? tableCellPropertiesToNode(tblpr.cells, false) : null,
 		},
 	);
 }

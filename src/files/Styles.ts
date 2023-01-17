@@ -2,17 +2,23 @@ import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
 import {
-	ParagraphProperties,
+	type ParagraphProperties,
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from '../properties/paragraph-properties.ts';
 import {
-	TableProperties,
+	type TableConditionalProperties,
+	type TableConditionalTypes,
+	tableConditionalPropertiesFromNode,
+	tableConditionalPropertiesToNode,
+} from '../properties/table-conditional-properties.ts';
+import {
+	type TableProperties,
 	tablePropertiesFromNode,
 	tablePropertiesToNode,
 } from '../properties/table-properties.ts';
 import {
-	TextProperties,
+	type TextProperties,
 	textPropertiesFromNode,
 	textPropertiesToNode,
 } from '../properties/text-properties.ts';
@@ -39,7 +45,9 @@ type TableStyle = {
 	type: 'table';
 	paragraph?: null;
 	text?: null;
-	table?: TableProperties;
+	table?: TableProperties & {
+		conditions?: Partial<Record<TableConditionalTypes, Omit<TableConditionalProperties, 'type'>>>;
+	};
 };
 
 export type AnyStyleDefinition = {
@@ -129,12 +137,12 @@ export class Styles extends XmlFile {
 								attribute ${QNS.w}type { $style('type') },
 								attribute ${QNS.w}styleId { $style('id') },
 								if ($style('isDefault')) then attribute ${QNS.w}default {"1"} else (),
-
 								if ($style('name')) then <w:name w:val="{$style('name')}" /> else (),
 								if ($style('basedOn')) then <w:basedOn w:val="{$style('basedOn')}" /> else (),
 								if ($style('ppr')) then $style('ppr') else (),
 								if ($style('rpr')) then $style('rpr') else (),
-								if ($style('tblpr')) then $style('tblpr') else ()
+								if ($style('tblpr')) then $style('tblpr') else (),
+								$style('conditions')
 							}
 						</w:style>
 				}
@@ -145,6 +153,14 @@ export class Styles extends XmlFile {
 					ppr: paragraphPropertiesToNode(paragraph as ParagraphStyle['paragraph']),
 					rpr: textPropertiesToNode(text as ParagraphStyle['text']),
 					tblpr: tablePropertiesToNode(table as TableStyle['table']),
+					conditions: table?.conditions
+						? Object.entries(table.conditions).map(([type, properties]) =>
+								tableConditionalPropertiesToNode({
+									...properties,
+									type: type as TableConditionalTypes,
+								}),
+						  )
+						: null,
 				})),
 				latentStyles: this.#latentStyles,
 			},
@@ -219,6 +235,8 @@ export class Styles extends XmlFile {
 		const instance = new Styles(location);
 
 		const dom = await archive.readXml(location);
+
+		// Warning! Untyped objects
 		instance.addStyles(
 			evaluateXPathToArray(
 				`array { /*/${QNS.w}style[@${QNS.w}type = ("paragraph", "table", "character") and @${QNS.w}styleId]/map {
@@ -228,29 +246,34 @@ export class Styles extends XmlFile {
 					"basedOn": ./${QNS.w}basedOn/@${QNS.w}val/string(),
 					"isDefault": @${QNS.w}default/ooxml:is-on-off-enabled(.),
 					"tblpr": ./${QNS.w}tblPr,
+					"tblStylePr": array{ ./${QNS.w}tblStyleRr },
 					"ppr": ./${QNS.w}pPr,
 					"rpr": ./${QNS.w}rPr
 				}}`,
 				dom,
-			).map(({ ppr, rpr, tblpr, ...json }) => ({
+			).map(({ ppr, rpr, tblpr, tblStylePr, ...json }) => ({
 				...json,
 				paragraph: paragraphPropertiesFromNode(ppr),
 				text: textPropertiesFromNode(rpr),
-				table: tablePropertiesFromNode(tblpr),
+				table: {
+					...tablePropertiesFromNode(tblpr),
+					...(tblStylePr.length
+						? { conditions: tblStylePr.map(tableConditionalPropertiesFromNode) }
+						: {}),
+				},
 			})),
 		);
 
+		// Warning! Untyped objects
 		evaluateXPathToArray(
-			`
-				array { /*/${QNS.w}latentStyles/${QNS.w}lsdException/map {
-					"name": @${QNS.w}name/string(),
-					"uiPriority": @${QNS.w}uiPriority/number(),
-					"qFormat": @${QNS.w}qFormat/ooxml:is-on-off-enabled(.),
-					"unhideWhenUsed": @${QNS.w}unhideWhenUsed/ooxml:is-on-off-enabled(.),
-					"locked": @${QNS.w}locked/ooxml:is-on-off-enabled(.),
-					"semiHidden": @${QNS.w}semiHidden/ooxml:is-on-off-enabled(.)
-				}}
-			`,
+			`array { /*/${QNS.w}latentStyles/${QNS.w}lsdException/map {
+				"name": @${QNS.w}name/string(),
+				"uiPriority": @${QNS.w}uiPriority/number(),
+				"qFormat": @${QNS.w}qFormat/ooxml:is-on-off-enabled(.),
+				"unhideWhenUsed": @${QNS.w}unhideWhenUsed/ooxml:is-on-off-enabled(.),
+				"locked": @${QNS.w}locked/ooxml:is-on-off-enabled(.),
+				"semiHidden": @${QNS.w}semiHidden/ooxml:is-on-off-enabled(.)
+			}}`,
 			dom,
 		).forEach((json) => instance.addLatent(json));
 

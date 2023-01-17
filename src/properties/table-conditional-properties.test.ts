@@ -1,6 +1,6 @@
 import { describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { hpt, opt, pt, twip } from '../utilities/length.ts';
+import { opt } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { createXmlRoundRobinTest } from '../utilities/tests.ts';
 import {

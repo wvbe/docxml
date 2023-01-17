@@ -2,10 +2,21 @@ import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import {
+	ParagraphProperties,
+	paragraphPropertiesFromNode,
+	paragraphPropertiesToNode,
+} from './paragraph-properties.ts';
+import {
 	type TableCellProperties,
 	tableCellPropertiesFromNode,
 	tableCellPropertiesToNode,
 } from './table-cell-properties.ts';
+import {
+	TableProperties,
+	tablePropertiesFromNode,
+	tablePropertiesToNode,
+} from './table-properties.ts';
+import { TextProperties, textPropertiesFromNode, textPropertiesToNode } from './text-properties.ts';
 
 export type TableConditionalTypes =
 	// The formatting applies to odd numbered groupings of rows
@@ -41,16 +52,25 @@ export type TableConditionalTypes =
  */
 export type TableConditionalProperties = {
 	type: TableConditionalTypes;
-	cells?: null | TableCellProperties;
+	cell?: null | TableCellProperties;
+	paragraph?: null | ParagraphProperties;
+	text?: null | TextProperties;
+	table?: null | TableProperties;
 };
 
 export function tableConditionalPropertiesFromNode(node: Node): TableConditionalProperties {
-	const { tcPr, ...rest } = evaluateXPathToMap<{
+	const { pPr, rPr, tblPr, tcPr, ...rest } = evaluateXPathToMap<{
 		type: TableConditionalTypes;
+		pPr?: Element;
+		rPr?: Element;
+		tblPr?: Element;
 		tcPr?: Element;
 	}>(
 		`map {
 			"type": ./@${QNS.w}type/string(),
+			"pPr": ./${QNS.w}pPr,
+			"rPr": ./${QNS.w}rPr,
+			"tblPr": ./${QNS.w}tblPr,
 			"tcPr": ./${QNS.w}tcPr
 		}`,
 		node,
@@ -58,7 +78,10 @@ export function tableConditionalPropertiesFromNode(node: Node): TableConditional
 
 	const properties: TableConditionalProperties = {
 		...rest,
-		cells: tcPr ? tableCellPropertiesFromNode(tcPr) : null,
+		paragraph: pPr ? paragraphPropertiesFromNode(pPr) : null,
+		text: rPr ? textPropertiesFromNode(rPr) : null,
+		table: tblPr ? tablePropertiesFromNode(tblPr) : null,
+		cell: tcPr ? tableCellPropertiesFromNode(tcPr) : null,
 	};
 
 	return properties;
@@ -68,11 +91,17 @@ export function tableConditionalPropertiesToNode(tblpr: TableConditionalProperti
 	return create(
 		`element ${QNS.w}tblStylePr {
 			attribute ${QNS.w}type { $type },
+			$pPr,
+			$rPr,
+			$tblPr,
 			$tcPr
 		}`,
 		{
 			...tblpr,
-			tcPr: tblpr.cells ? tableCellPropertiesToNode(tblpr.cells, false) : null,
+			pPr: tblpr.paragraph ? paragraphPropertiesToNode(tblpr.paragraph) : null,
+			rPr: tblpr.text ? textPropertiesToNode(tblpr.text) : null,
+			tblPr: tblpr.table ? tablePropertiesToNode(tblpr.table) : null,
+			tcPr: tblpr.cell ? tableCellPropertiesToNode(tblpr.cell, false) : null,
 		},
 	);
 }

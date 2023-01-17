@@ -1,6 +1,6 @@
 import { describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { opt } from '../utilities/length.ts';
+import { opt, pt } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { createXmlRoundRobinTest } from '../utilities/tests.ts';
 import {
@@ -14,9 +14,22 @@ const test = createXmlRoundRobinTest<TableConditionalProperties>(
 	tableConditionalPropertiesToNode,
 );
 
-describe('Table formatting', () => {
+describe('Table conditional formatting', () => {
 	test(
 		`<w:tblStylePr ${ALL_NAMESPACE_DECLARATIONS} w:type="wholeTable">
+			<w:pPr>
+				<w:pBdr>
+					<w:top w:val="single" w:sz="24" w:space="1" w:color="FF0000" />
+				</w:pBdr>
+			</w:pPr>
+			<w:rPr>
+				<w:b />
+			</w:rPr>
+			<w:tblPr>
+				<w:tblBorders>
+					<w:top w:sz="8" w:space="1" w:color="red" />
+				</w:tblBorders>
+			</w:tblPr>
 			<w:tcPr>
 				<w:tcW w:w="1701" w:type="dxa" />
 				<w:tcBorders>
@@ -30,7 +43,61 @@ describe('Table formatting', () => {
 		</w:tblStylePr>`,
 		{
 			type: 'wholeTable',
-			cells: {
+			paragraph: {
+				alignment: null,
+				outlineLvl: null,
+				style: null,
+				spacing: null,
+				indentation: null,
+				borders: {
+					top: {
+						type: 'single',
+						width: pt(3),
+						spacing: 1,
+						color: 'FF0000',
+					},
+					left: null,
+					bottom: null,
+					right: null,
+					between: null,
+				},
+				listItem: null,
+				change: null,
+				pilcrow: null,
+			},
+			text: {
+				style: null,
+				color: null,
+				isUnderlined: null,
+				isBold: true,
+				isItalic: false,
+				isSmallCaps: false,
+				isCaps: false,
+				verticalAlign: null,
+				language: null,
+				fontSize: null,
+				isStrike: false,
+				font: null,
+			},
+			table: {
+				style: null,
+				look: null,
+				borders: {
+					top: {
+						type: null,
+						width: pt(1),
+						spacing: 1,
+						color: 'red',
+					},
+					left: null,
+					bottom: null,
+					right: null,
+					insideH: null,
+					insideV: null,
+				},
+				width: null,
+			},
+			cell: {
 				colSpan: 1,
 				rowSpan: 1,
 				borders: {

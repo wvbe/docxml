@@ -42,7 +42,7 @@ describe('Styles', () => {
 				},
 				conditions: {
 					lastCol: {
-						cells: {
+						cell: {
 							borders: {
 								top: { color: '000000' },
 							},
@@ -74,7 +74,7 @@ describe('Styles', () => {
 		);
 
 		const reparsed = (await Styles.fromDom(node, 'derp')).get('test');
-		expect(reparsed?.table?.conditions?.lastCol?.cells?.borders?.top).toEqual({
+		expect(reparsed?.table?.conditions?.lastCol?.cell?.borders?.top).toEqual({
 			type: null,
 			width: null,
 			spacing: null,

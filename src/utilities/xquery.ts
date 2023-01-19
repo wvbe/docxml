@@ -16,7 +16,7 @@ import {
 	evaluateXPathToString as _evaluateXPathToString,
 } from 'https://esm.sh/fontoxpath@3.27.1?pin=v96';
 
-import { PIZZA_SPACE } from './xquery-functions.ts';
+import { DOCXML_NS_URI } from './xquery-functions.ts';
 
 export type { INodesFactory } from 'https://esm.sh/fontoxpath@3.27.1?pin=v96';
 
@@ -25,7 +25,7 @@ export const XQUERY_3_1_LANGUAGE = _evaluateXPath.XQUERY_3_1_LANGUAGE;
 const OPTIONS = {
 	language: XQUERY_3_1_LANGUAGE,
 	moduleImports: {
-		ooxml: PIZZA_SPACE,
+		docxml: DOCXML_NS_URI,
 	},
 };
 

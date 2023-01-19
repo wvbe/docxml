@@ -30,14 +30,14 @@ export function tableCellPropertiesFromNode(node?: Node | null): TableCellProper
 	return node
 		? evaluateXPathToMap<TableCellProperties>(
 				`
-				let $colStart := ooxml:cell-column(.)
+				let $colStart := docxml:cell-column(.)
 
 				let $rowStart := count(../../preceding-sibling::${QNS.w}tr)
 
 				(: The first next row that contains a new cell in this column :)
 				let $firstNextRow := ../../following-sibling::${QNS.w}tr[
 					child::${QNS.w}tc[
-						ooxml:cell-column(.) = $colStart and
+						docxml:cell-column(.) = $colStart and
 						not(
 							./${QNS.w}tcPr/${QNS.w}vMerge[
 								@${QNS.w}val = "continue" or
@@ -59,14 +59,14 @@ export function tableCellPropertiesFromNode(node?: Node | null): TableCellProper
 						then $rowEnd - $rowStart
 						else 1,
 					"borders": ./${QNS.w}tcBorders/map {
-						"top": ./${QNS.w}top/ooxml:border(.),
-						"start": ./${QNS.w}start/ooxml:border(.),
-						"bottom": ./${QNS.w}bottom/ooxml:border(.),
-						"end": ./${QNS.w}end/ooxml:border(.),
-						"tl2br": ./${QNS.w}tl2br/ooxml:border(.),
-						"tr2bl": ./${QNS.w}tr2bl/ooxml:border(.),
-						"insideH": ./${QNS.w}insideH/ooxml:border(.),
-						"insideV": ./${QNS.w}insideV/ooxml:border(.)
+						"top": ./${QNS.w}top/docxml:border(.),
+						"start": ./${QNS.w}start/docxml:border(.),
+						"bottom": ./${QNS.w}bottom/docxml:border(.),
+						"end": ./${QNS.w}end/docxml:border(.),
+						"tl2br": ./${QNS.w}tl2br/docxml:border(.),
+						"tr2bl": ./${QNS.w}tr2bl/docxml:border(.),
+						"insideH": ./${QNS.w}insideH/docxml:border(.),
+						"insideV": ./${QNS.w}insideV/docxml:border(.)
 					}
 				}
 				`,
@@ -97,14 +97,14 @@ export function tableCellPropertiesToNode(
 			),
 			if (exists($borders)) then element ${QNS.w}tcBorders {
 				(: In sequence order: :)
-				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
-				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "start"), $borders('start')),
-				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
-				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "end"), $borders('end')),
-				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "tl2br"), $borders('tl2br')),
-				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "tr2bl"), $borders('tr2bl')),
-				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
-				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
+				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
+				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "start"), $borders('start')),
+				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
+				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "end"), $borders('end')),
+				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "tl2br"), $borders('tl2br')),
+				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "tr2bl"), $borders('tr2bl')),
+				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
+				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
 			} else ()
 		}`,
 		{

@@ -120,12 +120,12 @@ export class Cell extends Component<CellProps, CellChild> {
 	static fromNode(node: Node): Cell {
 		const { children, ...props } = evaluateXPathToMap<CellProps & { children: Node[] }>(
 			`
-				let $colStart := ooxml:cell-column(.)
+				let $colStart := docxml:cell-column(.)
 
 				let $rowStart := count(../preceding-sibling::${QNS.w}tr)
 
 				let $firstNextRow := ../following-sibling::${QNS.w}tr[
-					child::${QNS.w}tc[ooxml:cell-column(.) = $colStart and not(
+					child::${QNS.w}tc[docxml:cell-column(.) = $colStart and not(
 						./${QNS.w}tcPr/${QNS.w}vMerge[
 							@${QNS.w}val = "continue" or
 							not(./@${QNS.w}val)

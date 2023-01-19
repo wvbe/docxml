@@ -83,8 +83,8 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 					"after": @${QNS.w}after/number(),
 					"line": @${QNS.w}line/number(),
 					"lineRule": @${QNS.w}lineRule/string(),
-					"afterAutoSpacing": @${QNS.w}afterAutoSpacing/ooxml:is-on-off-enabled(.),
-					"beforeAutoSpacing": @${QNS.w}beforeAutoSpacing/ooxml:is-on-off-enabled(.)
+					"afterAutoSpacing": @${QNS.w}afterAutoSpacing/docxml:is-on-off-enabled(.),
+					"beforeAutoSpacing": @${QNS.w}beforeAutoSpacing/docxml:is-on-off-enabled(.)
 				},
 				"indentation": ${QNS.w}ind/map {
 					"left": @${QNS.w}left/number(),
@@ -101,11 +101,11 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 					"endChars": @${QNS.w}endChars/number()
 				},
 				"borders": ./${QNS.w}pBdr/map {
-					"top": ./${QNS.w}top/ooxml:border(.),
-					"left": ./${QNS.w}left/ooxml:border(.),
-					"bottom": ./${QNS.w}bottom/ooxml:border(.),
-					"right": ./${QNS.w}right/ooxml:border(.),
-					"between": ./${QNS.w}between/ooxml:border(.)
+					"top": ./${QNS.w}top/docxml:border(.),
+					"left": ./${QNS.w}left/docxml:border(.),
+					"bottom": ./${QNS.w}bottom/docxml:border(.),
+					"right": ./${QNS.w}right/docxml:border(.),
+					"between": ./${QNS.w}between/docxml:border(.)
 				},
 				"listItem": ./${QNS.w}numPr/map {
 					"numbering": ./${QNS.w}numId/@${QNS.w}val/number(),
@@ -254,11 +254,11 @@ export function paragraphPropertiesToNode(
 
 				if (exists($borders)) then element ${QNS.w}pBdr {
 					(: In sequence order: :)
-					ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
-					ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
-					ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
-					ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
-					ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "between"), $borders('between'))
+					docxml:create-border-element(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
+					docxml:create-border-element(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
+					docxml:create-border-element(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
+					docxml:create-border-element(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
+					docxml:create-border-element(fn:QName("${NamespaceUri.w}", "between"), $borders('between'))
 				} else (),
 
 				$rpr,

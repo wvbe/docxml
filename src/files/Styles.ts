@@ -238,7 +238,7 @@ export class Styles extends XmlFile {
 					"type": @${QNS.w}type/string(),
 					"name": ./${QNS.w}name/@${QNS.w}val/string(),
 					"basedOn": ./${QNS.w}basedOn/@${QNS.w}val/string(),
-					"isDefault": @${QNS.w}default/ooxml:is-on-off-enabled(.),
+					"isDefault": @${QNS.w}default/docxml:is-on-off-enabled(.),
 					"tblpr": ./${QNS.w}tblPr,
 					"tblStylePr": array{ ./${QNS.w}tblStylePr },
 					"ppr": ./${QNS.w}pPr,
@@ -273,10 +273,10 @@ export class Styles extends XmlFile {
 			`array { /*/${QNS.w}latentStyles/${QNS.w}lsdException/map {
 				"name": @${QNS.w}name/string(),
 				"uiPriority": @${QNS.w}uiPriority/number(),
-				"qFormat": @${QNS.w}qFormat/ooxml:is-on-off-enabled(.),
-				"unhideWhenUsed": @${QNS.w}unhideWhenUsed/ooxml:is-on-off-enabled(.),
-				"locked": @${QNS.w}locked/ooxml:is-on-off-enabled(.),
-				"semiHidden": @${QNS.w}semiHidden/ooxml:is-on-off-enabled(.)
+				"qFormat": @${QNS.w}qFormat/docxml:is-on-off-enabled(.),
+				"unhideWhenUsed": @${QNS.w}unhideWhenUsed/docxml:is-on-off-enabled(.),
+				"locked": @${QNS.w}locked/docxml:is-on-off-enabled(.),
+				"semiHidden": @${QNS.w}semiHidden/docxml:is-on-off-enabled(.)
 			}}`,
 			dom,
 		).forEach((json) => instance.addLatent(json));

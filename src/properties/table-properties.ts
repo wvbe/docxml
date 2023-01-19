@@ -68,8 +68,8 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 						"noHBand": ./@${QNS.w}noHBand/docxml:is-on-off-enabled(.),
 						"noVBand": ./@${QNS.w}noVBand/docxml:is-on-off-enabled(.)
 					},
-					"indentation": ./${QNS.w}tblInd/@${QNS.w}w/docxml:length(., 'twip'),
-					"cellSpacing": ./${QNS.w}tblCellSpacing/@${QNS.w}w/docxml:length(., 'twip'),
+					"indentation": ./${QNS.w}tblInd[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
+					"cellSpacing": ./${QNS.w}tblCellSpacing[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
 					"columnBandingSize": ./${QNS.w}tblStyleColBandSize/@${QNS.w}val/number(),
 					"rowBandingSize": ./${QNS.w}tblStyleRowBandSize/@${QNS.w}val/number(),
 					"borders": ./${QNS.w}tblBorders/map {

@@ -49,10 +49,10 @@ export type TableProperties = {
 	 * The cell padding, space between its border and its contents, for each side of a cell.
 	 */
 	cellPadding?: null | {
-		top: null | Length;
-		bottom: null | Length;
-		start: null | Length;
-		end: null | Length;
+		top?: null | Length;
+		bottom?: null | Length;
+		start?: null | Length;
+		end?: null | Length;
 	};
 	borders?: null | {
 		top?: null | Border<LineBorderType | ArtBorderType>;
@@ -81,9 +81,9 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 					"cellSpacing": ./${QNS.w}tblCellSpacing[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
 					"cellPadding": ./${QNS.w}tblCellMar/map {
 						"top": ./${QNS.w}top[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
-						"start": ./${QNS.w}start[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
+						"start": ./(${QNS.w}start|${QNS.w}left)[not(@${QNS.w}type = 'nil')][1]/@${QNS.w}w/docxml:length(., 'twip'),
 						"bottom": ./${QNS.w}bottom[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
-						"end": ./${QNS.w}end[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip')
+						"end": ./(${QNS.w}end|${QNS.w}right)[not(@${QNS.w}type = 'nil')][1]/@${QNS.w}w/docxml:length(., 'twip')
 					},
 					"columnBandingSize": ./${QNS.w}tblStyleColBandSize/@${QNS.w}val/number(),
 					"rowBandingSize": ./${QNS.w}tblStyleRowBandSize/@${QNS.w}val/number(),

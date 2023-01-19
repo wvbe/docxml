@@ -77,6 +77,25 @@ describe('Table formatting', () => {
 		},
 	);
 
+	describe('Legacy schema for cellPadding', () => {
+		test(
+			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:tblCellMar>
+					<w:left w:w="432" w:type="dxa" />
+					<w:right w:w="144" w:type="dxa" />
+				</w:tblCellMar>
+			</w:tblPr>`,
+			{
+				cellPadding: {
+					top: null,
+					bottom: null,
+					start: twip(432),
+					end: twip(144),
+				},
+			},
+		);
+	});
+
 	describe('Setting table width to a "%" string', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
@@ -88,7 +107,7 @@ describe('Table formatting', () => {
 		);
 	});
 
-	describe('Setting table width to a "%" string', () => {
+	describe('Setting table width to an unannotated value', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
 				<w:tblW w:val="420" w:type="nil" />

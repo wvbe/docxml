@@ -1,4 +1,5 @@
 import { create } from '../utilities/dom.ts';
+import { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { type ArtBorderType, type Border, type LineBorderType } from './shared-properties.ts';
@@ -17,6 +18,12 @@ export type TableProperties = {
 				length: '`${number}%' | string | number;
 				unit: null | 'nil' | 'auto' | 'dxa' | 'pct';
 		  };
+
+	/**
+	 * The distance with which this table is indented from the left page boundary.
+	 */
+	indentation?: null | Length;
+
 	/**
 	 * @todo rename to something more descriptive?
 	 */
@@ -51,6 +58,7 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 						"noHBand": ./@${QNS.w}noHBand/ooxml:is-on-off-enabled(.),
 						"noVBand": ./@${QNS.w}noVBand/ooxml:is-on-off-enabled(.)
 					},
+					"indentation": ./${QNS.w}tblInd/@${QNS.w}w/ooxml:universal-size(., 'twip'),
 					"borders": ./${QNS.w}tblBorders/map {
 						"top": ./${QNS.w}top/ooxml:border(.),
 						"left": ./${QNS.w}left/ooxml:border(.),
@@ -97,6 +105,10 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
 				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
 				ooxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
+			} else (),
+			if (exists($indentation)) then element ${QNS.w}tblInd {
+				attribute ${QNS.w}w { $indentation('twip') },
+				attribute ${QNS.w}type { "dxa" }
 			} else ()
 		}`,
 		{
@@ -122,6 +134,7 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 						...tblpr.borders,
 				  }
 				: null,
+			indentation: tblpr.indentation || null,
 		},
 	);
 }

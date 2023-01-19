@@ -34,6 +34,7 @@ describe('Table formatting', () => {
 				<w:left w:val="dashed" w:sz="8" w:space="1" />
 				<w:insideH w:val="heartBalloon" w:sz="8" w:space="1" w:color="red" />
 			</w:tblBorders>
+			<w:tblInd w:w="100" w:type="dxa" />
 		</w:tblPr>`,
 		{
 			style: 'afkicken-van-de-opkikkers',
@@ -46,6 +47,7 @@ describe('Table formatting', () => {
 				noHBand: true,
 				noVBand: true,
 			},
+			indentation: pt(5),
 			borders: {
 				top: { type: null, width: opt(8), spacing: 1, color: 'red' },
 				right: { type: 'seattle', width: null, spacing: 1, color: 'red' },

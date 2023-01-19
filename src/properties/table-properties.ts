@@ -45,6 +45,15 @@ export type TableProperties = {
 		noHBand?: null | boolean;
 		noVBand?: null | boolean;
 	};
+	/**
+	 * The cell padding, space between its border and its contents, for each side of a cell.
+	 */
+	cellPadding?: null | {
+		top: null | Length;
+		bottom: null | Length;
+		start: null | Length;
+		end: null | Length;
+	};
 	borders?: null | {
 		top?: null | Border<LineBorderType | ArtBorderType>;
 		left?: null | Border<LineBorderType | ArtBorderType>;
@@ -70,6 +79,12 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 					},
 					"indentation": ./${QNS.w}tblInd[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
 					"cellSpacing": ./${QNS.w}tblCellSpacing[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
+					"cellPadding": ./${QNS.w}tblCellMar/map {
+						"top": ./${QNS.w}top[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
+						"start": ./${QNS.w}start[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
+						"bottom": ./${QNS.w}bottom[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
+						"end": ./${QNS.w}end[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip')
+					},
 					"columnBandingSize": ./${QNS.w}tblStyleColBandSize/@${QNS.w}val/number(),
 					"rowBandingSize": ./${QNS.w}tblStyleRowBandSize/@${QNS.w}val/number(),
 					"borders": ./${QNS.w}tblBorders/map {
@@ -110,6 +125,24 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 				if ($look('noHBand')) then attribute ${QNS.w}noHBand { "1" } else (),
 				if ($look('noVBand')) then attribute ${QNS.w}noVBand { "1"}  else ()
 			} else (),
+			if (exists($cellPadding)) then element ${QNS.w}tblCellMar {
+				if (exists($cellPadding('top'))) then element ${QNS.w}top {
+					attribute ${QNS.w}w { $cellPadding('top')('twip') },
+					attribute ${QNS.w}type { "dxa" }
+				} else (),
+				if (exists($cellPadding('bottom'))) then element ${QNS.w}bottom {
+					attribute ${QNS.w}w { $cellPadding('bottom')('twip') },
+					attribute ${QNS.w}type { "dxa" }
+				} else (),
+				if (exists($cellPadding('start'))) then element ${QNS.w}start {
+					attribute ${QNS.w}w { $cellPadding('start')('twip') },
+					attribute ${QNS.w}type { "dxa" }
+				} else (),
+				if (exists($cellPadding('end'))) then element ${QNS.w}end {
+					attribute ${QNS.w}w { $cellPadding('end')('twip') },
+					attribute ${QNS.w}type { "dxa" }
+				} else ()
+			} else (),
 			if (exists($borders)) then element ${QNS.w}tblBorders {
 				(: In sequence order: :)
 				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
@@ -146,6 +179,7 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 							unit: 'dxa',
 					  }
 					: tblpr.width || null,
+			cellPadding: tblpr.cellPadding || null,
 			borders: tblpr.borders
 				? {
 						top: null,

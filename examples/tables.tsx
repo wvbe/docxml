@@ -4,6 +4,12 @@ import Docx, { Cell, cm, Paragraph, pt, Row, Table } from '../mod.ts';
 await Docx.fromJsx(
 	<Table
 		columnWidths={[cm(3), cm(5)]}
+		cellPadding={{
+			top: pt(6),
+			bottom: pt(6),
+			start: pt(6),
+			end: pt(6),
+		}}
 		borders={{
 			bottom: { color: '666666', width: pt(1), type: 'single' },
 			left: { color: '666666', width: pt(1), type: 'single' },

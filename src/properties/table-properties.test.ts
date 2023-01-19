@@ -27,6 +27,12 @@ describe('Table formatting', () => {
 				w:noHBand="1"
 				w:noVBand="1"
 			/>
+			<w:tblCellMar>
+				<w:top w:w="720" w:type="dxa" />
+				<w:start w:w="432" w:type="dxa" />
+				<w:bottom w:w="0" w:type="dxa" />
+				<w:end w:w="144" w:type="dxa" />
+			</w:tblCellMar>
 			<w:tblBorders>
 				<w:top w:sz="8" w:space="1" w:color="red" />
 				<w:right w:val="seattle" w:space="1" w:color="red" />
@@ -52,6 +58,12 @@ describe('Table formatting', () => {
 			},
 			indentation: pt(5),
 			cellSpacing: pt(3),
+			cellPadding: {
+				top: twip(720),
+				bottom: twip(0),
+				start: twip(432),
+				end: twip(144),
+			},
 			rowBandingSize: 2,
 			columnBandingSize: 3,
 			borders: {

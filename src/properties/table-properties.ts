@@ -23,6 +23,10 @@ export type TableProperties = {
 	 */
 	indentation?: null | Length;
 	/**
+	 * The distance between cells.
+	 */
+	cellSpacing?: null | Length;
+	/**
 	 * If banding is used, specifies how many rows constitute one banded group.
 	 */
 	rowBandingSize?: null | number;
@@ -65,6 +69,7 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 						"noVBand": ./@${QNS.w}noVBand/ooxml:is-on-off-enabled(.)
 					},
 					"indentation": ./${QNS.w}tblInd/@${QNS.w}w/ooxml:universal-size(., 'twip'),
+					"cellSpacing": ./${QNS.w}tblCellSpacing/@${QNS.w}w/ooxml:universal-size(., 'twip'),
 					"columnBandingSize": ./${QNS.w}tblStyleColBandSize/@${QNS.w}val/number(),
 					"rowBandingSize": ./${QNS.w}tblStyleRowBandSize/@${QNS.w}val/number(),
 					"borders": ./${QNS.w}tblBorders/map {
@@ -118,6 +123,10 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 				attribute ${QNS.w}w { $indentation('twip') },
 				attribute ${QNS.w}type { "dxa" }
 			} else (),
+			if (exists($cellSpacing)) then element ${QNS.w}tblCellSpacing {
+				attribute ${QNS.w}w { $cellSpacing('twip') },
+				attribute ${QNS.w}type { "dxa" }
+			} else (),
 			if (exists($columnBandingSize)) then element ${QNS.w}tblStyleColBandSize {
 				attribute ${QNS.w}val { $columnBandingSize }
 			} else (),
@@ -149,6 +158,7 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 				  }
 				: null,
 			indentation: tblpr.indentation || null,
+			cellSpacing: tblpr.cellSpacing || null,
 			columnBandingSize: tblpr.columnBandingSize || null,
 			rowBandingSize: tblpr.rowBandingSize || null,
 		},

@@ -20,6 +20,7 @@ describe('Paragraph formatting', () => {
 			<w:pStyle w:val="Header" />
 			<w:spacing w:after="200" w:line="276" w:lineRule="auto" />
 			<w:outlineLvl w:val="3" />
+			<w:shd w:val="pct45" w:color="FFFF00" w:fill="B2A1C7" />
 			<w:pBdr>
 				<w:top w:val="single" w:sz="24" w:space="1" w:color="FF0000" />
 			</w:pBdr>
@@ -37,6 +38,11 @@ describe('Paragraph formatting', () => {
 			// This test fails due to a naming collision with the "style" property on TextProperties
 			style: 'Header',
 
+			shading: {
+				background: 'B2A1C7',
+				foreground: 'FFFF00',
+				pattern: 'pct45',
+			},
 			outlineLvl: 3,
 			spacing: {
 				before: null,

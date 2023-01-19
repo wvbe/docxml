@@ -5,8 +5,9 @@ import { Cell } from '../components/Cell.ts';
 import { Row } from '../components/Row.ts';
 import { Table } from '../components/Table.ts';
 import { Docx } from '../Docx.ts';
+import { parse } from './dom.ts';
 import { cm, emu, hpt, inch, pt, twip } from './length.ts';
-import { QNS } from './namespaces.ts';
+import { NamespaceUri, QNS } from './namespaces.ts';
 import { evaluateXPathToBoolean, evaluateXPathToMap, evaluateXPathToNumber } from './xquery.ts';
 
 describe('XQuery functions', () => {
@@ -34,6 +35,22 @@ describe('XQuery functions', () => {
 		expect(evaluateXPathToNumber(`docxml:cell-column(//${QNS.w}tc[1])`, dom)).toBe(0);
 		expect(evaluateXPathToNumber(`docxml:cell-column(//${QNS.w}tc[2])`, dom)).toBe(1);
 		expect(evaluateXPathToNumber(`docxml:cell-column(//${QNS.w}tc[3])`, dom)).toBe(3);
+	});
+
+	it('docxml:shading', () => {
+		const dom = parse(
+			`<x
+				xmlns:w="${NamespaceUri.w}"
+				w:fill="abc123"
+				w:color="def456"
+				w:val="thinDiagCross"
+			/>`,
+		);
+		expect(evaluateXPathToMap(`docxml:shading(/*)`, dom)).toEqual({
+			background: 'abc123',
+			foreground: 'def456',
+			pattern: 'thinDiagCross',
+		});
 	});
 
 	it('docxml:is-on-off-enabled', () => {

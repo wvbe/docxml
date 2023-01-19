@@ -32,6 +32,23 @@ registerXQueryModule(`
 		$val = ("on", "true", "1")
 	};
 
+	declare %public function docxml:shading($val) as map(*) {
+		$val/map {
+			"foreground": ./@${QNS.w}color/string(),
+			"background": ./@${QNS.w}fill/string(),
+			"pattern": ./@${QNS.w}val/string()
+		}
+	};
+
+	(: @TODO Test this function :)
+	declare %public function docxml:create-shading-element($obj as map(*)?) {
+		if (exists($obj)) then element ${QNS.w}shd {
+			if (exists($obj('foreground'))) then attribute ${QNS.w}color { $obj('foreground') } else (),
+			if (exists($obj('background'))) then attribute ${QNS.w}fill { $obj('background') } else (),
+			if (exists($obj('pattern'))) then attribute ${QNS.w}val { $obj('pattern') } else ()
+		} else ()
+	};
+
 	(: @TODO Test this function :)
 	declare %public function docxml:border($val) as map(*) {
 		$val/map {

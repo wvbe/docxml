@@ -3,7 +3,7 @@ import { type Length, twip } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../utilities/xquery.ts';
 import { type SectionProperties, sectionPropertiesToNode } from './section-properties.ts';
-import { type Border, type LineBorderType } from './shared-properties.ts';
+import { type Border, type LineBorderType, type Shading } from './shared-properties.ts';
 import {
 	type TextProperties,
 	textPropertiesFromNode,
@@ -51,6 +51,7 @@ export type ParagraphProperties = {
 		right?: null | Border<LineBorderType>;
 		between?: null | Border<LineBorderType>;
 	};
+	shading?: null | Shading;
 	listItem?: null | {
 		numbering?: null | number;
 		depth?: null | number;
@@ -100,6 +101,7 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 					"end": @${QNS.w}end/number(),
 					"endChars": @${QNS.w}endChars/number()
 				},
+				"shading": ./${QNS.w}shd/docxml:shading(.),
 				"borders": ./${QNS.w}pBdr/map {
 					"top": ./${QNS.w}top/docxml:border(.),
 					"left": ./${QNS.w}left/docxml:border(.),
@@ -191,7 +193,7 @@ export function paragraphPropertiesToNode(
 				if (exists($outlineLvl)) then element ${QNS.w}outlineLvl {
 					attribute ${QNS.w}val { $outlineLvl }
 				} else (),
-
+				if (exists($shading)) then docxml:create-shading-element($shading) else (),
 				if (exists($spacing)) then element ${QNS.w}spacing {
 					if (exists($spacing('before'))) then attribute ${QNS.w}before {
 						$spacing('before')
@@ -288,6 +290,7 @@ export function paragraphPropertiesToNode(
 						end: data.indentation.end?.twip || null,
 				  }
 				: null,
+			shading: data.shading || null,
 			spacing: data.spacing
 				? {
 						...data.spacing,

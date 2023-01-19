@@ -49,6 +49,7 @@ describe('Table conditional formatting', () => {
 				style: null,
 				spacing: null,
 				indentation: null,
+				shading: null,
 				borders: {
 					top: {
 						type: 'single',
@@ -104,6 +105,7 @@ describe('Table conditional formatting', () => {
 			cell: {
 				colSpan: 1,
 				rowSpan: 1,
+				shading: null,
 				borders: {
 					top: {
 						type: 'double',

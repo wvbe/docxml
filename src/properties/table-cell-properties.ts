@@ -2,12 +2,13 @@ import { create } from '../utilities/dom.ts';
 import { type Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { type Border, type LineBorderType } from './shared-properties.ts';
+import { type Border, type LineBorderType, type Shading } from './shared-properties.ts';
 
 export type TableCellProperties = {
 	colSpan?: null | number;
 	rowSpan?: null | number;
 	width?: null | Length;
+	shading?: null | Shading;
 	borders?: null | {
 		top?: null | Border<LineBorderType>;
 		start?: null | Border<LineBorderType>;
@@ -58,6 +59,7 @@ export function tableCellPropertiesFromNode(node?: Node | null): TableCellProper
 					"rowSpan": if ($rowEnd != $rowStart)
 						then $rowEnd - $rowStart
 						else 1,
+					"shading": ./${QNS.w}shd/docxml:shading(.),
 					"borders": ./${QNS.w}tcBorders/map {
 						"top": ./${QNS.w}top/docxml:border(.),
 						"start": ./${QNS.w}start/docxml:border(.),
@@ -95,6 +97,7 @@ export function tableCellPropertiesToNode(
 					attribute ${QNS.w}val { "restart" }
 				} else ()
 			),
+			if (exists($shading)) then docxml:create-shading-element($shading) else (),
 			if (exists($borders)) then element ${QNS.w}tcBorders {
 				(: In sequence order: :)
 				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
@@ -112,6 +115,7 @@ export function tableCellPropertiesToNode(
 			colSpan: tcpr.colSpan || 1,
 			rowSpan: tcpr.rowSpan || 1,
 			width: tcpr.width ? Math.round(tcpr.width.twip) : null,
+			shading: tcpr.shading || null,
 			borders: tcpr.borders
 				? {
 						top: null,

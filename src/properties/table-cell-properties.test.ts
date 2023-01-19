@@ -31,6 +31,7 @@ describe('Table cell formatting', () => {
 				<w:tcPr>
 					<w:tcW w:w="1701" w:type="dxa" />
 					<w:gridSpan w:val="2" />
+					<w:shd w:val="pct45" w:color="FFFF00" w:fill="B2A1C7" />
 					<w:vMerge w:val="restart" />
 					<w:tcBorders>
 						<w:top w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
@@ -86,6 +87,11 @@ describe('Table cell formatting', () => {
 	test(evaluateXPathToFirstNode(`//*[@id="colspanning-cell"]/w:tcPr`, dom) as Node, {
 		colSpan: 2,
 		rowSpan: 2,
+		shading: {
+			background: 'B2A1C7',
+			foreground: 'FFFF00',
+			pattern: 'pct45',
+		},
 		borders: {
 			top: {
 				type: 'double',

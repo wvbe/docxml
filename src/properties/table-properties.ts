@@ -18,12 +18,18 @@ export type TableProperties = {
 				length: '`${number}%' | string | number;
 				unit: null | 'nil' | 'auto' | 'dxa' | 'pct';
 		  };
-
 	/**
 	 * The distance with which this table is indented from the left page boundary.
 	 */
 	indentation?: null | Length;
-
+	/**
+	 * If banding is used, specifies how many rows constitute one banded group.
+	 */
+	rowBandingSize?: null | number;
+	/**
+	 * If banding is used, specifies how many columns constitute one banded group.
+	 */
+	columnBandingSize?: null | number;
 	/**
 	 * @todo rename to something more descriptive?
 	 */
@@ -59,6 +65,8 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 						"noVBand": ./@${QNS.w}noVBand/ooxml:is-on-off-enabled(.)
 					},
 					"indentation": ./${QNS.w}tblInd/@${QNS.w}w/ooxml:universal-size(., 'twip'),
+					"columnBandingSize": ./${QNS.w}tblStyleColBandSize/@${QNS.w}val/number(),
+					"rowBandingSize": ./${QNS.w}tblStyleRowBandSize/@${QNS.w}val/number(),
 					"borders": ./${QNS.w}tblBorders/map {
 						"top": ./${QNS.w}top/ooxml:border(.),
 						"left": ./${QNS.w}left/ooxml:border(.),
@@ -109,6 +117,12 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			if (exists($indentation)) then element ${QNS.w}tblInd {
 				attribute ${QNS.w}w { $indentation('twip') },
 				attribute ${QNS.w}type { "dxa" }
+			} else (),
+			if (exists($columnBandingSize)) then element ${QNS.w}tblStyleColBandSize {
+				attribute ${QNS.w}val { $columnBandingSize }
+			} else (),
+			if (exists($rowBandingSize)) then element ${QNS.w}tblStyleRowBandSize {
+				attribute ${QNS.w}val { $rowBandingSize }
 			} else ()
 		}`,
 		{
@@ -135,6 +149,8 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 				  }
 				: null,
 			indentation: tblpr.indentation || null,
+			columnBandingSize: tblpr.columnBandingSize || null,
+			rowBandingSize: tblpr.rowBandingSize || null,
 		},
 	);
 }

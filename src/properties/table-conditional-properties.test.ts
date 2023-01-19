@@ -97,6 +97,8 @@ describe('Table conditional formatting', () => {
 					insideV: null,
 				},
 				width: null,
+				columnBandingSize: null,
+				rowBandingSize: null,
 			},
 			cell: {
 				colSpan: 1,

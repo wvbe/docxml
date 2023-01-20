@@ -2,6 +2,16 @@ import { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
+import {
+	ParagraphProperties,
+	paragraphPropertiesFromNode,
+	paragraphPropertiesToNode,
+} from '../properties/paragraph-properties.ts';
+import {
+	TextProperties,
+	textPropertiesFromNode,
+	textPropertiesToNode,
+} from '../properties/text-properties.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
@@ -39,8 +49,10 @@ type AbstractNumbering = {
 			| 'upperRoman'
 			| 'none'
 			| null;
-		text: string | null;
+		affix: string | null;
 		alignment: 'left' | 'right' | 'center' | 'both' | null;
+		paragraph?: ParagraphProperties | null;
+		text?: TextProperties | null;
 	}>;
 };
 
@@ -124,12 +136,14 @@ export class Numbering extends XmlFile {
 									if (exists($lvl('format'))) then element ${QNS.w}numFmt {
 										attribute ${QNS.w}val { $lvl('format') }
 									} else (),
-									if (exists($lvl('text'))) then element ${QNS.w}lvlText {
-										attribute ${QNS.w}val { $lvl('text') }
+									if (exists($lvl('affix'))) then element ${QNS.w}lvlText {
+										attribute ${QNS.w}val { $lvl('affix') }
 									} else (),
 									if (exists($lvl('alignment'))) then element ${QNS.w}lvlJc {
 										attribute ${QNS.w}val { $lvl('alignment') }
-									} else ()
+									} else (),
+									$lvl('pPr'),
+									$lvl('rPr')
 								}
 						},
 					for $concrete in array:flatten($concretes)
@@ -142,7 +156,14 @@ export class Numbering extends XmlFile {
 				}
 			</w:numbering>`,
 			{
-				abstracts: this.abstracts.array(),
+				abstracts: this.abstracts.array().map((abstract) => ({
+					...abstract,
+					levels: abstract.levels.map(({ paragraph, text, ...level }) => ({
+						...level,
+						pPr: paragraph ? paragraphPropertiesToNode(paragraph) : null,
+						rPr: text ? textPropertiesToNode(text) : null,
+					})),
+				})),
 				concretes: this.concretes.array(),
 			},
 			true,
@@ -153,7 +174,12 @@ export class Numbering extends XmlFile {
 		const instance = new Numbering(location);
 		const { concretes, abstracts } = evaluateXPathToMap<{
 			concretes: ConcreteNumbering[];
-			abstracts: AbstractNumbering[];
+			abstracts: (Omit<AbstractNumbering, 'levels'> & {
+				levels: ((AbstractNumbering['levels'] extends Array<infer P> ? P : never) & {
+					pPr: Element | null;
+					rPr: Element | null;
+				})[];
+			})[];
 		}>(
 			`map {
 				"abstracts": array { /*/${QNS.w}abstractNum/map {
@@ -162,8 +188,10 @@ export class Numbering extends XmlFile {
 					"levels": array {./${QNS.w}lvl/map {
 						"start": ./${QNS.w}start/@${QNS.w}val/number(),
 						"format": ./${QNS.w}numFmt/@${QNS.w}val/string(),
-						"text": ./${QNS.w}lvlText/@${QNS.w}val/string(),
-						"alignment": ./${QNS.w}lvlJc/@${QNS.w}val/string()
+						"affix": ./${QNS.w}lvlText/@${QNS.w}val/string(),
+						"alignment": ./${QNS.w}lvlJc/@${QNS.w}val/string(),
+						"pPr": ./${QNS.w}pPr,
+						"rPr": ./${QNS.w}rPr
 					}}
 				}},
 				"concretes": array { /*/${QNS.w}num/map {
@@ -173,7 +201,16 @@ export class Numbering extends XmlFile {
 			}`,
 			dom,
 		);
-		abstracts.forEach((abstract) => instance.addAbstract(abstract));
+		abstracts.forEach((abstract) =>
+			instance.addAbstract({
+				...abstract,
+				levels: abstract.levels.map(({ pPr, rPr, ...level }) => ({
+					...level,
+					paragraph: paragraphPropertiesFromNode(pPr),
+					text: textPropertiesFromNode(rPr),
+				})),
+			}),
+		);
 		concretes.forEach((concrete) => instance.concretes.set(concrete.id, concrete));
 
 		return instance;

@@ -26,7 +26,7 @@ describe('Numbering', () => {
 					alignment: 'left',
 					format: 'decimal',
 					start: 3,
-					text: '%1.',
+					affix: '%1.',
 				},
 			],
 		});

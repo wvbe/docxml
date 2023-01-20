@@ -66,8 +66,10 @@ describe('Numbering', () => {
 	});
 
 	it('can parse', async () => {
-		const num = Numbering.fromNode(parse(serialize(await numbering.$$$toNode())), '');
-		expect(num).toEqual(numbering);
+		const xml1 = serialize(await numbering.$$$toNode());
+		const num = Numbering.fromNode(parse(xml1), '');
+		const xml2 = serialize(await num.$$$toNode());
+		expect(xml1).toBe(xml2);
 	});
 });
 

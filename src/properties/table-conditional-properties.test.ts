@@ -63,8 +63,6 @@ describe('Table conditional formatting', () => {
 					between: null,
 				},
 				listItem: null,
-				change: null,
-				pilcrow: null,
 			},
 			text: {
 				style: null,

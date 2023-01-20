@@ -1,6 +1,6 @@
 /** @jsx API.jsx */
 
-import API, { Paragraph, Section, cm } from '../mod.ts';
+import API, { cm, Paragraph, Section } from '../mod.ts';
 
 const api = API.fromNothing();
 

@@ -74,53 +74,51 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 	const data = node
 		? // deno-lint-ignore no-explicit-any
 		  evaluateXPathToMap<any>(
-				`
-			map {
-				"alignment": ${QNS.w}jc/@${QNS.w}val/string(),
-				"outlineLvl": ${QNS.w}outlineLvl/@${QNS.w}val/number(),
-				"style": ${QNS.w}pStyle/@${QNS.w}val/string(),
-				"spacing": ${QNS.w}spacing/map {
-					"before": @${QNS.w}before/number(),
-					"after": @${QNS.w}after/number(),
-					"line": @${QNS.w}line/number(),
-					"lineRule": @${QNS.w}lineRule/string(),
-					"afterAutoSpacing": @${QNS.w}afterAutoSpacing/docxml:is-on-off-enabled(.),
-					"beforeAutoSpacing": @${QNS.w}beforeAutoSpacing/docxml:is-on-off-enabled(.)
-				},
-				"indentation": ${QNS.w}ind/map {
-					"left": @${QNS.w}left/number(),
-					"leftChars": @${QNS.w}leftChars/number(),
-					"right": @${QNS.w}right/number(),
-					"rightChars": @${QNS.w}rightChars/number(),
-					"hanging": @${QNS.w}hanging/number(),
-					"hangingChars": @${QNS.w}hangingChars/number(),
-					"firstLine": @${QNS.w}firstLine/number(),
-					"firstLineChars": @${QNS.w}firstLineChars/number(),
-					"start": @${QNS.w}start/number(),
-					"startChars": @${QNS.w}startChars/number(),
-					"end": @${QNS.w}end/number(),
-					"endChars": @${QNS.w}endChars/number()
-				},
-				"shading": ./${QNS.w}shd/docxml:shading(.),
-				"borders": ./${QNS.w}pBdr/map {
-					"top": ./${QNS.w}top/docxml:border(.),
-					"left": ./${QNS.w}left/docxml:border(.),
-					"bottom": ./${QNS.w}bottom/docxml:border(.),
-					"right": ./${QNS.w}right/docxml:border(.),
-					"between": ./${QNS.w}between/docxml:border(.)
-				},
-				"listItem": ./${QNS.w}numPr/map {
-					"numbering": ./${QNS.w}numId/@${QNS.w}val/number(),
-					"depth": ./${QNS.w}ilvl/@${QNS.w}val/number()
-				},
-				"change": ${QNS.w}pPrChange/map {
-					"id": @${QNS.w}id/string(),
-					"author": @${QNS.w}author/string(),
-					"date": @${QNS.w}date/string(),
-					"_node": ./${QNS.w}pPr
-				}
-			}
-		`,
+				`map {
+					"alignment": ${QNS.w}jc/@${QNS.w}val/string(),
+					"outlineLvl": ${QNS.w}outlineLvl/@${QNS.w}val/number(),
+					"style": ${QNS.w}pStyle/@${QNS.w}val/string(),
+					"spacing": ${QNS.w}spacing/map {
+						"before": @${QNS.w}before/number(),
+						"after": @${QNS.w}after/number(),
+						"line": @${QNS.w}line/number(),
+						"lineRule": @${QNS.w}lineRule/string(),
+						"afterAutoSpacing": @${QNS.w}afterAutoSpacing/docxml:is-on-off-enabled(.),
+						"beforeAutoSpacing": @${QNS.w}beforeAutoSpacing/docxml:is-on-off-enabled(.)
+					},
+					"indentation": ${QNS.w}ind/map {
+						"left": @${QNS.w}left/number(),
+						"leftChars": @${QNS.w}leftChars/number(),
+						"right": @${QNS.w}right/number(),
+						"rightChars": @${QNS.w}rightChars/number(),
+						"hanging": @${QNS.w}hanging/number(),
+						"hangingChars": @${QNS.w}hangingChars/number(),
+						"firstLine": @${QNS.w}firstLine/number(),
+						"firstLineChars": @${QNS.w}firstLineChars/number(),
+						"start": @${QNS.w}start/number(),
+						"startChars": @${QNS.w}startChars/number(),
+						"end": @${QNS.w}end/number(),
+						"endChars": @${QNS.w}endChars/number()
+					},
+					"shading": ./${QNS.w}shd/docxml:shading(.),
+					"borders": ./${QNS.w}pBdr/map {
+						"top": ./${QNS.w}top/docxml:border(.),
+						"left": ./${QNS.w}left/docxml:border(.),
+						"bottom": ./${QNS.w}bottom/docxml:border(.),
+						"right": ./${QNS.w}right/docxml:border(.),
+						"between": ./${QNS.w}between/docxml:border(.)
+					},
+					"listItem": ./${QNS.w}numPr/map {
+						"numbering": ./${QNS.w}numId/@${QNS.w}val/number(),
+						"depth": ./${QNS.w}ilvl/@${QNS.w}val/number()
+					},
+					"change": ${QNS.w}pPrChange/map {
+						"id": @${QNS.w}id/string(),
+						"author": @${QNS.w}author/string(),
+						"date": @${QNS.w}date/string(),
+						"_node": ./${QNS.w}pPr
+					}
+				}`,
 				node,
 		  ) || {}
 		: {};
@@ -155,24 +153,30 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 	}
 
 	const rpr = node && evaluateXPathToFirstNode(`./${QNS.w}rPr`, node);
-	return {
-		...data,
-		pilcrow: rpr ? textPropertiesFromNode(rpr) : null,
-		change: data.change
-			? {
-					...data.change,
-					date: new Date(data.change.date),
-					...paragraphPropertiesFromNode(data.change._node),
-					_node: undefined,
-			  }
-			: null,
-	};
+
+	if (rpr) {
+		data.pilcrow = textPropertiesFromNode(rpr);
+	}
+	if (data.change) {
+		data.change = {
+			...data.change,
+			date: new Date(data.change.date),
+			...paragraphPropertiesFromNode(data.change._node),
+			_node: undefined,
+		};
+	} else {
+		delete data.change;
+	}
+	return data;
 }
 
 export function paragraphPropertiesToNode(
 	data: ParagraphProperties = {},
 	sectionProperties: SectionProperties | null = null,
-): Node {
+): Node | null {
+	if (!Object.keys(data).length && !sectionProperties) {
+		return null;
+	}
 	return create(
 		`
 			element ${QNS.w}pPr {

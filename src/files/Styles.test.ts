@@ -56,7 +56,6 @@ describe('Styles', () => {
 			`<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 				<w:latentStyles w:defLockedState="0" w:defUIPriority="99" w:defSemiHidden="0" w:defUnhideWhenUsed="0" w:defQFormat="0" w:count="1"/>
 				<w:style w:type="table" w:styleId="test">
-					<w:pPr/>
 					<w:tblPr>
 						<w:tblBorders>
 							<w:top w:color="000000"/>

@@ -8,7 +8,7 @@ import { Docx } from '../Docx.ts';
 import { parse } from './dom.ts';
 import { cm, emu, hpt, inch, pt, twip } from './length.ts';
 import { NamespaceUri, QNS } from './namespaces.ts';
-import { evaluateXPathToBoolean, evaluateXPathToMap, evaluateXPathToNumber } from './xquery.ts';
+import { evaluateXPath, evaluateXPathToMap, evaluateXPathToNumber } from './xquery.ts';
 
 describe('XQuery functions', () => {
 	it('docxml:length', () => {
@@ -37,7 +37,7 @@ describe('XQuery functions', () => {
 		expect(evaluateXPathToNumber(`docxml:cell-column(//${QNS.w}tc[3])`, dom)).toBe(3);
 	});
 
-	it('docxml:shading', () => {
+	it('docxml:ct-shd', () => {
 		const dom = parse(
 			`<x
 				xmlns:w="${NamespaceUri.w}"
@@ -46,19 +46,33 @@ describe('XQuery functions', () => {
 				w:val="thinDiagCross"
 			/>`,
 		);
-		expect(evaluateXPathToMap(`docxml:shading(/*)`, dom)).toEqual({
+		expect(evaluateXPathToMap(`docxml:ct-shd(/*)`, dom)).toEqual({
 			background: 'abc123',
 			foreground: 'def456',
 			pattern: 'thinDiagCross',
 		});
 	});
 
-	it('docxml:is-on-off-enabled', () => {
-		expect(evaluateXPathToBoolean(`docxml:is-on-off-enabled("true")`)).toBeTruthy();
-		expect(evaluateXPathToBoolean(`docxml:is-on-off-enabled("1")`)).toBeTruthy();
-		expect(evaluateXPathToBoolean(`docxml:is-on-off-enabled("on")`)).toBeTruthy();
-		expect(evaluateXPathToBoolean(`docxml:is-on-off-enabled("TRUE")`)).toBeFalsy();
-		expect(evaluateXPathToBoolean(`docxml:is-on-off-enabled("false")`)).toBeFalsy();
+	it('docxml:ct-on-off', () => {
+		const dom = parse(
+			`<x xmlns:w="${NamespaceUri.w}">
+				<a />
+				<b w:val="efwrgtr" />
+				<c w:val="true" />
+			</x>`,
+		);
+		expect(evaluateXPath(`docxml:ct-on-off(/x/a)`, dom)).toBe(true);
+		expect(evaluateXPath(`docxml:ct-on-off(/x/b)`, dom)).toBe(false);
+		expect(evaluateXPath(`docxml:ct-on-off(/x/c)`, dom)).toBe(true);
+		expect(evaluateXPath(`docxml:ct-on-off(/x/d)`, dom)).toBe(false);
+	});
+
+	it('docxml:st-on-off', () => {
+		expect(evaluateXPath(`docxml:st-on-off("true")`)).toBe(true);
+		expect(evaluateXPath(`docxml:st-on-off("1")`)).toBe(true);
+		expect(evaluateXPath(`docxml:st-on-off("on")`)).toBe(true);
+		expect(evaluateXPath(`docxml:st-on-off("TRUE")`)).toBe(false);
+		expect(evaluateXPath(`docxml:st-on-off("false")`)).toBe(false);
 	});
 });
 

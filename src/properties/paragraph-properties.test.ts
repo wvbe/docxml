@@ -49,8 +49,8 @@ describe('Paragraph formatting', () => {
 				after: twip(200),
 				line: twip(276),
 				lineRule: 'auto',
-				afterAutoSpacing: null,
-				beforeAutoSpacing: null,
+				afterAutoSpacing: false,
+				beforeAutoSpacing: false,
 			},
 			borders: {
 				top: {

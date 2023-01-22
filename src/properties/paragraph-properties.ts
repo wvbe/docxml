@@ -83,8 +83,8 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 						"after": @${QNS.w}after/number(),
 						"line": @${QNS.w}line/number(),
 						"lineRule": @${QNS.w}lineRule/string(),
-						"afterAutoSpacing": @${QNS.w}afterAutoSpacing/docxml:is-on-off-enabled(.),
-						"beforeAutoSpacing": @${QNS.w}beforeAutoSpacing/docxml:is-on-off-enabled(.)
+						"afterAutoSpacing": docxml:st-on-off(@${QNS.w}afterAutoSpacing),
+						"beforeAutoSpacing": docxml:st-on-off(@${QNS.w}beforeAutoSpacing)
 					},
 					"indentation": ${QNS.w}ind/map {
 						"left": @${QNS.w}left/number(),
@@ -100,13 +100,13 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 						"end": @${QNS.w}end/number(),
 						"endChars": @${QNS.w}endChars/number()
 					},
-					"shading": ./${QNS.w}shd/docxml:shading(.),
+					"shading": ./${QNS.w}shd/docxml:ct-shd(.),
 					"borders": ./${QNS.w}pBdr/map {
-						"top": ./${QNS.w}top/docxml:border(.),
-						"left": ./${QNS.w}left/docxml:border(.),
-						"bottom": ./${QNS.w}bottom/docxml:border(.),
-						"right": ./${QNS.w}right/docxml:border(.),
-						"between": ./${QNS.w}between/docxml:border(.)
+						"top": docxml:ct-border(${QNS.w}top),
+						"left": docxml:ct-border(${QNS.w}left),
+						"bottom": docxml:ct-border(${QNS.w}bottom),
+						"right": docxml:ct-border(${QNS.w}right),
+						"between": docxml:ct-border(${QNS.w}between)
 					},
 					"listItem": ./${QNS.w}numPr/map {
 						"numbering": ./${QNS.w}numId/@${QNS.w}val/number(),
@@ -197,7 +197,7 @@ export function paragraphPropertiesToNode(
 				if (exists($outlineLvl)) then element ${QNS.w}outlineLvl {
 					attribute ${QNS.w}val { $outlineLvl }
 				} else (),
-				if (exists($shading)) then docxml:create-shading-element($shading) else (),
+				docxml:ct-shd(fn:QName("${NamespaceUri.w}", "shd"), $shading),
 				if (exists($spacing)) then element ${QNS.w}spacing {
 					if (exists($spacing('before'))) then attribute ${QNS.w}before {
 						$spacing('before')
@@ -260,11 +260,11 @@ export function paragraphPropertiesToNode(
 
 				if (exists($borders)) then element ${QNS.w}pBdr {
 					(: In sequence order: :)
-					docxml:create-border-element(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
-					docxml:create-border-element(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
-					docxml:create-border-element(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
-					docxml:create-border-element(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
-					docxml:create-border-element(fn:QName("${NamespaceUri.w}", "between"), $borders('between'))
+					docxml:ct-border(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
+					docxml:ct-border(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
+					docxml:ct-border(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
+					docxml:ct-border(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
+					docxml:ct-border(fn:QName("${NamespaceUri.w}", "between"), $borders('between'))
 				} else (),
 
 				$rpr,

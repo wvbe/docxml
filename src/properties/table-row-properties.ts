@@ -2,60 +2,35 @@ import { create } from '../utilities/dom.ts';
 import { type Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { type Border, type LineBorderType, type Shading } from './shared-properties.ts';
 
-export type TableCellProperties = {
-	colSpan?: null | number;
-	rowSpan?: null | number;
-	width?: null | Length;
-	shading?: null | Shading;
-	borders?: null | {
-		top?: null | Border<LineBorderType>;
-		start?: null | Border<LineBorderType>;
-		bottom?: null | Border<LineBorderType>;
-		end?: null | Border<LineBorderType>;
-		insideH?: null | Border<LineBorderType>;
-		insideV?: null | Border<LineBorderType>;
-		/**
-		 * Diagonally from top-left to bottom-right. Like a backward slash.
-		 */
-		tl2br?: null | Border<LineBorderType>;
-		/**
-		 * Diagonally from top-right to bottom-left. Like a forward slash.
-		 */
-		tr2bl?: null | Border<LineBorderType>;
-	};
+export type TableRowProperties = {
+	/**
+	 * Specifies that the current row should be repeated at the top each new page on which the table
+	 * is displayed. This can be specified for multiple rows to generate a multi-row header. Note
+	 * that if the row is not the first row, then the property will be ignored.
+	 */
+	isHeaderRow?: null | boolean;
+	/**
+	 * If `true`, it prevents the contents of the row from breaking across multiple pages by moving
+	 * the start of the row to the start of a new page. If the contents cannot fit on a single page,
+	 * the row will start on a new page and flow onto multiple pages.
+	 */
+	isUnsplittable?: null | boolean;
+	/**
+	 * Specifies the height of the row. If omitted, the row is automatically resized to fit the content.
+	 */
+	height?: null | Length;
+	/**
+	 * The distance between cells.
+	 */
+	cellSpacing?: null | Length;
 };
 
-export function tableCellPropertiesFromNode(node?: Node | null): TableCellProperties {
+export function tableCellPropertiesFromNode(node?: Node | null): TableRowProperties {
 	return node
-		? evaluateXPathToMap<TableCellProperties>(
-				`
-				let $colStart := docxml:cell-column(.)
-
-				let $rowStart := count(../../preceding-sibling::${QNS.w}tr)
-
-				(: The first next row that contains a new cell in this column :)
-				let $firstNextRow := ../../following-sibling::${QNS.w}tr[
-					child::${QNS.w}tc[
-						docxml:cell-column(.) = $colStart and
-						not(
-							./${QNS.w}tcPr/${QNS.w}vMerge[
-								@${QNS.w}val = "continue" or
-								not(./@${QNS.w}val)
-							]
-						)
-					]
-				][1]
-
-				let $rowEnd := if ($firstNextRow)
-					then count($firstNextRow/preceding-sibling::${QNS.w}tr)
-					else count(../../../${QNS.w}tr)
-
-				return map {
-					"colSpan": if (./${QNS.w}gridSpan)
-						then ./${QNS.w}gridSpan/@${QNS.w}val/number()
-						else 1,
+		? evaluateXPathToMap<TableRowProperties>(
+				`map {
+					"isHeaderRow": docxml:ct-on-off(./${QNS.w}tblHeader),
 					"rowSpan": if ($rowEnd != $rowStart)
 						then $rowEnd - $rowStart
 						else 1,
@@ -70,15 +45,14 @@ export function tableCellPropertiesFromNode(node?: Node | null): TableCellProper
 						"insideH": docxml:ct-border(${QNS.w}insideH),
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					}
-				}
-				`,
+				}`,
 				node,
 		  )
 		: {};
 }
 
 export function tableCellPropertiesToNode(
-	tcpr: TableCellProperties = {},
+	tcpr: TableRowProperties = {},
 	asRepeatingNode: boolean,
 ): Node {
 	return create(

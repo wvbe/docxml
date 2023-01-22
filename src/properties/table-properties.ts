@@ -70,12 +70,12 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 				`map {
 					"style": ./${QNS.w}tblStyle/@${QNS.w}val/string(),
 					"look": ./${QNS.w}tblLook/map {
-						"firstColumn": ./@${QNS.w}firstColumn/docxml:is-on-off-enabled(.),
-						"lastColumn": ./@${QNS.w}lastColumn/docxml:is-on-off-enabled(.),
-						"firstRow": ./@${QNS.w}firstRow/docxml:is-on-off-enabled(.),
-						"lastRow": ./@${QNS.w}lastRow/docxml:is-on-off-enabled(.),
-						"noHBand": ./@${QNS.w}noHBand/docxml:is-on-off-enabled(.),
-						"noVBand": ./@${QNS.w}noVBand/docxml:is-on-off-enabled(.)
+						"firstColumn": docxml:st-on-off(@${QNS.w}firstColumn),
+						"lastColumn": docxml:st-on-off(@${QNS.w}lastColumn),
+						"firstRow": docxml:st-on-off(@${QNS.w}firstRow),
+						"lastRow": docxml:st-on-off(@${QNS.w}lastRow),
+						"noHBand": docxml:st-on-off(@${QNS.w}noHBand),
+						"noVBand": docxml:st-on-off(@${QNS.w}noVBand)
 					},
 					"indentation": ./${QNS.w}tblInd[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
 					"cellSpacing": ./${QNS.w}tblCellSpacing[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
@@ -88,12 +88,12 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 					"columnBandingSize": ./${QNS.w}tblStyleColBandSize/@${QNS.w}val/number(),
 					"rowBandingSize": ./${QNS.w}tblStyleRowBandSize/@${QNS.w}val/number(),
 					"borders": ./${QNS.w}tblBorders/map {
-						"top": ./${QNS.w}top/docxml:border(.),
-						"left": ./${QNS.w}left/docxml:border(.),
-						"bottom": ./${QNS.w}bottom/docxml:border(.),
-						"right": ./${QNS.w}right/docxml:border(.),
-						"insideH": ./${QNS.w}insideH/docxml:border(.),
-						"insideV": ./${QNS.w}insideV/docxml:border(.)
+						"top": docxml:ct-border(${QNS.w}top),
+						"left": docxml:ct-border(${QNS.w}left),
+						"bottom": docxml:ct-border(${QNS.w}bottom),
+						"right": docxml:ct-border(${QNS.w}right),
+						"insideH": docxml:ct-border(${QNS.w}insideH),
+						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
 					"width": ./${QNS.w}tblW/map {
 						"length": ./@${QNS.w}val/string(),
@@ -145,12 +145,12 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			} else (),
 			if (exists($borders)) then element ${QNS.w}tblBorders {
 				(: In sequence order: :)
-				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
-				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
-				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
-				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
-				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
-				docxml:create-border-element(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
+				docxml:ct-border(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
+				docxml:ct-border(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
+				docxml:ct-border(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
+				docxml:ct-border(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
+				docxml:ct-border(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
+				docxml:ct-border(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
 			} else (),
 			if (exists($indentation)) then element ${QNS.w}tblInd {
 				attribute ${QNS.w}w { $indentation('twip') },

@@ -94,7 +94,7 @@ export class Settings extends XmlFile implements SettingsI {
 
 		const settings = evaluateXPathToMap<SettingsI>(
 			`/${QNS.w}settings/map {
-				"isTrackChangesEnabled": docxml:is-on-off-enabled(./${QNS.w}trackChanges/@${QNS.w}val)
+				"isTrackChangesEnabled": docxml:ct-on-off(./${QNS.w}trackChanges)
 			}`,
 			await archive.readXml(location),
 		);

@@ -28,11 +28,34 @@ registerXQueryModule(`
 		)
 	};
 
-	declare %public function docxml:is-on-off-enabled($val) as xs:boolean {
+	(:
+		Correlates with the ST_OnOff simple type. In short,
+		- If $val is "on", "true" or "1", value is TRUE
+		- Any other value means FALSE
+	:)
+	declare %public function docxml:st-on-off($val) as xs:boolean {
 		$val = ("on", "true", "1")
 	};
 
-	declare %public function docxml:shading($val) as map(*) {
+	(:
+		Correlates with the CT_OnOff complex type. In short;
+		- If the element does not exist, value is FALSE
+		- If the element exists but has no @val, defaults to value TRUE
+		- If the element @val is set to "on", "true" or "1", value is TRUE
+		- Any other value of @val means FALSE
+	:)
+	declare %public function docxml:ct-on-off($val) as xs:boolean {
+		if (not(exists($val)))
+			then false()
+			else if (not($val/@${QNS.w}val))
+				then true()
+				else docxml:st-on-off($val/@${QNS.w}val)
+	};
+
+	(:
+		Correlates with the CT_Shd complex type. Returns a map of TypeScript shape "Shading".
+	:)
+	declare %public function docxml:ct-shd($val) as map(*)? {
 		$val/map {
 			"foreground": ./@${QNS.w}color/string(),
 			"background": ./@${QNS.w}fill/string(),
@@ -41,16 +64,20 @@ registerXQueryModule(`
 	};
 
 	(: @TODO Test this function :)
-	declare %public function docxml:create-shading-element($obj as map(*)?) {
-		if (exists($obj)) then element ${QNS.w}shd {
-			if (exists($obj('foreground'))) then attribute ${QNS.w}color { $obj('foreground') } else (),
-			if (exists($obj('background'))) then attribute ${QNS.w}fill { $obj('background') } else (),
-			if (exists($obj('pattern'))) then attribute ${QNS.w}val { $obj('pattern') } else ()
+	declare %public function docxml:ct-shd($name as xs:QName, $data as map(*)?) {
+		if (exists($data)) then element {$name} {
+			if (exists($data('foreground'))) then attribute ${QNS.w}color { $data('foreground') } else (),
+			if (exists($data('background'))) then attribute ${QNS.w}fill { $data('background') } else (),
+			if (exists($data('pattern'))) then attribute ${QNS.w}val { $data('pattern') } else ()
 		} else ()
 	};
 
-	(: @TODO Test this function :)
-	declare %public function docxml:border($val) as map(*) {
+	(:
+		Correlates with the CT_Border complex type.
+
+		@TODO Test this function
+	:)
+	declare %public function docxml:ct-border($val) as map(*)? {
 		$val/map {
 			"type": ./@${QNS.w}val/string(),
 			"width": if (exists(./@${QNS.w}sz))
@@ -63,13 +90,17 @@ registerXQueryModule(`
 		}
 	};
 
-	(: @TODO Test this function :)
-	declare %public function docxml:create-border-element($name as xs:QName, $obj as map(*)?) {
-		if (exists($obj)) then element {$name} {
-			if ($obj('type')) then attribute ${QNS.w}val { $obj('type') } else (),
-			if (exists($obj('width'))) then attribute ${QNS.w}sz { $obj('width')('opt') } else (),
-			if (exists($obj('spacing'))) then attribute ${QNS.w}space { $obj('spacing') } else (),
-			if ($obj('color')) then attribute ${QNS.w}color { $obj('color') } else ()
+	(:
+		Creates a new element of the CT_Border complex type.
+
+		@TODO Test this function
+	:)
+	declare %public function docxml:ct-border($name as xs:QName, $data as map(*)?) {
+		if (exists($data)) then element {$name} {
+			if ($data('type')) then attribute ${QNS.w}val { $data('type') } else (),
+			if (exists($data('width'))) then attribute ${QNS.w}sz { $data('width')('opt') } else (),
+			if (exists($data('spacing'))) then attribute ${QNS.w}space { $data('spacing') } else (),
+			if ($data('color')) then attribute ${QNS.w}color { $data('color') } else ()
 		} else ()
 	};
 `);

@@ -3,6 +3,7 @@
 /examples/readme--*
 /examples/usage--*
 /node_modules
+/npm
 package-lock.json
 .DS_Store
 ~*.dotx

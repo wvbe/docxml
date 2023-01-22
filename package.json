@@ -1,6 +1,7 @@
 {
 	"scripts": {
-		"lint": "eslint . --ext .ts,.tsx"
+		"lint": "eslint . --ext .ts,.tsx",
+		"prepublishOnly": "echo 'This package cannot be published' && exit 1"
 	},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^5.30.0",

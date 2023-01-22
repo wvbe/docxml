@@ -59,11 +59,11 @@ export { jsx } from './src/utilities/jsx.ts';
 export { type Length, cm, emu, hpt, inch, opt, pt, twip } from './src/utilities/length.ts';
 
 // Archive component types
-export { type Comments as CommentsXml } from './src/files/Comments.ts';
-export { type ContentTypes as ContentTypesXml } from './src/files/ContentTypes.ts';
-export { type Footer as FooterXml, type Header as HeaderXml } from './src/files/HeaderFooter.ts';
-export { type Numbering as NumberingXml } from './src/files/Numbering.ts';
-export { type OfficeDocument as DocumentXml } from './src/files/OfficeDocument.ts';
-export { type Relationships as RelationshipsXml } from './src/files/Relationships.ts';
-export { type Settings as SettingsXml } from './src/files/Settings.ts';
-export { type Styles as StylesXml } from './src/files/Styles.ts';
+export { type CommentsXml } from './src/files/CommentsXml.ts';
+export { type ContentTypesXml } from './src/files/ContentTypesXml.ts';
+export { type DocumentXml } from './src/files/DocumentXml.ts';
+export { type FooterXml, type HeaderXml } from './src/files/HeaderFooterXml.ts';
+export { type NumberingXml } from './src/files/NumberingXml.ts';
+export { type RelationshipsXml } from './src/files/RelationshipsXml.ts';
+export { type SettingsXml } from './src/files/SettingsXml.ts';
+export { type StylesXml } from './src/files/StylesXml.ts';

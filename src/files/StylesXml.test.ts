@@ -1,11 +1,11 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { serialize } from '../utilities/dom.ts';
-import { Styles } from './Styles.ts';
+import { StylesXml } from './StylesXml.ts';
 
 describe('Styles', () => {
 	it('Serializes paragraph styles correctly', async () => {
-		const stylesXml = new Styles('test');
+		const stylesXml = new StylesXml('test');
 		stylesXml.add({
 			type: 'paragraph',
 			basedOn: 'derp',
@@ -32,7 +32,7 @@ describe('Styles', () => {
 	});
 
 	it('Serializes table styles and table conditional styles correctly', async () => {
-		const stylesXml = new Styles('test');
+		const stylesXml = new StylesXml('test');
 		stylesXml.add({
 			type: 'table',
 			id: 'test',
@@ -72,7 +72,7 @@ describe('Styles', () => {
 			</w:styles>`.replace(/\n|\t/g, ''),
 		);
 
-		const reparsed = (await Styles.fromDom(node, 'derp')).get('test');
+		const reparsed = (await StylesXml.fromDom(node, 'derp')).get('test');
 		expect(reparsed?.table?.conditions?.lastCol?.cell?.borders?.top).toEqual({
 			type: null,
 			width: null,

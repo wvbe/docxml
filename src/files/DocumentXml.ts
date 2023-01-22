@@ -10,28 +10,26 @@ import { createChildComponentsFromNodes } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
-import { Comments } from './Comments.ts';
-import { type HeaderFooterRoot, Footer, Header } from './HeaderFooter.ts';
-import { Numbering } from './Numbering.ts';
-import { File, Relationships, RelationshipType } from './Relationships.ts';
-import { Settings } from './Settings.ts';
-import { Styles } from './Styles.ts';
+import { CommentsXml } from './CommentsXml.ts';
+import { type HeaderFooterRoot, FooterXml, HeaderXml } from './HeaderFooterXml.ts';
+import { NumberingXml } from './NumberingXml.ts';
+import { File, RelationshipsXml, RelationshipType } from './RelationshipsXml.ts';
+import { SettingsXml } from './SettingsXml.ts';
+import { StylesXml } from './StylesXml.ts';
 
-export type OfficeDocumentChild = Paragraph | Table | Section;
+export type DocumentChild = Paragraph | Table | Section;
 
-export type OfficeDocumentRoot =
-	| OfficeDocumentChild
-	| OfficeDocumentChild[]
-	| Promise<OfficeDocumentChild[]>;
-export class OfficeDocument extends XmlFile {
+export type DocumentRoot = DocumentChild | DocumentChild[] | Promise<DocumentChild[]>;
+
+export class DocumentXml extends XmlFile {
 	public static contentType = FileMime.mainDocument;
 
-	public readonly relationships: Relationships;
-	#root: OfficeDocumentRoot | null = null;
+	public readonly relationships: RelationshipsXml;
+	#root: DocumentRoot | null = null;
 
 	public constructor(
 		location: string,
-		relationships = new Relationships(
+		relationships = new RelationshipsXml(
 			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
 		),
 	) {
@@ -45,63 +43,63 @@ export class OfficeDocument extends XmlFile {
 		});
 	}
 
-	#styles: Styles | null = null;
+	#styles: StylesXml | null = null;
 
 	/**
 	 * The API representing "styles.xml" and all the text/paragraph/table styles associated with this document.
 	 */
-	public get styles(): Styles {
+	public get styles(): StylesXml {
 		// @TODO Invalidate the cached _styles whenever that relationship changes.
 		if (!this.#styles) {
 			this.#styles = this.relationships.ensureRelationship(
 				RelationshipType.styles,
-				() => new Styles(FileLocation.styles),
+				() => new StylesXml(FileLocation.styles),
 			);
 		}
 		return this.#styles;
 	}
 
-	#settings: Settings | null = null;
+	#settings: SettingsXml | null = null;
 
 	/**
 	 * The API representing "settings.xml" and all the settings associated with this document.
 	 */
-	public get settings(): Settings {
+	public get settings(): SettingsXml {
 		// @TODO Invalidate the cached _settings whenever that relationship changes.
 		if (!this.#settings) {
 			this.#settings = this.relationships.ensureRelationship(
 				RelationshipType.settings,
-				() => new Settings(FileLocation.settings),
+				() => new SettingsXml(FileLocation.settings),
 			);
 		}
 		return this.#settings;
 	}
 
-	#comments: Comments | null = null;
+	#comments: CommentsXml | null = null;
 
 	/**
 	 * The API representing "comments.xml" and all the comments associated with this document.
 	 */
-	public get comments(): Comments {
+	public get comments(): CommentsXml {
 		if (!this.#comments) {
 			this.#comments = this.relationships.ensureRelationship(
 				RelationshipType.comments,
-				() => new Comments(FileLocation.comments),
+				() => new CommentsXml(FileLocation.comments),
 			);
 		}
 		return this.#comments;
 	}
 
-	#numbering: Numbering | null = null;
+	#numbering: NumberingXml | null = null;
 
 	/**
 	 * The API representing "numbering.xml" and all the numbering styles/schemes
 	 */
-	public get numbering(): Numbering {
+	public get numbering(): NumberingXml {
 		if (!this.#numbering) {
 			this.#numbering = this.relationships.ensureRelationship(
 				RelationshipType.numbering,
-				() => new Numbering(FileLocation.numbering),
+				() => new NumberingXml(FileLocation.numbering),
 			);
 		}
 		return this.#numbering;
@@ -110,17 +108,17 @@ export class OfficeDocument extends XmlFile {
 	/**
 	 * The components normalized from #root, which is potentially arrayed, promised, array promised etc.
 	 */
-	public get children(): Promise<OfficeDocumentChild[]> {
+	public get children(): Promise<DocumentChild[]> {
 		if (!this.#root) {
 			return Promise.resolve([]);
 		}
 		return Promise.resolve(this.#root)
 			.then((root) => (Array.isArray(root) ? Promise.all(root) : [root]))
 			.then((roots) =>
-				roots.reduce<Promise<OfficeDocumentChild[]>>(async function flatten(
+				roots.reduce<Promise<DocumentChild[]>>(async function flatten(
 					flatPromise,
 					childPromise,
-				): Promise<OfficeDocumentChild[]> {
+				): Promise<DocumentChild[]> {
 					const child = await childPromise;
 					const flat = await flatPromise;
 					return Array.isArray(child)
@@ -151,7 +149,7 @@ export class OfficeDocument extends XmlFile {
 	/**
 	 * Set the contents of the document
 	 */
-	public set(root: OfficeDocumentRoot): void {
+	public set(root: DocumentRoot): void {
 		this.#root = root;
 	}
 
@@ -165,7 +163,7 @@ export class OfficeDocument extends XmlFile {
 
 	public readonly headers = {
 		add: (location: string, root: HeaderFooterRoot) => {
-			const inst = new Header(location);
+			const inst = new HeaderXml(location);
 			inst.set(root);
 			return this.relationships.add(RelationshipType.header, inst);
 		},
@@ -173,7 +171,7 @@ export class OfficeDocument extends XmlFile {
 
 	public readonly footers = {
 		add: (location: string, root: HeaderFooterRoot) => {
-			const inst = new Footer(location);
+			const inst = new FooterXml(location);
 			inst.set(root);
 			return this.relationships.add(RelationshipType.footer, inst);
 		},
@@ -182,12 +180,12 @@ export class OfficeDocument extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<OfficeDocument> {
-		const relationships = await Relationships.fromArchive(
+	public static async fromArchive(archive: Archive, location: string): Promise<DocumentXml> {
+		const relationships = await RelationshipsXml.fromArchive(
 			archive,
 			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
 		);
-		const doc = new OfficeDocument(location, relationships);
+		const doc = new DocumentXml(location, relationships);
 		const dom = await archive.readXml(location);
 		const sections = evaluateXPathToNodes(
 			`/*/${QNS.w}body/(${QNS.w}p/${QNS.w}pPr/${QNS.w}sectPr | ${QNS.w}sectPr)`,

@@ -15,7 +15,7 @@ type Comment = {
 	contents: Paragraph[] | Promise<Paragraph[]>;
 };
 
-export class Comments extends XmlFile {
+export class CommentsXml extends XmlFile {
 	public static contentType = FileMime.comments;
 
 	private readonly comments = new NumberMap<Comment>();
@@ -109,10 +109,10 @@ export class Comments extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<Comments> {
+	public static async fromArchive(archive: Archive, location: string): Promise<CommentsXml> {
 		const dom = await archive.readXml(location);
 
-		const instance = new Comments(location);
+		const instance = new CommentsXml(location);
 
 		evaluateXPathToArray(
 			`

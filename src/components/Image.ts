@@ -4,8 +4,7 @@ import {
 	type ComponentDefinition,
 	Component,
 } from '../classes/Component.ts';
-import { Relationships } from '../files/Relationships.ts';
-import { RelationshipType } from '../files/Relationships.ts';
+import { RelationshipsXml, RelationshipType } from '../files/RelationshipsXml.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { createRandomId, createUniqueNumericIdentifier } from '../utilities/identifiers.ts';
@@ -45,7 +44,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 * An event hook with which this component can ensure that the correct relationship type is
 	 * recorded to the relationship XML.
 	 */
-	public ensureRelationship(relationships: Relationships) {
+	public ensureRelationship(relationships: RelationshipsXml) {
 		this.#relationshipId = relationships.add(
 			RelationshipType.image,
 			BinaryFile.fromData(this.props.data, `word/media/${createRandomId('img')}`),
@@ -58,7 +57,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public toNode(_ancestry: ComponentAncestor[]): Node {
 		if (!this.#relationshipId) {
-			throw new Error('Cannot serialize an image outside the context of an OfficeDocument');
+			throw new Error('Cannot serialize an image outside the context of an Document');
 		}
 		return create(
 			`

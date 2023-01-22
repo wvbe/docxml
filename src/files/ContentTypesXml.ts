@@ -15,7 +15,7 @@ type ContentTypeDefault = {
 	contentType: string | FileMime;
 };
 
-export class ContentTypes extends XmlFile {
+export class ContentTypesXml extends XmlFile {
 	readonly #defaults: Array<ContentTypeDefault> = [
 		{
 			extension: 'rels',
@@ -92,7 +92,7 @@ export class ContentTypes extends XmlFile {
 	 */
 	public static async fromArchive(archive: Archive, location: string) {
 		const dom = await archive.readXml(location);
-		const instance = new ContentTypes(location);
+		const instance = new ContentTypesXml(location);
 
 		evaluateXPathToArray(
 			`

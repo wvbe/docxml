@@ -69,7 +69,7 @@ type LatentStyle = {
 	qFormat?: boolean | null;
 };
 
-export class Styles extends XmlFile {
+export class StylesXml extends XmlFile {
 	public static contentType = FileMime.styles;
 
 	readonly #latentStyles: LatentStyle[] = [];
@@ -228,8 +228,8 @@ export class Styles extends XmlFile {
 		return this.#styles.find((style) => style.id === id);
 	}
 
-	public static fromDom(dom: Document, location: string): Styles {
-		const instance = new Styles(location);
+	public static fromDom(dom: Document, location: string): StylesXml {
+		const instance = new StylesXml(location);
 		// Warning! Untyped objects
 		instance.addStyles(
 			evaluateXPathToArray(
@@ -287,7 +287,7 @@ export class Styles extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<Styles> {
+	public static async fromArchive(archive: Archive, location: string): Promise<StylesXml> {
 		const dom = await archive.readXml(location);
 		return this.fromDom(dom, location);
 	}

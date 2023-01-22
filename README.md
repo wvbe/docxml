@@ -162,7 +162,6 @@ npm install
 # Run all unit tests
 deno task test
 
-
 # Run all linting
 deno task lint
 ```

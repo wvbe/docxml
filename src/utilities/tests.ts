@@ -9,7 +9,7 @@ import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { Docx } from '../Docx.ts';
 import { castRelationshipToClass } from '../files/index.ts';
-import { RelationshipType } from '../files/Relationships.ts';
+import { RelationshipType } from '../files/RelationshipsXml.ts';
 import { create } from './dom.ts';
 import { evaluateXPathToBoolean } from './xquery.ts';
 

@@ -1,5 +1,5 @@
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
-import { OfficeDocument } from '../files/OfficeDocument.ts';
+import { DocumentXml } from '../files/DocumentXml.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
@@ -30,7 +30,7 @@ export class Comment extends Component<CommentProps, CommentChild> {
 	 */
 	public toNode(ancestry: ComponentAncestor[]): Node {
 		const doc = ancestry.find(
-			(ancestor): ancestor is OfficeDocument => ancestor instanceof OfficeDocument,
+			(ancestor): ancestor is DocumentXml => ancestor instanceof DocumentXml,
 		);
 		if (!doc || !doc.comments.has(this.props.id)) {
 			throw new Error(`Comment "${this.props.id}" does not exist`);

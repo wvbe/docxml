@@ -1,10 +1,10 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { parse, serialize } from '../utilities/dom.ts';
-import { Numbering } from './Numbering.ts';
+import { NumberingXml } from './NumberingXml.ts';
 
 describe('Numbering', () => {
-	const numbering = Numbering.fromNode(
+	const numbering = NumberingXml.fromNode(
 		parse(`
 			<numbering xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main" />
 		`),
@@ -67,7 +67,7 @@ describe('Numbering', () => {
 
 	it('can parse', async () => {
 		const xml1 = serialize(await numbering.$$$toNode());
-		const num = Numbering.fromNode(parse(xml1), '');
+		const num = NumberingXml.fromNode(parse(xml1), '');
 		const xml2 = serialize(await num.$$$toNode());
 		expect(xml1).toBe(xml2);
 	});

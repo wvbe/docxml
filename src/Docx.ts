@@ -4,14 +4,10 @@ import { Archive } from './classes/Archive.ts';
 import { Bookmarks } from './classes/Bookmarks.ts';
 import { type Component } from './classes/Component.ts';
 import { FileLocation } from './enums.ts';
-import { ContentTypes } from './files/ContentTypes.ts';
-import {
-	type OfficeDocumentChild,
-	OfficeDocument,
-	OfficeDocumentRoot,
-} from './files/OfficeDocument.ts';
-import { Relationships, RelationshipType } from './files/Relationships.ts';
-import { type SettingsI } from './files/Settings.ts';
+import { ContentTypesXml } from './files/ContentTypesXml.ts';
+import { type DocumentChild, DocumentRoot, DocumentXml } from './files/DocumentXml.ts';
+import { RelationshipsXml, RelationshipType } from './files/RelationshipsXml.ts';
+import { type SettingsI } from './files/SettingsXml.ts';
 import { parse } from './utilities/dom.ts';
 import { jsx } from './utilities/jsx.ts';
 
@@ -21,8 +17,8 @@ type RuleResult = SyncRuleResult | AsyncRuleResult | Array<RuleResult>;
 
 /**
  * Represents the DOCX file as a whole, and collates other responsibilities together. Provides
- * access to DOCX content types ({@link ContentTypes}), relationships ({@link Relationships}),
- * the document itself ({@link OfficeDocument}).
+ * access to DOCX content types ({@link ContentTypesXml}), relationships ({@link RelationshipsXml}),
+ * the document itself ({@link DocumentXml}).
  *
  * An instance of this class can access other classes that represent the various XML files in a
  * DOCX archive, such as `ContentTypes.xml`, `word/document.xml`, and `_rels/.rels`.
@@ -45,20 +41,20 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * The utility function dealing with the XML for recording content types. Every DOCX file has
 	 * exactly one of these.
 	 */
-	public readonly contentTypes: ContentTypes;
+	public readonly contentTypes: ContentTypesXml;
 
 	/**
 	 * The utility function dealing with the top-level XML file for recording relationships. Other
 	 * relationships may have their own relationship XMLs.
 	 */
-	public readonly relationships: Relationships;
+	public readonly relationships: RelationshipsXml;
 
 	public readonly bookmarks = new Bookmarks();
 
 	protected constructor(
-		contentTypes = new ContentTypes(FileLocation.contentTypes),
-		relationships = new Relationships(FileLocation.relationships),
-		rules: GenericRenderer<RuleResult, { document: OfficeDocument } & PropsGeneric> | null = null,
+		contentTypes = new ContentTypesXml(FileLocation.contentTypes),
+		relationships = new RelationshipsXml(FileLocation.relationships),
+		rules: GenericRenderer<RuleResult, { document: DocumentXml } & PropsGeneric> | null = null,
 	) {
 		this.contentTypes = contentTypes;
 		this.relationships = relationships;
@@ -70,23 +66,23 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		if (!this.relationships.hasType(RelationshipType.officeDocument)) {
 			this.relationships.add(
 				RelationshipType.officeDocument,
-				new OfficeDocument(FileLocation.mainDocument),
+				new DocumentXml(FileLocation.mainDocument),
 			);
 		}
 	}
 
 	// Also not enumerable
-	#officeDocument: OfficeDocument | null = null;
+	#officeDocument: DocumentXml | null = null;
 
 	/**
 	 * A short-cut to the relationship that represents visible document content.
 	 */
-	public get document(): OfficeDocument {
+	public get document(): DocumentXml {
 		// @TODO Invalidate the cached _officeDocument whenever that relationship changes.
 		if (!this.#officeDocument) {
 			this.#officeDocument = this.relationships.ensureRelationship(
 				RelationshipType.officeDocument,
-				() => new OfficeDocument(FileLocation.mainDocument),
+				() => new DocumentXml(FileLocation.mainDocument),
 			);
 		}
 		return this.#officeDocument;
@@ -109,7 +105,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 					return;
 				}
 				if (Array.isArray(component)) {
-					await Promise.all((component as OfficeDocumentChild[]).map(walk));
+					await Promise.all((component as DocumentChild[]).map(walk));
 					return;
 				}
 
@@ -120,7 +116,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 
 				component.ensureRelationship(relationships);
 
-				await Promise.all((component.children as OfficeDocumentChild[]).map(walk));
+				await Promise.all((component.children as DocumentChild[]).map(walk));
 			}),
 		);
 
@@ -133,7 +129,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		await Promise.all(
 			this.relationships
 				.getRelated()
-				.filter((related) => !(related instanceof Relationships))
+				.filter((related) => !(related instanceof RelationshipsXml))
 				.map(async (related) => {
 					this.contentTypes.addOverride(related.location, await related.contentType);
 				}),
@@ -189,8 +185,8 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 				? await Archive.fromUInt8Array(locationOrZipArchive)
 				: locationOrZipArchive;
 		return new Docx<PropsGeneric>(
-			await ContentTypes.fromArchive(archive, FileLocation.contentTypes),
-			await Relationships.fromArchive(archive, FileLocation.relationships),
+			await ContentTypesXml.fromArchive(archive, FileLocation.contentTypes),
+			await RelationshipsXml.fromArchive(archive, FileLocation.relationships),
 		);
 	}
 
@@ -207,7 +203,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * Create a new DOCX with contents composed by this library's components. Needs a single JSX component
 	 * as root, for example `<Section>` or `<Paragragh>`.
 	 */
-	public static fromJsx(roots: OfficeDocumentChild[] | Promise<OfficeDocumentChild[]>) {
+	public static fromJsx(roots: DocumentChild[] | Promise<DocumentChild[]>) {
 		const docx = Docx.fromNothing();
 		docx.document.set(roots);
 		return docx;
@@ -217,10 +213,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * The XML renderer instance containing translation rules, going from your XML to this library's
 	 * OOXML components.
 	 */
-	readonly #renderer = new GenericRenderer<
-		RuleResult,
-		{ document: OfficeDocument } & PropsGeneric
-	>();
+	readonly #renderer = new GenericRenderer<RuleResult, { document: DocumentXml } & PropsGeneric>();
 
 	/**
 	 * Add an XML translation rule, applied to an element that matches the given XPath test.
@@ -230,7 +223,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	public withXmlRule(
 		xPathTest: string,
 		transformer: Parameters<
-			GenericRenderer<RuleResult, { document: OfficeDocument } & PropsGeneric>['add']
+			GenericRenderer<RuleResult, { document: DocumentXml } & PropsGeneric>['add']
 		>[1],
 	): this {
 		this.#renderer.add(xPathTest, transformer);
@@ -242,7 +235,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * cloning.
 	 */
 	private withXmlRules(
-		renderer: GenericRenderer<RuleResult, { document: OfficeDocument } & PropsGeneric>,
+		renderer: GenericRenderer<RuleResult, { document: DocumentXml } & PropsGeneric>,
 	): this {
 		this.#renderer.merge(renderer);
 		return this;
@@ -299,7 +292,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		// @TODO implement some kind of an errr-out mechanism
 
 		// @TODO validate that the children are correct?
-		this.document.set(root as OfficeDocumentRoot);
+		this.document.set(root as DocumentRoot);
 
 		return this;
 	}

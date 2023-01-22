@@ -6,7 +6,7 @@ import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { File, Relationships } from './Relationships.ts';
+import { File, RelationshipsXml } from './RelationshipsXml.ts';
 
 export type SettingsI = {
 	isTrackChangesEnabled: boolean;
@@ -16,16 +16,16 @@ const DEFAULT_SETTINGS: SettingsI = {
 	isTrackChangesEnabled: false,
 };
 
-export class Settings extends XmlFile implements SettingsI {
+export class SettingsXml extends XmlFile implements SettingsI {
 	public static contentType = FileMime.settings;
 
-	public readonly relationships: Relationships;
+	public readonly relationships: RelationshipsXml;
 
 	public isTrackChangesEnabled = DEFAULT_SETTINGS.isTrackChangesEnabled;
 
 	public constructor(
 		location: string,
-		relationships = new Relationships(
+		relationships = new RelationshipsXml(
 			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
 		),
 		settings: SettingsI = DEFAULT_SETTINGS,
@@ -79,12 +79,12 @@ export class Settings extends XmlFile implements SettingsI {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<Settings> {
+	public static async fromArchive(archive: Archive, location: string): Promise<SettingsXml> {
 		let relationships;
 
 		const relationshipsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
 		try {
-			relationships = await Relationships.fromArchive(archive, relationshipsLocation);
+			relationships = await RelationshipsXml.fromArchive(archive, relationshipsLocation);
 		} catch (_error: unknown) {
 			// console.error(
 			// 	'Warning, relationships could not be resolved\n' +
@@ -98,9 +98,9 @@ export class Settings extends XmlFile implements SettingsI {
 			}`,
 			await archive.readXml(location),
 		);
-		return new Settings(
+		return new SettingsXml(
 			location,
-			relationships || new Relationships(relationshipsLocation),
+			relationships || new RelationshipsXml(relationshipsLocation),
 			settings,
 		);
 	}

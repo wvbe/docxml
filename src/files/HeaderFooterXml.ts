@@ -15,7 +15,10 @@ export type HeaderFooterRoot =
 	| HeaderFooterChild[]
 	| Promise<HeaderFooterChild[]>;
 
-class HeaderFooterAbstraction extends XmlFile {
+/**
+ * Somewhat generic implementation of either the Header or Footer helper classes.
+ */
+class HeaderFooterAbstractionXml extends XmlFile {
 	#nodeName: string;
 
 	#root: HeaderFooterRoot | null = null;
@@ -72,7 +75,7 @@ class HeaderFooterAbstraction extends XmlFile {
 	}
 }
 
-export class Header extends HeaderFooterAbstraction {
+export class HeaderXml extends HeaderFooterAbstractionXml {
 	public static contentType = FileMime.header;
 
 	constructor(location: string) {
@@ -95,7 +98,7 @@ export class Header extends HeaderFooterAbstraction {
 	}
 }
 
-export class Footer extends HeaderFooterAbstraction {
+export class FooterXml extends HeaderFooterAbstractionXml {
 	public static contentType = FileMime.footer;
 
 	constructor(location: string) {

@@ -1,12 +1,12 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { serialize } from '../../utilities/dom.ts';
-import { CoreProperties } from './CoreProperties.ts';
+import { CorePropertiesXml } from './CorePropertiesXml.ts';
 
 describe('CoreProperties', () => {
 	it('serializes an empty instance correctly', async () => {
 		const now = new Date().toISOString();
-		const instance = new CoreProperties('');
+		const instance = new CorePropertiesXml('');
 
 		expect(serialize(await instance.$$$toNode()).replace(/(.\d{3})(?=Z)/g, '')).toBe(
 			// It's more chatty than the original XML, but it is not incorrect.

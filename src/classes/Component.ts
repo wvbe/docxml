@@ -1,14 +1,14 @@
-import { type Footer, type Header } from '../files/HeaderFooter.ts';
-import { type OfficeDocument } from '../files/OfficeDocument.ts';
-import { type Relationships } from '../files/Relationships.ts';
+import { type DocumentXml } from '../files/DocumentXml.ts';
+import { type FooterXml, type HeaderXml } from '../files/HeaderFooterXml.ts';
+import { type RelationshipsXml } from '../files/RelationshipsXml.ts';
 
 /**
- * An ancestor of a component at serialization time, or the OfficeDocument instance that is the
+ * An ancestor of a component at serialization time, or the {@link DocumentXml} instance that is the
  * parent of the top-most component.
  *
  * Having this ancestry allows context-aware serialization.
  */
-export type ComponentAncestor = OfficeDocument | Header | Footer | AnyComponent;
+export type ComponentAncestor = DocumentXml | HeaderXml | FooterXml | AnyComponent;
 
 /**
  * Any component instance, uncaring of which one or which props/children it has. Knows nothing,
@@ -112,7 +112,7 @@ export abstract class Component<
 	 * recorded to the relationship XML.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public ensureRelationship(_relationships: Relationships) {
+	public ensureRelationship(_relationships: RelationshipsXml) {
 		// no-op
 	}
 

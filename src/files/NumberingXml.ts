@@ -63,7 +63,7 @@ type ConcreteNumbering = {
 	abstract: number;
 };
 
-export class Numbering extends XmlFile {
+export class NumberingXml extends XmlFile {
 	public static contentType = FileMime.numbering;
 
 	/**
@@ -170,8 +170,8 @@ export class Numbering extends XmlFile {
 		);
 	}
 
-	public static fromNode(dom: Document, location: string): Numbering {
-		const instance = new Numbering(location);
+	public static fromNode(dom: Document, location: string): NumberingXml {
+		const instance = new NumberingXml(location);
 		const { concretes, abstracts } = evaluateXPathToMap<{
 			concretes: ConcreteNumbering[];
 			abstracts: (Omit<AbstractNumbering, 'levels'> & {
@@ -216,7 +216,7 @@ export class Numbering extends XmlFile {
 		return instance;
 	}
 
-	public static async fromArchive(archive: Archive, location: string): Promise<Numbering> {
+	public static async fromArchive(archive: Archive, location: string): Promise<NumberingXml> {
 		return this.fromNode(await archive.readXml(location), location);
 	}
 }

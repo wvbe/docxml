@@ -2,12 +2,12 @@ import { beforeAll, describe, expect, it, run } from 'https://deno.land/x/tincan
 
 import { serialize } from '../utilities/dom.ts';
 import { archive } from '../utilities/tests.ts';
-import { Relationships } from './Relationships.ts';
+import { RelationshipsXml } from './RelationshipsXml.ts';
 
 describe('Relationships', () => {
-	let relationships: Relationships;
+	let relationships: RelationshipsXml;
 	beforeAll(async () => {
-		relationships = await Relationships.fromArchive(
+		relationships = await RelationshipsXml.fromArchive(
 			await archive('test/simple.docx'),
 			'_rels/.rels',
 		);

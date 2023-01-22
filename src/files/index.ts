@@ -1,19 +1,19 @@
 import { Archive } from '../classes/Archive.ts';
 import { UnhandledXmlFile } from '../classes/XmlFile.ts';
-import { Comments } from './Comments.ts';
-import { Footer, Header } from './HeaderFooter.ts';
-import { Numbering } from './Numbering.ts';
-import { OfficeDocument } from './OfficeDocument.ts';
-import { RelationshipMeta, RelationshipType } from './Relationships.ts';
-import { Settings } from './Settings.ts';
-import { Styles } from './Styles.ts';
-import { CoreProperties } from './wip/CoreProperties.ts';
-import { Endnotes } from './wip/Endnotes.ts';
-import { ExtendedProperties } from './wip/ExtendedProperties.ts';
-import { FontTable } from './wip/FontTable.ts';
-import { Footnotes } from './wip/Footnotes.ts';
-import { Theme } from './wip/Theme.ts';
-import { WebSettings } from './wip/WebSettings.ts';
+import { CommentsXml } from './CommentsXml.ts';
+import { DocumentXml } from './DocumentXml.ts';
+import { FooterXml, HeaderXml } from './HeaderFooterXml.ts';
+import { NumberingXml } from './NumberingXml.ts';
+import { RelationshipMeta, RelationshipType } from './RelationshipsXml.ts';
+import { SettingsXml } from './SettingsXml.ts';
+import { StylesXml } from './StylesXml.ts';
+import { CorePropertiesXml } from './wip/CorePropertiesXml.ts';
+import { EndnotesXml } from './wip/EndnotesXml.ts';
+import { ExtendedPropertiesXml } from './wip/ExtendedPropertiesXml.ts';
+import { FontTableXml } from './wip/FontTableXml.ts';
+import { FootnotesXml } from './wip/FootnotesXml.ts';
+import { ThemeXml } from './wip/ThemeXml.ts';
+import { WebSettingsXml } from './wip/WebSettingsXml.ts';
 
 /**
  * @deprecated This is probably not the best way to instantiate new classes. Should be looking at
@@ -25,33 +25,33 @@ export function castRelationshipToClass(
 ) {
 	switch (meta.type) {
 		case RelationshipType.coreProperties:
-			return CoreProperties.fromArchive(archive, meta.target);
+			return CorePropertiesXml.fromArchive(archive, meta.target);
 		case RelationshipType.endnotes:
-			return Endnotes.fromArchive(archive, meta.target);
+			return EndnotesXml.fromArchive(archive, meta.target);
 		case RelationshipType.extendedProperties:
-			return ExtendedProperties.fromArchive(archive, meta.target);
+			return ExtendedPropertiesXml.fromArchive(archive, meta.target);
 		case RelationshipType.fontTable:
-			return FontTable.fromArchive(archive, meta.target);
+			return FontTableXml.fromArchive(archive, meta.target);
 		case RelationshipType.footer:
-			return Footer.fromArchive(archive, meta.target);
+			return FooterXml.fromArchive(archive, meta.target);
 		case RelationshipType.footnotes:
-			return Footnotes.fromArchive(archive, meta.target);
+			return FootnotesXml.fromArchive(archive, meta.target);
 		case RelationshipType.header:
-			return Header.fromArchive(archive, meta.target);
+			return HeaderXml.fromArchive(archive, meta.target);
 		case RelationshipType.officeDocument:
-			return OfficeDocument.fromArchive(archive, meta.target);
+			return DocumentXml.fromArchive(archive, meta.target);
 		case RelationshipType.settings:
-			return Settings.fromArchive(archive, meta.target);
+			return SettingsXml.fromArchive(archive, meta.target);
 		case RelationshipType.styles:
-			return Styles.fromArchive(archive, meta.target);
+			return StylesXml.fromArchive(archive, meta.target);
 		case RelationshipType.comments:
-			return Comments.fromArchive(archive, meta.target);
+			return CommentsXml.fromArchive(archive, meta.target);
 		case RelationshipType.theme:
-			return Theme.fromArchive(archive, meta.target);
+			return ThemeXml.fromArchive(archive, meta.target);
 		case RelationshipType.webSettings:
-			return WebSettings.fromArchive(archive, meta.target);
+			return WebSettingsXml.fromArchive(archive, meta.target);
 		case RelationshipType.numbering:
-			return Numbering.fromArchive(archive, meta.target);
+			return NumberingXml.fromArchive(archive, meta.target);
 
 		case RelationshipType.customXml:
 		case RelationshipType.people:

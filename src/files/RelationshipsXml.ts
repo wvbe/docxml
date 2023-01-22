@@ -48,7 +48,7 @@ export type RelationshipMeta = {
 
 export type File = XmlFile | BinaryFile;
 
-export class Relationships extends XmlFile {
+export class RelationshipsXml extends XmlFile {
 	public static contentType = FileMime.relationships;
 
 	/**
@@ -85,7 +85,7 @@ export class Relationships extends XmlFile {
 	// }
 
 	/**
-	 * Find a relationship instance (eg. a OfficeDocument) by its metadata. The metadata would tell you what type
+	 * Find a relationship instance (eg. a {@link DocumentXml}) by its metadata. The metadata would tell you what type
 	 * of relationship it is.
 	 */
 	public find<R extends File = File>(cb: (meta: RelationshipMeta) => boolean): R | null {
@@ -178,7 +178,7 @@ export class Relationships extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<Relationships> {
+	public static async fromArchive(archive: Archive, location: string): Promise<RelationshipsXml> {
 		const meta = evaluateXPathToArray(
 			`
 				array{/*/Relationship/map{
@@ -214,6 +214,6 @@ export class Relationships extends XmlFile {
 			return map;
 		}, new Map<string, File>());
 
-		return new Relationships(location, meta, instances);
+		return new RelationshipsXml(location, meta, instances);
 	}
 }

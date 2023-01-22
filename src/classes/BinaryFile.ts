@@ -1,5 +1,5 @@
 import { FileMime } from '../enums.ts';
-import { File } from '../files/Relationships.ts';
+import { type File } from '../files/RelationshipsXml.ts';
 import { getMimeTypeForUint8Array } from '../utilities/mime-types.ts';
 import { Archive } from './Archive.ts';
 

@@ -35,9 +35,9 @@ describe('Table formatting', () => {
 			</w:tblCellMar>
 			<w:tblBorders>
 				<w:top w:sz="8" w:space="1" w:color="red" />
-				<w:right w:val="seattle" w:space="1" w:color="red" />
+				<w:end w:val="seattle" w:space="1" w:color="red" />
 				<w:bottom w:val="peopleHats" w:sz="8" w:color="red" />
-				<w:left w:val="dashed" w:sz="8" w:space="1" />
+				<w:start w:val="dashed" w:sz="8" w:space="1" />
 				<w:insideH w:val="heartBalloon" w:sz="8" w:space="1" w:color="red" />
 			</w:tblBorders>
 			<w:tblInd w:w="100" w:type="dxa" />
@@ -68,9 +68,9 @@ describe('Table formatting', () => {
 			columnBandingSize: 3,
 			borders: {
 				top: { type: null, width: opt(8), spacing: 1, color: 'red' },
-				right: { type: 'seattle', width: null, spacing: 1, color: 'red' },
+				end: { type: 'seattle', width: null, spacing: 1, color: 'red' },
 				bottom: { type: 'peopleHats', width: pt(1), spacing: null, color: 'red' },
-				left: { type: 'dashed', width: hpt(2), spacing: 1, color: null },
+				start: { type: 'dashed', width: hpt(2), spacing: 1, color: null },
 				insideH: { type: 'heartBalloon', width: twip(20), spacing: 1, color: 'red' },
 				insideV: null,
 			},
@@ -114,6 +114,37 @@ describe('Table formatting', () => {
 			</w:tblPr>`,
 			{
 				width: { length: '420', unit: 'nil' },
+			},
+		);
+	});
+
+	describe('Word 2006-style "left" and "right" borders can still be read', () => {
+		test(
+			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:tblBorders>
+					<w:left w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
+					<w:right w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
+				</w:tblBorders>
+			</w:tblPr>`,
+			{
+				borders: {
+					start: {
+						type: 'double',
+						width: opt(24),
+						spacing: 0,
+						color: 'FF0000',
+					},
+					end: {
+						type: 'double',
+						width: opt(24),
+						spacing: 0,
+						color: 'FF0000',
+					},
+					top: null,
+					bottom: null,
+					insideH: null,
+					insideV: null,
+				},
 			},
 		);
 	});

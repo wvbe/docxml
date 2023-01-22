@@ -82,10 +82,10 @@ describe('Table cell formatting', () => {
 				</w:p>
 			</w:tc>
 		</w:tr>
-	</w:tbl>
-	`);
+	</w:tbl>`);
 	test(evaluateXPathToFirstNode(`//*[@id="colspanning-cell"]/w:tcPr`, dom) as Node, {
 		colSpan: 2,
+		// Rowspan would have been "1" if other cells are not succesfully taken into account:
 		rowSpan: 2,
 		shading: {
 			background: 'B2A1C7',
@@ -127,6 +127,39 @@ describe('Table cell formatting', () => {
 			insideH: null,
 			insideV: null,
 		},
+	});
+
+	describe('Word 2006-style "left" and "right" borders can still be read', () => {
+		test(
+			`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:tcBorders>
+					<w:left w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
+					<w:right w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
+				</w:tcBorders>
+			</w:tcPr>`,
+			{
+				borders: {
+					start: {
+						type: 'double',
+						width: opt(24),
+						spacing: 0,
+						color: 'FF0000',
+					},
+					end: {
+						type: 'double',
+						width: opt(24),
+						spacing: 0,
+						color: 'FF0000',
+					},
+					top: null,
+					bottom: null,
+					tl2br: null,
+					tr2bl: null,
+					insideH: null,
+					insideV: null,
+				},
+			},
+		);
 	});
 });
 

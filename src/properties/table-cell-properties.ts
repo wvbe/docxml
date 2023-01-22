@@ -62,9 +62,9 @@ export function tableCellPropertiesFromNode(node?: Node | null): TableCellProper
 					"shading": ./${QNS.w}shd/docxml:ct-shd(.),
 					"borders": ./${QNS.w}tcBorders/map {
 						"top": docxml:ct-border(${QNS.w}top),
-						"start": docxml:ct-border(${QNS.w}start),
+						"start": docxml:ct-border((${QNS.w}start|${QNS.w}left)[1]),
 						"bottom": docxml:ct-border(${QNS.w}bottom),
-						"end": docxml:ct-border(${QNS.w}end),
+						"end": docxml:ct-border((${QNS.w}end|${QNS.w}right)[1]),
 						"tl2br": docxml:ct-border(${QNS.w}tl2br),
 						"tr2bl": docxml:ct-border(${QNS.w}tr2bl),
 						"insideH": docxml:ct-border(${QNS.w}insideH),

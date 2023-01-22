@@ -56,9 +56,9 @@ export type TableProperties = {
 	};
 	borders?: null | {
 		top?: null | Border<LineBorderType | ArtBorderType>;
-		left?: null | Border<LineBorderType | ArtBorderType>;
+		start?: null | Border<LineBorderType | ArtBorderType>;
 		bottom?: null | Border<LineBorderType | ArtBorderType>;
-		right?: null | Border<LineBorderType | ArtBorderType>;
+		end?: null | Border<LineBorderType | ArtBorderType>;
 		insideH?: null | Border<LineBorderType | ArtBorderType>;
 		insideV?: null | Border<LineBorderType | ArtBorderType>;
 	};
@@ -89,9 +89,9 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 					"rowBandingSize": ./${QNS.w}tblStyleRowBandSize/@${QNS.w}val/number(),
 					"borders": ./${QNS.w}tblBorders/map {
 						"top": docxml:ct-border(${QNS.w}top),
-						"left": docxml:ct-border(${QNS.w}left),
+						"start": docxml:ct-border((${QNS.w}start|${QNS.w}left)[1]),
 						"bottom": docxml:ct-border(${QNS.w}bottom),
-						"right": docxml:ct-border(${QNS.w}right),
+						"end": docxml:ct-border((${QNS.w}end|${QNS.w}right)[1]),
 						"insideH": docxml:ct-border(${QNS.w}insideH),
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
@@ -146,9 +146,9 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			if (exists($borders)) then element ${QNS.w}tblBorders {
 				(: In sequence order: :)
 				docxml:ct-border(fn:QName("${NamespaceUri.w}", "top"), $borders('top')),
-				docxml:ct-border(fn:QName("${NamespaceUri.w}", "left"), $borders('left')),
+				docxml:ct-border(fn:QName("${NamespaceUri.w}", "start"), $borders('start')),
 				docxml:ct-border(fn:QName("${NamespaceUri.w}", "bottom"), $borders('bottom')),
-				docxml:ct-border(fn:QName("${NamespaceUri.w}", "right"), $borders('right')),
+				docxml:ct-border(fn:QName("${NamespaceUri.w}", "end"), $borders('end')),
 				docxml:ct-border(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
 				docxml:ct-border(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
 			} else (),
@@ -183,9 +183,9 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			borders: tblpr.borders
 				? {
 						top: null,
-						left: null,
+						start: null,
 						bottom: null,
-						right: null,
+						end: null,
 						insideH: null,
 						insideV: null,
 						...tblpr.borders,

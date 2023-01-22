@@ -21,6 +21,7 @@ describe('Paragraph formatting', () => {
 			<w:spacing w:after="200" w:line="276" w:lineRule="auto" />
 			<w:outlineLvl w:val="3" />
 			<w:shd w:val="pct45" w:color="FFFF00" w:fill="B2A1C7" />
+			<w:ind w:start="1440" w:end="1440" />
 			<w:pBdr>
 				<w:top w:val="single" w:sz="24" w:space="1" w:color="FF0000" />
 			</w:pBdr>
@@ -44,6 +45,16 @@ describe('Paragraph formatting', () => {
 				pattern: 'pct45',
 			},
 			outlineLvl: 3,
+			indentation: {
+				start: twip(1440),
+				end: twip(1440),
+				startChars: null,
+				endChars: null,
+				hanging: null,
+				hangingChars: null,
+				firstLine: null,
+				firstLineChars: null,
+			},
 			spacing: {
 				before: null,
 				after: twip(200),
@@ -88,6 +99,26 @@ describe('Paragraph formatting', () => {
 			</w:pPr>`,
 			{
 				outlineLvl: 0,
+			},
+		);
+	});
+
+	describe('Word 2006-style "left" and "right" can still be read', () => {
+		test(
+			`<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:ind w:left="1440" w:right="1440" />
+			</w:pPr>`,
+			{
+				indentation: {
+					start: twip(1440),
+					end: twip(1440),
+					startChars: null,
+					endChars: null,
+					hanging: null,
+					hangingChars: null,
+					firstLine: null,
+					firstLineChars: null,
+				},
 			},
 		);
 	});

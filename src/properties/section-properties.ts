@@ -33,8 +33,8 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 				"even": ./${QNS.w}footerReference[@${QNS.w}type = 'even']/@${QNS.r}id/string(),
 				"odd": ./${QNS.w}footerReference[@${QNS.w}type = 'default']/@${QNS.r}id/string()
 			},
-			"pageWidth": ./${QNS.w}pgSz/@${QNS.w}w/docxml:length(., 'twip'),
-			"pageHeight": ./${QNS.w}pgSz/@${QNS.w}h/docxml:length(., 'twip'),
+			"pageWidth": docxml:length(${QNS.w}pgSz/@${QNS.w}w, 'twip'),
+			"pageHeight": docxml:length(${QNS.w}pgSz/@${QNS.w}h, 'twip'),
 			"pageOrientation": ./${QNS.w}pgSz/@${QNS.w}orient/string()
 		}`,
 		node,

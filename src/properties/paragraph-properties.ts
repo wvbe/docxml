@@ -1,5 +1,5 @@
 import { create } from '../utilities/dom.ts';
-import { type Length, twip } from '../utilities/length.ts';
+import { type Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../utilities/xquery.ts';
 import { type SectionProperties, sectionPropertiesToNode } from './section-properties.ts';
@@ -30,15 +30,10 @@ export type ParagraphProperties = {
 		beforeAutoSpacing?: boolean | null;
 	} | null;
 	indentation?: {
-		left?: Length | null;
-		leftChars?: number | null;
-		right?: Length | null;
-		rightChars?: number | null;
 		hanging?: Length | null;
 		hangingChars?: number | null;
 		firstLine?: Length | null;
 		firstLineChars?: number | null;
-		// MSWORD 2010:
 		start?: Length | null;
 		startChars?: number | null;
 		end?: Length | null;
@@ -79,26 +74,22 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 					"outlineLvl": ${QNS.w}outlineLvl/@${QNS.w}val/number(),
 					"style": ${QNS.w}pStyle/@${QNS.w}val/string(),
 					"spacing": ${QNS.w}spacing/map {
-						"before": @${QNS.w}before/number(),
-						"after": @${QNS.w}after/number(),
-						"line": @${QNS.w}line/number(),
+						"before": docxml:length(@${QNS.w}before, 'twip'),
+						"after": docxml:length(@${QNS.w}after, 'twip'),
+						"line": docxml:length(@${QNS.w}line, 'twip'),
 						"lineRule": @${QNS.w}lineRule/string(),
 						"afterAutoSpacing": docxml:st-on-off(@${QNS.w}afterAutoSpacing),
 						"beforeAutoSpacing": docxml:st-on-off(@${QNS.w}beforeAutoSpacing)
 					},
 					"indentation": ${QNS.w}ind/map {
-						"left": @${QNS.w}left/number(),
-						"leftChars": @${QNS.w}leftChars/number(),
-						"right": @${QNS.w}right/number(),
-						"rightChars": @${QNS.w}rightChars/number(),
-						"hanging": @${QNS.w}hanging/number(),
+						"start": docxml:length((@${QNS.w}start|@${QNS.w}left)[1], 'twip'),
+						"startChars": (@${QNS.w}startChars|@${QNS.w}leftChars)[1]/number(),
+						"end": docxml:length((@${QNS.w}end|@${QNS.w}right)[1], 'twip'),
+						"endChars": (@${QNS.w}endChars|@${QNS.w}rightChars)/number(),
+						"hanging": docxml:length(@${QNS.w}hanging, 'twip'),
 						"hangingChars": @${QNS.w}hangingChars/number(),
-						"firstLine": @${QNS.w}firstLine/number(),
-						"firstLineChars": @${QNS.w}firstLineChars/number(),
-						"start": @${QNS.w}start/number(),
-						"startChars": @${QNS.w}startChars/number(),
-						"end": @${QNS.w}end/number(),
-						"endChars": @${QNS.w}endChars/number()
+						"firstLine": docxml:length(@${QNS.w}firstLine, 'twip'),
+						"firstLineChars": @${QNS.w}firstLineChars/number()
 					},
 					"shading": ./${QNS.w}shd/docxml:ct-shd(.),
 					"borders": ./${QNS.w}pBdr/map {
@@ -122,35 +113,6 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 				node,
 		  ) || {}
 		: {};
-
-	// Sad but necessary.
-	if (data.spacing?.before) {
-		data.spacing.before = twip(data.spacing.before);
-	}
-	if (data.spacing?.after) {
-		data.spacing.after = twip(data.spacing.after);
-	}
-	if (data.spacing?.line) {
-		data.spacing.line = twip(data.spacing.line);
-	}
-	if (data.indentation?.left) {
-		data.indentation.left = twip(data.indentation.left);
-	}
-	if (data.indentation?.right) {
-		data.indentation.right = twip(data.indentation.right);
-	}
-	if (data.indentation?.hanging) {
-		data.indentation.hanging = twip(data.indentation.hanging);
-	}
-	if (data.indentation?.firstLine) {
-		data.indentation.firstLine = twip(data.indentation.firstLine);
-	}
-	if (data.indentation?.start) {
-		data.indentation.start = twip(data.indentation.start);
-	}
-	if (data.indentation?.end) {
-		data.indentation.end = twip(data.indentation.end);
-	}
 
 	const rpr = node && evaluateXPathToFirstNode(`./${QNS.w}rPr`, node);
 
@@ -220,17 +182,17 @@ export function paragraphPropertiesToNode(
 				} else (),
 
 				if (exists($indentation)) then element ${QNS.w}ind {
-					if (exists($indentation('left'))) then attribute ${QNS.w}left {
-						$indentation('left')
+					if (exists($indentation('start'))) then attribute ${QNS.w}start {
+						$indentation('start')
 					} else (),
-					if (exists($indentation('leftChars'))) then attribute ${QNS.w}leftChars {
-						$indentation('leftChars')
+					if (exists($indentation('startChars'))) then attribute ${QNS.w}startChars {
+						$indentation('startChars')
 					} else (),
-					if (exists($indentation('right'))) then attribute ${QNS.w}right {
-						$indentation('right')
+					if (exists($indentation('end'))) then attribute ${QNS.w}end {
+						$indentation('end')
 					} else (),
-					if (exists($indentation('rightChars'))) then attribute ${QNS.w}rightChars {
-						$indentation('rightChars')
+					if (exists($indentation('endChars'))) then attribute ${QNS.w}endChars {
+						$indentation('endChars')
 					} else (),
 					if (exists($indentation('hanging'))) then attribute ${QNS.w}hanging {
 						$indentation('hanging')
@@ -243,18 +205,6 @@ export function paragraphPropertiesToNode(
 					} else (),
 					if (exists($indentation('firstLineChars'))) then attribute ${QNS.w}firstLineChars {
 						$indentation('firstLineChars')
-					} else (),
-					if (exists($indentation('start'))) then attribute ${QNS.w}start {
-						$indentation('start')
-					} else (),
-					if (exists($indentation('startChars'))) then attribute ${QNS.w}startChars {
-						$indentation('startChars')
-					} else (),
-					if (exists($indentation('end'))) then attribute ${QNS.w}end {
-						$indentation('end')
-					} else (),
-					if (exists($indentation('endChars'))) then attribute ${QNS.w}endChars {
-						$indentation('endChars')
 					} else ()
 				} else (),
 
@@ -286,8 +236,6 @@ export function paragraphPropertiesToNode(
 			indentation: data.indentation
 				? {
 						...data.indentation,
-						left: data.indentation.left?.twip || null,
-						right: data.indentation.right?.twip || null,
 						hanging: data.indentation.hanging?.twip || null,
 						firstLine: data.indentation.firstLine?.twip || null,
 						start: data.indentation.start?.twip || null,

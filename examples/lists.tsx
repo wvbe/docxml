@@ -25,7 +25,7 @@ const numbering = api.document.numbering.add({
 			//      properties
 			paragraph: {
 				indentation: {
-					left: cm(1),
+					start: cm(1),
 				},
 				shading: {
 					background: 'yellow',
@@ -45,7 +45,7 @@ const numbering = api.document.numbering.add({
 			affix: '%1',
 			paragraph: {
 				indentation: {
-					left: cm(2),
+					start: cm(2),
 				},
 			},
 		},

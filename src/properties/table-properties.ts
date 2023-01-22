@@ -77,13 +77,13 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 						"noHBand": docxml:st-on-off(@${QNS.w}noHBand),
 						"noVBand": docxml:st-on-off(@${QNS.w}noVBand)
 					},
-					"indentation": ./${QNS.w}tblInd[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
-					"cellSpacing": ./${QNS.w}tblCellSpacing[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
+					"indentation": docxml:length(${QNS.w}tblInd[not(@${QNS.w}type = 'nil')]/@${QNS.w}w, 'twip'),
+					"cellSpacing": docxml:length(${QNS.w}tblCellSpacing[not(@${QNS.w}type = 'nil')]/@${QNS.w}w, 'twip'),
 					"cellPadding": ./${QNS.w}tblCellMar/map {
-						"top": ./${QNS.w}top[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
-						"start": ./(${QNS.w}start|${QNS.w}left)[not(@${QNS.w}type = 'nil')][1]/@${QNS.w}w/docxml:length(., 'twip'),
-						"bottom": ./${QNS.w}bottom[not(@${QNS.w}type = 'nil')]/@${QNS.w}w/docxml:length(., 'twip'),
-						"end": ./(${QNS.w}end|${QNS.w}right)[not(@${QNS.w}type = 'nil')][1]/@${QNS.w}w/docxml:length(., 'twip')
+						"top": docxml:length(${QNS.w}top[not(@${QNS.w}type = 'nil')]/@${QNS.w}w, 'twip'),
+						"start": docxml:length((${QNS.w}start|${QNS.w}left)[not(@${QNS.w}type = 'nil')][1]/@${QNS.w}w, 'twip'),
+						"bottom": docxml:length(${QNS.w}bottom[not(@${QNS.w}type = 'nil')]/@${QNS.w}w, 'twip'),
+						"end": docxml:length((${QNS.w}end|${QNS.w}right)[not(@${QNS.w}type = 'nil')][1]/@${QNS.w}w, 'twip')
 					},
 					"columnBandingSize": ./${QNS.w}tblStyleColBandSize/@${QNS.w}val/number(),
 					"rowBandingSize": ./${QNS.w}tblStyleRowBandSize/@${QNS.w}val/number(),

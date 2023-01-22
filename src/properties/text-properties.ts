@@ -67,7 +67,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"isCaps": docxml:ct-on-off(./${QNS.w}caps),
 				"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
 				"language": ./${QNS.w}lang/@${QNS.w}val/string(),
-				"fontSize": ./${QNS.w}sz/@${QNS.w}val/docxml:length(xs:float(.), "hpt"),
+				"fontSize": docxml:length(${QNS.w}sz/@${QNS.w}val, "hpt"),
 				"isStrike": docxml:ct-on-off(./${QNS.w}strike),
 				"font": ./${QNS.w}rFonts/map {
 					"cs": @${QNS.w}cs/string(),

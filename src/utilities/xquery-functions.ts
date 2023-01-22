@@ -10,9 +10,9 @@ export const DOCXML_NS_URI = 'https://github.com/wvbe/docxml';
 
 registerCustomXPathFunction(
 	{ namespaceURI: DOCXML_NS_URI, localName: 'length' },
-	['xs:float', 'xs:string'],
-	'map(*)',
-	(_facade, value, unit) => convert(value, unit),
+	['xs:float?', 'xs:string'],
+	'map(*)?',
+	(_facade, value, unit) => (value === null ? null : convert(value, unit)),
 );
 
 registerXQueryModule(`
@@ -43,6 +43,8 @@ registerXQueryModule(`
 		- If the element exists but has no @val, defaults to value TRUE
 		- If the element @val is set to "on", "true" or "1", value is TRUE
 		- Any other value of @val means FALSE
+
+		Also works with CT_BooleanProperty.
 	:)
 	declare %public function docxml:ct-on-off($val) as xs:boolean {
 		if (not(exists($val)))
@@ -80,9 +82,7 @@ registerXQueryModule(`
 	declare %public function docxml:ct-border($val) as map(*)? {
 		$val/map {
 			"type": ./@${QNS.w}val/string(),
-			"width": if (exists(./@${QNS.w}sz))
-				then docxml:length(./@${QNS.w}sz, 'opt')
-				else (),
+			"width": docxml:length(@${QNS.w}sz, 'opt'),
 			"spacing": if (exists(./@${QNS.w}space))
 				then ./@${QNS.w}space/number()
 				else (),

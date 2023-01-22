@@ -12,12 +12,15 @@ import { evaluateXPath, evaluateXPathToMap, evaluateXPathToNumber } from './xque
 
 describe('XQuery functions', () => {
 	it('docxml:length', () => {
-		expect(evaluateXPathToMap(`docxml:length(10, "pt")`)).toEqual(pt(10));
-		expect(evaluateXPathToMap(`docxml:length(10, "emu")`)).toEqual(emu(10));
-		expect(evaluateXPathToMap(`docxml:length(10, "hpt")`)).toEqual(hpt(10));
-		expect(evaluateXPathToMap(`docxml:length(10, "twip")`)).toEqual(twip(10));
-		expect(evaluateXPathToMap(`docxml:length(10, "cm")`)).toEqual(cm(10));
-		expect(evaluateXPathToMap(`docxml:length(10, "inch")`)).toEqual(inch(10));
+		// In XPath an empty sequence equals null. Fontoxpath returns an empty sequence as an empty paragraph
+		expect(evaluateXPath(`docxml:length((), "pt")`)).toEqual([]);
+
+		expect(evaluateXPath(`docxml:length(10, "pt")`)).toEqual(pt(10));
+		expect(evaluateXPath(`docxml:length(10, "emu")`)).toEqual(emu(10));
+		expect(evaluateXPath(`docxml:length(10, "hpt")`)).toEqual(hpt(10));
+		expect(evaluateXPath(`docxml:length(10, "twip")`)).toEqual(twip(10));
+		expect(evaluateXPath(`docxml:length(10, "cm")`)).toEqual(cm(10));
+		expect(evaluateXPath(`docxml:length(10, "inch")`)).toEqual(inch(10));
 	});
 
 	it('docxml:cell-column', async () => {

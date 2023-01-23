@@ -12,9 +12,9 @@ await Docx.fromJsx(
 		}}
 		borders={{
 			bottom: { color: '666666', width: pt(1), type: 'single' },
-			left: { color: '666666', width: pt(1), type: 'single' },
+			start: { color: '666666', width: pt(1), type: 'single' },
 			top: { color: '666666', width: pt(1), type: 'single' },
-			right: { color: '666666', width: pt(1), type: 'single' },
+			end: { color: '666666', width: pt(1), type: 'single' },
 			insideH: { color: 'CCCCCC', width: pt(1), type: 'dashed' },
 			insideV: { color: 'CCCCCC', width: pt(1), type: 'dashed' },
 		}}

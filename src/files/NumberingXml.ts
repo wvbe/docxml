@@ -219,4 +219,8 @@ export class NumberingXml extends XmlFile {
 	public static async fromArchive(archive: Archive, location: string): Promise<NumberingXml> {
 		return this.fromNode(await archive.readXml(location), location);
 	}
+
+	public getAbstracts(): AbstractNumbering[] {
+		return this.abstracts.array();
+	}
 }

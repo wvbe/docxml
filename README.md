@@ -23,17 +23,14 @@ const { default: Docxml, Paragraph } = require('docxml');
 import Docxml, { Paragraph } from 'docxml';
 
 // Deno without an import map
-import Docxml, { Paragraph } from 'deno.land/x/docxml/mod.ts';
+import Docxml, { Paragraph } from 'https://deno.land/x/docxml/mod.ts';
 ```
 
 `docxml` is designed to be used in vanilla JavaScript using class component instances, or using JSX if you're on Deno or
 want to use NodeJS and a transpiler like Babel:
 
 ```ts
-const para = new Paragraph(
-	{ alignment: 'center' },
-	new Text({}, 'I want a cookie')
-);
+const para = new Paragraph({ alignment: 'center' }, new Text({}, 'I want a cookie'));
 ```
 
 ```tsx
@@ -53,29 +50,19 @@ const para = (
 to transform from an XML document. Both modes work equally well with vanilla JS or JSX.
 
 ```tsx
-await Docx
-	.fromJsx(
-		<Paragraph alignment="center">
-			<Text>I want a cookie</Text>
-		</Paragraph>,
-	)
-	.toFile('example-1.docx');
+await Docx.fromJsx(
+	<Paragraph alignment="center">
+		<Text>I want a cookie</Text>
+	</Paragraph>,
+).toFile('example-1.docx');
 ```
 
 ```tsx
 await Docx.fromNothing()
-	.withXmlRule(
-		'self::text()',
-		({ node }) => <Text>{node.nodeValue}</Text>
-	)
-	.withXmlRule(
-		'self::p',
-		({ traverse, node }) => (
-			<Paragraph alignment={node.getAttribute('align')}>
-				{traverse()}
-			</Paragraph>
-		)
-	)
+	.withXmlRule('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>)
+	.withXmlRule('self::p', ({ traverse, node }) => (
+		<Paragraph alignment={node.getAttribute('align')}>{traverse()}</Paragraph>
+	))
 	.withXml(`<p align="center">I want a cookie</p>`, {})
 	.toFile('example-2.docx');
 ```
@@ -108,7 +95,6 @@ yet -- they are not available, but hopefully soon.
 - [ ] Aligning text on tabs
 - [x] Font family
 - [ ] Embed TTF in the DOCX file
-
 
 **References:**
 

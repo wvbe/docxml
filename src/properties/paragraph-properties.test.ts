@@ -87,6 +87,7 @@ describe('Paragraph formatting', () => {
 				language: 'en-GB',
 				fontSize: hpt(19),
 				isStrike: false,
+				spacing: null,
 				font: null,
 			},
 		},

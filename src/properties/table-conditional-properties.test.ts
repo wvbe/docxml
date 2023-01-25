@@ -76,6 +76,7 @@ describe('Table conditional formatting', () => {
 				language: null,
 				fontSize: null,
 				isStrike: false,
+				spacing: null,
 				font: null,
 			},
 			table: {

@@ -5,22 +5,13 @@
  * tell you where the query was run from.
  */
 // Import the file that registers custom XPath functions to the fontoxpath global;
-import {
-	evaluateXPath as _evaluateXPath,
-	evaluateXPathToArray as _evaluateXPathToArray,
-	evaluateXPathToBoolean as _evaluateXPathToBoolean,
-	evaluateXPathToFirstNode as _evaluateXPathToFirstNode,
-	evaluateXPathToMap as _evaluateXPathToMap,
-	evaluateXPathToNodes as _evaluateXPathToNodes,
-	evaluateXPathToNumber as _evaluateXPathToNumber,
-	evaluateXPathToString as _evaluateXPathToString,
-} from 'https://esm.sh/fontoxpath@3.27.1?pin=v96';
+import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v96';
 
 import { DOCXML_NS_URI } from './xquery-functions.ts';
 
-export type { INodesFactory } from 'https://esm.sh/fontoxpath@3.27.1?pin=v96';
+export type { INodesFactory } from 'https://esm.sh/fontoxpath@3.28.2?pin=v96';
 
-export const XQUERY_3_1_LANGUAGE = _evaluateXPath.XQUERY_3_1_LANGUAGE;
+export const XQUERY_3_1_LANGUAGE = fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE;
 
 const OPTIONS = {
 	language: XQUERY_3_1_LANGUAGE,
@@ -30,10 +21,12 @@ const OPTIONS = {
 };
 
 export function evaluateXPath(
-	...[query, node, domFacade, variables, returnType, options]: Parameters<typeof _evaluateXPath>
+	...[query, node, domFacade, variables, returnType, options]: Parameters<
+		typeof fontoxpath.evaluateXPath
+	>
 ) {
 	try {
-		return _evaluateXPath(query, node, domFacade, variables, returnType, {
+		return fontoxpath.evaluateXPath(query, node, domFacade, variables, returnType, {
 			...(options || {}),
 			...OPTIONS,
 		});
@@ -44,10 +37,12 @@ export function evaluateXPath(
 }
 
 export function evaluateXPathToArray(
-	...[query, node, domFacade, variables, options]: Parameters<typeof _evaluateXPathToArray>
+	...[query, node, domFacade, variables, options]: Parameters<
+		typeof fontoxpath.evaluateXPathToArray
+	>
 ) {
 	try {
-		return _evaluateXPathToArray(query, node, domFacade, variables, {
+		return fontoxpath.evaluateXPathToArray(query, node, domFacade, variables, {
 			...(options || {}),
 			...OPTIONS,
 		});
@@ -58,10 +53,10 @@ export function evaluateXPathToArray(
 }
 
 export function evaluateXPathToMap<P = Record<string, unknown>>(
-	...[query, node, domFacade, variables, options]: Parameters<typeof _evaluateXPathToMap>
+	...[query, node, domFacade, variables, options]: Parameters<typeof fontoxpath.evaluateXPathToMap>
 ) {
 	try {
-		return _evaluateXPathToMap(query, node, domFacade, variables, {
+		return fontoxpath.evaluateXPathToMap(query, node, domFacade, variables, {
 			...(options || {}),
 			...OPTIONS,
 		}) as P;
@@ -72,10 +67,12 @@ export function evaluateXPathToMap<P = Record<string, unknown>>(
 }
 
 export function evaluateXPathToFirstNode(
-	...[query, node, domFacade, variables, options]: Parameters<typeof _evaluateXPathToFirstNode>
+	...[query, node, domFacade, variables, options]: Parameters<
+		typeof fontoxpath.evaluateXPathToFirstNode
+	>
 ) {
 	try {
-		return _evaluateXPathToFirstNode<Node>(query, node, domFacade, variables, {
+		return fontoxpath.evaluateXPathToFirstNode<Node>(query, node, domFacade, variables, {
 			...(options || {}),
 			...OPTIONS,
 		});
@@ -86,10 +83,12 @@ export function evaluateXPathToFirstNode(
 }
 
 export function evaluateXPathToNodes(
-	...[query, node, domFacade, variables, options]: Parameters<typeof _evaluateXPathToNodes>
+	...[query, node, domFacade, variables, options]: Parameters<
+		typeof fontoxpath.evaluateXPathToNodes
+	>
 ) {
 	try {
-		return _evaluateXPathToNodes<Node>(query, node, domFacade, variables, {
+		return fontoxpath.evaluateXPathToNodes<Node>(query, node, domFacade, variables, {
 			...(options || {}),
 			...OPTIONS,
 		});
@@ -100,10 +99,12 @@ export function evaluateXPathToNodes(
 }
 
 export function evaluateXPathToBoolean(
-	...[query, node, domFacade, variables, options]: Parameters<typeof _evaluateXPathToBoolean>
+	...[query, node, domFacade, variables, options]: Parameters<
+		typeof fontoxpath.evaluateXPathToBoolean
+	>
 ) {
 	try {
-		return _evaluateXPathToBoolean(query, node, domFacade, variables, {
+		return fontoxpath.evaluateXPathToBoolean(query, node, domFacade, variables, {
 			...(options || {}),
 			...OPTIONS,
 		});
@@ -114,10 +115,12 @@ export function evaluateXPathToBoolean(
 }
 
 export function evaluateXPathToNumber(
-	...[query, node, domFacade, variables, options]: Parameters<typeof _evaluateXPathToNumber>
+	...[query, node, domFacade, variables, options]: Parameters<
+		typeof fontoxpath.evaluateXPathToNumber
+	>
 ) {
 	try {
-		return _evaluateXPathToNumber(query, node, domFacade, variables, {
+		return fontoxpath.evaluateXPathToNumber(query, node, domFacade, variables, {
 			...(options || {}),
 			...OPTIONS,
 		});
@@ -128,10 +131,12 @@ export function evaluateXPathToNumber(
 }
 
 export function evaluateXPathToString(
-	...[query, node, domFacade, variables, options]: Parameters<typeof _evaluateXPathToString>
+	...[query, node, domFacade, variables, options]: Parameters<
+		typeof fontoxpath.evaluateXPathToString
+	>
 ) {
 	try {
-		return _evaluateXPathToString(query, node, domFacade, variables, {
+		return fontoxpath.evaluateXPathToString(query, node, domFacade, variables, {
 			...(options || {}),
 			...OPTIONS,
 		});

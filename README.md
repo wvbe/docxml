@@ -1,7 +1,7 @@
 # DOCX Markup Language
 
-This is a [Deno](https://deno.land) module for making `.docx` files from scratch or from an existing DOCX/DOTX template.
-It will probably be [published for NodeJS soon™ too](https://github.com/wvbe/docxml/issues/8).
+This is a [NodeJS](https://nodejs.org/)/[Deno](https://deno.land) module for making `.docx` files from scratch or from
+an existing DOCX/DOTX template.
 
 You could use `docxml` to:
 
@@ -10,6 +10,21 @@ You could use `docxml` to:
 - Convert JSON, XML or other data structures to DOCX
 - Parse content from an existing DOCX file
 - Extract style definitions from a DOTX/DOCX file
+
+`docxml` can be used in [NodeJS](https://nodejs.org/) and [Deno](https://deno.land) according to the traditions in those
+ecosystems. For Node users, simply `npm install docxml` and then `require()` or `import` as you wish. For Deno users,
+`import "deno.land/x/docxml/mod.ts"` or use an import map if you wish.
+
+```js
+// NodeJS using CommonJS:
+const { default: Docxml, Paragraph } = require('docxml');
+
+// NodeJS using ES6 modules, or Deno with an import map
+import Docxml, { Paragraph } from 'docxml';
+
+// Deno without an import map
+import Docxml, { Paragraph } from 'deno.land/x/docxml/mod.ts';
+```
 
 `docxml` is designed to be used in vanilla JavaScript using class component instances, or using JSX if you're on Deno or
 want to use NodeJS and a transpiler like Babel:

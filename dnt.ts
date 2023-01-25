@@ -56,13 +56,9 @@ await build({
 		typings: 'esm/mod.d.ts',
 	},
 	mappings: {
-		'https://esm.sh/fontoxpath@3.26.0': {
+		'https://esm.sh/fontoxpath@3.28.2?pin=v96': {
 			name: 'fontoxpath',
-			version: '3.27.1',
-		},
-		'https://esm.sh/fontoxpath@3.27.1?pin=v96': {
-			name: 'fontoxpath',
-			version: '3.27.1',
+			version: '3.28.2',
 		},
 		'https://esm.sh/slimdom@4.0.2?pin=v96': {
 			name: 'slimdom',

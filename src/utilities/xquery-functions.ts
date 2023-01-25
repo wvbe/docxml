@@ -1,21 +1,18 @@
-import {
-	registerCustomXPathFunction,
-	registerXQueryModule,
-} from 'https://esm.sh/fontoxpath@3.27.1?pin=v96';
+import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v96';
 
 import { convert } from './length.ts';
 import { QNS } from './namespaces.ts';
 
 export const DOCXML_NS_URI = 'https://github.com/wvbe/docxml';
 
-registerCustomXPathFunction(
+fontoxpath.registerCustomXPathFunction(
 	{ namespaceURI: DOCXML_NS_URI, localName: 'length' },
 	['xs:float?', 'xs:string'],
 	'map(*)?',
 	(_facade, value, unit) => (value === null ? null : convert(value, unit)),
 );
 
-registerXQueryModule(`
+fontoxpath.registerXQueryModule(`
 	module namespace docxml = "${DOCXML_NS_URI}";
 
 	declare %public function docxml:cell-column($cell) as xs:double {

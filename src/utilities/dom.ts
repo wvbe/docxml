@@ -1,7 +1,4 @@
-import {
-	evaluateUpdatingExpressionSync,
-	executePendingUpdateList,
-} from 'https://esm.sh/fontoxpath@3.27.1?pin=v96';
+import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v96';
 import {
 	Document as SlimdomDocument,
 	Node as SlimdomNode,
@@ -72,8 +69,9 @@ export function create(
  */
 export function update(dom: Node | Document, expression: string, times = 1): void {
 	while (times-- > 0) {
-		executePendingUpdateList(
-			evaluateUpdatingExpressionSync(expression, dom, null, {}, { debug: true }).pendingUpdateList,
+		fontoxpath.executePendingUpdateList(
+			fontoxpath.evaluateUpdatingExpressionSync(expression, dom, null, {}, { debug: true })
+				.pendingUpdateList,
 		);
 	}
 }

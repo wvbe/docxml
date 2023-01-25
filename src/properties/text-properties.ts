@@ -41,6 +41,7 @@ export type TextProperties = {
 	language?: string | null;
 	fontSize?: Length | null;
 	isStrike?: boolean | null;
+	spacing?: Length | null;
 	font?:
 		| string
 		| {
@@ -69,6 +70,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"language": ./${QNS.w}lang/@${QNS.w}val/string(),
 				"fontSize": docxml:length(${QNS.w}sz/@${QNS.w}val, "hpt"),
 				"isStrike": docxml:ct-on-off(./${QNS.w}strike),
+				"spacing": docxml:length(${QNS.w}spacing/@${QNS.w}val, 'twip'),
 				"font": ./${QNS.w}rFonts/map {
 					"cs": @${QNS.w}cs/string(),
 					"ascii": @${QNS.w}ascii/string(),
@@ -122,6 +124,9 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 				attribute ${QNS.w}val { $fontSize }
 			} else (),
 			if ($isStrike) then element ${QNS.w}strike {} else (),
+			if ($spacing) then element ${QNS.w}spacing {
+				attribute ${QNS.w}val { $spacing }
+			} else (),
 
 			if (exists($font)) then element ${QNS.w}rFonts {
 				if (exists($font('cs'))) then attribute ${QNS.w}cs {
@@ -147,6 +152,7 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 			isCaps: data.isCaps || false,
 			fontSize: data.fontSize ? data.fontSize.hpt : null,
 			isStrike: data.isStrike || false,
+			spacing: data.spacing ? data.spacing.twip : null,
 			font:
 				typeof data.font === 'string'
 					? {

@@ -82,7 +82,7 @@ describe('Table conditional formatting', () => {
 			},
 			table: {
 				style: null,
-				look: null,
+				activeConditions: null,
 				indentation: null,
 				cellSpacing: null,
 				cellPadding: null,

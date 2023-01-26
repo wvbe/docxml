@@ -5,9 +5,12 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { type ArtBorderType, type Border, type LineBorderType } from './shared-properties.ts';
 
 export type TableProperties = {
+	/**
+	 * Show this table according to the style that is referenced through this style identifier.
+	 */
 	style?: string | null;
 	/**
-	 * @deprecated Use columnWidths instead. Also, this API sucks.
+	 * @deprecated Use columnWidths instead.
 	 */
 	width?:
 		| null
@@ -35,9 +38,11 @@ export type TableProperties = {
 	 */
 	columnBandingSize?: null | number;
 	/**
+	 * The conditions that will be evaluated for conditional formatting of table parts.
+	 *
 	 * @todo rename to something more descriptive?
 	 */
-	look?: null | {
+	activeConditions?: null | {
 		firstColumn?: null | boolean;
 		lastColumn?: null | boolean;
 		firstRow?: null | boolean;
@@ -69,7 +74,7 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 		? evaluateXPathToMap<TableProperties>(
 				`map {
 					"style": ./${QNS.w}tblStyle/@${QNS.w}val/string(),
-					"look": ./${QNS.w}tblLook/map {
+					"activeConditions": ./${QNS.w}tblLook/map {
 						"firstColumn": docxml:st-on-off(@${QNS.w}firstColumn),
 						"lastColumn": docxml:st-on-off(@${QNS.w}lastColumn),
 						"firstRow": docxml:st-on-off(@${QNS.w}firstRow),
@@ -117,13 +122,13 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 				attribute ${QNS.w}val { $width('length') },
 				attribute ${QNS.w}type { $width('unit') }
 			} else (),
-			if (exists($look)) then element ${QNS.w}tblLook {
-				if ($look('firstColumn')) then attribute ${QNS.w}firstColumn { "1" } else (),
-				if ($look('firstRow')) then attribute ${QNS.w}firstRow { "1" } else (),
-				if ($look('lastColumn')) then attribute ${QNS.w}lastColumn { "1" } else (),
-				if ($look('lastRow')) then attribute ${QNS.w}lastRow { "1" } else (),
-				if ($look('noHBand')) then attribute ${QNS.w}noHBand { "1" } else (),
-				if ($look('noVBand')) then attribute ${QNS.w}noVBand { "1"}  else ()
+			if (exists($activeConditions)) then element ${QNS.w}tblLook {
+				if ($activeConditions('firstColumn')) then attribute ${QNS.w}firstColumn { "1" } else (),
+				if ($activeConditions('firstRow')) then attribute ${QNS.w}firstRow { "1" } else (),
+				if ($activeConditions('lastColumn')) then attribute ${QNS.w}lastColumn { "1" } else (),
+				if ($activeConditions('lastRow')) then attribute ${QNS.w}lastRow { "1" } else (),
+				if ($activeConditions('noHBand')) then attribute ${QNS.w}noHBand { "1" } else (),
+				if ($activeConditions('noVBand')) then attribute ${QNS.w}noVBand { "1"}  else ()
 			} else (),
 			if (exists($cellPadding)) then element ${QNS.w}tblCellMar {
 				if (exists($cellPadding('top'))) then element ${QNS.w}top {
@@ -169,7 +174,7 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 		}`,
 		{
 			style: tblpr.style || null,
-			look: tblpr.look || null,
+			activeConditions: tblpr.activeConditions || null,
 			width:
 				typeof tblpr.width === 'string' && tblpr.width.endsWith('%')
 					? { length: tblpr.width, unit: 'pct' }

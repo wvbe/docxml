@@ -18,9 +18,21 @@ import {
  *   http://www.datypic.com/sc/ooxml/e-w_pPr-6.html
  */
 export type ParagraphProperties = {
+	/**
+	 * The horizontal alignment of text in this paragraph.
+	 */
 	alignment?: 'left' | 'right' | 'center' | 'both' | null;
+	/**
+	 * The level or indentation at which this paragraph lives as a table-of-contents item.
+	 */
 	outlineLvl?: number | null;
+	/**
+	 * Show this paragraph according to the style that is referenced through this style identifier.
+	 */
 	style?: string | null;
+	/**
+	 * Extra vertical whitespace before, after and/or between the lines of this paragraph.
+	 */
 	spacing?: {
 		before?: Length | null;
 		after?: Length | null;
@@ -29,6 +41,9 @@ export type ParagraphProperties = {
 		afterAutoSpacing?: boolean | null;
 		beforeAutoSpacing?: boolean | null;
 	} | null;
+	/**
+	 * Extra horizontal whitespace before or after this paragraph, or for the first line only.
+	 */
 	indentation?: {
 		hanging?: Length | null;
 		hangingChars?: number | null;
@@ -39,6 +54,9 @@ export type ParagraphProperties = {
 		end?: Length | null;
 		endChars?: number | null;
 	} | null;
+	/**
+	 * The border on any side of this paragraph, or between other paragraphs of the same style.
+	 */
 	borders?: null | {
 		top?: null | Border<LineBorderType>;
 		left?: null | Border<LineBorderType>;
@@ -46,11 +64,20 @@ export type ParagraphProperties = {
 		right?: null | Border<LineBorderType>;
 		between?: null | Border<LineBorderType>;
 	};
+	/**
+	 * The background color of this paragraph, optionally with a pattern in a secondary color.
+	 */
 	shading?: null | Shading;
+	/**
+	 * Configuration of the list bulleting given to this paragraph.
+	 */
 	listItem?: null | {
 		numbering?: null | number;
 		depth?: null | number;
 	};
+	/**
+	 * Change tracking info for this paragraph.
+	 */
 	change?:
 		| null
 		| ({
@@ -58,7 +85,6 @@ export type ParagraphProperties = {
 				author: string;
 				date: Date;
 		  } & Omit<ParagraphProperties, 'change'>);
-
 	/**
 	 * Formatting of the pilcrow signn
 	 */

@@ -48,7 +48,7 @@ describe('Table formatting', () => {
 		{
 			style: 'afkicken-van-de-opkikkers',
 			width: { length: '1200', unit: 'dxa' },
-			look: {
+			activeConditions: {
 				firstColumn: true,
 				firstRow: true,
 				lastColumn: true,

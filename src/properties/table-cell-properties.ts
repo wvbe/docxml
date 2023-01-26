@@ -5,10 +5,25 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { type Border, type LineBorderType, type Shading } from './shared-properties.ts';
 
 export type TableCellProperties = {
+	/**
+	 * The amount of columns spanned by this cell. Defaults to `1`.
+	 */
 	colSpan?: null | number;
+	/**
+	 * The amount of rows spanned by this cell. Defaults to `1`.
+	 */
 	rowSpan?: null | number;
+	/**
+	 * The width of this cell.
+	 */
 	width?: null | Length;
+	/**
+	 * The background color of this cell, optionally with a pattern in a secondary color.
+	 */
 	shading?: null | Shading;
+	/**
+	 * The border on any side of this cell, or between diagonally across in either direction.
+	 */
 	borders?: null | {
 		top?: null | Border<LineBorderType>;
 		start?: null | Border<LineBorderType>;

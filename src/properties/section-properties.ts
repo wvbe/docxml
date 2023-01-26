@@ -10,10 +10,26 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
  *   https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_rPr_topic_ID0EIEKM.html
  */
 export type SectionProperties = {
+	/**
+	 * A reference to the header portion on every page in this section.
+	 */
 	headers?: null | string | { first?: string | null; even?: string | null; odd?: string | null };
+	/**
+	 * A reference to the footer portion on every page in this section.
+	 */
 	footers?: null | string | { first?: string | null; even?: string | null; odd?: string | null };
+	/**
+	 * The width of any page in this section.
+	 */
 	pageWidth?: null | Length;
+	/**
+	 * The height of any page in this section.
+	 */
 	pageHeight?: null | Length;
+	/**
+	 * The supposed orientation noted for pages in this section. Overridden by `.pageWidth` or `.pageHeight`
+	 * when they are set.
+	 */
 	pageOrientation?: null | 'landscape' | 'portrait';
 };
 

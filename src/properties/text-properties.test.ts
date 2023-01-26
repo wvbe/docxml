@@ -30,13 +30,13 @@ describe('Text formatting', () => {
 		{
 			color: 'red',
 			isUnderlined: 'dashLongHeavy',
-			isBold: true,
-			isItalic: true,
+			isBold: { simple: true, complex: false },
+			isItalic: { simple: true, complex: false },
 			isSmallCaps: true,
 			isCaps: true,
 			verticalAlign: 'subscript',
 			language: 'en-GB',
-			fontSize: hpt(19),
+			fontSize: { simple: hpt(19), complex: null },
 			minimumKerningFontSize: hpt(23),
 			spacing: twip(100),
 			font: {
@@ -46,6 +46,21 @@ describe('Text formatting', () => {
 			},
 		},
 	);
+
+	describe('Complex character formatting', () => {
+		test(
+			`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:bCs />
+				<w:iCs />
+				<w:szCs w:val="23" />
+			</w:rPr>`,
+			{
+				isBold: { simple: false, complex: true },
+				isItalic: { simple: false, complex: true },
+				fontSize: { simple: null, complex: hpt(23) },
+			},
+		);
+	});
 });
 
 run();

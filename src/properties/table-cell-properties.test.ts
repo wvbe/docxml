@@ -129,7 +129,7 @@ describe('Table cell formatting', () => {
 		},
 	});
 
-	describe('Word 2006-style "left" and "right" borders can still be read', () => {
+	describe('Legacy "left"/"right"', () => {
 		test(
 			`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
 				<w:tcBorders>

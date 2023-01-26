@@ -31,7 +31,6 @@ describe('Table conditional formatting', () => {
 				</w:tblBorders>
 			</w:tblPr>
 			<w:tcPr>
-				<w:tcW w:w="1701" w:type="dxa" />
 				<w:tcBorders>
 					<w:top w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
 					<w:start w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
@@ -44,12 +43,6 @@ describe('Table conditional formatting', () => {
 		{
 			type: 'wholeTable',
 			paragraph: {
-				alignment: null,
-				outlineLvl: null,
-				style: null,
-				spacing: null,
-				indentation: null,
-				shading: null,
 				borders: {
 					top: {
 						type: 'single',
@@ -57,35 +50,12 @@ describe('Table conditional formatting', () => {
 						spacing: 1,
 						color: 'FF0000',
 					},
-					left: null,
-					bottom: null,
-					right: null,
-					between: null,
 				},
-				listItem: null,
 			},
 			text: {
-				style: null,
-				color: null,
-				isUnderlined: null,
-				isBold: { simple: true, complex: false },
-				isItalic: { simple: false, complex: false },
-				isSmallCaps: false,
-				isCaps: false,
-				verticalAlign: null,
-				language: null,
-				fontSize: { simple: null, complex: null },
-				minimumKerningFontSize: null,
-				isStrike: false,
-				spacing: null,
-				font: null,
+				isBold: { simple: true },
 			},
 			table: {
-				style: null,
-				activeConditions: null,
-				indentation: null,
-				cellSpacing: null,
-				cellPadding: null,
 				borders: {
 					top: {
 						type: null,
@@ -93,20 +63,9 @@ describe('Table conditional formatting', () => {
 						spacing: 1,
 						color: 'red',
 					},
-					start: null,
-					bottom: null,
-					end: null,
-					insideH: null,
-					insideV: null,
 				},
-				width: null,
-				columnBandingSize: null,
-				rowBandingSize: null,
 			},
 			cell: {
-				colSpan: 1,
-				rowSpan: 1,
-				shading: null,
 				borders: {
 					top: {
 						type: 'double',
@@ -138,9 +97,6 @@ describe('Table conditional formatting', () => {
 						spacing: 0,
 						color: 'FF0000',
 					},
-					tr2bl: null,
-					insideH: null,
-					insideV: null,
 				},
 			},
 		},

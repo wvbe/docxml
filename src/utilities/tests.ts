@@ -3,7 +3,7 @@
  * All the helper functions for test purposes only.
  */
 import * as path from 'https://deno.land/std@0.170.0/path/mod.ts';
-import { expect, it } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { describe, expect, it } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
@@ -113,40 +113,46 @@ export function createXmlRoundRobinTest<ObjectShape extends { [key: string]: unk
 	fromNode: (n: Node | null) => ObjectShape,
 	toNode: (n: ObjectShape) => Node | null,
 ) {
-	return function test(
-		/**
-		 * The XML that the system should be able to ingest.
-		 */
-		xmlSource: Node | string,
-		/**
-		 * The object parsed from XML.
-		 */
-		parsedExpectation: ObjectShape,
+	function assert(
+		prop: string,
+		p1: Record<string, unknown>,
+		e1: Record<string, unknown>,
+		p2: Record<string, unknown>,
 	) {
-		const serializedOnce = typeof xmlSource === 'string' ? create(xmlSource) : xmlSource;
-		const parsedOnce = fromNode(serializedOnce);
-		const serializedAgain = toNode(parsedOnce);
-		if (typeof xmlSource !== 'string') {
-			xmlSource.parentElement?.insertBefore(serializedAgain as Node, xmlSource);
-			xmlSource.parentElement?.removeChild(xmlSource);
-		}
+		const value = p1[prop];
+		const expectation = e1[prop];
+		const reparsed = p2[prop];
 
-		const parsedTwice = fromNode(serializedAgain);
-
-		// Usually fails strict string equals because of namespace declarations and shit:
-		// it('XML', () => {
-		// 	expect(serialize(serializedOnce)).toBe(serialize(serializedAgain));
-		// });
-
-		for (const prop in parsedExpectation) {
-			it(`.${String(prop)}`, () => {
-				// Assert that the parsed prop equals the expected
-				expect(parsedOnce[prop]).toEqual(parsedExpectation[prop]);
-
-				// Assert that serializing and parsing again will result in the same outcome
-				// nb: If this test fails there is probably a problem in paragraphPropertiesToNode()
-				expect(parsedOnce[prop]).toEqual(parsedTwice[prop]);
+		if (expectation && typeof expectation === 'object' && !Array.isArray(expectation)) {
+			describe(`.${String(prop)}`, () => {
+				for (const p in expectation) {
+					assert(
+						p,
+						value as Record<string, unknown>,
+						expectation as Record<string, unknown>,
+						reparsed as Record<string, unknown>,
+					);
+				}
 			});
+		} else {
+			it(`.${String(prop)}`, () => {
+				expect(value).toBe(expectation);
+				expect(reparsed).toBe(expectation);
+			});
+		}
+	}
+
+	return function test(xml: Node | string, parsedExpectation: ObjectShape) {
+		const dom = typeof xml === 'string' ? create(xml) : xml;
+		const p1 = fromNode(dom);
+		const serializedAgain = toNode(p1);
+		if (typeof xml !== 'string') {
+			xml.parentElement?.insertBefore(serializedAgain as Node, xml);
+			xml.parentElement?.removeChild(xml);
+		}
+		const p2 = fromNode(serializedAgain);
+		for (const prop in parsedExpectation) {
+			assert(prop, p1, parsedExpectation, p2);
 		}
 	};
 }

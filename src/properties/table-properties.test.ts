@@ -118,7 +118,7 @@ describe('Table formatting', () => {
 		);
 	});
 
-	describe('Word 2006-style "left" and "right" borders can still be read', () => {
+	describe('Legacy "left"/"right"', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
 				<w:tblBorders>

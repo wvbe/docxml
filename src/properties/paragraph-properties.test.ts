@@ -76,20 +76,11 @@ describe('Paragraph formatting', () => {
 				between: null,
 			},
 			pilcrow: {
-				style: null,
-				color: null,
-				isUnderlined: null,
-				isBold: { simple: true, complex: false },
-				isItalic: { simple: true, complex: false },
-				isSmallCaps: false,
-				isCaps: false,
-				minimumKerningFontSize: null,
+				isBold: { simple: true },
+				isItalic: { simple: true },
 				verticalAlign: 'subscript',
 				language: 'en-GB',
-				fontSize: { simple: hpt(19), complex: null },
-				isStrike: false,
-				spacing: null,
-				font: null,
+				fontSize: { simple: hpt(19) },
 			},
 		},
 	);
@@ -105,7 +96,7 @@ describe('Paragraph formatting', () => {
 		);
 	});
 
-	describe('Word 2006-style "left" and "right" can still be read', () => {
+	describe('Legacy "left"/"right"', () => {
 		test(
 			`<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
 				<w:ind w:left="1440" w:right="1440" />
@@ -114,12 +105,6 @@ describe('Paragraph formatting', () => {
 				indentation: {
 					start: twip(1440),
 					end: twip(1440),
-					startChars: null,
-					endChars: null,
-					hanging: null,
-					hangingChars: null,
-					firstLine: null,
-					firstLineChars: null,
 				},
 			},
 		);

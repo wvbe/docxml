@@ -75,6 +75,7 @@ describe('Table conditional formatting', () => {
 				verticalAlign: null,
 				language: null,
 				fontSize: null,
+				minimumKerningFontSize: null,
 				isStrike: false,
 				spacing: null,
 				font: null,

@@ -10,9 +10,21 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
  *   https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_rPr_topic_ID0EIEKM.html
  */
 export type TextProperties = {
+	/**
+	 * Show this text according to the style that is referenced through this style identifier.
+	 */
 	style?: string | null;
+	/**
+	 * The color of this text. Type as a hexidecimal code (`"ff0000"`) or a basic color name (`"red"`).
+	 */
 	color?: string | null;
+	/**
+	 * The baseline position of this text.
+	 */
 	verticalAlign?: 'baseline' | 'subscript' | 'superscript' | null;
+	/**
+	 * Display this text with an underline, and if so, what kind of line.
+	 */
 	isUnderlined?:
 		| null
 		| boolean
@@ -34,14 +46,46 @@ export type TextProperties = {
 		| 'wavyHeavy'
 		| 'wavyDouble'
 		| 'none';
+	/**
+	 * Display extra thick characters, or not.
+	 */
 	isBold?: boolean | null;
+	/**
+	 * Display text with a slant, or not.
+	 */
 	isItalic?: boolean | null;
+	/**
+	 * Display text as capital letters, or not.
+	 */
 	isCaps?: boolean | null;
+	/**
+	 * Display text as small capital letters, or not.
+	 */
 	isSmallCaps?: boolean | null;
+	/**
+	 * The language of this bit of text, for spell checking.
+	 */
 	language?: string | null;
+	/**
+	 * The size of your font.
+	 */
 	fontSize?: Length | null;
+	/**
+	 * If the font size is equal or larger to `.minimumKerningFontSize`, font kerning should be applied.
+	 */
+	minimumKerningFontSize?: Length | null;
+	/**
+	 * Display text with a strike-through, or not.
+	 */
 	isStrike?: boolean | null;
+	/**
+	 * The space between letters.
+	 */
 	spacing?: Length | null;
+	/**
+	 * The name of the font family used for this text. Set as either a string, or as an object if you
+	 * want more control over different font variations.
+	 */
 	font?:
 		| string
 		| {
@@ -69,6 +113,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
 				"language": ./${QNS.w}lang/@${QNS.w}val/string(),
 				"fontSize": docxml:length(${QNS.w}sz/@${QNS.w}val, "hpt"),
+				"minimumKerningFontSize": docxml:length(${QNS.w}kern/@${QNS.w}val, "hpt"),
 				"isStrike": docxml:ct-on-off(./${QNS.w}strike),
 				"spacing": docxml:length(${QNS.w}spacing/@${QNS.w}val, 'twip'),
 				"font": ./${QNS.w}rFonts/map {
@@ -123,11 +168,13 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 			if ($fontSize) then element ${QNS.w}sz {
 				attribute ${QNS.w}val { $fontSize }
 			} else (),
+			if ($minimumKerningFontSize) then element ${QNS.w}kern {
+				attribute ${QNS.w}val { $minimumKerningFontSize }
+			} else (),
 			if ($isStrike) then element ${QNS.w}strike {} else (),
 			if ($spacing) then element ${QNS.w}spacing {
 				attribute ${QNS.w}val { $spacing }
 			} else (),
-
 			if (exists($font)) then element ${QNS.w}rFonts {
 				if (exists($font('cs'))) then attribute ${QNS.w}cs {
 					$font('cs')
@@ -151,6 +198,7 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 			isSmallCaps: data.isSmallCaps || false,
 			isCaps: data.isCaps || false,
 			fontSize: data.fontSize ? data.fontSize.hpt : null,
+			minimumKerningFontSize: data.minimumKerningFontSize ? data.minimumKerningFontSize.hpt : null,
 			isStrike: data.isStrike || false,
 			spacing: data.spacing ? data.spacing.twip : null,
 			font:

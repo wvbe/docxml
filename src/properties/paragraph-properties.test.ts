@@ -83,6 +83,7 @@ describe('Paragraph formatting', () => {
 				isItalic: true,
 				isSmallCaps: false,
 				isCaps: false,
+				minimumKerningFontSize: null,
 				verticalAlign: 'subscript',
 				language: 'en-GB',
 				fontSize: hpt(19),

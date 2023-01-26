@@ -23,6 +23,7 @@ describe('Text formatting', () => {
 			<w:vertAlign w:val="subscript" />
 			<w:lang w:val="en-GB" />
 			<w:sz w:val="19" />
+			<w:kern w:val="23" />
 			<w:spacing w:val="100" />
 			<w:rFonts w:cs="Tahoma" w:ascii="Arial" w:hAnsi="Courier New" />
 		</w:rPr>`,
@@ -36,6 +37,7 @@ describe('Text formatting', () => {
 			verticalAlign: 'subscript',
 			language: 'en-GB',
 			fontSize: hpt(19),
+			minimumKerningFontSize: hpt(23),
 			spacing: twip(100),
 			font: {
 				cs: 'Tahoma',

@@ -11,6 +11,8 @@ You could use `docxml` to:
 - Parse content from an existing DOCX file
 - Extract style definitions from a DOTX/DOCX file
 
+### For Deno or for NodeJS
+
 `docxml` can be used in [NodeJS](https://nodejs.org/) and [Deno](https://deno.land) according to the traditions in those
 ecosystems. For Node users, simply `npm install docxml` and then `require()` or `import` as you wish. For Deno users,
 `import "deno.land/x/docxml/mod.ts"` or use an import map if you wish.
@@ -25,6 +27,10 @@ import Docxml, { Paragraph } from 'docxml';
 // Deno without an import map
 import Docxml, { Paragraph } from 'https://deno.land/x/docxml/mod.ts';
 ```
+
+[Read all about `docxml` in Deno or Node](./docs/setup/deno-or-node.md)
+
+### For JSX or for vanilla
 
 `docxml` is designed to be used in vanilla JavaScript using class component instances, or using JSX if you're on Deno or
 want to use NodeJS and a transpiler like Babel:
@@ -45,6 +51,8 @@ const para = (
 [👉 More on using class components](https://github.com/wvbe/docxml/wiki/Get-started#components)
 
 [👉 More on using JSX](https://github.com/wvbe/docxml/wiki/Get-started#using-jsx)
+
+### For XML or for anything
 
 `docxml` is also designed to be used from scratch/entirely programmatically, or using a more ergonomic API
 to transform from an XML document. Both modes work equally well with vanilla JS or JSX.

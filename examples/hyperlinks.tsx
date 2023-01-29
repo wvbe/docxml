@@ -1,32 +1,35 @@
-/** @jsx API.jsx */
+/** @jsx Docx.jsx */
 
-import API, {
+import Docx, {
 	BookmarkRangeEnd,
 	BookmarkRangeStart,
 	Hyperlink,
 	Paragraph,
 	Section,
-} from '../mod.ts';
+	Text,
+} from 'docxml';
 
-const api = API.fromNothing();
+const docx = Docx.fromNothing();
 
-const bookmark = api.bookmarks.create();
+const bookmark = docx.bookmarks.create();
 
-api.document.set([
+docx.document.set([
 	<Section pageOrientation={'portrait'}>
 		<Paragraph>
-			<Hyperlink bookmark={bookmark}>This is a cross-reference to the next section</Hyperlink>
+			<Hyperlink bookmark={bookmark}>
+				<Text>This is a cross-reference to the next section</Text>
+			</Hyperlink>
 		</Paragraph>
 	</Section>,
 	<Section pageOrientation={'landscape'}>
 		<BookmarkRangeStart bookmark={bookmark} />
 		<Paragraph>
 			<Hyperlink url="https://github.com/wvbe/docxml">
-				This is a hyperlink to external target "github.com/wvbe/docxml"
+				<Text>This is a hyperlink to external target "github.com/wvbe/docxml"</Text>
 			</Hyperlink>
 		</Paragraph>
 		<BookmarkRangeEnd bookmark={bookmark} />
 	</Section>,
 ]);
 
-api.toFile('hyperlinks.docx');
+docx.toFile('hyperlinks.docx');

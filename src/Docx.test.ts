@@ -13,7 +13,7 @@ describe('Docx', () => {
 	it('correct files', async () => {
 		const archive = await bundle.toArchive();
 		expect(
-			Object.keys(archive.$fileNames)
+			Object.keys(archive.$$$fileNames)
 				.filter((name) => !name.endsWith('/'))
 				.sort(),
 		).toEqual(

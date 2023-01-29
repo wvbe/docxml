@@ -18,10 +18,10 @@ type Comment = {
 export class CommentsXml extends XmlFile {
 	public static contentType = FileMime.comments;
 
-	private readonly comments = new NumberMap<Comment>();
+	#comments = new NumberMap<Comment>();
 
 	public isEmpty() {
-		return !this.comments.size;
+		return !this.#comments.size;
 	}
 
 	protected async toNode(): Promise<Document> {
@@ -42,7 +42,7 @@ export class CommentsXml extends XmlFile {
 			`,
 			{
 				comments: await Promise.all(
-					this.comments.array().map(async (comment) => ({
+					this.#comments.array().map(async (comment) => ({
 						...comment,
 						date: comment.date.toISOString(),
 						contents: await Promise.all(
@@ -56,40 +56,13 @@ export class CommentsXml extends XmlFile {
 	}
 
 	/**
-	 * @deprecated Will be deprecated as a public API in the next breaking release.
-	 */
-	public get(id: Comment['id']): Comment | undefined {
-		return this.comments.get(id);
-	}
-
-	/**
-	 * @deprecated Will be deprecated as a public API in the next breaking release.
-	 */
-	public set(
-		id: Comment['id'],
-		meta: Omit<Comment, 'id' | 'contents'>,
-		contents: Comment['contents'],
-	): void {
-		const existing = this.get(id);
-		if (existing) {
-			Object.assign(existing, { ...meta, contents });
-		} else {
-			this.comments.set(id, {
-				id,
-				...meta,
-				contents,
-			});
-		}
-	}
-
-	/**
 	 * Add a comment to the DOCX file and return its new identifier. You should reference this
 	 * identifier from the document using the {@link Comment}, {@link CommentRangeStart} and
 	 * {@link CommentRangeEnd} components.
 	 */
 	public add(meta: Omit<Comment, 'id' | 'contents'>, contents: Comment['contents']) {
-		const id = this.comments.getNextAvailableKey();
-		this.comments.set(id, {
+		const id = this.#comments.getNextAvailableKey();
+		this.#comments.set(id, {
 			id,
 			...meta,
 			contents,
@@ -99,11 +72,9 @@ export class CommentsXml extends XmlFile {
 
 	/**
 	 * Check whether or not a comment with the given identifier already exists.
-	 *
-	 * @deprecated Will be deprecated as a public API in the next breaking release.
 	 */
 	public has(id: number) {
-		return this.comments.has(id);
+		return this.#comments.has(id);
 	}
 
 	/**

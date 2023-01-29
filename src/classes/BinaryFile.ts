@@ -44,8 +44,6 @@ export class BinaryFile {
 
 	/**
 	 * Let a file tell the system when it is effectively empty, so it can be omitted from the archive.
-	 *
-	 * @deprecated Remove?
 	 */
 	public isEmpty() {
 		return false;

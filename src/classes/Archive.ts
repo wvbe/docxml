@@ -14,7 +14,7 @@ export class Archive {
 	/**
 	 * @deprecated For testing purposes only.
 	 */
-	get $fileNames() {
+	get $$$fileNames() {
 		return this.#zip.files();
 	}
 

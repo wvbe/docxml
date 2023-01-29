@@ -81,7 +81,7 @@ export async function expectDocxToContain(
 	relationshipType: RelationshipType,
 	test: string,
 ) {
-	const document = bundle.relationships.find((meta) => meta.type === relationshipType);
+	const document = bundle.relationships.findInstance((meta) => meta.type === relationshipType);
 	if (!document) {
 		throw new Error('$$$ Unknown relationship ' + relationshipType);
 	}
@@ -94,7 +94,9 @@ export async function expectDocumentToContain(
 	relationshipType: RelationshipType,
 	test: string,
 ) {
-	const document = bundle.document.relationships.find((meta) => meta.type === relationshipType);
+	const document = bundle.document.relationships.findInstance(
+		(meta) => meta.type === relationshipType,
+	);
 	if (!document) {
 		throw new Error('$$$ Unknown relationship ' + relationshipType);
 	}

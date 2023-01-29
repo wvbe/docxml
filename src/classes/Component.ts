@@ -110,6 +110,16 @@ export abstract class Component<
 	/**
 	 * An event hook with which this component can ensure that the correct relationship type is
 	 * recorded to the relationship XML.
+	 *
+	 * For example;
+	 *
+	 * - Create a relationship to a {@link Hyperlink} external target
+	 * - Create a relationship from the {@link Image} component to its image file binary.
+	 *
+	 * You'll want to use {@link RelationshipsXml} to create a relationship and store its
+	 * identifier somewhere, before using it in {@link Component.toNode}.
+	 *
+	 *     this.#relationshipId = relationships.add(RelationshipType.hyperlink, this.props.url);
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public ensureRelationship(_relationships: RelationshipsXml) {

@@ -31,6 +31,7 @@ export enum RelationshipType {
 	styles = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
 	theme = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme',
 	webSettings = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/webSettings',
+	hyperlink = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink',
 
 	/**
 	 * @deprecated This is an external relationship, which are not implemneted yet
@@ -54,7 +55,7 @@ export class RelationshipsXml extends XmlFile {
 	/**
 	 * All relationship data
 	 */
-	#meta: Array<RelationshipMeta>;
+	public readonly meta: Array<RelationshipMeta>;
 
 	/**
 	 * Class instances of all relationships that are not "external"
@@ -67,13 +68,13 @@ export class RelationshipsXml extends XmlFile {
 		instances = new Map<string, File>(),
 	) {
 		super(location);
-		this.#meta = meta;
+		this.meta = meta;
 		this.#instances = instances;
 	}
 
 	// public toJSON() {
 	// 	return {
-	// 		meta: this.#meta.slice(),
+	// 		meta: this.meta.slice(),
 	// 		instances: Array.from(this.#instances.keys()).reduce<{ [id: string]: File }>(
 	// 			(json, key) => ({
 	// 				...json,
@@ -85,11 +86,20 @@ export class RelationshipsXml extends XmlFile {
 	// }
 
 	/**
-	 * Find a relationship instance (eg. a {@link DocumentXml}) by its metadata. The metadata would tell you what type
-	 * of relationship it is.
+	 * @deprecated Use {@link RelationshipXml.findInstance} instead.
 	 */
 	public find<R extends File = File>(cb: (meta: RelationshipMeta) => boolean): R | null {
-		const id = this.#meta.find(cb)?.id;
+		return this.findInstance(cb);
+	}
+	/**
+	 * Find a relationship instance (eg. a {@link DocumentXml}) by its metadata. The metadata would tell you what type
+	 * of relationship it is.
+	 *
+	 * @note So far this function is only used for testing. It may be removed in the future, so if you
+	 * have a valid use case for it please submit an issue on GitHub.
+	 */
+	public findInstance<R extends File = File>(cb: (meta: RelationshipMeta) => boolean): R | null {
+		const id = this.meta.find(cb)?.id;
 		if (!id) {
 			return null;
 		}
@@ -99,21 +109,23 @@ export class RelationshipsXml extends XmlFile {
 	/**
 	 * Create a new relationship and return the new identifier
 	 */
-	public add(type: RelationshipType, instance: File): string {
+	public add(type: RelationshipType, target: File | string): string {
 		const meta: RelationshipMeta = {
 			id: createRandomId('relationship'),
 			type,
-			target: instance.location,
-			isExternal: false,
+			target: typeof target === 'string' ? target : target.location,
+			isExternal: type === RelationshipType.hyperlink,
 			isBinary: type === RelationshipType.image,
 		};
-		this.#meta.push(meta);
-		this.#instances.set(meta.id, instance);
+		this.meta.push(meta);
+		if (typeof target !== 'string') {
+			this.#instances.set(meta.id, target);
+		}
 		return meta.id;
 	}
 
 	public hasType(type: RelationshipType) {
-		return this.#meta.some((meta) => meta.type === type);
+		return this.meta.some((meta) => meta.type === type);
 	}
 
 	public ensureRelationship<C extends File>(type: RelationshipType, createInstance: () => C): C {
@@ -144,9 +156,11 @@ export class RelationshipsXml extends XmlFile {
 				}
 			`,
 			{
-				relationships: this.#meta.map((meta) => ({
+				relationships: this.meta.map((meta) => ({
 					...meta,
-					target: path.relative(path.dirname(path.dirname(this.location)), meta.target),
+					target: meta.isExternal
+						? meta.target
+						: path.relative(path.dirname(path.dirname(this.location)), meta.target),
 				})),
 			},
 			true,

@@ -1,3 +1,4 @@
+import { type Bookmark } from '../classes/Bookmarks.ts';
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
@@ -12,9 +13,10 @@ export type BookmarkRangeEndChild = never;
 /**
  * A type describing the props accepted by {@link BookmarkRangeEnd}.
  */
-export type BookmarkRangeEndProps = {
-	id: number;
-};
+export type BookmarkRangeEndProps =
+	| { bookmark: Bookmark; id?: never }
+	// Deprecate this way:
+	| { bookmark?: never; id: number };
 
 /**
  * The end of a range associated with a comment.
@@ -33,7 +35,7 @@ export class BookmarkRangeEnd extends Component<BookmarkRangeEndProps, BookmarkR
 			`element ${QNS.w}bookmarkEnd {
 				attribute ${QNS.w}id { $id }
 			}`,
-			{
+			this.props.bookmark || {
 				id: this.props.id,
 			},
 		);

@@ -1,3 +1,7 @@
+export type Bookmark = {
+	id: number;
+	name: string;
+};
 export class Bookmarks {
 	#bookmarks = new Map<number, string | null>();
 
@@ -31,7 +35,7 @@ export class Bookmarks {
 	 * Not using a GUID because this causes Word to not make the link clickable. A much shorter
 	 * identifier works as expected.
 	 */
-	public create() {
+	public create(): Bookmark {
 		const id = this.#getNextAvailableIdentifier();
 		const name = `__docxml_bookmark_${id}`;
 		this.registerIdentifier(id);

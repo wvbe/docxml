@@ -1,5 +1,6 @@
 import './Text.ts';
 
+import { Bookmark } from '../classes/Bookmarks.ts';
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import { type RelationshipsXml, RelationshipType } from '../files/RelationshipsXml.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
@@ -16,11 +17,25 @@ export type HyperlinkChild = Text;
 /**
  * A type describing the props accepted by {@link Hyperlink}.
  */
-export type HyperlinkProps = {
-	anchor?: string;
-	url?: string;
-	tooltip?: string;
-};
+export type HyperlinkProps =
+	| {
+			anchor: string;
+			bookmark?: never;
+			url?: never;
+			tooltip?: string;
+	  }
+	| {
+			anchor?: never;
+			bookmark: Bookmark;
+			url?: never;
+			tooltip?: string;
+	  }
+	| {
+			anchor?: never;
+			bookmark?: never;
+			url: string;
+			tooltip?: string;
+	  };
 
 /**
  * A component that represents a hyperlink to another part of the same document.
@@ -33,9 +48,6 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 	#relationshipId: string | null = null;
 
 	public ensureRelationship(relationships: RelationshipsXml) {
-		if (this.props.anchor && this.props.url) {
-			throw new Error(`A hyperlink cannot reference both an anchor and an URL`);
-		}
 		if (!this.props.url) {
 			return;
 		}
@@ -58,7 +70,7 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 			`,
 			{
 				relationshipId: this.#relationshipId,
-				anchor: this.props.anchor || null,
+				anchor: this.props.bookmark?.name || this.props.anchor || null,
 				tooltip: this.props.tooltip || null,
 				children: await this.childrenToNode(ancestry),
 			},

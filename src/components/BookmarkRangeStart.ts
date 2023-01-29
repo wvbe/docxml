@@ -1,3 +1,4 @@
+import { type Bookmark } from '../classes/Bookmarks.ts';
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
@@ -12,10 +13,18 @@ export type BookmarkRangeStartChild = never;
 /**
  * A type describing the props accepted by {@link BookmarkRangeStart}.
  */
-export type BookmarkRangeStartProps = {
-	id: number;
-	name: string;
-};
+export type BookmarkRangeStartProps =
+	| {
+			bookmark: Bookmark;
+			id?: never;
+			name?: never;
+	  }
+	// Deprecate this way:
+	| {
+			bookmark?: never;
+			id: number;
+			name: string;
+	  };
 
 /**
  * The start of a range associated with a comment.
@@ -33,12 +42,13 @@ export class BookmarkRangeStart extends Component<
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public toNode(_ancestry: ComponentAncestor[]): Node {
+		console.log(this.props);
 		return create(
 			`element ${QNS.w}bookmarkStart {
 				attribute ${QNS.w}id { $id },
 				attribute ${QNS.w}name { $name }
 			}`,
-			{
+			this.props.bookmark || {
 				id: this.props.id,
 				name: this.props.name,
 			},

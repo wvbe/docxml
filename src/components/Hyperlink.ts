@@ -1,6 +1,7 @@
 import './Text.ts';
 
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { type RelationshipsXml, RelationshipType } from '../files/RelationshipsXml.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
@@ -16,7 +17,8 @@ export type HyperlinkChild = Text;
  * A type describing the props accepted by {@link Hyperlink}.
  */
 export type HyperlinkProps = {
-	anchor: string;
+	anchor?: string;
+	url?: string;
 	tooltip?: string;
 };
 
@@ -28,6 +30,18 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 
 	public static readonly mixed: boolean = false;
 
+	#relationshipId: string | null = null;
+
+	public ensureRelationship(relationships: RelationshipsXml) {
+		if (this.props.anchor && this.props.url) {
+			throw new Error(`A hyperlink cannot reference both an anchor and an URL`);
+		}
+		if (!this.props.url) {
+			return;
+		}
+		this.#relationshipId = relationships.add(RelationshipType.hyperlink, this.props.url);
+	}
+
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
@@ -36,13 +50,15 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 		return create(
 			`
 				element ${QNS.w}hyperlink {
-					attribute ${QNS.w}anchor { $anchor },
-					attribute ${QNS.w}tooltip { $tooltip },
+					if(exists($relationshipId)) then attribute ${QNS.r}id { $relationshipId } else (),
+					if(exists($anchor)) then attribute ${QNS.w}anchor { $anchor } else (),
+					if(exists($tooltip)) then attribute ${QNS.w}tooltip { $tooltip } else (),
 					$children
 				}
 			`,
 			{
-				anchor: this.props.anchor,
+				relationshipId: this.#relationshipId,
+				anchor: this.props.anchor || null,
 				tooltip: this.props.tooltip || null,
 				children: await this.childrenToNode(ancestry),
 			},

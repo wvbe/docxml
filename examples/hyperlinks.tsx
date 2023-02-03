@@ -7,7 +7,7 @@ import Docx, {
 	Paragraph,
 	Section,
 	Text,
-} from 'docxml';
+} from '../mod.ts';
 
 const docx = Docx.fromNothing();
 

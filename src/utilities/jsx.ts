@@ -66,7 +66,7 @@ export async function jsx<C extends Component>(
 					} else {
 						const lastQueuedItem = nodes[nodes.length - 1];
 						if (typeof lastQueuedItem === 'string' || lastQueuedItem instanceof Component) {
-							// Queue this item as a simple object, so that its children can be fucked with
+							// Queue this item as a simple object, so that its children can be changed
 							// in the next iteration.
 							nodes.push({
 								component,
@@ -102,6 +102,7 @@ export async function jsx<C extends Component>(
 				(flat, thing) => (Array.isArray(thing) ? [...flat, ...thing] : [...flat, thing]),
 				[],
 			)
+			// Remove empty Text components, they don't do anything
 			.filter((node) => !(node.constructor === Text && !(node as Text).children.length))
 	);
 }

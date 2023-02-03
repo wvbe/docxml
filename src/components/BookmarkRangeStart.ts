@@ -42,7 +42,6 @@ export class BookmarkRangeStart extends Component<
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public toNode(_ancestry: ComponentAncestor[]): Node {
-		console.log(this.props);
 		return create(
 			`element ${QNS.w}bookmarkStart {
 				attribute ${QNS.w}id { $id },

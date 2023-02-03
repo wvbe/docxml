@@ -1,20 +1,11 @@
+import { NumberMap } from './NumberMap.ts';
+
 export type Bookmark = {
 	id: number;
 	name: string;
 };
 export class Bookmarks {
-	#bookmarks = new Map<number, string | null>();
-
-	/**
-	 * Get the first numeric identifier that is not already taken.
-	 */
-	#getNextAvailableIdentifier() {
-		let i = 0;
-		while (this.#bookmarks.has(i)) {
-			i++;
-		}
-		return i;
-	}
+	#bookmarks = new NumberMap<string | null>(0);
 
 	/**
 	 * Marks a unique identifier as taken.
@@ -36,7 +27,7 @@ export class Bookmarks {
 	 * identifier works as expected.
 	 */
 	public create(): Bookmark {
-		const id = this.#getNextAvailableIdentifier();
+		const id = this.#bookmarks.getNextAvailableKey();
 		const name = `__docxml_bookmark_${id}`;
 		this.registerIdentifier(id);
 		return { id, name };

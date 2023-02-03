@@ -1,13 +1,14 @@
+- [Introduction](/)
 - **Setup**
-
   - [Deno, or Node](../setup/deno-or-node.md)
   - [JSX, or not](../setup/jsx-or-not.md)
-
+  - [Instantiation](../setup/instantiation.md)
 - **Examples**
-  - [Tables](../examples/tables.md)
-  - [Images](../examples/images.md)
+  - [Paragraphs](../examples/paragraphs.md)
   - [Lists](../examples/lists.md)
-  - [Sections](../examples/sections.md)
-  - [Headers/footers](../examples/headers-and-footers.md)
   - [Hyperlinks](../examples/hyperlinks.md)
   - [Bookmarks](../examples/bookmarks.md)
+  - [Images](../examples/images.md)
+  - [Tables](../examples/tables.md)
+  - [Sections](../examples/sections.md)
+  - [Headers/footers](../examples/headers-and-footers.md)

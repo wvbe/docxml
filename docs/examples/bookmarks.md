@@ -1,6 +1,8 @@
 To cross-reference other parts of the document you need to use the `<Hyperlink>` component, and point it to either an `anchor` or a `bookmark`.
 
-### Reference specific content through bookmarks
+[👉 Read more about hyperlinking external content instead](hyperlinks.md)
+
+### Bookmark ranges
 
 For referencing specific content, you'll need to create a custom bookmark;
 
@@ -52,3 +54,12 @@ docx.toFile('hyperlinks.docx');
 There are a few anchors pre-defined:
 
 - `"_top"`
+- More???
+
+These anchor(s) can be referenced with the `anchor` prop:
+
+```tsx
+<Hyperlink anchor="_top">
+	<Text>Go to top</Text>
+</Hyperlink>
+```

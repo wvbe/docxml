@@ -7,3 +7,5 @@ The `<Hyperlink>` component can be used to create clickable references to extern
 	</Text>
 </Hyperlink>
 ```
+
+[👉 Read more about cross-referencing to another part of the document](bookmarks.md)

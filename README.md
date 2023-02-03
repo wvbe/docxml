@@ -11,7 +11,16 @@ You could use `docxml` to:
 - Parse content from an existing DOCX file
 - Extract style definitions from a DOTX/DOCX file
 
-### For Deno or for NodeJS
+This documentation for this lib is available at various locations:
+
+[👉 Documentation site](https://wvbe.github.io/docxml)<br />
+[👉 GitHub source](http://github.com/wvbe/docxml)<br />
+[👉 Deno mirror](http://deno.land/x/docxml)<br />
+[👉 npm mirror](http://npmjs.org/package/docxml)
+
+#### For Deno or for NodeJS
+
+[👉 Main article](./docs/setup/deno-or-node.md)
 
 `docxml` can be used in [NodeJS](https://nodejs.org/) and [Deno](https://deno.land) according to the traditions in those
 ecosystems. For Node users, simply `npm install docxml` and then `require()` or `import` as you wish. For Deno users,
@@ -28,9 +37,9 @@ import Docxml, { Paragraph } from 'docxml';
 import Docxml, { Paragraph } from 'https://deno.land/x/docxml/mod.ts';
 ```
 
-[Read all about `docxml` in Deno or Node](./docs/setup/deno-or-node.md)
+#### For JSX or for vanilla
 
-### For JSX or for vanilla
+[👉 Main article](./docs/setup/jsx-or-not.md)
 
 `docxml` is designed to be used in vanilla JavaScript using class component instances, or using JSX if you're on Deno or
 want to use NodeJS and a transpiler like Babel:
@@ -48,11 +57,7 @@ const para = (
 );
 ```
 
-[👉 More on using class components](https://github.com/wvbe/docxml/wiki/Get-started#components)
-
-[👉 More on using JSX](https://github.com/wvbe/docxml/wiki/Get-started#using-jsx)
-
-### For XML or for anything
+#### For XML or for anything
 
 `docxml` is also designed to be used from scratch/entirely programmatically, or using a more ergonomic API
 to transform from an XML document. Both modes work equally well with vanilla JS or JSX.
@@ -75,11 +80,7 @@ await Docx.fromNothing()
 	.toFile('example-2.docx');
 ```
 
-[👉 More on XML rendering rules](https://github.com/wvbe/docxml/wiki/Get-started#rendering-xml)
-
-[👉 Go to the API docs that Deno generates for docxml](https://deno.land/x/docxml@5.2.0/mod.ts)
-
-# Features
+#### Features
 
 To great or small extend, the following features work in the current version of `docxml`. Some items are not ticked off
 yet -- they are not available, but hopefully soon.
@@ -140,7 +141,7 @@ yet -- they are not available, but hopefully soon.
 - [x] Style changes
 - [x] Table row additions and deletions
 
-# Differences with actual MS Word DOCX
+#### Differences with actual MS Word DOCX
 
 Obviously `docxml` is a TypeScript project, which is already very different from how you would normally interact
 with a DOCX document. More meaningfully however, `docxml` is meant to make writing DOCX _easier_ than going straight
@@ -159,7 +160,7 @@ to OOXML. For example;
 - Especially in tables and images, a lot of formatting details are automatically applied. In a lot of cases there
   is no API _yet_ to change them.
 
-# For contributors
+#### For contributors
 
 This project uses unit tests and linting for quality control. To lint, both Deno's own linting as well as ESLint are used.
 Please run both of the following commands to ensure that a GitHub Action does not fail later.

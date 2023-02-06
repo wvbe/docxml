@@ -48,7 +48,7 @@ want to use NodeJS and a transpiler like Babel:
 const para = new Paragraph({ alignment: 'center' }, new Text({}, 'I want a cookie'));
 ```
 
-```tsx
+```ts
 /** @jsx Docx.jsx */
 const para = (
 	<Paragraph alignment="center">
@@ -62,7 +62,7 @@ const para = (
 `docxml` is also designed to be used from scratch/entirely programmatically, or using a more ergonomic API
 to transform from an XML document. Both modes work equally well with vanilla JS or JSX.
 
-```tsx
+```ts
 await Docx.fromJsx(
 	<Paragraph alignment="center">
 		<Text>I want a cookie</Text>
@@ -70,7 +70,7 @@ await Docx.fromJsx(
 ).toFile('example-1.docx');
 ```
 
-```tsx
+```ts
 await Docx.fromNothing()
 	.withXmlRule('self::text()', ({ node }) => <Text>{node.nodeValue}</Text>)
 	.withXmlRule('self::p', ({ traverse, node }) => (

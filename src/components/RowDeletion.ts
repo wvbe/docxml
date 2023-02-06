@@ -4,6 +4,7 @@
  */
 
 import { Component, ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
+import { type TableRowProperties } from '../properties/table-row-properties.ts';
 import { type ChangeInformation, getChangeInformation } from '../utilities/changes.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
@@ -19,7 +20,7 @@ export type RowDeletionChild = RowChild;
 /**
  * A type describing the props accepted by {@link RowDeletion}.
  */
-export type RowDeletionProps = ChangeInformation;
+export type RowDeletionProps = ChangeInformation & TableRowProperties;
 
 /**
  * A component that represents a change-tracked table row that was deleted. Works the same way as

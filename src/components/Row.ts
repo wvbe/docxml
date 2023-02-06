@@ -3,15 +3,24 @@
 import './Cell.ts';
 
 import {
-	AnyComponent,
+	type AnyComponent,
+	type ComponentAncestor,
+	type ComponentDefinition,
 	Component,
-	ComponentAncestor,
-	ComponentDefinition,
 } from '../classes/Component.ts';
+import {
+	type TableRowProperties,
+	tableRowPropertiesFromNode,
+	tableRowPropertiesToNode,
+} from '../properties/table-row-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToBoolean, evaluateXPathToMap } from '../utilities/xquery.ts';
+import {
+	evaluateXPathToBoolean,
+	evaluateXPathToFirstNode,
+	evaluateXPathToNodes,
+} from '../utilities/xquery.ts';
 import { type Cell } from './Cell.ts';
 import { type RowAddition } from './RowAddition.ts';
 import { type RowDeletion } from './RowDeletion.ts';
@@ -25,26 +34,23 @@ export type RowChild = Cell;
 /**
  * A type describing the props accepted by {@link Row}.
  */
-export type RowProps = { [key: string]: never };
+export type RowProps = TableRowProperties;
 
 /**
  * For drying some logic between {@link Row}, {@link RowAddition} and {@link RowDeletion}
  *
  * Parses the children (and no props yet) from an existing XML node.
  */
-export function parsePropsAndChildNodes(node: Node) {
-	return evaluateXPathToMap<RowProps & { children: Node[] }>(
-		`
-			map {
-				"children": array{
-					./${QNS.w}tc[
-						not(./${QNS.w}tcPr/${QNS.w}vMerge/@${QNS.w}val = "continue")
-					]
-				}
-			}
-		`,
-		node,
-	);
+export function parsePropsAndChildNodes(node: Node): RowProps & { children: Node[] } {
+	return {
+		...tableRowPropertiesFromNode(evaluateXPathToFirstNode(`./${QNS.w}trPr`, node)),
+		children: evaluateXPathToNodes(
+			`./${QNS.w}tc[
+				not(./${QNS.w}tcPr/${QNS.w}vMerge/@${QNS.w}val = "continue")
+			]`,
+			node,
+		),
+	};
 }
 
 /**
@@ -65,10 +71,12 @@ export async function createNodeFromRow(
 	return create(
 		`
 			element ${QNS.w}tr {
+				$trPr,
 				$children
 			}
 		`,
 		{
+			trPr: tableRowPropertiesToNode(row.props),
 			children: await Promise.all(
 				table.model.getCellsInRow(y).map((cell, x) => {
 					const info = table.model.getCellInfo(cell);

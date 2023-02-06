@@ -13,7 +13,15 @@ export type BreakChild = never;
  * A type describing the props accepted by {@link Break}.
  */
 export type BreakProps = {
+	/**
+	 * Specifies the type of break, which determines the location for the following text.
+	 * Defaults to `"textWrapping"`.
+	 */
 	type?: 'page' | 'column' | 'textWrapping' | null;
+	/**
+	 * Specifies the location where text restarts when the value of the type attribute is
+	 * `"textWrapping"`.
+	 */
 	clear?: 'left' | 'right' | 'all' | 'none' | null;
 };
 

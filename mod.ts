@@ -61,8 +61,12 @@ export { type Length, cm, emu, hpt, inch, opt, pt, twip } from './src/utilities/
 // Archive component types
 export { type CommentsXml } from './src/files/CommentsXml.ts';
 export { type ContentTypesXml } from './src/files/ContentTypesXml.ts';
-export { type DocumentXml } from './src/files/DocumentXml.ts';
-export { type FooterXml, type HeaderXml } from './src/files/HeaderFooterXml.ts';
+export { type DocumentChild, type DocumentXml } from './src/files/DocumentXml.ts';
+export {
+	type FooterXml,
+	type HeaderFooterChild,
+	type HeaderXml,
+} from './src/files/HeaderFooterXml.ts';
 export { type NumberingXml } from './src/files/NumberingXml.ts';
 export { type RelationshipsXml } from './src/files/RelationshipsXml.ts';
 export { type SettingsXml } from './src/files/SettingsXml.ts';

@@ -22,11 +22,29 @@ describe('Section formatting', () => {
 				w:h="1600"
 				w:orient="landscape"
 			/>
+					<w:pgMar
+						w:top="1000"
+						w:right="1000"
+						w:bottom="1000"
+						w:left="1000"
+						w:header="1000"
+						w:footer="1000"
+						w:gutter="1000"
+					/>
 		</w:sectPr>`,
 		{
 			pageWidth: twip(1200),
 			pageHeight: twip(1600),
 			pageOrientation: 'landscape',
+			pageMargin: {
+				top: twip(1000),
+				right: twip(1000),
+				bottom: twip(1000),
+				left: twip(1000),
+				header: twip(1000),
+				footer: twip(1000),
+				gutter: twip(1000),
+			},
 		},
 	);
 });

@@ -31,6 +31,19 @@ export type SectionProperties = {
 	 * when they are set.
 	 */
 	pageOrientation?: null | 'landscape' | 'portrait';
+
+	/**
+	 * The space between content and various other boundaries in the page layout.
+	 */
+	pageMargin?: {
+		top?: null | Length;
+		right?: null | Length;
+		bottom?: null | Length;
+		left?: null | Length;
+		header?: null | Length;
+		footer?: null | Length;
+		gutter?: null | Length;
+	};
 };
 
 export function sectionPropertiesFromNode(node?: Node | null): SectionProperties {
@@ -51,7 +64,16 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 			},
 			"pageWidth": docxml:length(${QNS.w}pgSz/@${QNS.w}w, 'twip'),
 			"pageHeight": docxml:length(${QNS.w}pgSz/@${QNS.w}h, 'twip'),
-			"pageOrientation": ./${QNS.w}pgSz/@${QNS.w}orient/string()
+			"pageOrientation": ./${QNS.w}pgSz/@${QNS.w}orient/string(),
+			"pageMargin": map {
+				"top": docxml:length(./${QNS.w}pgMar/@${QNS.w}top, 'twip'),
+				"right": docxml:length(./${QNS.w}pgMar/@${QNS.w}right, 'twip'),
+				"bottom": docxml:length(./${QNS.w}pgMar/@${QNS.w}bottom, 'twip'),
+				"left": docxml:length(./${QNS.w}pgMar/@${QNS.w}left, 'twip'),
+				"header": docxml:length(./${QNS.w}pgMar/@${QNS.w}header, 'twip'),
+				"footer": docxml:length(./${QNS.w}pgMar/@${QNS.w}footer, 'twip'),
+				"gutter": docxml:length(./${QNS.w}pgMar/@${QNS.w}gutter, 'twip')
+			}
 		}`,
 		node,
 	);
@@ -90,6 +112,15 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				if (exists($pageWidth)) then attribute ${QNS.w}w { $pageWidth('twip') } else (),
 				if (exists($pageHeight)) then attribute ${QNS.w}h { $pageHeight('twip') } else (),
 				if ($pageOrientation) then attribute ${QNS.w}orient { $pageOrientation } else ()
+			} else (),
+			if (exists($pageMargin)) then element ${QNS.w}pgMar {
+				if (exists($pageMargin('top'))) then attribute ${QNS.w}top { $pageMargin('top')('twip') } else (),
+				if (exists($pageMargin('right'))) then attribute ${QNS.w}right { $pageMargin('right')('twip') } else (),
+				if (exists($pageMargin('bottom'))) then attribute ${QNS.w}bottom { $pageMargin('bottom')('twip') } else (),
+				if (exists($pageMargin('left'))) then attribute ${QNS.w}left { $pageMargin('left')('twip') } else (),
+				if (exists($pageMargin('header'))) then attribute ${QNS.w}header { $pageMargin('header')('twip') } else (),
+				if (exists($pageMargin('footer'))) then attribute ${QNS.w}footer { $pageMargin('footer')('twip') } else (),
+				if (exists($pageMargin('gutter'))) then attribute ${QNS.w}gutter { $pageMargin('gutter')('twip') } else ()
 			} else ()
 		}`,
 		{
@@ -103,6 +134,7 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 					: data.footers || {},
 			pageWidth: data.pageWidth || null,
 			pageHeight: data.pageHeight || null,
+			pageMargin: data.pageMargin || null,
 			pageOrientation: data.pageOrientation || null,
 		},
 	);

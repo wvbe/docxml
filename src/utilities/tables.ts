@@ -73,7 +73,7 @@ export class TableGridModel {
 		const columnsOccupied = Array.from(this.#occupancy.keys())
 			.filter((key) => key.endsWith(`,${y}`))
 			.map((key) => parseInt(key.split(',')[0], 10))
-			.sort();
+			.sort((a, b) => a - b);
 		for (let i = 0; i < columnsOccupied.length; i++) {
 			if (i !== columnsOccupied[i]) {
 				return i;

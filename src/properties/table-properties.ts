@@ -10,7 +10,7 @@ export type TableProperties = {
 	 */
 	style?: string | null;
 	/**
-	 * @deprecated Use columnWidths instead.
+	 * @deprecated Use the {@link Table} `columnWidths` prop instead.
 	 */
 	width?:
 		| null
@@ -21,6 +21,12 @@ export type TableProperties = {
 				length: '`${number}%' | string | number;
 				unit: null | 'nil' | 'auto' | 'dxa' | 'pct';
 		  };
+	/**
+	 * When set to `true`, the column widths as specified to the {@link Table} component are used
+	 * strictly. If not set, or set to `false`, the specified column widths are considered a
+	 * preference only, and may change depending on the column contents.
+	 */
+	strictColumnWidths?: boolean | null;
 	/**
 	 * The distance with which this table is indented from the left page boundary.
 	 */
@@ -103,7 +109,8 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 					"width": ./${QNS.w}tblW/map {
 						"length": ./@${QNS.w}val/string(),
 						"unit": ./@${QNS.w}type/string()
-					}
+					},
+					"strictColumnWidths": boolean(./${QNS.w}tblLayout/@${QNS.w}type = "fixed")
 				}`,
 				node,
 		  )
@@ -170,6 +177,9 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			} else (),
 			if (exists($rowBandingSize)) then element ${QNS.w}tblStyleRowBandSize {
 				attribute ${QNS.w}val { $rowBandingSize }
+			} else (),
+			if ($strictColumnWidths) then element ${QNS.w}tblLayout {
+				attribute ${QNS.w}type { "fixed" }
 			} else ()
 		}`,
 		{
@@ -200,6 +210,7 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			cellSpacing: tblpr.cellSpacing || null,
 			columnBandingSize: tblpr.columnBandingSize || null,
 			rowBandingSize: tblpr.rowBandingSize || null,
+			strictColumnWidths: tblpr.strictColumnWidths || false,
 		},
 	);
 }

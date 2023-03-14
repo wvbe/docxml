@@ -40,6 +40,7 @@ describe('Table formatting', () => {
 				<w:start w:val="dashed" w:sz="8" w:space="1" />
 				<w:insideH w:val="heartBalloon" w:sz="8" w:space="1" w:color="red" />
 			</w:tblBorders>
+			<w:tblLayout w:type="fixed" />
 			<w:tblInd w:w="100" w:type="dxa" />
 			<w:tblCellSpacing w:w="60" w:type="dxa" />
 			<w:tblStyleRowBandSize w:val="2" />
@@ -74,6 +75,7 @@ describe('Table formatting', () => {
 				insideH: { type: 'heartBalloon', width: twip(20), spacing: 1, color: 'red' },
 				insideV: null,
 			},
+			strictColumnWidths: true,
 		},
 	);
 

@@ -78,7 +78,7 @@ export class NumberingXml extends XmlFile {
 	 *
 	 * Each item correlates with <w:num>
 	 */
-	private readonly concretes = new NumberMap<ConcreteNumbering>(1);
+	private readonly implementations = new NumberMap<ConcreteNumbering>(1);
 
 	public isEmpty() {
 		return !this.abstracts.size;
@@ -101,6 +101,20 @@ export class NumberingXml extends XmlFile {
 	/**
 	 * Register a concrete implementation of an abstract numbering style and return the concrete
 	 * identifier.
+	 */
+	public addImplementation(abstract: number): number {
+		if (!this.abstracts.has(abstract)) {
+			throw new Error(`No abstract numbering at ID "${abstract}"`);
+		}
+		const id = this.implementations.getNextAvailableKey();
+		this.implementations.add({ id, abstract });
+		return id;
+	}
+
+	/**
+	 * Register a concrete implementation of an abstract numbering style and return the concrete
+	 * identifier. Create the abstract numbering style if the passed argument is an object rather
+	 * than a reference to an existing abstract.
 	 *
 	 * Not meant for public use.
 	 */
@@ -108,12 +122,7 @@ export class NumberingXml extends XmlFile {
 		if (typeof abstract === 'object') {
 			abstract = this.addAbstract(abstract);
 		}
-		if (!this.abstracts.has(abstract)) {
-			throw new Error(`No abstract numbering at ID "${abstract}"`);
-		}
-		const id = this.concretes.getNextAvailableKey();
-		this.concretes.add({ id, abstract });
-		return id;
+		return this.addImplementation(abstract);
 	}
 
 	protected toNode(): Document {
@@ -146,7 +155,7 @@ export class NumberingXml extends XmlFile {
 									$lvl('rPr')
 								}
 						},
-					for $concrete in array:flatten($concretes)
+					for $concrete in array:flatten($implementations)
 						return element ${QNS.w}num {
 							attribute ${QNS.w}numId { $concrete('id') },
 							element ${QNS.w}abstractNumId {
@@ -164,7 +173,7 @@ export class NumberingXml extends XmlFile {
 						rPr: text ? textPropertiesToNode(text) : null,
 					})),
 				})),
-				concretes: this.concretes.array(),
+				implementations: this.implementations.array(),
 			},
 			true,
 		);
@@ -172,8 +181,8 @@ export class NumberingXml extends XmlFile {
 
 	public static fromNode(dom: Document, location: string): NumberingXml {
 		const instance = new NumberingXml(location);
-		const { concretes, abstracts } = evaluateXPathToMap<{
-			concretes: ConcreteNumbering[];
+		const { implementations, abstracts } = evaluateXPathToMap<{
+			implementations: ConcreteNumbering[];
 			abstracts: (Omit<AbstractNumbering, 'levels'> & {
 				levels: ((AbstractNumbering['levels'] extends Array<infer P> ? P : never) & {
 					pPr: Element | null;
@@ -194,7 +203,7 @@ export class NumberingXml extends XmlFile {
 						"rPr": ./${QNS.w}rPr
 					}}
 				}},
-				"concretes": array { /*/${QNS.w}num/map {
+				"implementations": array { /*/${QNS.w}num/map {
 					"id": ./@${QNS.w}numId/number(),
 					"abstract": ./${QNS.w}abstractNumId/@${QNS.w}val/number()
 				}}
@@ -211,7 +220,7 @@ export class NumberingXml extends XmlFile {
 				})),
 			}),
 		);
-		concretes.forEach((concrete) => instance.concretes.set(concrete.id, concrete));
+		implementations.forEach((concrete) => instance.implementations.set(concrete.id, concrete));
 
 		return instance;
 	}
@@ -220,6 +229,9 @@ export class NumberingXml extends XmlFile {
 		return this.fromNode(await archive.readXml(location), location);
 	}
 
+	public getImplementations(): ConcreteNumbering[] {
+		return this.implementations.array();
+	}
 	public getAbstracts(): AbstractNumbering[] {
 		return this.abstracts.array();
 	}

@@ -7,13 +7,15 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
+import { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import { Paragraph } from './Paragraph.ts';
 import { Table } from './Table.ts';
 
 /**
  * A type describing the components accepted as children of {@link Cell}.
  */
-export type CellChild = Paragraph | Table;
+export type CellChild = Paragraph | Table | BookmarkRangeStart | BookmarkRangeEnd;
 
 /**
  * A type describing the props accepted by {@link Cell}.
@@ -27,7 +29,12 @@ export type CellProps = Omit<TableCellProperties, 'width'>;
  * quietly fix that for you if you don't have a paragraph there already.
  */
 export class Cell extends Component<CellProps, CellChild> {
-	public static readonly children: string[] = ['Paragraph', 'Table'];
+	public static readonly children: string[] = [
+		'Paragraph',
+		'Table',
+		'BookmarkRangeStart',
+		'BookmarkRangeEnd',
+	];
 	public static readonly mixed: boolean = false;
 
 	/**

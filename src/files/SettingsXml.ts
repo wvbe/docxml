@@ -10,10 +10,18 @@ import { File, RelationshipsXml } from './RelationshipsXml.ts';
 
 export type SettingsI = {
 	isTrackChangesEnabled: boolean;
+	/**
+	 * When set to `true`, the file will use different headers between odd and even pages, or leave them
+	 * empty. When set to `false`, odd and even pages will get the same header (the one set for "odd").
+	 *
+	 * Defaults to `false`
+	 */
+	evenAndOddHeaders: boolean;
 };
 
 const DEFAULT_SETTINGS: SettingsI = {
 	isTrackChangesEnabled: false,
+	evenAndOddHeaders: false,
 };
 
 export class SettingsXml extends XmlFile implements SettingsI {
@@ -22,6 +30,7 @@ export class SettingsXml extends XmlFile implements SettingsI {
 	public readonly relationships: RelationshipsXml;
 
 	public isTrackChangesEnabled = DEFAULT_SETTINGS.isTrackChangesEnabled;
+	public evenAndOddHeaders = DEFAULT_SETTINGS.evenAndOddHeaders;
 
 	public constructor(
 		location: string,
@@ -55,12 +64,16 @@ export class SettingsXml extends XmlFile implements SettingsI {
 				{
 					if ($isTrackChangesEnabled) then element ${QNS.w}trackRevisions {
 						(: attribute ${QNS.w}val { $isTrackChangesEnabled } :)
+					} else (),
+					if ($evenAndOddHeaders) then element ${QNS.w}evenAndOddHeaders {
+						attribute ${QNS.w}val { $evenAndOddHeaders }
 					} else ()
 
 				}
 			</w:settings>`,
 			{
 				isTrackChangesEnabled: this.isTrackChangesEnabled,
+				evenAndOddHeaders: this.evenAndOddHeaders,
 			},
 			true,
 		);
@@ -94,7 +107,8 @@ export class SettingsXml extends XmlFile implements SettingsI {
 
 		const settings = evaluateXPathToMap<SettingsI>(
 			`/${QNS.w}settings/map {
-				"isTrackChangesEnabled": docxml:ct-on-off(./${QNS.w}trackChanges)
+				"isTrackChangesEnabled": docxml:ct-on-off(./${QNS.w}trackChanges),
+				"evenAndOddHeaders": docxml:ct-on-off(./${QNS.w}evenAndOddHeaders)
 			}`,
 			await archive.readXml(location),
 		);

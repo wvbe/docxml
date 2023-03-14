@@ -7,6 +7,7 @@
  */
 import { blue, dim, green, red } from 'https://deno.land/std@0.170.0/fmt/colors.ts';
 
+import { RelationshipType } from './mod.ts';
 import { AnyComponent } from './src/classes/Component.ts';
 import { Docx } from './src/Docx.ts';
 import { Length } from './src/utilities/length.ts';
@@ -60,7 +61,12 @@ function jsxify(comp: AnyComponent): string[] {
 	];
 }
 
-if (Deno.args.includes('--json')) {
+if (Deno.args.includes('--settings')) {
+	console.dir(
+		docx.document.relationships.findInstance((meta) => meta.type === RelationshipType.settings),
+		{ depth: 50 },
+	);
+} else if (Deno.args.includes('--json')) {
 	console.log(JSON.stringify(await docx.document.children, null, '  '));
 } else {
 	console.dir(jsxify((await docx.document.children)[0]).join('\n'), { depth: 50 });

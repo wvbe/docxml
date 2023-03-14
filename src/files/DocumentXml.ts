@@ -2,6 +2,8 @@ import * as path from 'https://deno.land/std@0.170.0/path/mod.ts';
 
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
+import { BookmarkRangeEnd } from '../components/BookmarkRangeEnd.ts';
+import { BookmarkRangeStart } from '../components/BookmarkRangeStart.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Section } from '../components/Section.ts';
 import { Table } from '../components/Table.ts';
@@ -17,7 +19,7 @@ import { File, RelationshipsXml, RelationshipType } from './RelationshipsXml.ts'
 import { SettingsXml } from './SettingsXml.ts';
 import { StylesXml } from './StylesXml.ts';
 
-export type DocumentChild = Paragraph | Table | Section;
+export type DocumentChild = Paragraph | Table | BookmarkRangeStart | BookmarkRangeEnd | Section;
 
 export type DocumentRoot = DocumentChild | DocumentChild[] | Promise<DocumentChild[]>;
 
@@ -195,7 +197,7 @@ export class DocumentXml extends XmlFile {
 			sections.length
 				? sections.map((node) => Section.fromNode(node))
 				: createChildComponentsFromNodes<Table | Paragraph>(
-						[Table.name, Paragraph.name],
+						[Table.name, Paragraph.name, BookmarkRangeStart.name, BookmarkRangeEnd.name],
 						evaluateXPathToNodes(`/*/${QNS.w}body/*`, dom),
 				  ),
 		);

@@ -19,13 +19,22 @@ import {
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import { type BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
+import { type BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import { Paragraph } from './Paragraph.ts';
-import { type Table } from './Table.ts';
+import { Table } from './Table.ts';
 
 /**
  * A type describing the components accepted as children of {@link Section}.
  */
-export type SectionChild = Paragraph | Table;
+export type SectionChild = Paragraph | Table | BookmarkRangeStart | BookmarkRangeEnd;
+
+export const sectionChildComponentNames = [
+	'Table',
+	'Paragraph',
+	'BookmarkRangeStart',
+	'BookmarkRangeEnd',
+];
 
 /**
  * A type describing the props accepted by {@link Section}.
@@ -41,7 +50,7 @@ export type SectionProps = SectionProperties;
  * that over in such a way that you can simply put `<Paragraph>` (etc.) inside `<Section>`.
  */
 export class Section extends Component<SectionProps, SectionChild> {
-	public static readonly children: string[] = ['Paragraph', 'Table'];
+	public static readonly children: string[] = sectionChildComponentNames;
 	public static readonly mixed: boolean = false;
 
 	/**

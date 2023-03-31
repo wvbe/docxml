@@ -53,7 +53,7 @@ await build({
 		type: 'module',
 		main: 'script/mod.js',
 		module: 'esm/mod.js',
-		typings: 'esm/mod.d.ts',
+		typings: 'types/mod.d.ts',
 	},
 	mappings: {
 		'https://esm.sh/fontoxpath@3.28.2?pin=v96': {

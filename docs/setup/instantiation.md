@@ -20,7 +20,8 @@ const docx = Docx.fromJsx(<Paragraph>Hello world!</Paragraph>);
 The `docx` instance from the example above provides access to some interesting helper classes that
 are roughly organised in the way that a DOCX archive is itself;
 
-- `docx.bookmarks` to add bookmarks that can be shared between ranges and links. [Read more about cross-referencing to bookmarks](../examples/bookmarks.md).
+- `docx.bookmarks` to add bookmarks that can be shared between ranges and links.
+  [Read more about cross-referencing to bookmarks](../examples/bookmarks.md).
 - `docx.document` to control the document contents, and relationships directly to `word/document.xml`
   - `docx.document.styles` to read/write custom style definitions
   - `docx.document.numbering` to read/write list numbering schemes. [Read more about creating lists and numbering](../examples/lists.md).

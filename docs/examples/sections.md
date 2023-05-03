@@ -1,4 +1,6 @@
-Sections can be used to determine page size and a few other things. Unlike the actual OOXML structure itself, in `docxml` sections are components that wrap the section contents. Their use is entirely optional.
+Sections can be used to determine page size and a few other things. Unlike the actual OOXML structure
+itself, in `docxml` sections are components that wrap the section contents. Their use is entirely
+optional.
 
 ```tsx
 /** @jsx Docx.jsx */

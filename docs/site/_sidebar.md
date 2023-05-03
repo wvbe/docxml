@@ -4,7 +4,7 @@
   - [JSX, or not](../setup/jsx-or-not.md)
   - [Instantiation](../setup/instantiation.md)
   - [XML, or not](../setup/xml-or-not.md)
-- **Examples**
+- [**Examples**](../examples/index.md)
   - [Paragraphs](../examples/paragraphs.md)
   - [Lists](../examples/lists.md)
   - [Hyperlinks](../examples/hyperlinks.md)

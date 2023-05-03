@@ -1,4 +1,5 @@
-Tables consist of `Table`, `Row` and `Cell` components. Cells can have paragraphs or other tables in them. Assemble like so:
+Tables consist of `Table`, `Row` and `Cell` components. Cells can have paragraphs or other tables in
+them. Assemble like so:
 
 ```tsx
 /** @jsx Docx.jsx */
@@ -41,4 +42,23 @@ await Docx.fromJsx(
 ).toFile('tables.docx');
 ```
 
-The `Table` and `Cell` component each have props to control borders on them, column widths, or colspans/rowspans. try to make rectangular tables only, meaning that you shouldn't have too few or too many cells on any given row.
+The `Table` and `Cell` component each have props to control borders on them, column widths, or
+colspans/rowspans. try to make rectangular tables only, meaning that you shouldn't have too few or
+too many cells on any given row.
+
+### Header rows
+
+Header rows automatically repeat on the next page in MS Word, if the table is tall enough. You can
+mark any amount of rows as a header row by using the `isHeaderRow` prop. However, a header row
+"in the middle of the table" will not work -- they need to live at the top of the table.
+
+```tsx
+<Row isHeaderRow>
+	<Cell>
+		<Paragraph>Artist</Paragraph>
+	</Cell>
+	<Cell>
+		<Paragraph>Track name</Paragraph>
+	</Cell>
+</Row>
+```

@@ -5,11 +5,11 @@
  * tell you where the query was run from.
  */
 // Import the file that registers custom XPath functions to the fontoxpath global;
-import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v96';
+import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v121';
 
 import { DOCXML_NS_URI } from './xquery-functions.ts';
 
-export type { INodesFactory } from 'https://esm.sh/fontoxpath@3.28.2?pin=v96';
+export type { INodesFactory } from 'https://esm.sh/fontoxpath@3.28.2?pin=v121';
 
 export const XQUERY_3_1_LANGUAGE = fontoxpath.evaluateXPath.XQUERY_3_1_LANGUAGE;
 

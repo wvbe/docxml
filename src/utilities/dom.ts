@@ -1,10 +1,10 @@
-import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v96';
+import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v121';
 import {
 	Document as SlimdomDocument,
 	Node as SlimdomNode,
 	parseXmlDocument,
 	serializeToWellFormedString,
-} from 'https://esm.sh/slimdom@4.0.2?pin=v96';
+} from 'https://esm.sh/slimdom@4.0.2?pin=v121';
 
 import { evaluateXPathToFirstNode, INodesFactory, XQUERY_3_1_LANGUAGE } from './xquery.ts';
 

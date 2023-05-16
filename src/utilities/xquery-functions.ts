@@ -1,4 +1,4 @@
-import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v96';
+import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v121';
 
 import { convert } from './length.ts';
 import { QNS } from './namespaces.ts';

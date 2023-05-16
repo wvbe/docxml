@@ -7,12 +7,13 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import { type Field } from './Field.ts';
 import { type Text } from './Text.ts';
 
 /**
  * A type describing the components accepted as children of {@link Hyperlink}.
  */
-export type HyperlinkChild = Text;
+export type HyperlinkChild = Text | Field;
 
 /**
  * A type describing the props accepted by {@link Hyperlink}.
@@ -41,7 +42,7 @@ export type HyperlinkProps =
  * A component that represents a hyperlink to another part of the same document.
  */
 export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
-	public static readonly children: string[] = ['Text'];
+	public static readonly children: string[] = ['Text', 'Field'];
 
 	public static readonly mixed: boolean = false;
 
@@ -91,7 +92,11 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 		const { children, ...props } = evaluateXPathToMap<HyperlinkProps & { children: Node[] }>(
 			`map {
 				"anchor": ./@${QNS.w}anchor/string(),
-				"tooltip": ./@${QNS.w}tooltip/string()
+				"tooltip": ./@${QNS.w}tooltip/string(),
+				"children": array{ ./(
+					${QNS.w}r |
+					${QNS.w}fldSimple
+				) }
 			}`,
 			node,
 		);

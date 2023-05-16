@@ -5,7 +5,7 @@
  * Use as;
  *   deno run --allow-read inspect.ts test/docx/simple.docx
  */
-import { blue, dim, green, red } from 'https://deno.land/std@0.170.0/fmt/colors.ts';
+import { blue, dim, green, red } from 'https://deno.land/std@0.187.0/fmt/colors.ts';
 
 import { RelationshipType } from './mod.ts';
 import { AnyComponent } from './src/classes/Component.ts';

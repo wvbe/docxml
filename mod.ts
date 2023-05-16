@@ -25,6 +25,7 @@ export {
 	type CommentRangeStartProps,
 	CommentRangeStart,
 } from './src/components/CommentRangeStart.ts';
+export { type FieldChild, type FieldProps, Field } from './src/components/Field.ts';
 export { type HyperlinkChild, type HyperlinkProps, Hyperlink } from './src/components/Hyperlink.ts';
 export { type ImageChild, type ImageProps, Image } from './src/components/Image.ts';
 export { type ParagraphChild, type ParagraphProps, Paragraph } from './src/components/Paragraph.ts';

@@ -2,15 +2,16 @@
 // definitions, components register themselves in a side-effect of their module.
 //
 // Add items to this list that would otherwise only be depended on as a type definition.
+import './BookmarkRangeEnd.ts';
+import './BookmarkRangeStart.ts';
+import './Comment.ts';
+import './CommentRangeEnd.ts';
+import './CommentRangeStart.ts';
+import './Field.ts';
+import './Hyperlink.ts';
 import './Text.ts';
 import './TextAddition.ts';
 import './TextDeletion.ts';
-import './CommentRangeStart.ts';
-import './CommentRangeEnd.ts';
-import './Comment.ts';
-import './Hyperlink.ts';
-import './BookmarkRangeStart.ts';
-import './BookmarkRangeEnd.ts';
 
 import { type Hyperlink } from '../../mod.ts';
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
@@ -29,6 +30,7 @@ import { type BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import { type Comment } from './Comment.ts';
 import { type CommentRangeEnd } from './CommentRangeEnd.ts';
 import { type CommentRangeStart } from './CommentRangeStart.ts';
+import { type Field } from './Field.ts';
 import { type Text } from './Text.ts';
 import { type TextAddition } from './TextAddition.ts';
 import { type TextDeletion } from './TextDeletion.ts';
@@ -45,7 +47,8 @@ export type ParagraphChild =
 	| Comment
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
-	| Hyperlink;
+	| Hyperlink
+	| Field;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
@@ -72,6 +75,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'Text',
 		'TextAddition',
 		'TextDeletion',
+		'Field',
 	];
 	public static readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;
@@ -124,7 +128,17 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 				map {
 					"ppr": ./${QNS.w}pPr,
 					"style": ./${QNS.w}pPr/${QNS.w}pStyle/@${QNS.w}val/string(),
-					"children": array{ ./(${QNS.w}r | ${QNS.w}del | ${QNS.w}ins | ${QNS.w}commentRangeStart | ${QNS.w}commentRangeEnd) }
+					"children": array{ ./(
+						${QNS.w}r |
+						${QNS.w}hyperlink |
+						${QNS.w}fldSimple |
+						${QNS.w}del |
+						${QNS.w}ins |
+						${QNS.w}commentRangeStart |
+						${QNS.w}commentRangeEnd |
+						${QNS.w}bookmarkStart |
+						${QNS.w}bookmarkEnd
+					) }
 				}
 			`,
 			node,

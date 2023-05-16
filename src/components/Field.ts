@@ -1,7 +1,6 @@
 import './Text.ts';
 
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
-import { type RelationshipsXml, RelationshipType } from '../files/RelationshipsXml.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';

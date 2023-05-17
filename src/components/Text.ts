@@ -3,10 +3,14 @@
 import './Break.ts';
 import './Image.ts';
 import './Tab.ts';
+import './FieldRangeEnd.ts';
+import './FieldRangeSeparator.ts';
+import './FieldRangeInstruction.ts';
+import './FieldRangeStart.ts';
 
-import { Component, ComponentAncestor } from '../classes/Component.ts';
+import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import {
-	TextProperties,
+	type TextProperties,
 	textPropertiesFromNode,
 	textPropertiesToNode,
 } from '../properties/text-properties.ts';
@@ -15,6 +19,10 @@ import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { type Break } from './Break.ts';
+import { type FieldRangeEnd } from './FieldRangeEnd.ts';
+import { type FieldRangeInstruction } from './FieldRangeInstruction.ts';
+import { type FieldRangeSeparator } from './FieldRangeSeparator.ts';
+import { type FieldRangeStart } from './FieldRangeStart.ts';
 import { type Image } from './Image.ts';
 import { type Tab } from './Tab.ts';
 import { TextDeletion } from './TextDeletion.ts';
@@ -22,7 +30,15 @@ import { TextDeletion } from './TextDeletion.ts';
 /**
  * A type describing the components accepted as children of {@link Text}.
  */
-export type TextChild = string | Break | Tab | Image;
+export type TextChild =
+	| string
+	| Break
+	| Tab
+	| Image
+	| FieldRangeStart
+	| FieldRangeInstruction
+	| FieldRangeEnd
+	| FieldRangeSeparator;
 
 /**
  * A type describing the props accepted by {@link Text}.
@@ -34,7 +50,15 @@ export type TextProps = TextProperties;
  * are in fact different props or styles on the `<Text>` component.
  */
 export class Text extends Component<TextProps, TextChild> {
-	public static readonly children: string[] = ['Break', 'Image', 'Tab'];
+	public static readonly children: string[] = [
+		'Break',
+		'Image',
+		'Tab',
+		'FieldRangeStart',
+		'FieldRangeEnd',
+		'FieldRangeSeparator',
+		'FieldRangeInstruction',
+	];
 	public static readonly mixed: boolean = true;
 
 	/**
@@ -58,9 +82,9 @@ export class Text extends Component<TextProps, TextChild> {
 						if (typeof child === 'string') {
 							return create(
 								`element ${QNS.w}${asTextDeletion ? 'delText' : 't'} {
-								attribute xml:space { "preserve" },
-								$text
-							}`,
+									attribute xml:space { "preserve" },
+									$text
+								}`,
 								{
 									text: child,
 								},

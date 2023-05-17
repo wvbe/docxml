@@ -115,8 +115,12 @@ export class Text extends Component<TextProps, TextChild> {
 					"children": array{
 						./(
 							${QNS.w}br,
+							${QNS.w}tab,
+							${QNS.w}drawing,
 							${QNS.w}t/text(),
-							${QNS.w}delText/text()
+							${QNS.w}delText/text(),
+							${QNS.w}fldChar,
+							${QNS.w}instrText
 						)
 					}
 				}

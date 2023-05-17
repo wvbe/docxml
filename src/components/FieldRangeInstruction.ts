@@ -1,8 +1,8 @@
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
-import { registerComponent } from '../utilities/components.ts';
+import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToBoolean } from '../utilities/xquery.ts';
+import { evaluateXPathToBoolean, evaluateXPathToMap } from '../utilities/xquery.ts';
 
 /**
  * A type describing the components accepted as children of {@link FieldRangeInstruction}.
@@ -46,14 +46,27 @@ export class FieldRangeInstruction extends Component<
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static matchesNode(node: Node): boolean {
-		return evaluateXPathToBoolean('self::w:fldChar and @w:fldCharType = "separate"', node);
+		return evaluateXPathToBoolean('self::w:instrText', node);
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(): FieldRangeInstruction {
-		return new FieldRangeInstruction({});
+	static fromNode(node: Node): FieldRangeInstruction {
+		const { children } = evaluateXPathToMap<{ rpr: Node; children: Node[] }>(
+			`
+				map {
+					"children": array{
+						./text()
+					}
+				}
+			`,
+			node,
+		);
+		return new FieldRangeInstruction(
+			{},
+			...createChildComponentsFromNodes<FieldRangeInstructionChild>(this.children, children),
+		);
 	}
 }
 

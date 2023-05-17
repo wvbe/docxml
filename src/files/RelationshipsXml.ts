@@ -106,6 +106,10 @@ export class RelationshipsXml extends XmlFile {
 		return (this.#instances.get(id) as R) || null;
 	}
 
+	public filterInstances<R extends File = File>(cb: (meta: RelationshipMeta) => boolean): R[] {
+		return this.meta.filter(cb).map((meta) => this.#instances.get(meta.id) as R);
+	}
+
 	/**
 	 * Create a new relationship and return the new identifier
 	 */

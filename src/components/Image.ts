@@ -138,7 +138,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:graphic';
+		return node.nodeName === 'w:drawing';
 	}
 
 	/**

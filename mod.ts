@@ -32,6 +32,11 @@ export {
 	FieldRangeEnd,
 } from './src/components/FieldRangeEnd.ts';
 export {
+	type FieldRangeInstructionChild,
+	type FieldRangeInstructionProps,
+	FieldRangeInstruction,
+} from './src/components/FieldRangeInstruction.ts';
+export {
 	type FieldRangeSeparatorChild,
 	type FieldRangeSeparatorProps,
 	FieldRangeSeparator,

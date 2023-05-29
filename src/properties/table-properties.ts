@@ -130,12 +130,12 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 				attribute ${QNS.w}type { $width('unit') }
 			} else (),
 			if (exists($activeConditions)) then element ${QNS.w}tblLook {
-				if ($activeConditions('firstColumn')) then attribute ${QNS.w}firstColumn { "1" } else (),
-				if ($activeConditions('firstRow')) then attribute ${QNS.w}firstRow { "1" } else (),
-				if ($activeConditions('lastColumn')) then attribute ${QNS.w}lastColumn { "1" } else (),
-				if ($activeConditions('lastRow')) then attribute ${QNS.w}lastRow { "1" } else (),
-				if ($activeConditions('noHBand')) then attribute ${QNS.w}noHBand { "1" } else (),
-				if ($activeConditions('noVBand')) then attribute ${QNS.w}noVBand { "1"}  else ()
+				if ($activeConditions('firstColumn')) then attribute ${QNS.w}firstColumn { "1" } else attribute ${QNS.w}firstColumn { "0" },
+				if ($activeConditions('firstRow')) then attribute ${QNS.w}firstRow { "1" } else attribute ${QNS.w}firstRow { "0" },
+				if ($activeConditions('lastColumn')) then attribute ${QNS.w}lastColumn { "1" } else attribute ${QNS.w}lastColumn { "0" } ,
+				if ($activeConditions('lastRow')) then attribute ${QNS.w}lastRow { "1" } else attribute ${QNS.w}lastRow { "0" },
+				if ($activeConditions('noHBand')) then attribute ${QNS.w}noHBand { "1" } else attribute ${QNS.w}noHBand { "0" },
+				if ($activeConditions('noVBand')) then attribute ${QNS.w}noVBand { "1" } else attribute ${QNS.w}noVBand { "0" }
 			} else (),
 			if (exists($cellPadding)) then element ${QNS.w}tblCellMar {
 				if (exists($cellPadding('top'))) then element ${QNS.w}top {

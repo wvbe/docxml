@@ -76,7 +76,7 @@ describe('Section titlePg', () => {
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
 		</w:sectPr>`,
 		{
-			titlePage: false,
+			isTitlePage: false,
 		},
 	);
 	test(
@@ -84,7 +84,7 @@ describe('Section titlePg', () => {
 			<w:titlePg />
 		</w:sectPr>`,
 		{
-			titlePage: true,
+			isTitlePage: true,
 		},
 	);
 	test(
@@ -92,7 +92,7 @@ describe('Section titlePg', () => {
 			<w:titlePg w:val="1" />
 		</w:sectPr>`,
 		{
-			titlePage: true,
+			isTitlePage: true,
 		},
 	);
 	test(
@@ -100,7 +100,7 @@ describe('Section titlePg', () => {
 			<w:titlePg w:val="0" />
 		</w:sectPr>`,
 		{
-			titlePage: false,
+			isTitlePage: false,
 		},
 	);
 });

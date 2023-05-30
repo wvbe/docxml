@@ -44,6 +44,11 @@ export type SectionProperties = {
 		footer?: null | Length;
 		gutter?: null | Length;
 	};
+
+	/**
+	 * Specifies whether sections in the document shall have different headers and footers for even and odd pages.
+	 */
+	titlePage?: null | boolean;
 };
 
 export function sectionPropertiesFromNode(node?: Node | null): SectionProperties {
@@ -73,7 +78,8 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 				"header": docxml:length(./${QNS.w}pgMar/@${QNS.w}header, 'twip'),
 				"footer": docxml:length(./${QNS.w}pgMar/@${QNS.w}footer, 'twip'),
 				"gutter": docxml:length(./${QNS.w}pgMar/@${QNS.w}gutter, 'twip')
-			}
+			},
+			"titlePage": exists(./${QNS.w}titlePg) and (not(./${QNS.w}titlePg/@${QNS.w}val) or docxml:st-on-off(./${QNS.w}titlePg/@${QNS.w}val))
 		}`,
 		node,
 	);
@@ -121,7 +127,8 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				if (exists($pageMargin('header'))) then attribute ${QNS.w}header { $pageMargin('header')('twip') } else (),
 				if (exists($pageMargin('footer'))) then attribute ${QNS.w}footer { $pageMargin('footer')('twip') } else (),
 				if (exists($pageMargin('gutter'))) then attribute ${QNS.w}gutter { $pageMargin('gutter')('twip') } else ()
-			} else ()
+			} else (),
+			if(exists($titlePage)) then element ${QNS.w}titlePg { attribute ${QNS.w}val { "1" } } else ()
 		}`,
 		{
 			headers:
@@ -136,6 +143,7 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 			pageHeight: data.pageHeight || null,
 			pageMargin: data.pageMargin || null,
 			pageOrientation: data.pageOrientation || null,
+			titlePage: data.titlePage || null
 		},
 	);
 }

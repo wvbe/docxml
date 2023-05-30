@@ -71,4 +71,38 @@ describe('Section header/footer references', () => {
 	);
 });
 
+describe('Section titlePg', () => {
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+		</w:sectPr>`,
+		{
+			titlePage: false,
+		},
+	);
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:titlePg />
+		</w:sectPr>`,
+		{
+			titlePage: true,
+		},
+	);
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:titlePg w:val="1" />
+		</w:sectPr>`,
+		{
+			titlePage: true,
+		},
+	);
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:titlePg w:val="0" />
+		</w:sectPr>`,
+		{
+			titlePage: false,
+		},
+	);
+});
+
 run();

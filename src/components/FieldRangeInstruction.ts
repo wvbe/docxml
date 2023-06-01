@@ -7,7 +7,7 @@ import { evaluateXPathToBoolean, evaluateXPathToMap } from '../utilities/xquery.
 /**
  * A type describing the components accepted as children of {@link FieldRangeInstruction}.
  */
-export type FieldRangeInstructionChild = never;
+export type FieldRangeInstructionChild = string;
 
 /**
  * A type describing the props accepted by {@link FieldRangeInstruction}.

@@ -43,6 +43,25 @@ describe('Docx', () => {
 			].sort(),
 		);
 	});
+
+	it('.cloneAsEmptyTemplate()', () => {
+		const original = Docx.fromNothing();
+		original.withSettings({
+			attachedTemplate: 'derp',
+			isTrackChangesEnabled: true,
+		});
+		original.document.styles.add({
+			id: 'foo',
+			type: 'paragraph',
+			paragraph: {
+				style: 'bar',
+			},
+		});
+
+		const clone = original.cloneAsEmptyTemplate();
+		expect(clone.document.styles.get('foo')).toBeTruthy();
+		expect(clone.document.settings.get('attachedTemplate')).toBe('derp');
+	});
 });
 
 run();

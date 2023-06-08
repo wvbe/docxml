@@ -143,7 +143,7 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 			pageHeight: data.pageHeight || null,
 			pageMargin: data.pageMargin || null,
 			pageOrientation: data.pageOrientation || null,
-			isTitlePage: data.isTitlePage || null
+			isTitlePage: data.isTitlePage || null,
 		},
 	);
 }

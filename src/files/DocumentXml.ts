@@ -5,7 +5,7 @@ import { XmlFile } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { type SectionChild, Section, sectionChildComponentNames } from '../components/Section.ts';
 import { Table } from '../components/Table.ts';
-import { FileLocation, FileMime } from '../enums.ts';
+import { FileLocation, FileMime, RelationshipType } from '../enums.ts';
 import { createChildComponentsFromNodes } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
@@ -13,7 +13,7 @@ import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import { CommentsXml } from './CommentsXml.ts';
 import { type HeaderFooterRoot, FooterXml, HeaderXml } from './HeaderFooterXml.ts';
 import { NumberingXml } from './NumberingXml.ts';
-import { File, RelationshipsXml, RelationshipType } from './RelationshipsXml.ts';
+import { File, RelationshipsXml } from './RelationshipsXml.ts';
 import { SettingsXml } from './SettingsXml.ts';
 import { StylesXml } from './StylesXml.ts';
 

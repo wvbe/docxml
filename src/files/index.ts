@@ -1,10 +1,11 @@
 import { Archive } from '../classes/Archive.ts';
 import { UnhandledXmlFile } from '../classes/XmlFile.ts';
+import { RelationshipType } from '../enums.ts';
 import { CommentsXml } from './CommentsXml.ts';
 import { DocumentXml } from './DocumentXml.ts';
 import { FooterXml, HeaderXml } from './HeaderFooterXml.ts';
 import { NumberingXml } from './NumberingXml.ts';
-import { RelationshipMeta, RelationshipType } from './RelationshipsXml.ts';
+import { RelationshipMeta } from './RelationshipsXml.ts';
 import { SettingsXml } from './SettingsXml.ts';
 import { StylesXml } from './StylesXml.ts';
 import { CorePropertiesXml } from './wip/CorePropertiesXml.ts';

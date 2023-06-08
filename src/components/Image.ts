@@ -4,7 +4,8 @@ import {
 	type ComponentDefinition,
 	Component,
 } from '../classes/Component.ts';
-import { RelationshipsXml, RelationshipType } from '../files/RelationshipsXml.ts';
+import { RelationshipType } from '../enums.ts';
+import { RelationshipsXml } from '../files/RelationshipsXml.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { createRandomId, createUniqueNumericIdentifier } from '../utilities/identifiers.ts';

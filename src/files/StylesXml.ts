@@ -221,8 +221,6 @@ export class StylesXml extends XmlFile {
 
 	/**
 	 * Gets the style data by its identifier.
-	 *
-	 * @deprecated Not sure what this is useful for any more.
 	 */
 	public get(id: string) {
 		return this.#styles.find((style) => style.id === id);

@@ -13,14 +13,15 @@ export type TableProperties = {
 	 * @deprecated Use the {@link Table} `columnWidths` prop instead.
 	 */
 	width?:
-		| null
-		| number
-		| '`${number}%'
-		| string
-		| {
-				length: '`${number}%' | string | number;
-				unit: null | 'nil' | 'auto' | 'dxa' | 'pct';
-		  };
+	| null
+	| number
+	| '`${number}%'
+	| string
+	| {
+		length: '`${number}%' | string | number;
+		unit: null | 'nil' | 'auto' | 'dxa' | 'pct' | undefined;
+	}
+	| undefined;
 	/**
 	 * When set to `true`, the column widths as specified to the {@link Table} component are used
 	 * strictly. If not set, or set to `false`, the specified column widths are considered a
@@ -107,7 +108,7 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
 					"width": ./${QNS.w}tblW/map {
-						"length": ./@${QNS.w}val/string(),
+						"length": ./@${QNS.w}w/string(),
 						"unit": ./@${QNS.w}type/string()
 					},
 					"strictColumnWidths": boolean(./${QNS.w}tblLayout/@${QNS.w}type = "fixed")
@@ -126,7 +127,7 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 				attribute ${QNS.w}val { $style }
 			} else (),
 			if (exists($width)) then element ${QNS.w}tblW {
-				attribute ${QNS.w}val { $width('length') },
+				attribute ${QNS.w}w { $width('length') },
 				attribute ${QNS.w}type { $width('unit') }
 			} else (),
 			if (exists($activeConditions)) then element ${QNS.w}tblLook {

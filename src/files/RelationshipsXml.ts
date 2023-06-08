@@ -3,41 +3,12 @@ import { posix as path } from 'https://deno.land/std@0.187.0/path/mod.ts';
 import { Archive } from '../classes/Archive.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
-import { FileMime } from '../enums.ts';
+import { FileMime, RelationshipType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { createRandomId } from '../utilities/identifiers.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
 import { castRelationshipToClass } from './index.ts';
-
-export enum RelationshipType {
-	commentIds = 'http://schemas.microsoft.com/office/2016/09/relationships/commentsIds',
-	comments = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments',
-	commentsExtended = 'http://schemas.microsoft.com/office/2011/relationships/commentsExtended',
-	coreProperties = 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties',
-	customProperties = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties',
-	customXml = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml',
-	endnotes = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/endnotes',
-	extendedProperties = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties',
-	fontTable = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/fontTable',
-	footer = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer',
-	footnotes = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes',
-	header = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/header',
-	image = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-	numbering = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering',
-	officeDocument = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument',
-	people = 'http://schemas.microsoft.com/office/2011/relationships/people',
-	settings = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings',
-	styles = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles',
-	theme = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme',
-	webSettings = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/webSettings',
-	hyperlink = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink',
-
-	/**
-	 * @deprecated This is an external relationship, which are not implemneted yet
-	 */
-	attachedTemplate = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/attachedTemplate',
-}
 
 export type RelationshipMeta = {
 	id: string;
@@ -118,7 +89,7 @@ export class RelationshipsXml extends XmlFile {
 			id: createRandomId('relationship'),
 			type,
 			target: typeof target === 'string' ? target : target.location,
-			isExternal: type === RelationshipType.hyperlink,
+			isExternal: type === RelationshipType.hyperlink || type === RelationshipType.attachedTemplate,
 			isBinary: type === RelationshipType.image,
 		};
 		this.meta.push(meta);
@@ -126,6 +97,14 @@ export class RelationshipsXml extends XmlFile {
 			this.#instances.set(meta.id, target);
 		}
 		return meta.id;
+	}
+
+	public getTarget(id: string) {
+		const meta = this.meta.find((meta) => meta.id === id);
+		if (!meta) {
+			throw new Error(`Unknown relationship ID "${id}"`);
+		}
+		return meta.target;
 	}
 
 	public hasType(type: RelationshipType) {

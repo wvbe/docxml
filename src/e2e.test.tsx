@@ -2,8 +2,7 @@
 import { describe, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Docx, { jsx, Paragraph, Section, Text, twip } from '../mod.ts';
-import { RelationshipType } from './files/RelationshipsXml.ts';
+import Docx, { jsx, Paragraph, RelationshipType, Section, Text, twip } from '../mod.ts';
 import { QNS } from './utilities/namespaces.ts';
 import { expectDocumentToContain, expectDocxToContain } from './utilities/tests.ts';
 

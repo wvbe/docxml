@@ -76,6 +76,7 @@ export {
 } from './src/components/TextDeletion.ts';
 
 // Utility functions
+export { RelationshipType } from './src/enums.ts';
 export { jsx } from './src/utilities/jsx.ts';
 export { type Length, cm, emu, hpt, inch, opt, pt, twip } from './src/utilities/length.ts';
 
@@ -89,6 +90,6 @@ export {
 	type HeaderXml,
 } from './src/files/HeaderFooterXml.ts';
 export { type NumberingXml } from './src/files/NumberingXml.ts';
-export { type RelationshipsXml, RelationshipType } from './src/files/RelationshipsXml.ts';
+export { type RelationshipsXml } from './src/files/RelationshipsXml.ts';
 export { type SettingsXml } from './src/files/SettingsXml.ts';
 export { type StylesXml } from './src/files/StylesXml.ts';

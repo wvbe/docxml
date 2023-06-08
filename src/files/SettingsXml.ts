@@ -2,7 +2,7 @@ import * as path from 'https://deno.land/std@0.187.0/path/mod.ts';
 
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
-import { FileMime } from '../enums.ts';
+import { FileMime, RelationshipType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
@@ -17,20 +17,58 @@ export type SettingsI = {
 	 * Defaults to `false`
 	 */
 	evenAndOddHeaders: boolean;
+
+	attachedTemplate: string | null;
 };
 
 const DEFAULT_SETTINGS: SettingsI = {
 	isTrackChangesEnabled: false,
 	evenAndOddHeaders: false,
+	attachedTemplate: null,
 };
 
-export class SettingsXml extends XmlFile implements SettingsI {
+enum SettingType {
+	OnOff,
+	Relationship,
+}
+
+type SettingMeta =
+	| {
+			docxmlName: keyof SettingsI;
+			ooxmlLocalName: string;
+			ooxmlType: SettingType.OnOff;
+	  }
+	| {
+			docxmlName: keyof SettingsI;
+			ooxmlLocalName: string;
+			ooxmlType: SettingType.Relationship;
+			ooxmlRelationshipType: RelationshipType;
+	  };
+const settingsMeta: Array<SettingMeta> = [
+	{
+		docxmlName: 'isTrackChangesEnabled',
+		ooxmlLocalName: 'trackRevisions',
+		ooxmlType: SettingType.OnOff,
+	},
+	{
+		docxmlName: 'evenAndOddHeaders',
+		ooxmlLocalName: 'evenAndOddHeaders',
+		ooxmlType: SettingType.OnOff,
+	},
+	{
+		docxmlName: 'attachedTemplate',
+		ooxmlLocalName: 'attachedTemplate',
+		ooxmlType: SettingType.Relationship,
+		ooxmlRelationshipType: RelationshipType.attachedTemplate,
+	},
+];
+
+export class SettingsXml extends XmlFile {
 	public static contentType = FileMime.settings;
 
 	public readonly relationships: RelationshipsXml;
 
-	public isTrackChangesEnabled = DEFAULT_SETTINGS.isTrackChangesEnabled;
-	public evenAndOddHeaders = DEFAULT_SETTINGS.evenAndOddHeaders;
+	#props: SettingsI;
 
 	public constructor(
 		location: string,
@@ -41,21 +79,51 @@ export class SettingsXml extends XmlFile implements SettingsI {
 	) {
 		super(location);
 		this.relationships = relationships;
-		Object.assign(this, settings);
+		this.#props = Object.assign({}, settings);
 	}
 
 	/**
 	 * Set a setting.
 	 */
-	public set(key: keyof SettingsI, value: SettingsI[typeof key]): void {
-		this[key] = value;
+	public set<Key extends keyof SettingsI>(key: Key, value: SettingsI[Key]): void {
+		const meta = settingsMeta.find((meta) => meta.docxmlName === key);
+		if (!meta) {
+			throw new Error(`Unsupported setting "${key}"`);
+		}
+		if (meta.ooxmlType === SettingType.Relationship) {
+			this.#props[key] = value
+				? (this.relationships.add(meta.ooxmlRelationshipType, value as string) as SettingsI[Key])
+				: value;
+		} else {
+			this.#props[key] = value;
+		}
 	}
 
 	/**
 	 * Get a setting.
 	 */
-	public get(key: keyof SettingsI): SettingsI[typeof key] {
-		return this[key];
+	public get<Key extends keyof SettingsI>(key: Key): SettingsI[Key] {
+		const meta = settingsMeta.find((meta) => meta.docxmlName === key);
+		if (!meta) {
+			throw new Error(`Unsupported setting "${key}"`);
+		}
+		if (meta.ooxmlType === SettingType.Relationship) {
+			return this.#props[key]
+				? (this.relationships.getTarget(this.#props[key] as string) as SettingsI[Key])
+				: (this.#props[key] as SettingsI[Key]);
+		} else {
+			return this.#props[key];
+		}
+	}
+
+	/**
+	 * Returns a list of setting key values (similar to `Object.entries`). Useful for cloning these
+	 * settings into a new instance.
+	 */
+	public entries() {
+		return Object.keys(this.#props).map((key) => [key, this.get(key as keyof SettingsI)]) as Array<
+			[keyof SettingsI, SettingsI[keyof SettingsI]]
+		>;
 	}
 
 	protected toNode(): Document {
@@ -71,10 +139,7 @@ export class SettingsXml extends XmlFile implements SettingsI {
 
 				}
 			</w:settings>`,
-			{
-				isTrackChangesEnabled: this.isTrackChangesEnabled,
-				evenAndOddHeaders: this.evenAndOddHeaders,
-			},
+			this.#props,
 			true,
 		);
 	}

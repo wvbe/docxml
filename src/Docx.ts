@@ -3,10 +3,10 @@ import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.7/mod.ts';
 import { Archive } from './classes/Archive.ts';
 import { Bookmarks } from './classes/Bookmarks.ts';
 import { type Component } from './classes/Component.ts';
-import { FileLocation } from './enums.ts';
+import { FileLocation, RelationshipType } from './enums.ts';
 import { ContentTypesXml } from './files/ContentTypesXml.ts';
 import { type DocumentChild, DocumentRoot, DocumentXml } from './files/DocumentXml.ts';
-import { RelationshipsXml, RelationshipType } from './files/RelationshipsXml.ts';
+import { RelationshipsXml } from './files/RelationshipsXml.ts';
 import { type SettingsI } from './files/SettingsXml.ts';
 import { parse } from './utilities/dom.ts';
 import { jsx } from './utilities/jsx.ts';
@@ -245,9 +245,8 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * A convenience method to set a few settings for the document.
 	 */
 	public withSettings(settingOverrides: Partial<SettingsI>): this {
-		Object.keys(settingOverrides).forEach((key) => {
-			const kkk = key as keyof SettingsI; // Happy now, TypeScript?
-			this.document.settings[kkk] = settingOverrides[kkk] as SettingsI[keyof SettingsI];
+		Object.entries(settingOverrides).forEach(([key, value]) => {
+			this.document.settings.set(key as keyof SettingsI, value);
 		});
 		return this;
 	}
@@ -308,13 +307,21 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * Does _not_ clone other things, like:
 	 * - Not content
 	 * - Not content type overrides
-	 * - Not relationships
+	 * - Not relationships (unless required for settings)
 	 * - Not anything else either
 	 */
 	public cloneAsEmptyTemplate(): Docx<PropsGeneric> {
 		const clone = Docx.fromNothing<PropsGeneric>();
 		clone.withXmlRules(this.#renderer);
-		clone.withSettings(this.document.settings);
+		clone.withSettings(
+			this.document.settings.entries().reduce<Partial<SettingsI>>(
+				(dict, [key, value]) => ({
+					...dict,
+					[key]: value,
+				}),
+				{},
+			),
+		);
 		clone.contentTypes.addDefaults(this.contentTypes.defaults);
 		clone.document.styles.addStyles(this.document.styles.styles);
 		return clone;

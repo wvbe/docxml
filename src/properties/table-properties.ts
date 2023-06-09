@@ -10,7 +10,7 @@ export type TableProperties = {
 	 */
 	style?: string | null;
 	/**
-	 * @deprecated Use the {@link Table} `columnWidths` prop instead.
+	 * Sets the width for the entire table, can be either a percent or absolute measurement.
 	 */
 	width?:
 	| null

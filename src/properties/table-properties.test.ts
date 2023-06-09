@@ -18,7 +18,7 @@ describe('Table formatting', () => {
 	test(
 		`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
 			<w:tblStyle w:val="afkicken-van-de-opkikkers" />
-			<w:tblW w:val="1200" w:type="dxa" />
+			<w:tblW w:w="1200" w:type="dxa" />
 			<w:tblLook
 				w:firstColumn="1"
 				w:firstRow="1"
@@ -101,7 +101,7 @@ describe('Table formatting', () => {
 	describe('Setting table width to a "%" string', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:tblW w:val="100%" w:type="nil" />
+				<w:tblW w:w="100%" w:type="nil" />
 			</w:tblPr>`,
 			{
 				width: { length: '100%', unit: 'nil' },
@@ -112,7 +112,7 @@ describe('Table formatting', () => {
 	describe('Setting table width to an unannotated value', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:tblW w:val="420" w:type="nil" />
+				<w:tblW w:w="420" w:type="nil" />
 			</w:tblPr>`,
 			{
 				width: { length: '420', unit: 'nil' },

@@ -135,8 +135,10 @@ export class SettingsXml extends XmlFile {
 					} else (),
 					if ($evenAndOddHeaders) then element ${QNS.w}evenAndOddHeaders {
 						attribute ${QNS.w}val { $evenAndOddHeaders }
+					} else (),
+					if ($attachedTemplate) then element ${QNS.w}attachedTemplate {
+						attribute ${QNS.r}id { $attachedTemplate }
 					} else ()
-
 				}
 			</w:settings>`,
 			this.#props,

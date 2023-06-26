@@ -44,7 +44,7 @@ export function tableRowPropertiesToNode(tcpr: TableRowProperties = {}): Node | 
 			if ($isHeaderRow) then element ${QNS.w}tblHeader {} else (),
 			if ($isUnsplittable) then element ${QNS.w}cantSplit {} else (),
 			if (exists($cellSpacing)) then element ${QNS.w}tblCellSpacing {
-				attribute ${QNS.w}w { $cellSpacing('twip') },
+				attribute ${QNS.w}w { round($cellSpacing('twip')) },
 				attribute ${QNS.w}type { "dxa" }
 			} else ()
 		}`,

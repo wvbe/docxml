@@ -115,18 +115,36 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				attribute ${QNS.w}type { 'default' }
 			} else (),
 			if (exists($pageWidth) or exists($pageHeight) or $pageOrientation) then element ${QNS.w}pgSz {
-				if (exists($pageWidth)) then attribute ${QNS.w}w { $pageWidth('twip') } else (),
-				if (exists($pageHeight)) then attribute ${QNS.w}h { $pageHeight('twip') } else (),
+				if (exists($pageWidth)) then attribute ${QNS.w}w {
+					round($pageWidth('twip'))
+				} else (),
+				if (exists($pageHeight)) then attribute ${QNS.w}h {
+					round($pageHeight('twip'))
+				} else (),
 				if ($pageOrientation) then attribute ${QNS.w}orient { $pageOrientation } else ()
 			} else (),
 			if (exists($pageMargin)) then element ${QNS.w}pgMar {
-				if (exists($pageMargin('top'))) then attribute ${QNS.w}top { $pageMargin('top')('twip') } else (),
-				if (exists($pageMargin('right'))) then attribute ${QNS.w}right { $pageMargin('right')('twip') } else (),
-				if (exists($pageMargin('bottom'))) then attribute ${QNS.w}bottom { $pageMargin('bottom')('twip') } else (),
-				if (exists($pageMargin('left'))) then attribute ${QNS.w}left { $pageMargin('left')('twip') } else (),
-				if (exists($pageMargin('header'))) then attribute ${QNS.w}header { $pageMargin('header')('twip') } else (),
-				if (exists($pageMargin('footer'))) then attribute ${QNS.w}footer { $pageMargin('footer')('twip') } else (),
-				if (exists($pageMargin('gutter'))) then attribute ${QNS.w}gutter { $pageMargin('gutter')('twip') } else ()
+				if (exists($pageMargin('top'))) then attribute ${QNS.w}top {
+					round($pageMargin('top')('twip'))
+				} else (),
+				if (exists($pageMargin('right'))) then attribute ${QNS.w}right {
+					round($pageMargin('right')('twip'))
+				} else (),
+				if (exists($pageMargin('bottom'))) then attribute ${QNS.w}bottom {
+					round($pageMargin('bottom')('twip'))
+				} else (),
+				if (exists($pageMargin('left'))) then attribute ${QNS.w}left {
+					round($pageMargin('left')('twip'))
+				} else (),
+				if (exists($pageMargin('header'))) then attribute ${QNS.w}header {
+					round($pageMargin('header')('twip'))
+				} else (),
+				if (exists($pageMargin('footer'))) then attribute ${QNS.w}footer {
+					round($pageMargin('footer')('twip'))
+				} else (),
+				if (exists($pageMargin('gutter'))) then attribute ${QNS.w}gutter {
+					round($pageMargin('gutter')('twip'))
+				} else ()
 			} else (),
 			if(exists($isTitlePage)) then element ${QNS.w}titlePg { attribute ${QNS.w}val { "1" } } else ()
 		}`,

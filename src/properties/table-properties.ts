@@ -13,15 +13,15 @@ export type TableProperties = {
 	 * Sets the width for the entire table, can be either a percent or absolute measurement.
 	 */
 	width?:
-	| null
-	| number
-	| '`${number}%'
-	| string
-	| {
-		length: '`${number}%' | string | number;
-		unit: null | 'nil' | 'auto' | 'dxa' | 'pct' | undefined;
-	}
-	| undefined;
+		| null
+		| number
+		| '`${number}%'
+		| string
+		| {
+				length: '`${number}%' | string | number;
+				unit: null | 'nil' | 'auto' | 'dxa' | 'pct' | undefined;
+		  }
+		| undefined;
 	/**
 	 * When set to `true`, the column widths as specified to the {@link Table} component are used
 	 * strictly. If not set, or set to `false`, the specified column widths are considered a
@@ -140,19 +140,19 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			} else (),
 			if (exists($cellPadding)) then element ${QNS.w}tblCellMar {
 				if (exists($cellPadding('top'))) then element ${QNS.w}top {
-					attribute ${QNS.w}w { $cellPadding('top')('twip') },
+					attribute ${QNS.w}w { round($cellPadding('top')('twip')) },
 					attribute ${QNS.w}type { "dxa" }
 				} else (),
 				if (exists($cellPadding('bottom'))) then element ${QNS.w}bottom {
-					attribute ${QNS.w}w { $cellPadding('bottom')('twip') },
+					attribute ${QNS.w}w { round($cellPadding('bottom')('twip')) },
 					attribute ${QNS.w}type { "dxa" }
 				} else (),
 				if (exists($cellPadding('start'))) then element ${QNS.w}start {
-					attribute ${QNS.w}w { $cellPadding('start')('twip') },
+					attribute ${QNS.w}w { round($cellPadding('start')('twip')) },
 					attribute ${QNS.w}type { "dxa" }
 				} else (),
 				if (exists($cellPadding('end'))) then element ${QNS.w}end {
-					attribute ${QNS.w}w { $cellPadding('end')('twip') },
+					attribute ${QNS.w}w { round($cellPadding('end')('twip')) },
 					attribute ${QNS.w}type { "dxa" }
 				} else ()
 			} else (),
@@ -166,11 +166,11 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 				docxml:ct-border(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
 			} else (),
 			if (exists($indentation)) then element ${QNS.w}tblInd {
-				attribute ${QNS.w}w { $indentation('twip') },
+				attribute ${QNS.w}w { round($indentation('twip')) },
 				attribute ${QNS.w}type { "dxa" }
 			} else (),
 			if (exists($cellSpacing)) then element ${QNS.w}tblCellSpacing {
-				attribute ${QNS.w}w { $cellSpacing('twip') },
+				attribute ${QNS.w}w { round($cellSpacing('twip')) },
 				attribute ${QNS.w}type { "dxa" }
 			} else (),
 			if (exists($columnBandingSize)) then element ${QNS.w}tblStyleColBandSize {

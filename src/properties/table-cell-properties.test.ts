@@ -161,6 +161,20 @@ describe('Table cell formatting', () => {
 			},
 		);
 	});
+
+	describe('vAlign', () => {
+		const options: TableCellProperties["vAlign"][] = ["bottom", "center", "top"];
+		options.forEach(align => {
+			test(
+				`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
+					<w:vAlign w:val="${align}"/>
+				</w:tcPr>`,
+				{
+					vAlign: align
+				},
+			);
+		})
+	});
 });
 
 run();

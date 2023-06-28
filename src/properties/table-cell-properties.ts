@@ -43,7 +43,7 @@ export type TableCellProperties = {
 	/**
 	 * The vertical alignment of this cell.
 	 */
-	vAlign?: null | "bottom" | "center" | "top";
+	vAlign?: null | 'bottom' | 'center' | 'top';
 };
 
 export function tableCellPropertiesFromNode(node?: Node | null): TableCellProperties {

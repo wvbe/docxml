@@ -43,7 +43,7 @@ export type TableCellProperties = {
 	/**
 	 * The vertical alignment of this cell.
 	 */
-	vAlign?: null | 'bottom' | 'center' | 'top';
+	verticalAlignment?: null | 'bottom' | 'center' | 'top';
 };
 
 export function tableCellPropertiesFromNode(node?: Node | null): TableCellProperties {
@@ -89,7 +89,7 @@ export function tableCellPropertiesFromNode(node?: Node | null): TableCellProper
 						"insideH": docxml:ct-border(${QNS.w}insideH),
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
-					"vAlign": ./${QNS.w}vAlign/@${QNS.w}val/string()
+					"verticalAlignment": ./${QNS.w}vAlign/@${QNS.w}val/string()
 				}
 				`,
 				node,
@@ -129,8 +129,8 @@ export function tableCellPropertiesToNode(
 				docxml:ct-border(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
 				docxml:ct-border(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
 			} else (),
-			if (exists($vAlign)) then element ${QNS.w}vAlign {
-				attribute ${QNS.w}val { $vAlign }
+			if (exists($verticalAlignment)) then element ${QNS.w}vAlign {
+				attribute ${QNS.w}val { $verticalAlignment }
 			} else ()
 		}`,
 		{
@@ -152,7 +152,7 @@ export function tableCellPropertiesToNode(
 						...tcpr.borders,
 				  }
 				: null,
-			vAlign: tcpr.vAlign || null
+			verticalAlignment: tcpr.verticalAlignment || null
 		},
 	);
 }

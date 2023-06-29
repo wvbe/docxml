@@ -162,15 +162,15 @@ describe('Table cell formatting', () => {
 		);
 	});
 
-	describe('vAlign', () => {
-		const options: TableCellProperties["vAlign"][] = ["bottom", "center", "top"];
-		options.forEach(align => {
+	describe('verticalAlignment', () => {
+		const options: TableCellProperties["verticalAlignment"][] = ["bottom", "center", "top"];
+		options.forEach(alignment => {
 			test(
 				`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
-					<w:vAlign w:val="${align}"/>
+					<w:vAlign w:val="${alignment}"/>
 				</w:tcPr>`,
 				{
-					vAlign: align
+					verticalAlignment: alignment
 				},
 			);
 		})

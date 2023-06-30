@@ -163,17 +163,17 @@ describe('Table cell formatting', () => {
 	});
 
 	describe('verticalAlignment', () => {
-		const options: TableCellProperties["verticalAlignment"][] = ["bottom", "center", "top"];
-		options.forEach(alignment => {
+		const options: TableCellProperties['verticalAlignment'][] = ['bottom', 'center', 'top'];
+		options.forEach((alignment) => {
 			test(
 				`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
 					<w:vAlign w:val="${alignment}"/>
 				</w:tcPr>`,
 				{
-					verticalAlignment: alignment
+					verticalAlignment: alignment,
 				},
 			);
-		})
+		});
 	});
 });
 

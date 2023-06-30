@@ -152,7 +152,7 @@ export function tableCellPropertiesToNode(
 						...tcpr.borders,
 				  }
 				: null,
-			verticalAlignment: tcpr.verticalAlignment || null
+			verticalAlignment: tcpr.verticalAlignment || null,
 		},
 	);
 }

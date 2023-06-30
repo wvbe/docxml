@@ -75,11 +75,11 @@ export class SettingsXml extends XmlFile {
 		relationships = new RelationshipsXml(
 			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
 		),
-		settings: SettingsI = DEFAULT_SETTINGS,
+		settings: Partial<SettingsI> = {},
 	) {
 		super(location);
 		this.relationships = relationships;
-		this.#props = Object.assign({}, settings);
+		this.#props = Object.assign({}, DEFAULT_SETTINGS, settings);
 	}
 
 	/**

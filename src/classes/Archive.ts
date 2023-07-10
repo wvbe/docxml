@@ -52,7 +52,10 @@ export class Archive {
 	 * Create a new XML file in the DOCX archive.
 	 */
 	public addXmlFile(location: string, node: Node | Document): this {
-		return this.addTextFile(location, serialize(node));
+		return this.addTextFile(
+			location,
+			`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>${serialize(node)}`,
+		);
 	}
 
 	/**
@@ -70,6 +73,7 @@ export class Archive {
 		this.#zip.addFile(location, contents);
 		return this;
 	}
+
 	readonly #promises: { location: string; promise: Promise<Uint8Array> }[] = [];
 
 	/**

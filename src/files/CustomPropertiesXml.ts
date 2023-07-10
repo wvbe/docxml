@@ -94,7 +94,7 @@ export class CustomPropertiesXml extends XmlFile {
 			`
 				array{/*/${QNS.op}property/map{
 					"type": fn:local-name(./*[1]),
-					"name": string(@${QNS.op}name),
+					"name": string(@name),
 					"value": string(./*)
 				}}
 			`,

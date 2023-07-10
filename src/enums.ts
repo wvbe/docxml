@@ -20,6 +20,7 @@ export enum FileMime {
 
 	// Overrides
 	coreProperties = 'application/vnd.openxmlformats-package.core-properties+xml',
+	customProperties = 'application/vnd.openxmlformats-officedocument.custom-properties+xml',
 	endnotes = 'application/vnd.openxmlformats-officedocument.wordprocessingml.endnotes+xml',
 	extendedProperties = 'application/vnd.openxmlformats-officedocument.extended-properties+xml',
 	fontTable = 'application/vnd.openxmlformats-officedocument.wordprocessingml.fontTable+xml',

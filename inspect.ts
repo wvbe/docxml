@@ -70,6 +70,8 @@ if (Deno.args.includes('--settings')) {
 		docx.document.relationships.findInstance((meta) => meta.type === RelationshipType.settings),
 		{ depth: 50 },
 	);
+} else if (Deno.args.includes('--custom-properties')) {
+	console.dir(docx.customProperties, { depth: 50 });
 } else if (Deno.args.includes('--footer')) {
 	const footer = await docx.document.relationships.filterInstances<FooterXml>(
 		(meta) => meta.type === RelationshipType.footer,

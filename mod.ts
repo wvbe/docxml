@@ -83,6 +83,7 @@ export { type Length, cm, emu, hpt, inch, opt, pt, twip } from './src/utilities/
 // Archive component types
 export { type CommentsXml } from './src/files/CommentsXml.ts';
 export { type ContentTypesXml } from './src/files/ContentTypesXml.ts';
+export { type CustomPropertiesXml, CustomPropertyType } from './src/files/CustomPropertiesXml.ts';
 export { type DocumentChild, type DocumentXml } from './src/files/DocumentXml.ts';
 export {
 	type FooterXml,

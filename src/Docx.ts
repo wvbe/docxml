@@ -5,6 +5,7 @@ import { Bookmarks } from './classes/Bookmarks.ts';
 import { type AnyComponent } from './classes/Component.ts';
 import { FileLocation, RelationshipType } from './enums.ts';
 import { ContentTypesXml } from './files/ContentTypesXml.ts';
+import { CustomPropertiesXml } from './files/CustomPropertiesXml.ts';
 import { type DocumentChild, DocumentRoot, DocumentXml } from './files/DocumentXml.ts';
 import { RelationshipsXml } from './files/RelationshipsXml.ts';
 import { type SettingsI } from './files/SettingsXml.ts';
@@ -86,6 +87,21 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 			);
 		}
 		return this.#officeDocument;
+	}
+
+	#customProperties: CustomPropertiesXml | null = null;
+
+	/**
+	 * The API representing "docProps/custom.xml"
+	 */
+	public get customProperties(): CustomPropertiesXml {
+		if (!this.#customProperties) {
+			this.#customProperties = this.relationships.ensureRelationship(
+				RelationshipType.customProperties,
+				() => new CustomPropertiesXml(FileLocation.comments),
+			);
+		}
+		return this.#customProperties;
 	}
 
 	/**
@@ -322,6 +338,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 				{},
 			),
 		);
+		clone.customProperties.add(this.customProperties.values());
 		clone.contentTypes.addDefaults(this.contentTypes.defaults);
 		clone.document.styles.addStyles(this.document.styles.styles);
 		return clone;

@@ -2,6 +2,7 @@ import { Archive } from '../classes/Archive.ts';
 import { UnhandledXmlFile } from '../classes/XmlFile.ts';
 import { RelationshipType } from '../enums.ts';
 import { CommentsXml } from './CommentsXml.ts';
+import { CustomPropertiesXml } from './CustomPropertiesXml.ts';
 import { DocumentXml } from './DocumentXml.ts';
 import { FooterXml, HeaderXml } from './HeaderFooterXml.ts';
 import { NumberingXml } from './NumberingXml.ts';
@@ -25,6 +26,8 @@ export function castRelationshipToClass(
 	meta: Pick<RelationshipMeta, 'type' | 'target'>,
 ) {
 	switch (meta.type) {
+		case RelationshipType.customProperties:
+			return CustomPropertiesXml.fromArchive(archive, meta.target);
 		case RelationshipType.coreProperties:
 			return CorePropertiesXml.fromArchive(archive, meta.target);
 		case RelationshipType.endnotes:
@@ -58,7 +61,6 @@ export function castRelationshipToClass(
 		case RelationshipType.people:
 		case RelationshipType.commentIds:
 		case RelationshipType.commentsExtended:
-		case RelationshipType.customProperties:
 			return UnhandledXmlFile.fromArchive(archive, meta.target);
 
 		case RelationshipType.attachedTemplate:

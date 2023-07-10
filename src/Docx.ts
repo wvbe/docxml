@@ -98,7 +98,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		if (!this.#customProperties) {
 			this.#customProperties = this.relationships.ensureRelationship(
 				RelationshipType.customProperties,
-				() => new CustomPropertiesXml(FileLocation.comments),
+				() => new CustomPropertiesXml(FileLocation.customProperties),
 			);
 		}
 		return this.#customProperties;

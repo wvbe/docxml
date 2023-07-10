@@ -11,6 +11,7 @@ export enum FileLocation {
 	numbering = 'word/numbering.xml',
 	settings = 'word/settings.xml',
 	styles = 'word/styles.xml',
+	customProperties = 'docProps/custom.xml',
 }
 
 export enum FileMime {

@@ -17,7 +17,7 @@ export const NamespaceUri = {
 	op: 'http://schemas.openxmlformats.org/officeDocument/2006/custom-properties',
 	r: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
 	v: 'urn:schemas-microsoft-com:vml',
-	vt: 'https://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes',
+	vt: 'http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes',
 	w: 'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
 	w10: 'urn:schemas-microsoft-com:office:word',
 	w14: 'http://schemas.microsoft.com/office/word/2010/wordml',

@@ -10,6 +10,10 @@ import {
 	textPropertiesToNode,
 } from './text-properties.ts';
 
+export function getTwipOrNull(length: Length | null | undefined): number | null {
+	return length && length.twip !== undefined && length.twip !== null ? length.twip : null;
+}
+
 /**
  * All the formatting properties that can be given to a paragraph.
  *
@@ -262,19 +266,19 @@ export function paragraphPropertiesToNode(
 			indentation: data.indentation
 				? {
 						...data.indentation,
-						hanging: data.indentation.hanging?.twip || null,
-						firstLine: data.indentation.firstLine?.twip || null,
-						start: data.indentation.start?.twip || null,
-						end: data.indentation.end?.twip || null,
+						hanging: getTwipOrNull(data.indentation.hanging),
+						firstLine: getTwipOrNull(data.indentation.firstLine),
+						start: getTwipOrNull(data.indentation.start),
+						end: getTwipOrNull(data.indentation.end),
 				  }
 				: null,
 			shading: data.shading || null,
 			spacing: data.spacing
 				? {
 						...data.spacing,
-						before: data.spacing.before?.twip || null,
-						after: data.spacing.after?.twip || null,
-						line: data.spacing.line?.twip || null,
+						before: getTwipOrNull(data.spacing.before),
+						after: getTwipOrNull(data.spacing.after),
+						line: getTwipOrNull(data.spacing.line),
 						lineRule: data.spacing.lineRule || null,
 				  }
 				: null,

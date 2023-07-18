@@ -7,6 +7,7 @@ import './FieldRangeEnd.ts';
 import './FieldRangeSeparator.ts';
 import './FieldRangeInstruction.ts';
 import './FieldRangeStart.ts';
+import './NonBreakingHyphen.ts';
 
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import {
@@ -24,6 +25,7 @@ import { type FieldRangeInstruction } from './FieldRangeInstruction.ts';
 import { type FieldRangeSeparator } from './FieldRangeSeparator.ts';
 import { type FieldRangeStart } from './FieldRangeStart.ts';
 import { type Image } from './Image.ts';
+import { type NonBreakingHyphen } from './NonBreakingHyphen.ts';
 import { type Tab } from './Tab.ts';
 import { TextDeletion } from './TextDeletion.ts';
 
@@ -33,12 +35,13 @@ import { TextDeletion } from './TextDeletion.ts';
 export type TextChild =
 	| string
 	| Break
-	| Tab
-	| Image
-	| FieldRangeStart
-	| FieldRangeInstruction
 	| FieldRangeEnd
-	| FieldRangeSeparator;
+	| FieldRangeInstruction
+	| FieldRangeSeparator
+	| FieldRangeStart
+	| Image
+	| NonBreakingHyphen
+	| Tab;
 
 /**
  * A type describing the props accepted by {@link Text}.
@@ -52,12 +55,13 @@ export type TextProps = TextProperties;
 export class Text extends Component<TextProps, TextChild> {
 	public static readonly children: string[] = [
 		'Break',
-		'Image',
-		'Tab',
-		'FieldRangeStart',
 		'FieldRangeEnd',
-		'FieldRangeSeparator',
 		'FieldRangeInstruction',
+		'FieldRangeSeparator',
+		'FieldRangeStart',
+		'Image',
+		'NonBreakingHyphen',
+		'Tab',
 	];
 	public static readonly mixed: boolean = true;
 
@@ -71,8 +75,7 @@ export class Text extends Component<TextProps, TextChild> {
 			`
 				element ${QNS.w}r {
 					$rpr,
-					for $child in $children
-						return $child
+					$children
 				}
 			`,
 			{

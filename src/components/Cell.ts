@@ -56,8 +56,7 @@ export class Cell extends Component<CellProps, CellChild> {
 		return create(
 			`element ${QNS.w}tc {
 				$tcPr,
-				for $child in $children
-					return $child
+				$children
 			}`,
 			{
 				tcPr: tableCellPropertiesToNode(

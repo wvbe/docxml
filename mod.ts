@@ -48,6 +48,11 @@ export {
 } from './src/components/FieldRangeStart.ts';
 export { type HyperlinkChild, type HyperlinkProps, Hyperlink } from './src/components/Hyperlink.ts';
 export { type ImageChild, type ImageProps, Image } from './src/components/Image.ts';
+export {
+	type NonBreakingHyphenChild,
+	type NonBreakingHyphenProps,
+	NonBreakingHyphen,
+} from './src/components/NonBreakingHyphen.ts';
 export { type ParagraphChild, type ParagraphProps, Paragraph } from './src/components/Paragraph.ts';
 export { type RowChild, type RowProps, Row } from './src/components/Row.ts';
 export {

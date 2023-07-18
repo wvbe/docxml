@@ -97,8 +97,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 			`
 				element ${QNS.w}p {
 					$pPr,
-					for $child in $children
-						return $child
+					$children
 				}
 			`,
 			{

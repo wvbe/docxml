@@ -1,13 +1,14 @@
 // Import without assignment ensures Deno does not tree-shake this component. To avoid circular
 // definitions, components register themselves in a side-effect of their module.
 import './Break.ts';
-import './Image.ts';
-import './Tab.ts';
 import './FieldRangeEnd.ts';
-import './FieldRangeSeparator.ts';
 import './FieldRangeInstruction.ts';
+import './FieldRangeSeparator.ts';
 import './FieldRangeStart.ts';
+import './Image.ts';
 import './NonBreakingHyphen.ts';
+import './Symbol.ts';
+import './Tab.ts';
 
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import {
@@ -26,6 +27,7 @@ import { type FieldRangeSeparator } from './FieldRangeSeparator.ts';
 import { type FieldRangeStart } from './FieldRangeStart.ts';
 import { type Image } from './Image.ts';
 import { type NonBreakingHyphen } from './NonBreakingHyphen.ts';
+import { type Symbol } from './Symbol.ts';
 import { type Tab } from './Tab.ts';
 import { TextDeletion } from './TextDeletion.ts';
 
@@ -41,6 +43,8 @@ export type TextChild =
 	| FieldRangeStart
 	| Image
 	| NonBreakingHyphen
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	| Symbol
 	| Tab;
 
 /**
@@ -61,6 +65,7 @@ export class Text extends Component<TextProps, TextChild> {
 		'FieldRangeStart',
 		'Image',
 		'NonBreakingHyphen',
+		'Symbol',
 		'Tab',
 	];
 	public static readonly mixed: boolean = true;

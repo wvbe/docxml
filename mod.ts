@@ -66,6 +66,7 @@ export {
 	RowDeletion,
 } from './src/components/RowDeletion.ts';
 export { type SectionChild, type SectionProps, Section } from './src/components/Section.ts';
+export { type SymbolChild, type SymbolProps, Symbol } from './src/components/Symbol.ts';
 export { type TabChild, type TabProps, Tab } from './src/components/Tab.ts';
 export { type TableChild, type TableProps, Table } from './src/components/Table.ts';
 export { type TextChild, type TextProps, Text } from './src/components/Text.ts';

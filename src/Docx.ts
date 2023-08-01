@@ -109,31 +109,56 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 */
 	public async toArchive(): Promise<Archive> {
 		const styles = this.document.styles;
-		const relationships = this.document.relationships;
 
-		// Loop over all content to ensure styles are registered, relationships created etc.
+		const roots = [
+			{
+				relationships: this.document.relationships,
+				componentRoot: this.document.children,
+			},
+			...this.document.headers.map((runningBlock) => ({
+				relationships: runningBlock.relationships,
+				componentRoot: runningBlock.children,
+			})),
+			...this.document.footers.map((runningBlock) => ({
+				relationships: runningBlock.relationships,
+				componentRoot: runningBlock.children,
+			})),
+		];
+
+		async function walkChildComponentsFromRoot(
+			children: Promise<DocumentChild[]>,
+			relationships: RelationshipsXml,
+		) {
+			// Loop over all content to ensure styles are registered, relationships created etc.
+			await Promise.all(
+				(
+					await children
+				).map(async function walk(componentPromise) {
+					const component = await componentPromise;
+					if (typeof component === 'string') {
+						return;
+					}
+					if (Array.isArray(component)) {
+						await Promise.all((component as DocumentChild[]).map(walk));
+						return;
+					}
+
+					const styleName = (component.props as { style?: string }).style;
+					if (styleName) {
+						styles.ensureStyle(styleName);
+					}
+
+					component.ensureRelationship(relationships);
+
+					await Promise.all((component.children as DocumentChild[]).map(walk));
+				}),
+			);
+		}
+
 		await Promise.all(
-			(
-				await this.document.children
-			).map(async function walk(componentPromise) {
-				const component = await componentPromise;
-				if (typeof component === 'string') {
-					return;
-				}
-				if (Array.isArray(component)) {
-					await Promise.all((component as DocumentChild[]).map(walk));
-					return;
-				}
-
-				const styleName = (component.props as { style?: string }).style;
-				if (styleName) {
-					styles.ensureStyle(styleName);
-				}
-
-				component.ensureRelationship(relationships);
-
-				await Promise.all((component.children as DocumentChild[]).map(walk));
-			}),
+			roots.map(({ relationships, componentRoot }) =>
+				walkChildComponentsFromRoot(componentRoot, relationships),
+			),
 		);
 
 		const archive = new Archive();

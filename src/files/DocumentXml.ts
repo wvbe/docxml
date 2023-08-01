@@ -170,6 +170,11 @@ export class DocumentXml extends XmlFile {
 			inst.set(root);
 			return this.relationships.add(RelationshipType.header, inst);
 		},
+		map: <Out>(cb: (header: HeaderXml) => Out) => {
+			return this.relationships
+				.filterInstances((meta) => meta.type === RelationshipType.header)
+				.map((file) => cb(file as HeaderXml));
+		},
 	};
 
 	public readonly footers = {
@@ -180,6 +185,11 @@ export class DocumentXml extends XmlFile {
 			const inst = new FooterXml(location);
 			inst.set(root);
 			return this.relationships.add(RelationshipType.footer, inst);
+		},
+		map: <Out>(cb: (footer: FooterXml) => Out) => {
+			return this.relationships
+				.filterInstances((meta) => meta.type === RelationshipType.footer)
+				.map((file) => cb(file as FooterXml));
 		},
 	};
 

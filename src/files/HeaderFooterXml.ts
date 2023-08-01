@@ -1,3 +1,5 @@
+import * as path from 'https://deno.land/std@0.187.0/path/mod.ts';
+
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
@@ -7,6 +9,7 @@ import { createChildComponentsFromNodes } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
+import { type File, RelationshipsXml } from './RelationshipsXml.ts';
 
 export type HeaderFooterChild = Paragraph | Table;
 
@@ -23,9 +26,18 @@ class HeaderFooterAbstractionXml extends XmlFile {
 
 	#root: HeaderFooterRoot | null = null;
 
-	constructor(location: string, nodeName: string) {
+	public readonly relationships: RelationshipsXml;
+
+	constructor(
+		location: string,
+		nodeName: string,
+		relationships = new RelationshipsXml(
+			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
+		),
+	) {
 		super(location);
 		this.#nodeName = nodeName;
+		this.relationships = relationships;
 	}
 
 	/**
@@ -50,6 +62,14 @@ class HeaderFooterAbstractionXml extends XmlFile {
 				},
 				Promise.resolve([])),
 			);
+	}
+
+	/**
+	 * Get all XmlFile instances related to this one, including self. This helps the system
+	 * serialize itself back to DOCX fullly. Probably not useful for consumers of the library.
+	 */
+	public getRelated(): File[] {
+		return [this, ...this.relationships.getRelated()];
 	}
 
 	protected async toNode(): Promise<Document> {

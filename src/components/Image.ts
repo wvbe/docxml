@@ -151,7 +151,10 @@ export class Image extends Component<ImageProps, ImageChild> {
 				`
 					map {
 						"type": ./@${QNS.w}type/string(),
-						"clear": ./@${QNS.w}clear/string()
+						"clear": ./@${QNS.w}clear/string(),
+						"title": ./${QNS.wp}inline/${QNS.wp}docPr/@name/string(),
+						"width": docxml:length(./${QNS.wp}inline/${QNS.wp}extent/@cx, 'emu'),
+						"height": docxml:length(./${QNS.wp}inline/${QNS.wp}extent/@cy, 'emu')
 					}
 				`,
 				node,

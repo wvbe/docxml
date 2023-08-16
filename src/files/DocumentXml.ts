@@ -35,12 +35,6 @@ export class DocumentXml extends XmlFile {
 	) {
 		super(location);
 		this.relationships = relationships;
-
-		// Some features don't work when there is no styles relationship (eg. change tracking styles).
-		// However, ensuring that object exists should be the responsibity of those features.
-		Object.defineProperty(this, '_styles', {
-			enumerable: false,
-		});
 	}
 
 	#styles: StylesXml | null = null;
@@ -49,7 +43,7 @@ export class DocumentXml extends XmlFile {
 	 * The API representing "styles.xml" and all the text/paragraph/table styles associated with this document.
 	 */
 	public get styles(): StylesXml {
-		// @TODO Invalidate the cached _styles whenever that relationship changes.
+		// @TODO Invalidate the cached #styles whenever that relationship changes.
 		if (!this.#styles) {
 			this.#styles = this.relationships.ensureRelationship(
 				RelationshipType.styles,

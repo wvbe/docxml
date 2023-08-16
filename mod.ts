@@ -80,6 +80,11 @@ export {
 	type TextDeletionProps,
 	TextDeletion,
 } from './src/components/TextDeletion.ts';
+export {
+	type WatermarkTextChild,
+	type WatermarkTextProps,
+	WatermarkText,
+} from './src/components/WatermarkText.ts';
 
 // Utility functions
 export { RelationshipType } from './src/enums.ts';

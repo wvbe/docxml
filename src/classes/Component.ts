@@ -45,7 +45,7 @@ export interface ComponentDefinition<C extends AnyComponent | unknown = AnyCompo
 	children: string[];
 	mixed: boolean;
 	matchesNode(node: Node): boolean;
-	fromNode(node: Node): C;
+	fromNode(node: Node): null | C;
 	[IS_COMPONENT]: true;
 }
 
@@ -132,7 +132,7 @@ export abstract class Component<
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public static fromNode(_node: Node): AnyComponent {
+	public static fromNode(_node: Node): null | AnyComponent {
 		throw new Error('Not implemented');
 	}
 

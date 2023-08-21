@@ -10,6 +10,7 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import { Paragraph } from './Paragraph.ts';
+import { Row } from './Row.ts';
 import { Table } from './Table.ts';
 
 /**
@@ -43,7 +44,7 @@ export class Cell extends Component<CellProps, CellChild> {
 	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		const table = ancestry.find((ancestor): ancestor is Table => ancestor instanceof Table);
 		if (!table) {
-			throw new Error('A row cannot be rendered outside the context of a table');
+			throw new Error('A cell cannot be rendered outside the context of a table');
 		}
 
 		const children = (await this.childrenToNode(ancestry)) as Node[];
@@ -77,7 +78,7 @@ export class Cell extends Component<CellProps, CellChild> {
 	public toRepeatingNode(ancestry: ComponentAncestor[], column: number, _row: number): Node | null {
 		const table = ancestry.find((ancestor): ancestor is Table => ancestor instanceof Table);
 		if (!table) {
-			throw new Error('A row cannot be rendered outside the context of a table');
+			throw new Error('A cell cannot be rendered outside the context of a table');
 		}
 
 		const info = table.model.getCellInfo(this);
@@ -105,6 +106,29 @@ export class Cell extends Component<CellProps, CellChild> {
 		);
 	}
 
+	/**
+	 * Returns `true` when this cell has no visual representation because a column-spanning or row-
+	 * spanning neighbour overlaps it.
+	 */
+	public isMergedAway(ancestry: ComponentAncestor[]): boolean {
+		const row = ancestry.find((ancestor): ancestor is Row => ancestor instanceof Row);
+		if (!row) {
+			throw new Error('A cell cannot be rendered outside the context of a row');
+		}
+		const table = ancestry.find((ancestor): ancestor is Table => ancestor instanceof Table);
+		if (!table) {
+			throw new Error('A cell cannot be rendered outside the context of a table');
+		}
+		const x = row.children.indexOf(this);
+		const y = table.children.indexOf(row);
+		if (y === -1 || x === -1) {
+			throw new Error('The cell is not part of this table');
+		}
+
+		const info = table.model.getCellInfo(this);
+		return info.column !== x || info.row !== y;
+	}
+
 	public getColSpan() {
 		return this.props.colSpan || 1;
 	}
@@ -123,8 +147,10 @@ export class Cell extends Component<CellProps, CellChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): Cell {
-		const { children, ...props } = evaluateXPathToMap<CellProps & { children: Node[] }>(
+	static fromNode(node: Node): null | Cell {
+		const { mergedAway, children, ...props } = evaluateXPathToMap<
+			CellProps & { mergedAway: boolean; children: Node[] }
+		>(
 			`
 				let $colStart := docxml:cell-column(.)
 
@@ -141,9 +167,12 @@ export class Cell extends Component<CellProps, CellChild> {
 
 				let $rowEnd := if ($firstNextRow)
 					then count($firstNextRow/preceding-sibling::${QNS.w}tr)
-					else count(../../${QNS.w}tr) - 1
+					else count(../../${QNS.w}tr)
+
+				let $mergeCell := boolean(./${QNS.w}tcPr/${QNS.w}vMerge[not(./@${QNS.w}val)])
 
 				return map {
+					"mergedAway": $mergeCell,
 					"colSpan": if (./${QNS.w}tcPr/${QNS.w}gridSpan)
 						then ./${QNS.w}tcPr/${QNS.w}gridSpan/@${QNS.w}val/number()
 						else 1,
@@ -153,6 +182,9 @@ export class Cell extends Component<CellProps, CellChild> {
 			`,
 			node,
 		);
+		if (mergedAway) {
+			return null;
+		}
 		return new Cell(props, ...createChildComponentsFromNodes<CellChild>(this.children, children));
 	}
 }

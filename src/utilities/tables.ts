@@ -86,7 +86,7 @@ export class TableGridModel {
 	 * Return the <td> node belonging to this column/row coordinate, taking all colspans/rowspans
 	 * into account.
 	 */
-	public getNodeAtCell(column: number, row: number) {
+	public getNodeAtCell(column: number, row: number): Cell | null {
 		return this.#occupancy.get(coord(column, row)) || null;
 	}
 

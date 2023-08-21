@@ -19,6 +19,9 @@ const header = docx.document.headers.add('word/header1.xml', [
 
 	<WatermarkText
 		text="ATLAS"
+		font="Georgia"
+		isItalic
+		opacity={0.25}
 		horizontalAlign="center"
 		verticalAlign="center"
 		boxWidth={cm(5)}

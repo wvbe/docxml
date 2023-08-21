@@ -6,7 +6,7 @@
 import { Component } from '../classes/Component.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
-import { cm, pt, type Length } from '../utilities/length.ts';
+import { type Length, cm, pt } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToBoolean, evaluateXPathToMap } from '../utilities/xquery.ts';
 
@@ -33,6 +33,17 @@ export type WatermarkTextProps = {
 	 * The color of this text. Type as a hexidecimal code (`"ff0000"`) or a basic color name (`"red"`).
 	 */
 	color?: string | null;
+
+	font?: string | null;
+
+	/**
+	 * The opacity of the watermark. Set to "1" for fully opaque, or to "0" for fully transparent (invisible), or
+	 * anything in between.
+	 */
+	opacity?: number | null;
+
+	isBold?: boolean | null;
+	isItalic?: boolean | null;
 };
 
 /**
@@ -78,14 +89,14 @@ export class WatermarkText extends Component<WatermarkTextProps, WatermarkTextCh
 							attribute fillcolor { concat("#", $color) },
 							attribute stroked { "f" },
 							element ${QNS.v}fill {
-								attribute opacity { "52428f" }
+								attribute opacity { $opacity }
 							},
 							element ${QNS.v}textpath {
 								attribute style { concat(
-									"font-family:&quot;Impact&quot;;",
+									"font-family:&quot;",$font,"&quot;;",
 									"font-size:", $minFontSize, "pt;",
-									"font-weight:bold;",
-									"font-style:italic"
+									if ($isBold) then "font-weight:bold;" else (),
+									if ($isItalic) then "font-style:italic" else ()
 								) },
 								attribute string { $text }
 							}
@@ -102,6 +113,13 @@ export class WatermarkText extends Component<WatermarkTextProps, WatermarkTextCh
 				boxHeight: (this.props.boxHeight || cm(23.9)).pt,
 				minFontSize: (this.props.minFontSize || pt(10)).pt,
 				color: this.props.color || '000000',
+				font: this.props.font || 'Arial',
+				opacity:
+					this.props.opacity === null || this.props.opacity === undefined
+						? '100%'
+						: this.props.opacity * 100 + '%',
+				isBold: !!this.props.isBold,
+				isItalic: !!this.props.isItalic,
 			},
 		);
 	}

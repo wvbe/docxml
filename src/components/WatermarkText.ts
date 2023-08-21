@@ -6,7 +6,7 @@
 import { Component } from '../classes/Component.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
-import { type Length, cm, pt } from '../utilities/length.ts';
+import { cm, pt, type Length } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToBoolean, evaluateXPathToMap } from '../utilities/xquery.ts';
 
@@ -68,9 +68,9 @@ export class WatermarkText extends Component<WatermarkTextProps, WatermarkTextCh
 								"mso-width-percent:0;",
 								"mso-height-percent:0;",
 								"mso-position-horizontal:", $horizontalAlign, ";",
-								"mso-position-horizontal-relative:margin;",
+								"mso-position-horizontal-relative:page;",
 								"mso-position-vertical:", $verticalAlign, ";",
-								"mso-position-vertical-relative:margin;",
+								"mso-position-vertical-relative:page;",
 								"mso-width-percent:0;",
 								"mso-height-percent:0"
 							) },

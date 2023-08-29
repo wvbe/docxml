@@ -286,7 +286,10 @@ export class StylesXml extends XmlFile {
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
 	public static async fromArchive(archive: Archive, location: string): Promise<StylesXml> {
-		const dom = await archive.readXml(location);
-		return this.fromDom(dom, location);
+		if (archive.hasFile(location)) {
+			const dom = await archive.readXml(location);
+			return this.fromDom(dom, location);
+		}
+		return Promise.resolve(new StylesXml(location));
 	}
 }

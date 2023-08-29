@@ -18,6 +18,10 @@ export class Archive {
 		return this.#zip.files();
 	}
 
+	public hasFile(location: string): boolean {
+		return !!this.#zip.files()[location];
+	}
+
 	public readText(location: string): Promise<string> {
 		if (location.startsWith('/') || location.startsWith('./')) {
 			location = location.substring(location.indexOf('/') + 1);

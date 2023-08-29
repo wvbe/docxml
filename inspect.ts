@@ -3,7 +3,7 @@
  * Dump the structure of a Docx instance to console.
  *
  * Use as;
- *   deno run --allow-read inspect.ts test/docx/simple.docx
+ *   deno run --allow-read inspect.ts test/simple.docx
  */
 
 import Docx, { FooterXml, HeaderXml, RelationshipType } from './mod.ts';

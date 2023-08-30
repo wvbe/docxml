@@ -127,7 +127,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 
 		async function walkChildComponentsFromRoot(
 			children: Promise<AnyComponent[]>,
-			relationships: RelationshipsXml,
+			relationships: RelationshipsXml | null,
 		) {
 			// Loop over all content to ensure styles are registered, relationships created etc.
 			await Promise.all(
@@ -148,7 +148,9 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 						styles.ensureStyle(styleName);
 					}
 
-					component.ensureRelationship(relationships);
+					if (relationships !== null) {
+						component.ensureRelationship(relationships);
+					}
 
 					await Promise.all((component.children as AnyComponent[]).map(walk));
 				}),

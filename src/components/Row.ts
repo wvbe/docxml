@@ -7,6 +7,7 @@ import {
 	type ComponentAncestor,
 	type ComponentDefinition,
 	Component,
+	ComponentContext,
 } from '../classes/Component.ts';
 import {
 	type TableRowProperties,
@@ -121,9 +122,12 @@ export class Row extends Component<RowProps, RowChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): Row {
+	static fromNode(node: Node, context: ComponentContext): Row {
 		const { children, ...props } = parsePropsAndChildNodes(node);
-		return new Row(props, ...createChildComponentsFromNodes<RowChild>(this.children, children));
+		return new Row(
+			props,
+			...createChildComponentsFromNodes<RowChild>(this.children, children, context),
+		);
 	}
 }
 

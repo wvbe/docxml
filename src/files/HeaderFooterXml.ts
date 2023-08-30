@@ -25,15 +25,9 @@ class HeaderFooterAbstractionXml<Child extends AnyComponent> extends XmlFile {
 
 	#root: HeaderFooterRoot<Child> | null = null;
 
-	public readonly relationships: RelationshipsXml;
+	public readonly relationships: RelationshipsXml | null;
 
-	constructor(
-		location: string,
-		nodeName: string,
-		relationships = new RelationshipsXml(
-			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
-		),
-	) {
+	constructor(location: string, nodeName: string, relationships: RelationshipsXml | null = null) {
 		super(location);
 		this.#nodeName = nodeName;
 		this.relationships = relationships;
@@ -68,6 +62,9 @@ class HeaderFooterAbstractionXml<Child extends AnyComponent> extends XmlFile {
 	 * serialize itself back to DOCX fullly. Probably not useful for consumers of the library.
 	 */
 	public getRelated(): File[] {
+		if (!this.relationships) {
+			return [this];
+		}
 		return [this, ...this.relationships.getRelated()];
 	}
 
@@ -99,8 +96,8 @@ class HeaderFooterAbstractionXml<Child extends AnyComponent> extends XmlFile {
 export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | WatermarkText> {
 	public static contentType = FileMime.header;
 
-	constructor(location: string) {
-		super(location, 'hdr');
+	constructor(location: string, relationships: RelationshipsXml | null) {
+		super(location, 'hdr', relationships);
 	}
 
 	/**
@@ -108,11 +105,19 @@ export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | Wa
 	 */
 	public static async fromArchive(archive: Archive, location: string) {
 		const dom = await archive.readXml(location);
-		const inst = new this(location);
+		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
+		const relationships = archive.hasFile(relsLocation)
+			? await RelationshipsXml.fromArchive(archive, relsLocation)
+			: null;
+		const inst = new this(location, relationships);
 		inst.set(
 			createChildComponentsFromNodes<Table | Paragraph>(
 				[Table.name, Paragraph.name],
 				evaluateXPathToNodes(`/*/*`, dom),
+				{
+					archive,
+					relationships: inst.relationships,
+				},
 			),
 		);
 		return inst;
@@ -126,7 +131,7 @@ export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | Wa
 		location: string,
 		roots: HeaderFooterRoot<HeaderFooterChild | WatermarkText>,
 	) {
-		const inst = new this(location);
+		const inst = new this(location, null);
 		inst.set(roots);
 		return inst;
 	}
@@ -135,8 +140,8 @@ export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | Wa
 export class FooterXml extends HeaderFooterAbstractionXml<HeaderFooterChild> {
 	public static contentType = FileMime.footer;
 
-	constructor(location: string) {
-		super(location, 'ftr');
+	constructor(location: string, relationships: RelationshipsXml | null) {
+		super(location, 'ftr', relationships);
 	}
 
 	/**
@@ -144,11 +149,19 @@ export class FooterXml extends HeaderFooterAbstractionXml<HeaderFooterChild> {
 	 */
 	public static async fromArchive(archive: Archive, location: string) {
 		const dom = await archive.readXml(location);
-		const inst = new this(location);
+		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
+		const relationships = archive.hasFile(relsLocation)
+			? await RelationshipsXml.fromArchive(archive, relsLocation)
+			: null;
+		const inst = new this(location, relationships);
 		inst.set(
 			createChildComponentsFromNodes<Table | Paragraph>(
 				[Table.name, Paragraph.name],
 				evaluateXPathToNodes(`/*/*`, dom),
+				{
+					archive,
+					relationships: inst.relationships,
+				},
 			),
 		);
 		return inst;
@@ -159,7 +172,7 @@ export class FooterXml extends HeaderFooterAbstractionXml<HeaderFooterChild> {
 	 * as root, for example `<Section>` or `<Paragragh>`.
 	 */
 	public static fromJsx(location: string, roots: HeaderFooterRoot) {
-		const inst = new this(location);
+		const inst = new this(location, null);
 		inst.set(roots);
 		return inst;
 	}

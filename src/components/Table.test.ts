@@ -3,8 +3,15 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { Table } from '../../mod.ts';
+import { Archive } from '../classes/Archive.ts';
+import { ComponentContext } from '../classes/Component.ts';
 import { create } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
+
+const emptyContext: ComponentContext = {
+	archive: new Archive(),
+	relationships: null,
+};
 
 describe('Table', () => {
 	//    +---------+----+
@@ -127,6 +134,7 @@ describe('Table', () => {
 				</w:tr>
 			</w:tbl>
 		`),
+		emptyContext,
 	);
 
 	it('Row 0 has the correct amount of cells', () =>

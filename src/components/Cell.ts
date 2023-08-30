@@ -1,4 +1,4 @@
-import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
 import {
 	type TableCellProperties,
 	tableCellPropertiesToNode,
@@ -147,7 +147,7 @@ export class Cell extends Component<CellProps, CellChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): null | Cell {
+	static fromNode(node: Node, context: ComponentContext): null | Cell {
 		const { mergedAway, children, ...props } = evaluateXPathToMap<
 			CellProps & { mergedAway: boolean; children: Node[] }
 		>(
@@ -186,7 +186,10 @@ export class Cell extends Component<CellProps, CellChild> {
 		if (mergedAway) {
 			return null;
 		}
-		return new Cell(props, ...createChildComponentsFromNodes<CellChild>(this.children, children));
+		return new Cell(
+			props,
+			...createChildComponentsFromNodes<CellChild>(this.children, children, context),
+		);
 	}
 }
 

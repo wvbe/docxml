@@ -1,4 +1,8 @@
-import { type AnyComponent, type ComponentDefinition } from '../classes/Component.ts';
+import {
+	type AnyComponent,
+	type ComponentDefinition,
+	ComponentContext,
+} from '../classes/Component.ts';
 
 const componentByName = new Map<string, ComponentDefinition>();
 
@@ -25,6 +29,7 @@ export function registerComponent<C extends AnyComponent>(component: ComponentDe
 export function createChildComponentsFromNodes<T extends AnyComponent | string>(
 	names: string[],
 	nodes: Node[],
+	context: ComponentContext,
 ): T[] {
 	const children = names.map((name) => {
 		const component = componentByName.get(name);
@@ -38,7 +43,9 @@ export function createChildComponentsFromNodes<T extends AnyComponent | string>(
 			(node) =>
 				(node.nodeType === 3
 					? node.nodeValue
-					: children.find((Child) => Child.matchesNode(node))?.fromNode(node)) as T | undefined,
+					: children.find((Child) => Child.matchesNode(node))?.fromNode(node, context)) as
+					| T
+					| undefined,
 		)
 		.filter((child): child is T => !!child);
 }

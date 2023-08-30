@@ -1,6 +1,7 @@
 import * as path from 'https://deno.land/std@0.187.0/path/mod.ts';
 
 import { Archive } from '../classes/Archive.ts';
+import { ComponentContext } from '../classes/Component.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { type SectionChild, Section, sectionChildComponentNames } from '../components/Section.ts';
@@ -160,7 +161,10 @@ export class DocumentXml extends XmlFile {
 		 * Creates a new header instance and returns the relationship identifier.
 		 */
 		add: (location: string, root: HeaderFooterRoot) => {
-			const inst = new HeaderXml(location);
+			const inst = new HeaderXml(
+				location,
+				new RelationshipsXml(`${path.dirname(location)}/_rels/${path.basename(location)}.rels`),
+			);
 			inst.set(root);
 			return this.relationships.add(RelationshipType.header, inst);
 		},
@@ -176,7 +180,10 @@ export class DocumentXml extends XmlFile {
 		 * Creates a new footer instance and returns the relationship identifier.
 		 */
 		add: (location: string, root: HeaderFooterRoot) => {
-			const inst = new FooterXml(location);
+			const inst = new FooterXml(
+				location,
+				new RelationshipsXml(`${path.dirname(location)}/_rels/${path.basename(location)}.rels`),
+			);
 			inst.set(root);
 			return this.relationships.add(RelationshipType.footer, inst);
 		},
@@ -201,12 +208,17 @@ export class DocumentXml extends XmlFile {
 			`/*/${QNS.w}body/(${QNS.w}p/${QNS.w}pPr/${QNS.w}sectPr | ${QNS.w}sectPr)`,
 			dom,
 		);
+		const context: ComponentContext = {
+			archive,
+			relationships,
+		};
 		doc.set(
 			sections.length
-				? sections.map((node) => Section.fromNode(node))
+				? sections.map((node) => Section.fromNode(node, context))
 				: createChildComponentsFromNodes<Table | Paragraph>(
 						sectionChildComponentNames,
 						evaluateXPathToNodes(`/*/${QNS.w}body/*`, dom),
+						context,
 				  ),
 		);
 		return doc;

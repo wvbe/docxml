@@ -4,7 +4,7 @@ import './Row.ts';
 import './RowAddition.ts';
 import './RowDeletion.ts';
 
-import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
 import {
 	type TableProperties,
 	tablePropertiesFromNode,
@@ -83,7 +83,7 @@ export class Table extends Component<TableProps, TableChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): Table {
+	static fromNode(node: Node, context: ComponentContext): Table {
 		const { children, tblpr, ...props } = evaluateXPathToMap<{
 			tblpr: Node;
 			children: Node[];
@@ -105,7 +105,7 @@ export class Table extends Component<TableProps, TableChild> {
 				columnWidths: props.columnWidths.map((size: number) => twip(size)),
 				...tablePropertiesFromNode(tblpr),
 			},
-			...createChildComponentsFromNodes<TableChild>(this.children, children),
+			...createChildComponentsFromNodes<TableChild>(this.children, children, context),
 		);
 	}
 }

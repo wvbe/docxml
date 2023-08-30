@@ -3,7 +3,12 @@
  * Note this file is 99% the same as RowDeletion. Please maintain both accordingly.
  */
 
-import { Component, ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
+import {
+	Component,
+	ComponentAncestor,
+	ComponentContext,
+	ComponentDefinition,
+} from '../classes/Component.ts';
 import { type TableRowProperties } from '../properties/table-row-properties.ts';
 import { type ChangeInformation, getChangeInformation } from '../utilities/changes.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
@@ -79,7 +84,7 @@ export class RowDeletion extends Component<RowDeletionProps, RowDeletionChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): RowDeletion {
+	static fromNode(node: Node, context: ComponentContext): RowDeletion {
 		const { children, ...rowProps } = parsePropsAndChildNodes(node);
 		const changeProps = getChangeInformation(evaluateXPathToFirstNode(`./${QNS.w}trPr`, node));
 
@@ -88,7 +93,7 @@ export class RowDeletion extends Component<RowDeletionProps, RowDeletionChild> {
 				...rowProps,
 				...changeProps,
 			},
-			...createChildComponentsFromNodes<RowDeletionChild>(this.children, children),
+			...createChildComponentsFromNodes<RowDeletionChild>(this.children, children, context),
 		);
 	}
 }

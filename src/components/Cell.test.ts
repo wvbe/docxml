@@ -1,9 +1,16 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { Cell } from '../../mod.ts';
+import { Archive } from '../classes/Archive.ts';
+import { ComponentContext } from '../classes/Component.ts';
 import { create } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
 import { evaluateXPathToFirstNode } from '../utilities/xquery.ts';
+
+const emptyContext: ComponentContext = {
+	archive: new Archive(),
+	relationships: null,
+};
 
 describe('Cell', () => {
 	const dom = create(`<w:tbl xmlns:w="${NamespaceUri.w}">
@@ -44,22 +51,31 @@ describe('Cell', () => {
 	</w:tbl>`);
 
 	describe('Cell 1', () => {
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		const cell = Cell.fromNode(evaluateXPathToFirstNode('.//*[@xid="cell-1"]', dom)!)!;
-		it('Colspan', () => expect(cell.props.colSpan).toBe(1));
-		it('Rowspan', () => expect(cell.props.rowSpan).toBe(1));
+		const cell = Cell.fromNode(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			evaluateXPathToFirstNode('.//*[@xid="cell-1"]', dom)!,
+			emptyContext,
+		);
+		it('Colspan', () => expect(cell?.props.colSpan).toBe(1));
+		it('Rowspan', () => expect(cell?.props.rowSpan).toBe(1));
 	});
 	describe('Cell 2', () => {
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		const cell = Cell.fromNode(evaluateXPathToFirstNode('.//*[@xid="cell-2"]', dom)!)!;
-		it('Colspan', () => expect(cell.props.colSpan).toBe(1));
-		it('Rowspan', () => expect(cell.props.rowSpan).toBe(1));
+		const cell = Cell.fromNode(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			evaluateXPathToFirstNode('.//*[@xid="cell-2"]', dom)!,
+			emptyContext,
+		);
+		it('Colspan', () => expect(cell?.props.colSpan).toBe(1));
+		it('Rowspan', () => expect(cell?.props.rowSpan).toBe(1));
 	});
 	describe('Cell 3', () => {
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		const cell = Cell.fromNode(evaluateXPathToFirstNode('.//*[@xid="cell-3"]', dom)!)!;
-		it('Colspan', () => expect(cell.props.colSpan).toBe(2));
-		it('Rowspan', () => expect(cell.props.rowSpan).toBe(1));
+		const cell = Cell.fromNode(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			evaluateXPathToFirstNode('.//*[@xid="cell-3"]', dom)!,
+			emptyContext,
+		);
+		it('Colspan', () => expect(cell?.props.colSpan).toBe(2));
+		it('Rowspan', () => expect(cell?.props.rowSpan).toBe(1));
 	});
 });
 

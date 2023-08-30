@@ -1,6 +1,7 @@
 import { type DocumentXml } from '../files/DocumentXml.ts';
 import { type FooterXml, type HeaderXml } from '../files/HeaderFooterXml.ts';
 import { type RelationshipsXml } from '../files/RelationshipsXml.ts';
+import { Archive } from './Archive.ts';
 
 /**
  * An ancestor of a component at serialization time, or the {@link DocumentXml} instance that is the
@@ -31,6 +32,21 @@ export type ComponentChild<ComponentGeneric extends Component | unknown> =
 	ComponentGeneric extends Component<any, infer C> ? C : never;
 
 /**
+ * Contains references to things that ancestor nodes might want to communicate to their children.
+ *
+ * When you are a node inside another node you are within it's "context". You are also within the
+ * "context" of all ancestor nodes. Nodes can block, change or pass context through so children see
+ * the context the way the nearest ancestor decides.
+ */
+export type ComponentContext = {
+	/** The Archive that nodes in this context can read from. */
+	archive: Archive;
+
+	/** Relationships that the nodes in this context can reference. */
+	relationships: RelationshipsXml | null;
+};
+
+/**
  * A secret property with which we can test wether or not a Class (or "Function" in JS land)
  * extends from Component
  */
@@ -45,7 +61,7 @@ export interface ComponentDefinition<C extends AnyComponent | unknown = AnyCompo
 	children: string[];
 	mixed: boolean;
 	matchesNode(node: Node): boolean;
-	fromNode(node: Node): null | C;
+	fromNode(node: Node, context: ComponentContext): null | C;
 	[IS_COMPONENT]: true;
 }
 
@@ -121,18 +137,15 @@ export abstract class Component<
 	 *
 	 *     this.#relationshipId = relationships.add(RelationshipType.hyperlink, this.props.url);
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public ensureRelationship(_relationships: RelationshipsXml) {
 		// no-op
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public static matchesNode(_node: Node): boolean {
 		return false;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public static fromNode(_node: Node): null | AnyComponent {
+	public static fromNode(_node: Node, _context: ComponentContext): null | AnyComponent {
 		throw new Error('Not implemented');
 	}
 

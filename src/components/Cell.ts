@@ -177,7 +177,8 @@ export class Cell extends Component<CellProps, CellChild> {
 						then ./${QNS.w}tcPr/${QNS.w}gridSpan/@${QNS.w}val/number()
 						else 1,
 					"rowSpan": $rowEnd - $rowStart,
-					"children": array{ ./(${QNS.w}p) }
+					"children": array{ ./(${QNS.w}p) },
+					"verticalAlignment": ./${QNS.w}tcPr/${QNS.w}vAlign/@${QNS.w}val/string()
 				}
 			`,
 			node,

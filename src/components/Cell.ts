@@ -1,7 +1,7 @@
-import { Component, type ComponentAncestor } from '../classes/Component.ts';
+import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import {
-	tableCellPropertiesToNode,
 	type TableCellProperties,
+	tableCellPropertiesToNode,
 } from '../properties/table-cell-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';

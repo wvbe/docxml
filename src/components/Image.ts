@@ -3,15 +3,21 @@ import {
 	type ComponentAncestor,
 	type ComponentDefinition,
 	Component,
+	ComponentContext,
 } from '../classes/Component.ts';
 import { RelationshipType } from '../enums.ts';
 import { RelationshipsXml } from '../files/RelationshipsXml.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { createRandomId, createUniqueNumericIdentifier } from '../utilities/identifiers.ts';
-import { type Length } from '../utilities/length.ts';
+import { type Length, emu } from '../utilities/length.ts';
+import { getMimeTypeForUint8Array } from '../utilities/mime-types.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import {
+	evaluateXPathToFirstNode,
+	evaluateXPathToNumber,
+	evaluateXPathToString,
+} from '../utilities/xquery.ts';
 
 /**
  * A type describing the components accepted as children of {@link Image}.
@@ -55,7 +61,6 @@ export class Image extends Component<ImageProps, ImageChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public toNode(_ancestry: ComponentAncestor[]): Node {
 		if (!this.#relationshipId) {
 			throw new Error('Cannot serialize an image outside the context of an Document');
@@ -135,6 +140,10 @@ export class Image extends Component<ImageProps, ImageChild> {
 		);
 	}
 
+	public async getMimeType() {
+		return getMimeTypeForUint8Array(await this.props.data);
+	}
+
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
@@ -145,21 +154,39 @@ export class Image extends Component<ImageProps, ImageChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): Image {
-		return new Image(
-			evaluateXPathToMap<ImageProps>(
-				`
-					map {
-						"type": ./@${QNS.w}type/string(),
-						"clear": ./@${QNS.w}clear/string(),
-						"title": ./${QNS.wp}inline/${QNS.wp}docPr/@name/string(),
-						"width": docxml:length(./${QNS.wp}inline/${QNS.wp}extent/@cx, 'emu'),
-						"height": docxml:length(./${QNS.wp}inline/${QNS.wp}extent/@cy, 'emu')
-					}
-				`,
-				node,
-			),
+	static fromNode(node: Node, { archive, relationships }: ComponentContext): Image {
+		// Important nodes
+		const inlineNode = evaluateXPathToFirstNode(`./${QNS.wp}inline`, node);
+		const picNode = evaluateXPathToFirstNode(
+			`./${QNS.a}graphic/${QNS.a}graphicData/${QNS.pic}pic`,
+			inlineNode,
 		);
+
+		const title = evaluateXPathToString(`./${QNS.wp}docPr/@name/string()`, inlineNode);
+
+		const width = emu(evaluateXPathToNumber(`./${QNS.wp}extent/@cx/number()`, inlineNode));
+		const height = emu(evaluateXPathToNumber(`./${QNS.wp}extent/@cy/number()`, inlineNode));
+
+		if (relationships === null) {
+			// Our simplified images are always expected to reference a relationship ID
+			throw new Error(
+				'Failed to load image. The image is referencing a relationship ID but RelationhipsXml is null in the context.',
+			);
+		}
+
+		const blipEmbedRel = evaluateXPathToString(
+			`${QNS.pic}blipFill/${QNS.a}blip/@${QNS.r}embed/string()`,
+			picNode,
+		);
+		const location = relationships.getTarget(blipEmbedRel);
+		const data = archive.readBinary(location);
+
+		return new Image({
+			data,
+			title,
+			width,
+			height,
+		});
 	}
 }
 

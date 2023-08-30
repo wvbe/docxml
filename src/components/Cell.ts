@@ -157,7 +157,7 @@ export class Cell extends Component<CellProps, CellChild> {
 				let $rowStart := count(../preceding-sibling::${QNS.w}tr)
 
 				let $firstNextRow := ../following-sibling::${QNS.w}tr[
-					child::${QNS.w}tc[docxml:cell-column(.) = $colStart and not(
+					child::${QNS.w}tc[docxml:spans-cell-column(., $colStart) and not(
 						./${QNS.w}tcPr/${QNS.w}vMerge[
 							@${QNS.w}val = "continue" or
 							not(./@${QNS.w}val)

@@ -25,6 +25,16 @@ fontoxpath.registerXQueryModule(`
 		)
 	};
 
+	declare %public function docxml:spans-cell-column($cell, $column) as xs:boolean {
+		let $start := docxml:cell-column($cell)
+		let $gridSpan := if ($cell/${QNS.w}tcPr/${QNS.w}gridSpan)
+			then number($cell/${QNS.w}tcPr/${QNS.w}gridSpan/@${QNS.w}val)
+			else 1
+
+		return boolean(($column >= $start) and ($column < ($start + $gridSpan)))
+	};
+
+
 	(:
 		Correlates with the ST_OnOff simple type. In short,
 		- If $val is "on", "true" or "1", value is TRUE

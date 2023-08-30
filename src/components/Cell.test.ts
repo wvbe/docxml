@@ -1,7 +1,7 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { Cell } from '../../mod.ts';
-import { create, serialize } from '../utilities/dom.ts';
+import { create } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
 import { evaluateXPathToFirstNode } from '../utilities/xquery.ts';
 

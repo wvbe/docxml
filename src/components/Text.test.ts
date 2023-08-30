@@ -1,8 +1,15 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { Text } from '../../mod.ts';
+import { Archive } from '../classes/Archive.ts';
+import { ComponentContext } from '../classes/Component.ts';
 import { create, serialize } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
+
+const emptyContext: ComponentContext = {
+	archive: new Archive(),
+	relationships: null,
+};
 
 describe('Text', () => {
 	const text = Text.fromNode(
@@ -16,6 +23,7 @@ describe('Text', () => {
 				<w:t>a page break</w:t>
 			</w:r>
 		`),
+		emptyContext,
 	);
 
 	it('parses props correctly', () => {

@@ -1,6 +1,6 @@
 import './Text.ts';
 
-import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
@@ -100,7 +100,7 @@ export class Field extends Component<FieldProps, FieldChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): Field {
+	static fromNode(node: Node, context: ComponentContext): Field {
 		const { children, ...props } = evaluateXPathToMap<FieldProps & { children: Node[] }>(
 			`map {
 				"instruction": ./@${QNS.w}instruction/string(),
@@ -119,7 +119,10 @@ export class Field extends Component<FieldProps, FieldChild> {
 			}`,
 			node,
 		);
-		return new Field(props, ...createChildComponentsFromNodes<FieldChild>(this.children, children));
+		return new Field(
+			props,
+			...createChildComponentsFromNodes<FieldChild>(this.children, children, context),
+		);
 	}
 }
 

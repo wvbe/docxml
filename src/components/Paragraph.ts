@@ -14,7 +14,7 @@ import './TextAddition.ts';
 import './TextDeletion.ts';
 
 import { type Hyperlink } from '../../mod.ts';
-import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
 import { type ParagraphProperties } from '../properties/paragraph-properties.ts';
 import {
 	paragraphPropertiesFromNode,
@@ -117,7 +117,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): Paragraph {
+	static fromNode(node: Node, context: ComponentContext): Paragraph {
 		const { children, ppr, ...props } = evaluateXPathToMap<{
 			ppr: Node;
 			children: Node[];
@@ -148,7 +148,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 				...paragraphPropertiesFromNode(ppr),
 				...props,
 			},
-			...createChildComponentsFromNodes<ParagraphChild>(this.children, children),
+			...createChildComponentsFromNodes<ParagraphChild>(this.children, children, context),
 		);
 	}
 }

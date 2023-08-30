@@ -10,7 +10,7 @@ import './NonBreakingHyphen.ts';
 import './Symbol.ts';
 import './Tab.ts';
 
-import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
 import {
 	type TextProperties,
 	textPropertiesFromNode,
@@ -115,7 +115,7 @@ export class Text extends Component<TextProps, TextChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): Text {
+	static fromNode(node: Node, context: ComponentContext): Text {
 		const { children, rpr } = evaluateXPathToMap<{ rpr: Node; children: Node[] }>(
 			`
 				map {
@@ -137,7 +137,7 @@ export class Text extends Component<TextProps, TextChild> {
 		);
 		return new Text(
 			textPropertiesFromNode(rpr),
-			...createChildComponentsFromNodes<TextChild>(this.children, children),
+			...createChildComponentsFromNodes<TextChild>(this.children, children, context),
 		);
 	}
 }

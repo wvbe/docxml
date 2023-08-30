@@ -8,6 +8,7 @@ import {
 	type ComponentDefinition,
 	AnyComponent,
 	Component,
+	ComponentContext,
 	ComponentNodes,
 	isComponentDefinition,
 } from '../classes/Component.ts';
@@ -92,7 +93,7 @@ export class Section extends Component<SectionProps, SectionChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): Section {
+	static fromNode(node: Node, context: ComponentContext): Section {
 		const { children } = evaluateXPathToMap<{ children: Node[] }>(
 			`
 				map {
@@ -119,7 +120,7 @@ export class Section extends Component<SectionProps, SectionChild> {
 
 		return new Section(
 			sectionPropertiesFromNode(node),
-			...createChildComponentsFromNodes<SectionChild>(this.children, children),
+			...createChildComponentsFromNodes<SectionChild>(this.children, children, context),
 		);
 	}
 }

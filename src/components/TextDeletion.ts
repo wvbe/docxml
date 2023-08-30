@@ -6,6 +6,7 @@ import {
 	type ComponentAncestor,
 	type ComponentDefinition,
 	Component,
+	ComponentContext,
 } from '../classes/Component.ts';
 import { type ChangeInformation, getChangeInformation } from '../utilities/changes.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
@@ -69,13 +70,14 @@ export class TextDeletion extends Component<TextDeletionProps, TextDeletionChild
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): TextDeletion {
+	static fromNode(node: Node, context: ComponentContext): TextDeletion {
 		const props = getChangeInformation(node);
 		return new TextDeletion(
 			props,
 			...createChildComponentsFromNodes<TextDeletionChild>(
 				this.children,
 				evaluateXPathToNodes(`./${QNS.w}r`, node),
+				context,
 			),
 		);
 	}

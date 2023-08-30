@@ -1,3 +1,5 @@
+import * as path from 'https://deno.land/std@0.187.0/path/mod.ts';
+
 import { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
@@ -6,6 +8,7 @@ import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
+import { RelationshipsXml } from './RelationshipsXml.ts';
 
 type Comment = {
 	id: number;
@@ -83,7 +86,12 @@ export class CommentsXml extends XmlFile {
 	public static async fromArchive(archive: Archive, location: string): Promise<CommentsXml> {
 		const dom = await archive.readXml(location);
 
-		const instance = new CommentsXml(location);
+		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
+		const relationships = archive.hasFile(relsLocation)
+			? await RelationshipsXml.fromArchive(archive, relsLocation)
+			: null;
+
+		const inst = new this(location);
 
 		evaluateXPathToArray(
 			`
@@ -97,15 +105,20 @@ export class CommentsXml extends XmlFile {
 			`,
 			dom,
 		).forEach(({ contents, date, ...rest }) =>
-			instance.add(
+			inst.add(
 				{
 					...rest,
 					date: new Date(date),
 				},
-				contents.map((node: Node) => Paragraph.fromNode(node)),
+				contents.map((node: Node) =>
+					Paragraph.fromNode(node, {
+						archive,
+						relationships,
+					}),
+				),
 			),
 		);
 
-		return instance;
+		return inst;
 	}
 }

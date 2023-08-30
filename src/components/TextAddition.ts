@@ -2,7 +2,12 @@
 // definitions, components register themselves in a side-effect of their module.
 import './Text.ts';
 
-import { Component, ComponentAncestor, ComponentDefinition } from '../classes/Component.ts';
+import {
+	Component,
+	ComponentAncestor,
+	ComponentContext,
+	ComponentDefinition,
+} from '../classes/Component.ts';
 import { type ChangeInformation, getChangeInformation } from '../utilities/changes.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
@@ -59,13 +64,14 @@ export class TextAddition extends Component<TextAdditionProps, TextAdditionChild
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): TextAddition {
+	static fromNode(node: Node, context: ComponentContext): TextAddition {
 		const props = getChangeInformation(node);
 		return new TextAddition(
 			props,
 			...createChildComponentsFromNodes<TextAdditionChild>(
 				this.children,
 				evaluateXPathToNodes(`./${QNS.w}r`, node),
+				context,
 			),
 		);
 	}

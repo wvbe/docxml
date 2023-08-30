@@ -1,4 +1,4 @@
-import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
@@ -52,7 +52,7 @@ export class FieldRangeInstruction extends Component<
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): FieldRangeInstruction {
+	static fromNode(node: Node, context: ComponentContext): FieldRangeInstruction {
 		const { children } = evaluateXPathToMap<{ rpr: Node; children: Node[] }>(
 			`
 				map {
@@ -65,7 +65,11 @@ export class FieldRangeInstruction extends Component<
 		);
 		return new FieldRangeInstruction(
 			{},
-			...createChildComponentsFromNodes<FieldRangeInstructionChild>(this.children, children),
+			...createChildComponentsFromNodes<FieldRangeInstructionChild>(
+				this.children,
+				children,
+				context,
+			),
 		);
 	}
 }

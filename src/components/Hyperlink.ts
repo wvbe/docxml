@@ -1,7 +1,7 @@
 import './Text.ts';
 
 import { Bookmark } from '../classes/Bookmarks.ts';
-import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
 import { RelationshipType } from '../enums.ts';
 import { type RelationshipsXml } from '../files/RelationshipsXml.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
@@ -89,7 +89,7 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): Hyperlink {
+	static fromNode(node: Node, context: ComponentContext): Hyperlink {
 		const { children, ...props } = evaluateXPathToMap<HyperlinkProps & { children: Node[] }>(
 			`map {
 				"anchor": ./@${QNS.w}anchor/string(),
@@ -103,7 +103,7 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 		);
 		return new Hyperlink(
 			props,
-			...createChildComponentsFromNodes<HyperlinkChild>(this.children, children),
+			...createChildComponentsFromNodes<HyperlinkChild>(this.children, children, context),
 		);
 	}
 }

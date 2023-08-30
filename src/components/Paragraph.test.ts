@@ -1,8 +1,15 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
+import { Archive } from '../classes/Archive.ts';
+import { ComponentContext } from '../classes/Component.ts';
 import { create, serialize } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
 import { Paragraph } from './Paragraph.ts';
+
+const emptyContext: ComponentContext = {
+	archive: new Archive(),
+	relationships: null,
+};
 
 describe('Paragraph from XML', () => {
 	const paragraph = Paragraph.fromNode(
@@ -22,6 +29,7 @@ describe('Paragraph from XML', () => {
 				</w:r>
 			</w:p>
 		`),
+		emptyContext,
 	);
 
 	it('parses props correctly', () => {

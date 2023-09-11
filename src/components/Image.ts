@@ -47,6 +47,11 @@ export class Image extends Component<ImageProps, ImageChild> {
 
 	#relationshipId: string | null = null;
 
+	#location = `word/media/${createRandomId('img')}`;
+	get location() {
+		return this.#location;
+	}
+
 	/**
 	 * An event hook with which this component can ensure that the correct relationship type is
 	 * recorded to the relationship XML.
@@ -54,7 +59,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 	public ensureRelationship(relationships: RelationshipsXml) {
 		this.#relationshipId = relationships.add(
 			RelationshipType.image,
-			BinaryFile.fromData(this.props.data, `word/media/${createRandomId('img')}`),
+			BinaryFile.fromData(this.props.data, this.#location),
 		);
 	}
 
@@ -180,13 +185,14 @@ export class Image extends Component<ImageProps, ImageChild> {
 		);
 		const location = relationships.getTarget(blipEmbedRel);
 		const data = archive.readBinary(location);
-
-		return new Image({
+		const image = new Image({
 			data,
 			title,
 			width,
 			height,
 		});
+		image.#location = location;
+		return image;
 	}
 }
 

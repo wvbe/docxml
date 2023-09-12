@@ -1,7 +1,8 @@
 import { create } from '../utilities/dom.ts';
 import { Length } from '../utilities/length.ts';
-import { QNS } from '../utilities/namespaces.ts';
+import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import { type Shading } from './shared-properties.ts';
 
 type SimpleOrComplex<Generic> = { simple?: Generic | null; complex?: Generic | null };
 function explodeSimpleOrComplex<Generic>(
@@ -40,6 +41,10 @@ export type TextProperties = {
 	 * The color of this text. Type as a hexidecimal code (`"ff0000"`) or a basic color name (`"red"`).
 	 */
 	color?: string | null;
+	/**
+	 * The background color of this paragraph, optionally with a pattern in a secondary color.
+	 */
+	shading?: null | Shading;
 	/**
 	 * The baseline position of this text.
 	 */
@@ -127,6 +132,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 			map {
 				"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
 				"color": ./${QNS.w}color/@${QNS.w}val/string(),
+				"shading": ./${QNS.w}shd/docxml:ct-shd(.),
 				"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
 				"isBold": map {
 					"simple": docxml:ct-on-off(./${QNS.w}b),
@@ -171,6 +177,7 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 		!data.isCaps &&
 		!data.fontSize &&
 		!data.isStrike &&
+		!data.shading &&
 		!data.font
 	) {
 		return null;
@@ -192,6 +199,7 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 			if ($isItalic('complex')) then element ${QNS.w}iCs {} else (),
 			if ($isSmallCaps) then element ${QNS.w}smallCaps {} else (),
 			if ($isCaps) then element ${QNS.w}caps {} else (),
+			docxml:ct-shd(fn:QName("${NamespaceUri.w}", "shd"), $shading),
 			if ($verticalAlign) then element ${QNS.w}vertAlign {
 				attribute ${QNS.w}val { $verticalAlign }
 			} else (),
@@ -228,6 +236,7 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 			color: data.color || null,
 			isUnderlined: data.isUnderlined === true ? 'single' : data.isUnderlined || null,
 			language: data.language || null,
+			shading: data.shading || null,
 			isBold: explodeSimpleOrComplex(data.isBold || false),
 			verticalAlign: data.verticalAlign || null,
 			isItalic: explodeSimpleOrComplex(data.isItalic || false),

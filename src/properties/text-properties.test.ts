@@ -18,6 +18,7 @@ describe('Text formatting', () => {
 			<w:u w:val="dashLongHeavy" />
 			<w:b />
 			<w:i />
+			<w:shd w:color="orange" w:fill="yellow" w:val="diagStripe" />
 			<w:smallCaps />
 			<w:caps />
 			<w:vertAlign w:val="subscript" />
@@ -33,6 +34,11 @@ describe('Text formatting', () => {
 			isBold: { simple: true, complex: false },
 			isItalic: { simple: true, complex: false },
 			isSmallCaps: true,
+			shading: {
+				background: 'yellow',
+				foreground: 'orange',
+				pattern: 'diagStripe',
+			},
 			isCaps: true,
 			verticalAlign: 'subscript',
 			language: 'en-GB',

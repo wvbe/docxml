@@ -57,8 +57,12 @@ export class BinaryFile {
 		return new BinaryFile(location, () => Deno.readFile(diskLocation));
 	}
 
-	public static fromData(data: Uint8Array | Promise<Uint8Array>, location: string): BinaryFile {
-		return new BinaryFile(location, () => Promise.resolve(data));
+	public static fromData(
+		data: Uint8Array | Promise<Uint8Array>,
+		location: string,
+		mime?: FileMime,
+	): BinaryFile {
+		return new BinaryFile(location, () => Promise.resolve(data), mime);
 	}
 
 	public toUint8Array(): Promise<Uint8Array> {

@@ -46,6 +46,8 @@ export const NamespaceUri = {
 
 	// Drawings/images
 	a: 'http://schemas.openxmlformats.org/drawingml/2006/main',
+	asvg: 'http://schemas.microsoft.com/office/drawing/2016/SVG/main',
+	a14: 'http://schemas.microsoft.com/office/drawing/2010/main',
 	pic: 'http://schemas.openxmlformats.org/drawingml/2006/picture',
 };
 

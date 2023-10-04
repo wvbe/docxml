@@ -12,7 +12,7 @@ type ContentTypeOverride = {
 
 type ContentTypeDefault = {
 	extension: string;
-	contentType: string | FileMime;
+	contentType: FileMime;
 };
 
 export class ContentTypesXml extends XmlFile {
@@ -35,7 +35,7 @@ export class ContentTypesXml extends XmlFile {
 	/**
 	 * Add a default content type association for a file extension.
 	 */
-	public addDefault(extension: string, contentType: string | FileMime): void {
+	public addDefault(extension: string, contentType: FileMime): void {
 		const exists = this.#defaults.findIndex((item) => item.extension === extension);
 		if (exists >= 0) {
 			this.#defaults.splice(exists, 1);
@@ -61,6 +61,18 @@ export class ContentTypesXml extends XmlFile {
 			this.#overrides.splice(exists, 1);
 		}
 		this.#overrides.push({ partName, contentType });
+	}
+
+	public getType(location: string): FileMime | undefined {
+		const indexInOverides = this.#overrides.findIndex((item) => item.partName === location);
+		if (indexInOverides >= 0) {
+			return this.#overrides[indexInOverides].contentType;
+		}
+
+		const indexInDefaults = this.#defaults.findIndex((item) => location.endsWith(item.extension));
+		if (indexInDefaults >= 0) {
+			return this.#defaults[indexInDefaults].contentType;
+		}
 	}
 
 	protected toNode(): Document {

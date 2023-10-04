@@ -227,10 +227,15 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 				: locationOrZipArchive instanceof Uint8Array
 				? await Archive.fromUInt8Array(locationOrZipArchive)
 				: locationOrZipArchive;
-		return new Docx<PropsGeneric>(
-			await ContentTypesXml.fromArchive(archive, FileLocation.contentTypes),
-			await RelationshipsXml.fromArchive(archive, FileLocation.relationships),
+
+		const contentTypes = await ContentTypesXml.fromArchive(archive, FileLocation.contentTypes);
+		const relationships = await RelationshipsXml.fromArchive(
+			archive,
+			contentTypes,
+			FileLocation.relationships,
 		);
+
+		return new Docx<PropsGeneric>(contentTypes, relationships);
 	}
 
 	/**

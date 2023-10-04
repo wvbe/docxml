@@ -1,8 +1,9 @@
 import { posix as path } from 'https://deno.land/std@0.187.0/path/mod.ts';
 
+import { ContentTypesXml } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';
-import { XmlFile } from '../classes/XmlFile.ts';
+import { XmlFile, XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { FileMime, RelationshipType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { createRandomId } from '../utilities/identifiers.ts';
@@ -20,7 +21,7 @@ export type RelationshipMeta = {
 
 export type File = XmlFile | BinaryFile;
 
-export class RelationshipsXml extends XmlFile {
+export class RelationshipsXml extends XmlFileWithContentTypes {
 	public static contentType = FileMime.relationships;
 
 	/**
@@ -175,7 +176,11 @@ export class RelationshipsXml extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<RelationshipsXml> {
+	public static async fromArchive(
+		archive: Archive,
+		contentTypes: ContentTypesXml,
+		location: string,
+	): Promise<RelationshipsXml> {
 		const meta = evaluateXPathToArray(
 			`
 				array{/*/Relationship/map{
@@ -200,7 +205,7 @@ export class RelationshipsXml extends XmlFile {
 						...meta,
 						instance: meta.isBinary
 							? await BinaryFile.fromArchive(archive, meta.target)
-							: await castRelationshipToClass(archive, {
+							: await castRelationshipToClass(archive, contentTypes, {
 									type: meta.type,
 									target: meta.target,
 							  }),

@@ -2,15 +2,16 @@ import { beforeAll, describe, expect, it, run } from 'https://deno.land/x/tincan
 
 import { serialize } from '../utilities/dom.ts';
 import { archive } from '../utilities/tests.ts';
+import { ContentTypesXml } from './ContentTypesXml.ts';
 import { RelationshipsXml } from './RelationshipsXml.ts';
 
 describe('Relationships', () => {
 	let relationships: RelationshipsXml;
+	let contentTypes: ContentTypesXml;
 	beforeAll(async () => {
-		relationships = await RelationshipsXml.fromArchive(
-			await archive('test/simple.docx'),
-			'_rels/.rels',
-		);
+		const arch = await archive('test/simple.docx');
+		contentTypes = await ContentTypesXml.fromArchive(arch, '[Content_Types].xml');
+		relationships = await RelationshipsXml.fromArchive(arch, contentTypes, '_rels/.rels');
 	});
 
 	it('serializes correctly', async () => {

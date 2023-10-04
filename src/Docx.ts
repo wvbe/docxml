@@ -149,7 +149,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 					}
 
 					if (relationships !== null) {
-						component.ensureRelationship(relationships);
+						await component.ensureRelationship(relationships);
 					}
 
 					await Promise.all((component.children as AnyComponent[]).map(walk));

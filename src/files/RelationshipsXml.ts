@@ -204,7 +204,7 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 					.map(async (meta) => ({
 						...meta,
 						instance: meta.isBinary
-							? await BinaryFile.fromArchive(archive, meta.target)
+							? await BinaryFile.fromArchive(archive, contentTypes, meta.target)
 							: await castRelationshipToClass(archive, contentTypes, {
 									type: meta.type,
 									target: meta.target,

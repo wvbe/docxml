@@ -56,10 +56,12 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 * An event hook with which this component can ensure that the correct relationship type is
 	 * recorded to the relationship XML.
 	 */
-	public ensureRelationship(relationships: RelationshipsXml) {
+	public async ensureRelationship(relationships: RelationshipsXml) {
+		const mime = await this.getMimeType();
+
 		this.#relationshipId = relationships.add(
 			RelationshipType.image,
-			BinaryFile.fromData(this.props.data, this.#location),
+			BinaryFile.fromData(this.props.data, this.#location, mime),
 		);
 	}
 

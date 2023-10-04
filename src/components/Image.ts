@@ -1,3 +1,4 @@
+import { Archive } from '../classes/Archive.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';
 import {
 	type ComponentAncestor,
@@ -5,16 +6,18 @@ import {
 	Component,
 	ComponentContext,
 } from '../classes/Component.ts';
-import { RelationshipType } from '../enums.ts';
+import { FileMime, RelationshipType } from '../enums.ts';
 import { RelationshipsXml } from '../files/RelationshipsXml.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
+import { extensionListUris } from '../utilities/drawingml-extensions.ts';
 import { createRandomId, createUniqueNumericIdentifier } from '../utilities/identifiers.ts';
 import { type Length, emu } from '../utilities/length.ts';
 import { getMimeTypeForUint8Array } from '../utilities/mime-types.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import {
 	evaluateXPathToFirstNode,
+	evaluateXPathToNodes,
 	evaluateXPathToNumber,
 	evaluateXPathToString,
 } from '../utilities/xquery.ts';
@@ -24,11 +27,16 @@ import {
  */
 export type ImageChild = never;
 
+export type DataExtensions = {
+	svg?: string | Promise<string>;
+};
+
 /**
  * A type describing the props accepted by {@link Image}.
  */
 export type ImageProps = {
 	data: Uint8Array | Promise<Uint8Array>;
+	dataExtensions?: DataExtensions;
 	title?: null | string;
 	alt?: null | string;
 	width: Length;
@@ -46,10 +54,15 @@ export class Image extends Component<ImageProps, ImageChild> {
 	public static readonly mixed: boolean = false;
 
 	#relationshipId: string | null = null;
+	#relationshipIdSvg: string | null = null;
 
 	#location = `word/media/${createRandomId('img')}`;
 	get location() {
 		return this.#location;
+	}
+	#locationSvg = `word/media/${createRandomId('svg')}`;
+	get locationSvg() {
+		return this.#locationSvg;
 	}
 
 	/**
@@ -63,6 +76,17 @@ export class Image extends Component<ImageProps, ImageChild> {
 			RelationshipType.image,
 			BinaryFile.fromData(this.props.data, this.#location, mime),
 		);
+
+		const { dataExtensions } = this.props;
+		if (dataExtensions) {
+			const { svg } = dataExtensions;
+			if (svg) {
+				this.#relationshipIdSvg = relationships.add(
+					RelationshipType.image,
+					BinaryFile.fromData(new TextEncoder().encode(await svg), this.#locationSvg, FileMime.svg),
+				);
+			}
+		}
 	}
 
 	/**
@@ -72,6 +96,35 @@ export class Image extends Component<ImageProps, ImageChild> {
 		if (!this.#relationshipId) {
 			throw new Error('Cannot serialize an image outside the context of an Document');
 		}
+
+		let extensionList: Node | undefined;
+
+		if (this.#relationshipIdSvg) {
+			extensionList = create(
+				`
+					element ${QNS.a}extLst {
+						element ${QNS.a}ext {
+							attribute uri { $extLstUseLocalDpi },
+							element ${QNS.a14}useLocalDpi {
+								attribute val { "0" }
+							}
+						},
+						element ${QNS.a}ext {
+							attribute uri { $extLstSvg },
+							element ${QNS.asvg}svgBlip {
+								attribute ${QNS.r}embed { $relationshipId }
+							}
+						}
+					}
+				`,
+				{
+					relationshipId: this.#relationshipIdSvg,
+					extLstUseLocalDpi: extensionListUris.useLocalDpi,
+					extLstSvg: extensionListUris.svg,
+				},
+			);
+		}
+
 		return create(
 			`
 				element ${QNS.w}drawing {
@@ -107,7 +160,8 @@ export class Image extends Component<ImageProps, ImageChild> {
 										element ${QNS.pic}blipFill {
 											element ${QNS.a}blip {
 												attribute ${QNS.r}embed { $relationshipId },
-												attribute cstate { "print" }
+												attribute cstate { "print" },
+												${extensionList ? '$extensionList' : '()'}
 											},
 											element ${QNS.a}stretch {
 												element ${QNS.a}fillRect {}
@@ -143,11 +197,15 @@ export class Image extends Component<ImageProps, ImageChild> {
 				height: Math.round(this.props.height.emu),
 				name: this.props.title || '',
 				desc: this.props.alt || '',
+				extensionList,
 			},
 		);
 	}
 
-	public async getMimeType() {
+	/**
+	 * @returns MIME tpye of main image data (not blip extensions).
+	 */
+	public async getMimeType(): Promise<FileMime> {
 		return getMimeTypeForUint8Array(await this.props.data);
 	}
 
@@ -181,21 +239,94 @@ export class Image extends Component<ImageProps, ImageChild> {
 			);
 		}
 
-		const blipEmbedRel = evaluateXPathToString(
-			`${QNS.pic}blipFill/${QNS.a}blip/@${QNS.r}embed/string()`,
-			picNode,
-		);
-		const location = relationships.getTarget(blipEmbedRel);
-		const data = archive.readBinary(location);
+		const blipNode = evaluateXPathToFirstNode(`${QNS.pic}blipFill/${QNS.a}blip`, picNode);
+		if (blipNode === null) {
+			throw new Error('Failed to load image. No blip found inside a blipFill.');
+		}
+		const { main, svg } = extractData(archive, relationships, blipNode);
+
+		const dataExtensions: DataExtensions = {};
+		if (svg) {
+			dataExtensions.svg = svg.data;
+		}
+
 		const image = new Image({
-			data,
+			data: main.data,
+			dataExtensions,
 			title,
 			width,
 			height,
 		});
-		image.#location = location;
+		image.#location = main.location;
+		if (svg) {
+			image.#locationSvg = svg.location;
+		}
 		return image;
 	}
 }
 
 registerComponent(Image as unknown as ComponentDefinition);
+
+type BlipLocationAndData = {
+	data: Promise<Uint8Array>;
+	location: string;
+};
+
+type BlipSvgLocationAndData = {
+	data: Promise<string>;
+	location: string;
+};
+
+type BlipAllLocationsAndData = {
+	main: BlipLocationAndData;
+	svg?: BlipSvgLocationAndData;
+};
+
+function extractData(
+	archive: Archive,
+	relationships: RelationshipsXml,
+	blipNode: Node,
+): BlipAllLocationsAndData {
+	const blipEmbedRel = evaluateXPathToString(`@${QNS.r}embed/string()`, blipNode);
+	const location = relationships.getTarget(blipEmbedRel);
+	const data = archive.readBinary(location);
+
+	const allLocationsAndData: BlipAllLocationsAndData = {
+		main: {
+			data,
+			location,
+		},
+	};
+
+	const blipextLst = evaluateXPathToNodes(`./extLst/*`, blipNode);
+	blipextLst.forEach((node) => {
+		if (node.nodeType !== 1) {
+			return;
+		}
+		const element = node as Element;
+		const extensionUri = element.getAttribute('uri');
+
+		if (extensionUri === extensionListUris.svg) {
+			const extensionRel = element.children[0].getAttributeNS(NamespaceUri.r, 'embed');
+			if (extensionRel === null) {
+				throw new Error(
+					'Failed to load image SVG extension. SVG extension URI found in extLst but it does not follow the known format.',
+				);
+			}
+			const location = relationships.getTarget(extensionRel);
+			const data = archive.readText(location);
+
+			allLocationsAndData.svg = {
+				location,
+				data,
+			};
+
+			return;
+		}
+
+		// Implement other similar blip extensions here
+		// if (extensionUri === "some other rui") { }
+	});
+
+	return allLocationsAndData;
+}

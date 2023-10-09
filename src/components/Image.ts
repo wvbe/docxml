@@ -28,14 +28,15 @@ import {
 export type ImageChild = never;
 
 export type DataExtensions = {
-	svg?: string | Promise<string>;
+	svg?: Promise<string>;
 };
 
 /**
  * A type describing the props accepted by {@link Image}.
  */
 export type ImageProps = {
-	data: Uint8Array | Promise<Uint8Array>;
+	data: Promise<Uint8Array>;
+	mime?: FileMime;
 	dataExtensions?: DataExtensions;
 	title?: null | string;
 	alt?: null | string;
@@ -53,16 +54,80 @@ export class Image extends Component<ImageProps, ImageChild> {
 
 	public static readonly mixed: boolean = false;
 
-	#relationshipId: string | null = null;
-	#relationshipIdSvg: string | null = null;
+	#embedMeta: {
+		location: string;
+		mime: Promise<FileMime> | null;
+		relationshipId: string | null;
 
-	#location = `word/media/${createRandomId('img')}`;
-	get location() {
-		return this.#location;
+		extensions: {
+			svg?: {
+				location: string;
+				relationshipId: string | null;
+			};
+		};
+	};
+	get embedMeta() {
+		const embedMeta = this.#embedMeta;
+		const props = this.props;
+
+		return {
+			get location() {
+				return embedMeta.location;
+			},
+			get mime() {
+				if (embedMeta.mime === null) {
+					embedMeta.mime = new Promise((resolve) => {
+						props.data.then((data) => {
+							resolve(getMimeTypeForUint8Array(data));
+						});
+					});
+				}
+				return embedMeta.mime;
+			},
+			get relationshipId() {
+				return embedMeta.relationshipId;
+			},
+
+			get extensions() {
+				return {
+					get svg() {
+						const { svg } = embedMeta.extensions;
+						if (!svg) {
+							return undefined;
+						}
+						return {
+							get location() {
+								return svg.location;
+							},
+							get relationshipId() {
+								return svg.relationshipId;
+							},
+						};
+					},
+				};
+			},
+		};
 	}
-	#locationSvg = `word/media/${createRandomId('svg')}`;
-	get locationSvg() {
-		return this.#locationSvg;
+
+	constructor(props: ImageProps, ...children: ImageChild[]) {
+		super(props, ...children);
+
+		this.#embedMeta = {
+			location: `word/media/${createRandomId('img')}`,
+			mime: null,
+			relationshipId: null,
+			extensions: {},
+		};
+
+		if (props.dataExtensions) {
+			const { svg } = props.dataExtensions;
+			if (svg !== undefined) {
+				this.#embedMeta.extensions.svg = {
+					location: `word/media/${createRandomId('svg')}`,
+					relationshipId: null,
+				};
+			}
+		}
 	}
 
 	/**
@@ -70,22 +135,23 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 * recorded to the relationship XML.
 	 */
 	public async ensureRelationship(relationships: RelationshipsXml) {
-		const mime = await this.getMimeType();
+		const { location, mime, extensions } = this.embedMeta;
 
-		this.#relationshipId = relationships.add(
+		this.#embedMeta.relationshipId = relationships.add(
 			RelationshipType.image,
-			BinaryFile.fromData(this.props.data, this.#location, mime),
+			BinaryFile.fromData(this.props.data, location, await mime),
 		);
 
-		const { dataExtensions } = this.props;
-		if (dataExtensions) {
-			const { svg } = dataExtensions;
-			if (svg) {
-				this.#relationshipIdSvg = relationships.add(
-					RelationshipType.image,
-					BinaryFile.fromData(new TextEncoder().encode(await svg), this.#locationSvg, FileMime.svg),
-				);
-			}
+		const { svg } = extensions;
+		if (this.#embedMeta.extensions.svg && svg && this.props.dataExtensions?.svg) {
+			this.#embedMeta.extensions.svg.relationshipId = relationships.add(
+				RelationshipType.image,
+				BinaryFile.fromData(
+					new TextEncoder().encode(await this.props.dataExtensions.svg),
+					svg.location,
+					FileMime.svg,
+				),
+			);
 		}
 	}
 
@@ -93,13 +159,13 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public toNode(_ancestry: ComponentAncestor[]): Node {
-		if (!this.#relationshipId) {
+		if (!this.#embedMeta.relationshipId) {
 			throw new Error('Cannot serialize an image outside the context of an Document');
 		}
 
 		let extensionList: Node | undefined;
-
-		if (this.#relationshipIdSvg) {
+		const { svg } = this.embedMeta.extensions;
+		if (svg) {
 			extensionList = create(
 				`
 					element ${QNS.a}extLst {
@@ -118,7 +184,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 					}
 				`,
 				{
-					relationshipId: this.#relationshipIdSvg,
+					relationshipId: svg.relationshipId,
 					extLstUseLocalDpi: extensionListUris.useLocalDpi,
 					extLstSvg: extensionListUris.svg,
 				},
@@ -192,7 +258,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 			`,
 			{
 				identifier: createUniqueNumericIdentifier(),
-				relationshipId: this.#relationshipId,
+				relationshipId: this.#embedMeta.relationshipId,
 				width: Math.round(this.props.width.emu),
 				height: Math.round(this.props.height.emu),
 				name: this.props.title || '',
@@ -200,13 +266,6 @@ export class Image extends Component<ImageProps, ImageChild> {
 				extensionList,
 			},
 		);
-	}
-
-	/**
-	 * @returns MIME tpye of main image data (not blip extensions).
-	 */
-	public async getMimeType(): Promise<FileMime> {
-		return getMimeTypeForUint8Array(await this.props.data);
 	}
 
 	/**
@@ -257,9 +316,20 @@ export class Image extends Component<ImageProps, ImageChild> {
 			width,
 			height,
 		});
-		image.#location = main.location;
+		image.#embedMeta.location = main.location;
 		if (svg) {
-			image.#locationSvg = svg.location;
+			const { svg: svgEmbed } = image.#embedMeta.extensions;
+			if (!svgEmbed) {
+				// At the time of writing this error should never happen.
+				// If you encountered it, it probably means that the Image constructor
+				// changed and is no longer defining #embed.svg when dataExtensions.svg
+				// is passed or this method changed and no longer passes
+				// dataExtensions.svg to the Image costuctor.
+				throw new Error(
+					'Failed setting image #embed.svg.location during Image deserialization. No SVG properties are available',
+				);
+			}
+			svgEmbed.location = svg.location;
 		}
 		return image;
 	}

@@ -380,7 +380,7 @@ function extractData(
 			const extensionRel = element.children[0].getAttributeNS(NamespaceUri.r, 'embed');
 			if (extensionRel === null) {
 				throw new Error(
-					'Failed to load image SVG extension. SVG extension URI found in extLst but it does not follow the known format.',
+					'Failed to load image SVG extension. SVG extension URI found in extLst but its node does not follow the known format.',
 				);
 			}
 			const location = relationships.getTarget(extensionRel);

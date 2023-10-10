@@ -54,7 +54,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 
 	public static readonly mixed: boolean = false;
 
-	#embedMeta: {
+	#meta: {
 		location: string;
 		mime: Promise<FileMime> | null;
 		relationshipId: string | null;
@@ -66,8 +66,8 @@ export class Image extends Component<ImageProps, ImageChild> {
 			};
 		};
 	};
-	get embedMeta() {
-		const embedMeta = this.#embedMeta;
+	get meta() {
+		const embedMeta = this.#meta;
 		const props = this.props;
 
 		return {
@@ -112,7 +112,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 	constructor(props: ImageProps, ...children: ImageChild[]) {
 		super(props, ...children);
 
-		this.#embedMeta = {
+		this.#meta = {
 			location: `word/media/${createRandomId('img')}`,
 			mime: null,
 			relationshipId: null,
@@ -122,7 +122,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 		if (props.dataExtensions) {
 			const { svg } = props.dataExtensions;
 			if (svg !== undefined) {
-				this.#embedMeta.extensions.svg = {
+				this.#meta.extensions.svg = {
 					location: `word/media/${createRandomId('svg')}`,
 					relationshipId: null,
 				};
@@ -135,16 +135,16 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 * recorded to the relationship XML.
 	 */
 	public async ensureRelationship(relationships: RelationshipsXml) {
-		const { location, mime, extensions } = this.embedMeta;
+		const { location, mime, extensions } = this.meta;
 
-		this.#embedMeta.relationshipId = relationships.add(
+		this.#meta.relationshipId = relationships.add(
 			RelationshipType.image,
 			BinaryFile.fromData(this.props.data, location, await mime),
 		);
 
 		const { svg } = extensions;
-		if (this.#embedMeta.extensions.svg && svg && this.props.dataExtensions?.svg) {
-			this.#embedMeta.extensions.svg.relationshipId = relationships.add(
+		if (this.#meta.extensions.svg && svg && this.props.dataExtensions?.svg) {
+			this.#meta.extensions.svg.relationshipId = relationships.add(
 				RelationshipType.image,
 				BinaryFile.fromData(
 					new TextEncoder().encode(await this.props.dataExtensions.svg),
@@ -159,12 +159,12 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public toNode(_ancestry: ComponentAncestor[]): Node {
-		if (!this.#embedMeta.relationshipId) {
+		if (!this.#meta.relationshipId) {
 			throw new Error('Cannot serialize an image outside the context of an Document');
 		}
 
 		let extensionList: Node | undefined;
-		const { svg } = this.embedMeta.extensions;
+		const { svg } = this.meta.extensions;
 		if (svg) {
 			extensionList = create(
 				`
@@ -258,7 +258,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 			`,
 			{
 				identifier: createUniqueNumericIdentifier(),
-				relationshipId: this.#embedMeta.relationshipId,
+				relationshipId: this.#meta.relationshipId,
 				width: Math.round(this.props.width.emu),
 				height: Math.round(this.props.height.emu),
 				name: this.props.title || '',
@@ -316,10 +316,10 @@ export class Image extends Component<ImageProps, ImageChild> {
 			width,
 			height,
 		});
-		image.#embedMeta.location = main.location;
+		image.#meta.location = main.location;
 		if (svg) {
-			const { svg: svgEmbed } = image.#embedMeta.extensions;
-			if (!svgEmbed) {
+			const { svg: svgMeta } = image.#meta.extensions;
+			if (!svgMeta) {
 				// At the time of writing this error should never happen.
 				// If you encountered it, it probably means that the Image constructor
 				// changed and is no longer defining #embed.svg when dataExtensions.svg
@@ -329,7 +329,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 					'Failed setting image #embed.svg.location during Image deserialization. No SVG properties are available',
 				);
 			}
-			svgEmbed.location = svg.location;
+			svgMeta.location = svg.location;
 		}
 		return image;
 	}

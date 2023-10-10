@@ -50,7 +50,7 @@ export class BinaryFile {
 		const mime = contentTypes.getType(location);
 		if (mime === undefined) {
 			throw new Error(
-				'Error creating BinaryFile from Archrive. No matching content type found in ContentTypesXML',
+				'Error creating BinaryFile from Archive. No matching content type found in ContentTypesXml',
 			);
 		}
 

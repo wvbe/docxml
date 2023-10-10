@@ -319,17 +319,10 @@ export class Image extends Component<ImageProps, ImageChild> {
 		image.#meta.location = main.location;
 		if (svg) {
 			const { svg: svgMeta } = image.#meta.extensions;
-			if (!svgMeta) {
-				// At the time of writing this error should never happen.
-				// If you encountered it, it probably means that the Image constructor
-				// changed and is no longer defining #embed.svg when dataExtensions.svg
-				// is passed or this method changed and no longer passes
-				// dataExtensions.svg to the Image costuctor.
-				throw new Error(
-					'Failed setting image #embed.svg.location during Image deserialization. No SVG properties are available',
-				);
-			}
-			svgMeta.location = svg.location;
+			// We are certain that if we pass `dataExtensions` with `svg` in it
+			// `Image` construtor makes it so image.#meta.extensions has `svg` too.
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			svgMeta!.location = svg.location;
 		}
 		return image;
 	}

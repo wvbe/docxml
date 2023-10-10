@@ -302,7 +302,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 		if (blipNode === null) {
 			throw new Error('Failed to load image. No blip found inside a blipFill.');
 		}
-		const { main, svg } = extractData(archive, relationships, blipNode);
+		const { main, svg } = extractDataFromBlipNode(archive, relationships, blipNode);
 
 		const dataExtensions: DataExtensions = {};
 		if (svg) {
@@ -330,31 +330,27 @@ export class Image extends Component<ImageProps, ImageChild> {
 
 registerComponent(Image as unknown as ComponentDefinition);
 
-type BlipLocationAndData = {
-	data: Promise<Uint8Array>;
-	location: string;
+type ExtractedBlipNodeData = {
+	main: {
+		data: Promise<Uint8Array>;
+		location: string;
+	};
+	svg?: {
+		data: Promise<string>;
+		location: string;
+	};
 };
 
-type BlipSvgLocationAndData = {
-	data: Promise<string>;
-	location: string;
-};
-
-type BlipAllLocationsAndData = {
-	main: BlipLocationAndData;
-	svg?: BlipSvgLocationAndData;
-};
-
-function extractData(
+function extractDataFromBlipNode(
 	archive: Archive,
 	relationships: RelationshipsXml,
 	blipNode: Node,
-): BlipAllLocationsAndData {
+): ExtractedBlipNodeData {
 	const blipEmbedRel = evaluateXPathToString(`@${QNS.r}embed/string()`, blipNode);
 	const location = relationships.getTarget(blipEmbedRel);
 	const data = archive.readBinary(location);
 
-	const allLocationsAndData: BlipAllLocationsAndData = {
+	const allLocationsAndData: ExtractedBlipNodeData = {
 		main: {
 			data,
 			location,

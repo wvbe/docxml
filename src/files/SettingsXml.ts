@@ -1,7 +1,8 @@
 import * as path from 'https://deno.land/std@0.187.0/path/mod.ts';
 
+import { ContentTypesXml } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
-import { XmlFile } from '../classes/XmlFile.ts';
+import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { FileMime, RelationshipType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
@@ -63,7 +64,7 @@ const settingsMeta: Array<SettingMeta> = [
 	},
 ];
 
-export class SettingsXml extends XmlFile {
+export class SettingsXml extends XmlFileWithContentTypes {
 	public static contentType = FileMime.settings;
 
 	public readonly relationships: RelationshipsXml;
@@ -159,12 +160,20 @@ export class SettingsXml extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<SettingsXml> {
+	public static async fromArchive(
+		archive: Archive,
+		contentTypes: ContentTypesXml,
+		location: string,
+	): Promise<SettingsXml> {
 		let relationships;
 
 		const relationshipsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
 		try {
-			relationships = await RelationshipsXml.fromArchive(archive, relationshipsLocation);
+			relationships = await RelationshipsXml.fromArchive(
+				archive,
+				contentTypes,
+				relationshipsLocation,
+			);
 		} catch (_error: unknown) {
 			// console.error(
 			// 	'Warning, relationships could not be resolved\n' +

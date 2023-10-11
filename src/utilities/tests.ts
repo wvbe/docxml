@@ -8,7 +8,8 @@ import { describe, expect, it } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { Docx } from '../Docx.ts';
-import { RelationshipType } from '../enums.ts';
+import { FileLocation, RelationshipType } from '../enums.ts';
+import { ContentTypesXml } from '../files/ContentTypesXml.ts';
 import { castRelationshipToClass } from '../files/index.ts';
 import { create } from './dom.ts';
 import { evaluateXPathToBoolean } from './xquery.ts';
@@ -67,7 +68,8 @@ export async function archivedFile(
 	fileLocation: string,
 ) {
 	const zip = await archive(archiveLocation);
-	return castRelationshipToClass(zip, { type, target: fileLocation });
+	const contentTypes = await ContentTypesXml.fromArchive(zip, FileLocation.contentTypes);
+	return castRelationshipToClass(zip, contentTypes, { type, target: fileLocation });
 }
 
 /**

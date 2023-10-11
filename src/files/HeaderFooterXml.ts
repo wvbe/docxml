@@ -1,8 +1,9 @@
 import * as path from 'https://deno.land/std@0.187.0/path/mod.ts';
 
+import { ContentTypesXml } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
 import { type AnyComponent } from '../classes/Component.ts';
-import { XmlFile } from '../classes/XmlFile.ts';
+import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Table } from '../components/Table.ts';
 import { WatermarkText } from '../components/WatermarkText.ts';
@@ -20,7 +21,7 @@ export type HeaderFooterRoot<Child = HeaderFooterChild> = Child | Child[] | Prom
 /**
  * Somewhat generic implementation of either the Header or Footer helper classes.
  */
-class HeaderFooterAbstractionXml<Child extends AnyComponent> extends XmlFile {
+class HeaderFooterAbstractionXml<Child extends AnyComponent> extends XmlFileWithContentTypes {
 	#nodeName: string;
 
 	#root: HeaderFooterRoot<Child> | null = null;
@@ -103,11 +104,15 @@ export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | Wa
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string) {
+	public static async fromArchive(
+		archive: Archive,
+		contentTypes: ContentTypesXml,
+		location: string,
+	) {
 		const dom = await archive.readXml(location);
 		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
 		const relationships = archive.hasFile(relsLocation)
-			? await RelationshipsXml.fromArchive(archive, relsLocation)
+			? await RelationshipsXml.fromArchive(archive, contentTypes, relsLocation)
 			: null;
 		const inst = new this(location, relationships);
 		inst.set(
@@ -147,11 +152,15 @@ export class FooterXml extends HeaderFooterAbstractionXml<HeaderFooterChild> {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string) {
+	public static async fromArchive(
+		archive: Archive,
+		contentTypes: ContentTypesXml,
+		location: string,
+	) {
 		const dom = await archive.readXml(location);
 		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
 		const relationships = archive.hasFile(relsLocation)
-			? await RelationshipsXml.fromArchive(archive, relsLocation)
+			? await RelationshipsXml.fromArchive(archive, contentTypes, relsLocation)
 			: null;
 		const inst = new this(location, relationships);
 		inst.set(

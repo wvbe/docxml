@@ -1,3 +1,4 @@
+import { ContentTypesXml } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
 import { UnhandledXmlFile } from '../classes/XmlFile.ts';
 import { RelationshipType } from '../enums.ts';
@@ -23,6 +24,7 @@ import { WebSettingsXml } from './wip/WebSettingsXml.ts';
  */
 export function castRelationshipToClass(
 	archive: Archive,
+	contentTypes: ContentTypesXml,
 	meta: Pick<RelationshipMeta, 'type' | 'target'>,
 ) {
 	switch (meta.type) {
@@ -37,19 +39,19 @@ export function castRelationshipToClass(
 		case RelationshipType.fontTable:
 			return FontTableXml.fromArchive(archive, meta.target);
 		case RelationshipType.footer:
-			return FooterXml.fromArchive(archive, meta.target);
+			return FooterXml.fromArchive(archive, contentTypes, meta.target);
 		case RelationshipType.footnotes:
 			return FootnotesXml.fromArchive(archive, meta.target);
 		case RelationshipType.header:
-			return HeaderXml.fromArchive(archive, meta.target);
+			return HeaderXml.fromArchive(archive, contentTypes, meta.target);
 		case RelationshipType.officeDocument:
-			return DocumentXml.fromArchive(archive, meta.target);
+			return DocumentXml.fromArchive(archive, contentTypes, meta.target);
 		case RelationshipType.settings:
-			return SettingsXml.fromArchive(archive, meta.target);
+			return SettingsXml.fromArchive(archive, contentTypes, meta.target);
 		case RelationshipType.styles:
 			return StylesXml.fromArchive(archive, meta.target);
 		case RelationshipType.comments:
-			return CommentsXml.fromArchive(archive, meta.target);
+			return CommentsXml.fromArchive(archive, contentTypes, meta.target);
 		case RelationshipType.theme:
 			return ThemeXml.fromArchive(archive, meta.target);
 		case RelationshipType.webSettings:

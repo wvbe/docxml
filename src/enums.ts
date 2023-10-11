@@ -37,10 +37,11 @@ export enum FileMime {
 	comments = 'application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml',
 	numbering = 'application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml',
 
-	// Binary content types
+	// Images
 	jpeg = 'image/jpeg',
 	png = 'image/png',
 	gif = 'image/gif',
+	svg = 'image/svg+xml',
 }
 
 export enum RelationshipType {

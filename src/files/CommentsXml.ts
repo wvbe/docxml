@@ -1,8 +1,9 @@
 import * as path from 'https://deno.land/std@0.187.0/path/mod.ts';
 
+import { ContentTypesXml } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
-import { XmlFile } from '../classes/XmlFile.ts';
+import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
@@ -18,7 +19,7 @@ type Comment = {
 	contents: Paragraph[] | Promise<Paragraph[]>;
 };
 
-export class CommentsXml extends XmlFile {
+export class CommentsXml extends XmlFileWithContentTypes {
 	public static contentType = FileMime.comments;
 
 	#comments = new NumberMap<Comment>();
@@ -83,12 +84,16 @@ export class CommentsXml extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<CommentsXml> {
+	public static async fromArchive(
+		archive: Archive,
+		contentTypes: ContentTypesXml,
+		location: string,
+	): Promise<CommentsXml> {
 		const dom = await archive.readXml(location);
 
 		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
 		const relationships = archive.hasFile(relsLocation)
-			? await RelationshipsXml.fromArchive(archive, relsLocation)
+			? await RelationshipsXml.fromArchive(archive, contentTypes, relsLocation)
 			: null;
 
 		const inst = new this(location);

@@ -1,9 +1,10 @@
 import { FileMime } from '../enums.ts';
+import { ContentTypesXml } from '../files/ContentTypesXml.ts';
 import { parse } from '../utilities/dom.ts';
 import { type Archive } from './Archive.ts';
 import { type BinaryFile } from './BinaryFile.ts';
 
-export class XmlFile {
+abstract class XmlFileBase {
 	public static readonly contentType: FileMime = FileMime.xml;
 
 	public readonly location: string;
@@ -13,7 +14,7 @@ export class XmlFile {
 	}
 
 	public get contentType(): FileMime {
-		return (this.constructor as typeof XmlFile).contentType;
+		return (this.constructor as typeof XmlFileBase).contentType;
 	}
 
 	/**
@@ -37,7 +38,7 @@ export class XmlFile {
 	 *
 	 * By default only returns the instance itself but no other related instances.
 	 */
-	public getRelated(): Array<XmlFile | BinaryFile> {
+	public getRelated(): Array<XmlFileBase | BinaryFile> {
 		return [this];
 	}
 
@@ -54,7 +55,7 @@ export class XmlFile {
 	public async addToArchive(archive: Archive): Promise<void> {
 		await Promise.all(
 			this.getRelated().map(async (related) => {
-				if (related instanceof XmlFile) {
+				if (related instanceof XmlFileBase) {
 					archive.addXmlFile(related.location, await related.toNode());
 				} else {
 					related.addToArchive(archive);
@@ -62,7 +63,9 @@ export class XmlFile {
 			}),
 		);
 	}
+}
 
+export class XmlFile extends XmlFileBase {
 	/**
 	 * Promise a new JS instance of this file based on the given archive.
 	 */
@@ -85,5 +88,15 @@ export class UnhandledXmlFile extends XmlFile {
 
 	public static async fromArchive(archive: Archive, location: string) {
 		return new UnhandledXmlFile(location, await archive.readText(location));
+	}
+}
+
+export class XmlFileWithContentTypes extends XmlFileBase {
+	public static fromArchive(
+		_archive: Archive,
+		_contentTypes: ContentTypesXml,
+		location: string,
+	): Promise<XmlFile> {
+		return Promise.resolve(new XmlFile(location));
 	}
 }

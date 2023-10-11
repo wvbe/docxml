@@ -227,7 +227,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 											element ${QNS.a}blip {
 												attribute ${QNS.r}embed { $relationshipId },
 												attribute cstate { "print" },
-												${extensionList ? '$extensionList' : '()'}
+												$extensionList
 											},
 											element ${QNS.a}stretch {
 												element ${QNS.a}fillRect {}

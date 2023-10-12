@@ -114,7 +114,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 
 		this.#meta = {
 			location: `word/media/${createRandomId('img')}`,
-			mime: null,
+			mime: props.mime ? Promise.resolve(props.mime) : null,
 			relationshipId: null,
 			extensions: {},
 		};

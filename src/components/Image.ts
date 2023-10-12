@@ -163,7 +163,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 			throw new Error('Cannot serialize an image outside the context of an Document');
 		}
 
-		let extensionList: Node | undefined;
+		let extensionList: Node | null = null;
 		const { svg } = this.meta.extensions;
 		if (svg) {
 			extensionList = create(

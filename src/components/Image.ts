@@ -213,44 +213,43 @@ export class Image extends Component<ImageProps, ImageChild> {
 						(: nb: _Must_ be prefixed with "a" or MS Word will refuse to open :)
 						element ${QNS.a}graphic {
 							element ${QNS.a}graphicData {
-									attribute uri { "${NamespaceUri.pic}"},
-									element ${QNS.pic}pic {
-										element ${QNS.pic}nvPicPr {
-											element ${QNS.pic}cNvPr {
-												attribute id { $identifier },
-												attribute name { $name },
-												attribute descr { $desc }
-											},
-											element ${QNS.pic}cNvPicPr {}
+								attribute uri { "${NamespaceUri.pic}"},
+								element ${QNS.pic}pic {
+									element ${QNS.pic}nvPicPr {
+										element ${QNS.pic}cNvPr {
+											attribute id { $identifier },
+											attribute name { $name },
+											attribute descr { $desc }
 										},
-										element ${QNS.pic}blipFill {
-											element ${QNS.a}blip {
-												attribute ${QNS.r}embed { $relationshipId },
-												attribute cstate { "print" },
-												$extensionList
+										element ${QNS.pic}cNvPicPr {}
+									},
+									element ${QNS.pic}blipFill {
+										element ${QNS.a}blip {
+											attribute ${QNS.r}embed { $relationshipId },
+											attribute cstate { "print" },
+											$extensionList
+										},
+										element ${QNS.a}stretch {
+											element ${QNS.a}fillRect {}
+										}
+									},
+									element ${QNS.pic}spPr {
+										element ${QNS.a}xfrm {
+											element ${QNS.a}off {
+												attribute x { "0" },
+												attribute y { "0" }
 											},
-											element ${QNS.a}stretch {
-												element ${QNS.a}fillRect {}
+											element ${QNS.a}ext {
+												attribute cx { $width },
+												attribute cy { $height }
 											}
 										},
-										element ${QNS.pic}spPr {
-											element ${QNS.a}xfrm {
-												element ${QNS.a}off {
-													attribute x { "0" },
-													attribute y { "0" }
-												},
-												element ${QNS.a}ext {
-													attribute cx { $width },
-													attribute cy { $height }
-												}
-											},
-											element ${QNS.a}prstGeom {
-												attribute prst { "rect" },
-												element ${QNS.a}avLst {}
-											}
+										element ${QNS.a}prstGeom {
+											attribute prst { "rect" },
+											element ${QNS.a}avLst {}
 										}
 									}
-
+								}
 							}
 						}
 					}

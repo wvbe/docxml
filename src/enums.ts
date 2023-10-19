@@ -18,6 +18,7 @@ export enum FileMime {
 	// Extension defaults
 	rels = 'application/vnd.openxmlformats-package.relationships+xml',
 	xml = 'application/xml',
+	json = 'application/json',
 
 	// Overrides
 	coreProperties = 'application/vnd.openxmlformats-package.core-properties+xml',

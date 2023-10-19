@@ -46,6 +46,9 @@ export {
 	type FieldRangeStartProps,
 	FieldRangeStart,
 } from './src/components/FieldRangeStart.ts';
+export {
+	FileMime
+} from './src/enums.ts',
 export { type HyperlinkChild, type HyperlinkProps, Hyperlink } from './src/components/Hyperlink.ts';
 export { type ImageChild, type ImageProps, Image } from './src/components/Image.ts';
 export {

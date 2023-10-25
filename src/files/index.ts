@@ -63,6 +63,9 @@ export function castRelationshipToClass(
 		case RelationshipType.people:
 		case RelationshipType.commentIds:
 		case RelationshipType.commentsExtended:
+		case RelationshipType.classificationlabels:
+		case RelationshipType.downRev:
+		case RelationshipType.graphicFrameDoc:
 			return UnhandledXmlFile.fromArchive(archive, meta.target);
 
 		case RelationshipType.attachedTemplate:

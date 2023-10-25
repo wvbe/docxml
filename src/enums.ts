@@ -68,4 +68,9 @@ export enum RelationshipType {
 	webSettings = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/webSettings',
 	hyperlink = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink',
 	attachedTemplate = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/attachedTemplate',
+	// For dotx created with office 2020	
+	classificationlabels = 'http://schemas.microsoft.com/office/2020/02/relationships/classificationlabels',
+	// Legacy template (.dot)
+	downRev = "http://schemas.microsoft.com/office/2006/relationships/downRev",
+	graphicFrameDoc = "http://schemas.microsoft.com/office/2006/relationships/graphicFrameDoc",
 }

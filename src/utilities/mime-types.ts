@@ -18,6 +18,8 @@ function getMimeTypeFromHexSignature(signature: string): FileMime {
 			return FileMime.png;
 		case '47494638':
 			return FileMime.gif;
+		case '3C3F786D':
+			return FileMime.svg;
 		// case '25504446':
 		// 	return 'application/pdf';
 		// case '504B0304':

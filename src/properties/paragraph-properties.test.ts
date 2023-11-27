@@ -31,7 +31,11 @@ describe('Paragraph formatting', () => {
 				<w:i />
 				<w:lang w:val="en-GB" />
 				<w:sz w:val="19" />
-			</w:rPr>
+			</w:rPr>			
+			<w:tabs>
+				<w:tab w:val="right" w:leader="dot" w:pos="10" />
+				<w:tab w:val="left" w:leader="dot" w:pos="100" />
+			</w:tabs>
 		</w:pPr>`,
 		{
 			alignment: null,
@@ -82,6 +86,18 @@ describe('Paragraph formatting', () => {
 				language: 'en-GB',
 				fontSize: { simple: hpt(19) },
 			},
+			tabs: [ 
+				{
+					type: "right",
+					leader: "dot",
+					position: twip(10),
+				},
+				{
+					type: "left",
+					leader: "dot",
+					position: twip(100),
+				}
+			]
 		},
 	);
 

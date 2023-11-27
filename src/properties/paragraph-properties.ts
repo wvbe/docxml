@@ -99,9 +99,9 @@ export type ParagraphProperties = {
 	 */
 	tabs?: Array<Partial<
 		{
-			val: null | string;
-			leader: null | string;
-			pos: null | Length;
+			type: 'bar' | 'center' | 'clear' | 'clear' | 'decimal' | 'left' |  'num' |  'right' | null;
+			leader: 'dot' | 'heavy' | 'hyphen' | 'middleDot' | 'none' | 'underscore' | null;
+			position: Length | null;
 		}>
 	>;	
 };
@@ -151,9 +151,9 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 						"_node": ./${QNS.w}pPr
 					},
 					"tabs": ./${QNS.w}tabs/array {${QNS.w}tab/map {
-						"val": @${QNS.w}val/string(),
+						"type": @${QNS.w}val/string(),
 						"leader": @${QNS.w}leader/string(),
-						"pos": docxml:length(@${QNS.w}pos, 'twip')
+						"position": docxml:length(@${QNS.w}pos, 'twip')
 					}}
 				}`,
 				node,
@@ -277,14 +277,14 @@ export function paragraphPropertiesToNode(
 				if (exists($tabs)) then element ${QNS.w}tabs {
 					for $tab in array:flatten($tabs)
 						return element ${QNS.w}tab {
-							if (exists($tab('val'))) then attribute ${QNS.w}val {
-								$tab('val')
+							if (exists($tab('type'))) then attribute ${QNS.w}val {
+								$tab('type')
 							} else (),
 							if (exists($tab('leader'))) then attribute ${QNS.w}leader {
 								$tab('leader')
 							} else (),
-							if (exists($tab('pos'))) then attribute ${QNS.w}pos {
-								$tab('pos')
+							if (exists($tab('position'))) then attribute ${QNS.w}pos {
+								$tab('position')
 							} else ()
 						}
 				} else ()
@@ -337,9 +337,9 @@ export function paragraphPropertiesToNode(
 			sectpr: sectionProperties && sectionPropertiesToNode(sectionProperties),
 			tabs: data.tabs?.length ? 
 				data.tabs?.map(tab => ({
-					val: tab.val,
+					type: tab.type,
 					leader: tab.leader,
-					pos: getTwipOrNull(tab.pos),
+					position: getTwipOrNull(tab.position),
 				})) : null
 		},
 	);

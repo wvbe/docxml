@@ -93,6 +93,17 @@ export type ParagraphProperties = {
 	 * Formatting of the pilcrow signn
 	 */
 	pilcrow?: TextProperties | null;
+
+	/**
+	 * Properties in styles for tabs.
+	 */
+	tabs?: Array<Partial<
+		{
+			val: null | string;
+			leader: null | string;
+			pos: null | Length;
+		}>
+	>;	
 };
 
 export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProperties {
@@ -138,7 +149,12 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 						"author": @${QNS.w}author/string(),
 						"date": @${QNS.w}date/string(),
 						"_node": ./${QNS.w}pPr
-					}
+					},
+					"tabs": ./${QNS.w}tabs/array {${QNS.w}tab/map {
+						"val": @${QNS.w}val/string(),
+						"leader": @${QNS.w}leader/string(),
+						"pos": docxml:length(@${QNS.w}pos, 'twip')
+					}}
 				}`,
 				node,
 		  ) || {}
@@ -169,6 +185,7 @@ export function paragraphPropertiesToNode(
 	if (!Object.keys(data).length && !sectionProperties) {
 		return null;
 	}
+
 	return create(
 		`
 			element ${QNS.w}pPr {
@@ -255,6 +272,21 @@ export function paragraphPropertiesToNode(
 					attribute ${QNS.w}author { $change('author') },
 					attribute ${QNS.w}date { $change('date') },
 					$change('node')
+				} else (),
+				
+				if (exists($tabs)) then element ${QNS.w}tabs {
+					for $tab in array:flatten($tabs)
+						return element ${QNS.w}tab {
+							if (exists($tab('val'))) then attribute ${QNS.w}val {
+								$tab('val')
+							} else (),
+							if (exists($tab('leader'))) then attribute ${QNS.w}leader {
+								$tab('leader')
+							} else (),
+							if (exists($tab('pos'))) then attribute ${QNS.w}pos {
+								$tab('pos')
+							} else ()
+						}
 				} else ()
 			}
 		`,
@@ -303,6 +335,12 @@ export function paragraphPropertiesToNode(
 				: null,
 			rpr: textPropertiesToNode(data.pilcrow || undefined),
 			sectpr: sectionProperties && sectionPropertiesToNode(sectionProperties),
+			tabs: data.tabs?.length ? 
+				data.tabs?.map(tab => ({
+					val: tab.val,
+					leader: tab.leader,
+					pos: getTwipOrNull(tab.pos),
+				})) : null
 		},
 	);
 }

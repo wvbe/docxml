@@ -118,23 +118,28 @@ export function createXmlRoundRobinTest<ObjectShape extends { [key: string]: unk
 	toNode: (n: ObjectShape) => Node | null,
 ) {
 	function assert(
-		prop: string,
-		p1: Record<string, unknown>,
-		e1: Record<string, unknown>,
-		p2: Record<string, unknown>,
-	) {
-		const value = p1[prop];
-		const expectation = e1[prop];
-		const reparsed = p2[prop];
+		prop: string | number,
+		p1: Record<string, unknown> | Array<unknown>,
+		e1: Record<string, unknown> | Array<unknown>,
+		p2: Record<string, unknown> | Array<unknown>,
+	): void {
+		const value = p1[prop as keyof typeof p1];
+		const expectation = e1[prop as keyof typeof e1];
+		const reparsed = p2[prop as keyof typeof p2];
 
-		if (expectation && typeof expectation === 'object' && !Array.isArray(expectation)) {
+		if (expectation && typeof expectation === 'object') {
 			describe(`.${String(prop)}`, () => {
+				if(Array.isArray(expectation)) {
+					it('Has the expected length', () => {
+						expect(value).toHaveLength(expectation.length);
+					});
+				}
 				for (const p in expectation) {
 					assert(
 						p,
-						value as Record<string, unknown>,
-						expectation as Record<string, unknown>,
-						reparsed as Record<string, unknown>,
+						value as Record<string, unknown> | Array<unknown>,
+						expectation as Record<string, unknown> | Array<unknown>,
+						reparsed as Record<string, unknown> | Array<unknown>,
 					);
 				}
 			});

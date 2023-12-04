@@ -1,12 +1,13 @@
 import * as path from 'https://deno.land/std@0.187.0/path/mod.ts';
 
-import { ContentTypesXml } from '../../mod.ts';
+import { ContentTypesXml, Length } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { FileMime, RelationshipType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
+import { twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import { evaluateXPathToMap, evaluateXPathToNumber } from '../utilities/xquery.ts';
 import { File, RelationshipsXml } from './RelationshipsXml.ts';
 
 export type SettingsI = {
@@ -20,20 +21,29 @@ export type SettingsI = {
 	evenAndOddHeaders: boolean;
 
 	attachedTemplate: string | null;
+
+	defaultTabStop: Length | null;
 };
 
 const DEFAULT_SETTINGS: SettingsI = {
 	isTrackChangesEnabled: false,
 	evenAndOddHeaders: false,
 	attachedTemplate: null,
+	defaultTabStop: null,
 };
 
 enum SettingType {
+	Length,
 	OnOff,
 	Relationship,
 }
 
 type SettingMeta =
+	| {
+			docxmlName: keyof SettingsI;
+			ooxmlLocalName: string;
+			ooxmlType: SettingType.Length;
+	  }
 	| {
 			docxmlName: keyof SettingsI;
 			ooxmlLocalName: string;
@@ -61,6 +71,11 @@ const settingsMeta: Array<SettingMeta> = [
 		ooxmlLocalName: 'attachedTemplate',
 		ooxmlType: SettingType.Relationship,
 		ooxmlRelationshipType: RelationshipType.attachedTemplate,
+	},
+	{
+		docxmlName: 'defaultTabStop',
+		ooxmlLocalName: 'defaultTabStop',
+		ooxmlType: SettingType.Length,
 	},
 ];
 
@@ -139,7 +154,15 @@ export class SettingsXml extends XmlFileWithContentTypes {
 					} else (),
 					if ($attachedTemplate) then element ${QNS.w}attachedTemplate {
 						attribute ${QNS.r}id { $attachedTemplate }
-					} else ()
+					} else (),
+					${
+						this.#props.defaultTabStop
+							? `
+						element ${QNS.w}defaultTabStop {
+							attribute ${QNS.w}val { map:get($defaultTabStop, 'twip') }
+						}`
+							: '()'
+					}
 				}
 			</w:settings>`,
 			this.#props,
@@ -181,13 +204,24 @@ export class SettingsXml extends XmlFileWithContentTypes {
 			// );
 		}
 
+		const xml = await archive.readXml(location);
+
 		const settings = evaluateXPathToMap<SettingsI>(
 			`/${QNS.w}settings/map {
 				"isTrackChangesEnabled": docxml:ct-on-off(./${QNS.w}trackChanges),
 				"evenAndOddHeaders": docxml:ct-on-off(./${QNS.w}evenAndOddHeaders)
 			}`,
-			await archive.readXml(location),
+			xml,
 		);
+
+		const defaultTabStopTwips = evaluateXPathToNumber(
+			`number(/*/${QNS.w}defaultTabStop/@${QNS.w}val)`,
+			xml,
+		);
+		if (defaultTabStopTwips !== null) {
+			settings.defaultTabStop = twip(defaultTabStopTwips);
+		}
+
 		return new SettingsXml(
 			location,
 			relationships || new RelationshipsXml(relationshipsLocation),

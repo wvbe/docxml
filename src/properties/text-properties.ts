@@ -120,7 +120,7 @@ export type TextProperties = {
 	 * The name of the font family used for this text. Set as either a string, or as an object if you
 	 * want more control over different font variations.
 	 */
-	font?: FontEncodingProperties;
+	font?: string | FontEncodingProperties;
 }
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {

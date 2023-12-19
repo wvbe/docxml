@@ -26,7 +26,7 @@ import {
 import { create } from '../utilities/dom.ts';
 import { createRandomId } from '../utilities/identifiers.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToArray, evaluateXPathToFirstNode } from '../utilities/xquery.ts';
+import { evaluateXPathToArray, evaluateXPathToFirstNode, evaluateXPathToString } from '../utilities/xquery.ts';
 
 type ParagraphStyle = {
 	type: 'paragraph';
@@ -69,6 +69,13 @@ type LatentStyle = {
 	unhideWhenUsed?: boolean | null;
 	qFormat?: boolean | null;
 };
+
+export type ThemeProperties = {
+	fontScheme: {
+		minorFont: string;
+		majorFont?: string;
+	}
+}
 
 export class StylesXml extends XmlFile {
 	public static contentType = FileMime.styles;
@@ -233,14 +240,26 @@ export class StylesXml extends XmlFile {
 		return this.#styles.find((style) => style.id === id);
 	}
 
-	public static fromDom(dom: Document, location: string): StylesXml {
+	public static fromDom(dom: Document, location: string, themeDefaults?: ThemeProperties): StylesXml {
 		const instance = new StylesXml(location);
 
-		// This is where we'll check what the documnent default styles are.
-		const defaultRunProperties = evaluateXPathToFirstNode(`/*/${QNS.w}docDefaults/${QNS.w}rPrDefault/${QNS.w}rPr`, dom);
-		instance.addDefault(
-			textPropertiesFromNode(defaultRunProperties)
-		);
+		// Check the documnent default styles are, possible get them from the theme1.xml file.
+		const defaultRunProperties = textPropertiesFromNode(evaluateXPathToFirstNode(`/*/${QNS.w}docDefaults/${QNS.w}rPrDefault/${QNS.w}rPr`, dom));
+		if (defaultRunProperties) {
+			instance.addDefault(
+				defaultRunProperties
+			);
+		}
+
+		if (instance.docDefaults?.font && typeof instance.docDefaults.font !== 'string' && themeDefaults) {
+			for (const key in instance.docDefaults.font) {
+				if (instance.docDefaults.font[key as keyof FontEncodingProperties] === null) {
+					instance.docDefaults.font[key as keyof FontEncodingProperties] = themeDefaults.fontScheme.minorFont;
+				}
+			}
+		}
+
+		console.log(instance.docDefaults?.font);
 
 		// Warning! Untyped objects
 		instance.addStyles(
@@ -259,14 +278,18 @@ export class StylesXml extends XmlFile {
 				dom,
 			).map(({ ppr, rpr, tblpr, tblStylePr, ...json }) => {
 				const runProperties = textPropertiesFromNode(rpr);
-				if (json.isDefault && runProperties.font && typeof runProperties.font !== 'string') {
+				if (json.isDefault
+					&& runProperties.font
+					&& typeof runProperties.font !== 'string'
+					&& instance.docDefaults
+				) {
 					for (const key in runProperties.font) {
-						if (runProperties.font[key as keyof FontEncodingProperties ] === null && instance.docDefaults!.font) {
-							runProperties.font[key as keyof FontEncodingProperties] = instance.docDefaults?.font[key as keyof FontEncodingProperties];
+						if (runProperties.font[key as keyof FontEncodingProperties] === null
+							&& instance.docDefaults.font
+							&& typeof instance.docDefaults!.font !== 'string') {
+							runProperties.font[key as keyof FontEncodingProperties] = instance.docDefaults.font[key as keyof FontEncodingProperties];
 						}
 					}
-					// console.log(runProperties.font);
-					// console.log(instance.docDefaults);
 				};
 				return {
 					...json,
@@ -312,9 +335,20 @@ export class StylesXml extends XmlFile {
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
 	public static async fromArchive(archive: Archive, location: string): Promise<StylesXml> {
+		// The minorFont is the default font specified in the theme1.xml file. This font is used
+		// for Normal styles if no other fonts are specified anywhere in the template.
+		const themeProperties: ThemeProperties = { fontScheme: { minorFont: 'Calibri'}};
+		// This is where the default fonts used by Word are. If a completely empty document
+		// is used as a template, this is where the fonts + encodings are found
+		if (archive.hasFile('word/theme/theme1.xml')) {
+			const defaultTheme = await archive.readXml('word/theme/theme1.xml');
+			if (defaultTheme) {
+				themeProperties.fontScheme.minorFont = evaluateXPathToString(`./descendant-or-self::${QNS.a}minorFont/${QNS.a}latin/@typeface`, defaultTheme) ?? 'Wingdings';
+			}
+		};
 		if (archive.hasFile(location)) {
 			const dom = await archive.readXml(location);
-			return this.fromDom(dom, location);
+			return this.fromDom(dom, location, themeProperties);
 		}
 		return Promise.resolve(new StylesXml(location));
 	}

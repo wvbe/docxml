@@ -26,6 +26,13 @@ function explodeSimpleOrComplex<Generic>(
 	};
 }
 
+export interface FontEncodingProperties
+{
+	cs?: string;
+	ascii?: string;
+	hAnsi?: string;
+}
+
 /**
  * All the formatting options that can be given on a text run (inline text).
  *
@@ -53,26 +60,26 @@ export type TextProperties = {
 	 * Display this text with an underline, and if so, what kind of line.
 	 */
 	isUnderlined?:
-		| null
-		| boolean
-		| 'single'
-		| 'words'
-		| 'double'
-		| 'thick'
-		| 'dotted'
-		| 'dottedHeavy'
-		| 'dash'
-		| 'dashedHeavy'
-		| 'dashLong'
-		| 'dashLongHeavy'
-		| 'dotDash'
-		| 'dashDotHeavy'
-		| 'dotDotDash'
-		| 'dashDotDotHeavy'
-		| 'wave'
-		| 'wavyHeavy'
-		| 'wavyDouble'
-		| 'none';
+	| null
+	| boolean
+	| 'single'
+	| 'words'
+	| 'double'
+	| 'thick'
+	| 'dotted'
+	| 'dottedHeavy'
+	| 'dash'
+	| 'dashedHeavy'
+	| 'dashLong'
+	| 'dashLongHeavy'
+	| 'dotDash'
+	| 'dashDotHeavy'
+	| 'dotDotDash'
+	| 'dashDotDotHeavy'
+	| 'wave'
+	| 'wavyHeavy'
+	| 'wavyDouble'
+	| 'none';
 	/**
 	 * Display extra thick characters, or not.
 	 */
@@ -113,15 +120,8 @@ export type TextProperties = {
 	 * The name of the font family used for this text. Set as either a string, or as an object if you
 	 * want more control over different font variations.
 	 */
-	font?:
-		| string
-		| {
-				cs?: string | null;
-				ascii?: string | null;
-				hAnsi?: string | null;
-		  }
-		| null;
-};
+	font?: FontEncodingProperties;
+}
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	if (!node) {

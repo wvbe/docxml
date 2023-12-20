@@ -259,8 +259,6 @@ export class StylesXml extends XmlFile {
 			}
 		}
 
-		console.log(instance.docDefaults?.font);
-
 		// Warning! Untyped objects
 		instance.addStyles(
 			evaluateXPathToArray(
@@ -337,7 +335,7 @@ export class StylesXml extends XmlFile {
 	public static async fromArchive(archive: Archive, location: string): Promise<StylesXml> {
 		// The minorFont is the default font specified in the theme1.xml file. This font is used
 		// for Normal styles if no other fonts are specified anywhere in the template.
-		const themeProperties: ThemeProperties = { fontScheme: { minorFont: 'Calibri'}};
+		const themeProperties: ThemeProperties = { fontScheme: { minorFont: ''}};
 		// This is where the default fonts used by Word are. If a completely empty document
 		// is used as a template, this is where the fonts + encodings are found
 		if (archive.hasFile('word/theme/theme1.xml')) {

@@ -1,6 +1,7 @@
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
+import { ThemeXml } from './ThemeXml.ts';
 import {
 	type ParagraphProperties,
 	paragraphPropertiesFromNode,
@@ -80,10 +81,10 @@ export type ThemeProperties = {
 export class StylesXml extends XmlFile {
 	public static contentType = FileMime.styles;
 
-	docDefaults?: TextProperties | undefined;
-
 	readonly #latentStyles: LatentStyle[] = [];
 	readonly #styles: AnyStyleDefinition[] = [];
+
+	docDefaults?: TextProperties | undefined;
 
 	public constructor(location: string) {
 		super(location);
@@ -241,9 +242,10 @@ export class StylesXml extends XmlFile {
 	}
 
 	public static fromDom(dom: Document, location: string, themeDefaults?: ThemeProperties): StylesXml {
+
 		const instance = new StylesXml(location);
 
-		// Check the documnent default styles are, possible get them from the theme1.xml file.
+		// Check the document default styles are there.
 		const defaultRunProperties = textPropertiesFromNode(evaluateXPathToFirstNode(`/*/${QNS.w}docDefaults/${QNS.w}rPrDefault/${QNS.w}rPr`, dom));
 		if (defaultRunProperties) {
 			instance.addDefault(
@@ -335,7 +337,7 @@ export class StylesXml extends XmlFile {
 	public static async fromArchive(archive: Archive, location: string): Promise<StylesXml> {
 		// The minorFont is the default font specified in the theme1.xml file. This font is used
 		// for Normal styles if no other fonts are specified anywhere in the template.
-		const themeProperties: ThemeProperties = { fontScheme: { minorFont: ''}};
+		const themeProperties: ThemeProperties = { fontScheme: { minorFont: '' } };
 		// This is where the default fonts used by Word are. If a completely empty document
 		// is used as a template, this is where the fonts + encodings are found
 		if (archive.hasFile('word/theme/theme1.xml')) {
@@ -344,6 +346,7 @@ export class StylesXml extends XmlFile {
 				themeProperties.fontScheme.minorFont = evaluateXPathToString(`./descendant-or-self::${QNS.a}minorFont/${QNS.a}latin/@typeface`, defaultTheme) ?? 'Wingdings';
 			}
 		};
+
 		if (archive.hasFile(location)) {
 			const dom = await archive.readXml(location);
 			return this.fromDom(dom, location, themeProperties);

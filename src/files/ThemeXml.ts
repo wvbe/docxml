@@ -4,20 +4,24 @@ import { FileMime } from '../enums.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap} from '../utilities/xquery.ts';
 
+export type ThemeElements = {
+	fontScheme: FontScheme | undefined;
+}
+
 export type FontScheme = {
-	name: string | undefined;
+	name: string;
 	majorFont: {
 		latinFont: LatinFont;
-		otherFonts?: Font | Font[];
+		otherFonts: Font[];
 	};
 	minorFont: {
 		latinFont: LatinFont;
-		otherFonts?: Font | Font[]
+		otherFonts: Font[]
 	}
 }
 
 export type Font = {
-	typeFace: string;
+	typeface: string;
 	script?: string;
 }
 
@@ -27,13 +31,19 @@ export interface LatinFont extends Font {
 
 export class ThemeXml extends XmlFile {
 	public static contentType = FileMime.theme;
-	public static fontScheme: FontScheme;
+	readonly #themeElements: ThemeElements;
+
+	public constructor(location: string) {
+		super(location);
+		const newThemeElements = {} as ThemeElements;
+		this.#themeElements = newThemeElements;
+	}
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
 	public static async fromArchive(archive: Archive, location: string): Promise<ThemeXml> {
 		const themeDocument = await archive.readXml(location);
-		const fontScheme = evaluateXPathToMap(`
+		const fontScheme: Record<string, string | Font[]> = evaluateXPathToMap(`
 			//${QNS.a}fontScheme/map {
 				"name": @name/string(),
 				"majorFontLatinTypeface": ${QNS.a}majorFont/${QNS.a}latin/@typeface/string(),
@@ -45,7 +55,32 @@ export class ThemeXml extends XmlFile {
 			}
 		`, themeDocument);
 
-		console.log(fontScheme["name"]);
-		return Promise.resolve(new ThemeXml(location));
+		const newFontScheme: FontScheme = {
+			name: fontScheme["name"] as string,
+			majorFont: {
+				latinFont: {
+					typeface: fontScheme["majorFontLatinTypeface"],
+					panose: fontScheme["majorFontLatinPanose"]
+				} as LatinFont,
+				otherFonts: typeof fontScheme["majorFontOthers"] !== 'string' ? fontScheme["majorFontOthers"].map((font: Font) => {
+					const newFont: Font = { script: font["script"],  typeface: font["typeface"] };
+					return newFont;
+				}) as Font[] : [{ script: '', typeface: ''}] as Font[]
+			},
+			minorFont: {
+				latinFont: {
+					typeface: fontScheme["minorFontLatinTypeface"],
+					panose: fontScheme["minorFontLatinPanose"]
+				} as LatinFont,
+				otherFonts: typeof fontScheme["minorFontOthers"] !== 'string' ? fontScheme["minorFontOthers"].map((font: Font) => {
+					const newFont: Font = { script: font["script"], typeface: font["typeface"] };
+					return newFont;
+				}) as Font[] : [{ script: '', typeface: ''}] as Font[]
+			}
+		}
+
+		const newTheme = new ThemeXml(location);
+		newTheme.#themeElements.fontScheme = newFontScheme;
+		return Promise.resolve(newTheme);
 	}
 }

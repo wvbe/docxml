@@ -84,7 +84,7 @@ export class StylesXml extends XmlFile {
 	readonly #latentStyles: LatentStyle[] = [];
 	readonly #styles: AnyStyleDefinition[] = [];
 
-	docDefaults?: TextProperties | undefined;
+	docDefaults: TextProperties | undefined;
 
 	public constructor(location: string) {
 		super(location);

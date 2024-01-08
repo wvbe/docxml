@@ -4,8 +4,17 @@ import { FileMime } from '../enums.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap} from '../utilities/xquery.ts';
 
+/**
+ * Represents the various 'scheme' elements that comprise a theme.
+ *
+ * Currently, only FontScheme is implemented. It functions as a fallback for
+ * determining which fonts to apply when the StylesXml cannot determine which
+ * font to apply for the required Normal style in MS Word.
+ *
+ * @TODO Implement ColorScheme and FormatScheme
+ */
 export type ThemeElements = {
-	fontScheme: FontScheme | undefined;
+	fontScheme: FontScheme | null;
 }
 
 export type FontScheme = {
@@ -31,12 +40,12 @@ export interface LatinFont extends Font {
 
 export class ThemeXml extends XmlFile {
 	public static contentType = FileMime.theme;
-	readonly #themeElements: ThemeElements;
+	public readonly themeElements: ThemeElements;
 
 	public constructor(location: string) {
 		super(location);
 		const newThemeElements = {} as ThemeElements;
-		this.#themeElements = newThemeElements;
+		this.themeElements = newThemeElements;
 	}
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
@@ -80,7 +89,7 @@ export class ThemeXml extends XmlFile {
 		}
 
 		const newTheme = new ThemeXml(location);
-		newTheme.#themeElements.fontScheme = newFontScheme;
+		newTheme.themeElements.fontScheme = newFontScheme;
 		return Promise.resolve(newTheme);
 	}
 }

@@ -50,7 +50,9 @@ export class ThemeXml extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<ThemeXml> {
+	public static async fromArchive(archive: Archive, location?: string): Promise<ThemeXml> {
+		// If a location is supplied, use that, otherwise use the default location for theme files.
+		location = location ?? 'word/theme/theme1.xml';
 		const themeDocument = await archive.readXml(location);
 		const fontScheme: Record<string, string | Font[]> = evaluateXPathToMap(`
 			//${QNS.a}fontScheme/map {

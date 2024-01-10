@@ -2,6 +2,7 @@ import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
 import { ThemeXml } from './ThemeXml.ts';
+import { evaluateXPathToFirstNode } from '../utilities/xquery.ts';
 import {
 	type ParagraphProperties,
 	paragraphPropertiesFromNode,
@@ -27,7 +28,7 @@ import {
 import { create } from '../utilities/dom.ts';
 import { createRandomId } from '../utilities/identifiers.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToArray, evaluateXPathToFirstNode } from '../utilities/xquery.ts';
+import { evaluateXPathToArray } from '../utilities/xquery.ts';
 
 type ParagraphStyle = {
 	type: 'paragraph';
@@ -52,11 +53,6 @@ type TableStyle = {
 	};
 };
 
-type DefaultProperties = {
-	paragraphDefaults: ParagraphProperties | null;
-	textRunDefaults: TextProperties | null;
-}
-
 export type AnyStyleDefinition = {
 	id: string;
 	name?: string | null;
@@ -76,14 +72,19 @@ type LatentStyle = {
 	qFormat?: boolean | null;
 };
 
+type DocumentDefaults = {
+	defaultRunProperties?: TextProperties | null;
+	defaultParagraphProperties?: ParagraphProperties | null;
+}
+
 export class StylesXml extends XmlFile {
 	public static contentType = FileMime.styles;
 
 	readonly #latentStyles: LatentStyle[] = [];
 	readonly #styles: AnyStyleDefinition[] = [];
-	readonly #docDefaults: DefaultProperties = {
-		paragraphDefaults: null,
-		textRunDefaults: null
+	readonly #docDefaultStyles: DocumentDefaults = {
+		defaultRunProperties: null,
+		defaultParagraphProperties: null
 	};
 
 	public constructor(location: string) {
@@ -207,10 +208,18 @@ export class StylesXml extends XmlFile {
 	}
 
 	/**
-	 * The list of custom styles. Does not include latent styles or default style;
+	 * The list of custom styles. Does not include latent styles.
 	 */
 	public get styles(): AnyStyleDefinition[] {
 		return this.#styles;
+	}
+
+	/**
+	 * Adds default styles.
+	 */
+	public addDefaults(properties: DocumentDefaults) {
+		this.#docDefaultStyles.defaultRunProperties = properties.defaultRunProperties;
+		this.#docDefaultStyles.defaultParagraphProperties = properties.defaultParagraphProperties;
 	}
 
 	/**
@@ -218,14 +227,6 @@ export class StylesXml extends XmlFile {
 	 */
 	public addLatent(properties: LatentStyle) {
 		this.#latentStyles.push(properties);
-	}
-
-	public addDefaultTextRunProperties(properties: TextProperties) {
-		this.#docDefaults.textRunDefaults = properties;
-	}
-
-	public addDefaultParagraphProperties(properties: ParagraphProperties) {
-		this.#docDefaults.paragraphDefaults = properties;
 	}
 
 	/**
@@ -245,25 +246,28 @@ export class StylesXml extends XmlFile {
 		return this.#styles.find((style) => style.id === id);
 	}
 
-	public static fromDom(dom: Document, location: string, themeDefaults?: ThemeXml): StylesXml {
-
+	public static fromDom(dom: Document, location: string, theme?: ThemeXml): StylesXml {
 		const instance = new StylesXml(location);
 
-		// Check the document default styles are there.
-		const defaultRunProperties = textPropertiesFromNode(evaluateXPathToFirstNode(`/*/${QNS.w}docDefaults/${QNS.w}rPrDefault/${QNS.w}rPr`, dom));
-		if (defaultRunProperties) {
-			instance.addDefaultTextRunProperties(
-				defaultRunProperties
-			);
-		}
+		const defaultRunProperties = textPropertiesFromNode(
+			evaluateXPathToFirstNode(`/*/${QNS.w}docDefaults/${QNS.w}rPrDefault/${QNS.w}rPr`, dom)
+		);
+		const defaultParagraphProperties = paragraphPropertiesFromNode(
+			evaluateXPathToFirstNode(`/*/${QNS.w}docDefaults/${QNS.w}pPrDefault/${QNS.w}pPr`, dom)
+		);
 
-		if (instance.#docDefaults?.textRunDefaults?.font
-			&& typeof instance.#docDefaults.textRunDefaults.font !== 'string'
-			&& themeDefaults) {
-			console.log("HERE");
-			for (const key in instance.#docDefaults.textRunDefaults.font) {
-				if (instance.#docDefaults.textRunDefaults.font[key as keyof FontEncodingProperties] === null) {
-					instance.#docDefaults.textRunDefaults.font[key as keyof FontEncodingProperties] = themeDefaults.themeElements.fontScheme?.minorFont.latinFont.typeface
+		instance.addDefaults({
+			defaultRunProperties: defaultRunProperties,
+			defaultParagraphProperties: defaultParagraphProperties
+		} as DocumentDefaults);
+
+		//We should not get here unless there's *NOTHING* telling us what to do.
+		if (instance.#docDefaultStyles?.defaultRunProperties?.font
+			&& typeof instance.#docDefaultStyles.defaultRunProperties.font !== 'string'
+			&& theme) {
+			for (const key in instance.#docDefaultStyles.defaultRunProperties.font) {
+				if (instance.#docDefaultStyles.defaultRunProperties.font[key as keyof FontEncodingProperties] === null) {
+					instance.#docDefaultStyles.defaultRunProperties.font[key as keyof FontEncodingProperties] = theme.themeElements.fontScheme?.minorFont.latinFont.typeface;
 				}
 			}
 		}
@@ -285,20 +289,20 @@ export class StylesXml extends XmlFile {
 				dom,
 			).map(({ ppr, rpr, tblpr, tblStylePr, ...json }) => {
 				const runProperties = textPropertiesFromNode(rpr);
-				if (json.isDefault
-					&& runProperties.font
-					&& typeof runProperties.font !== 'string'
-					&& instance.#docDefaults.textRunDefaults !== null
-				) {
-					for (const key in runProperties.font) {
-						if (runProperties.font[key as keyof FontEncodingProperties] === null
-							&& instance.#docDefaults.textRunDefaults.font
-							&& instance.#docDefaults.textRunDefaults.font !== null
-							&& typeof instance.#docDefaults.textRunDefaults!.font !== 'string') {
-							runProperties.font[key as keyof FontEncodingProperties] = instance!.#docDefaults!.textRunDefaults!.font![key as keyof FontEncodingProperties];
+				if (json.isDefault) {
+					if (runProperties.font === undefined || runProperties.font === null) {
+						runProperties.font = instance.#docDefaultStyles!.defaultRunProperties!.font;
+					}
+					if (runProperties.font && typeof runProperties.font !== 'string') {
+						for (const key in runProperties.font) {
+							if (runProperties.font[key as keyof FontEncodingProperties] === null
+								&& instance.#docDefaultStyles.defaultRunProperties?.font
+								&& typeof instance.#docDefaultStyles.defaultRunProperties.font !== 'string') {
+								runProperties.font[key as keyof FontEncodingProperties] = instance.#docDefaultStyles.defaultRunProperties.font[key as keyof FontEncodingProperties];
+							}
 						}
 					}
-				};
+				}
 				return {
 					...json,
 					paragraph: paragraphPropertiesFromNode(ppr),
@@ -314,14 +318,14 @@ export class StylesXml extends XmlFile {
 										Object.assign(m, {
 											[type]: style,
 										}),
-									{}
-								)
+									{},
+								),
 							}
 							: {}),
 					},
 				}
 			}
-			)
+			),
 		);
 
 		// Warning! Untyped objects
@@ -336,6 +340,7 @@ export class StylesXml extends XmlFile {
 			}}`,
 			dom,
 		).forEach((json) => instance.addLatent(json));
+
 		return instance;
 	}
 
@@ -343,13 +348,9 @@ export class StylesXml extends XmlFile {
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
 	public static async fromArchive(archive: Archive, location: string): Promise<StylesXml> {
-		// This is where the default fonts used by Word are. If a completely empty document
-		// is used as a template, this is where the fonts + encodings are found
-		const pathToDefaultTheme = 'word/theme/theme1.xml';
-
 		if (archive.hasFile(location)) {
+			const theme = await ThemeXml.fromArchive(archive);
 			const dom = await archive.readXml(location);
-			const theme = await ThemeXml.fromArchive(archive, pathToDefaultTheme);
 			return this.fromDom(dom, location, theme);
 		}
 		return Promise.resolve(new StylesXml(location));

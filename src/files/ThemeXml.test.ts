@@ -1,84 +1,65 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { parse, serialize } from '../utilities/dom.ts';
+import { Archive } from '../classes/Archive.ts';
+import { ThemeXml, ThemeElements, FontScheme, LatinFont, Font } from './ThemeXml.ts';
+import { QNS } from '../utilities/namespaces.ts';
 
-import { serialize } from '../utilities/dom.ts';
-import { StylesXml } from './StylesXml.ts';
-
-describe('Styles', () => {
-	it('Serializes paragraph styles correctly', async () => {
-		const stylesXml = new StylesXml('test');
-		stylesXml.add({
-			type: 'paragraph',
-			basedOn: 'derp',
-			id: 'nerf',
-			isDefault: true,
-			name: 'Derp',
-			paragraph: {
-				alignment: 'center',
-			},
-		});
-		expect(serialize(await stylesXml.$$$toNode())).toBe(
-			`<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-				<w:latentStyles w:defLockedState="0" w:defUIPriority="99" w:defSemiHidden="0" w:defUnhideWhenUsed="0" w:defQFormat="0" w:count="1"/>
-				<w:style w:type="paragraph" w:styleId="nerf" w:default="1">
-					<w:name w:val="Derp"/>
-					<w:basedOn w:val="derp"/>
-					<w:pPr>
-						<w:jc w:val="center"/>
-					</w:pPr>
-					<w:tblPr/>
-				</w:style>
-			</w:styles>`.replace(/\n|\t/g, ''),
+describe('Themes', () => {
+	it('Serializes implemented theme elements correctly', async () => {
+		const fakeArchive = new Archive();
+		const fakeThemeXml = parse(`
+			<a:themeElements xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Office Theme">
+				<a:fontScheme name="Office">
+					<a:majorFont>
+						<a:latin typeface="Calibri Light" panose="020F0302020204030204"/>
+						<a:font script="Jpan" typeface="Light"/>
+						<a:font script="Hang" typeface="this"/>
+					</a:majorFont>
+					<a:minorFont>
+						<a:latin typeface="Calibri" panose="020F0502020204030204"/>
+						<a:font script="Jpan" typeface="this"/>
+						<a:font script="Hang" typeface="this"/>
+					</a:minorFont>
+				</a:fontScheme>
+			</a:themeElements>`
 		);
-	});
-
-	it('Serializes table styles and table conditional styles correctly', async () => {
-		const stylesXml = new StylesXml('test');
-		stylesXml.add({
-			type: 'table',
-			id: 'test',
-			table: {
-				borders: {
-					top: { color: '000000' },
-				},
-				conditions: {
-					lastCol: {
-						cell: {
-							borders: {
-								top: { color: '000000' },
-							},
-						},
-					},
-				},
+		const themeXml = await ThemeXml.fromArchive(fakeArchive, undefined, fakeThemeXml);
+		const testFontScheme: FontScheme = {
+			name: "Office",
+			majorFont: {
+				latinFont: {
+					typeface: "Calibri Light",
+					panose: "020F0302020204030204",
+				} as LatinFont,
+				otherFonts: [
+					{
+						script: "Jpan",
+						typeface: "Light"
+					} as Font,
+					{
+						script: "Hang",
+						typeface: "this"
+					} as Font
+				]
 			},
-		});
-		const node = await stylesXml.$$$toNode();
-		expect(serialize(node)).toBe(
-			`<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-				<w:latentStyles w:defLockedState="0" w:defUIPriority="99" w:defSemiHidden="0" w:defUnhideWhenUsed="0" w:defQFormat="0" w:count="1"/>
-				<w:style w:type="table" w:styleId="test">
-					<w:tblPr>
-						<w:tblBorders>
-							<w:top w:color="000000"/>
-						</w:tblBorders>
-					</w:tblPr>
-					<w:tblStylePr w:type="lastCol">
-						<w:tcPr>
-							<w:tcBorders>
-								<w:top w:color="000000"/>
-							</w:tcBorders>
-						</w:tcPr>
-					</w:tblStylePr>
-				</w:style>
-			</w:styles>`.replace(/\n|\t/g, ''),
-		);
-
-		const reparsed = (await StylesXml.fromDom(node, 'derp')).get('test');
-		expect(reparsed?.table?.conditions?.lastCol?.cell?.borders?.top).toEqual({
-			type: null,
-			width: null,
-			spacing: null,
-			color: '000000',
-		});
+			minorFont: {
+				latinFont: {
+					typeface: "Calibri",
+					panose: "020F0502020204030204"
+				} as LatinFont,
+				otherFonts: [
+					{
+						script: "Jpan",
+						typeface: "this"
+					} as Font,
+					{
+						script: "Hang",
+						typeface: "this"
+					} as Font
+				]
+			}
+		};
+		expect(themeXml.themeElements.fontScheme).toBe(testFontScheme);
 	});
 });
 

@@ -1,8 +1,7 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
-import { parse, serialize } from '../utilities/dom.ts';
+import { parse } from '../utilities/dom.ts';
 import { Archive } from '../classes/Archive.ts';
-import { ThemeXml, ThemeElements, FontScheme, LatinFont, Font } from './ThemeXml.ts';
-import { QNS } from '../utilities/namespaces.ts';
+import { ThemeXml, FontScheme, LatinFont, Font } from './ThemeXml.ts';
 
 describe('Themes', () => {
 	it('Serializes implemented theme elements correctly', async () => {
@@ -59,7 +58,7 @@ describe('Themes', () => {
 				]
 			}
 		};
-		expect(themeXml.themeElements.fontScheme).toBe(testFontScheme);
+		expect(themeXml.themeElements.fontScheme).toEqual(testFontScheme);
 	});
 });
 

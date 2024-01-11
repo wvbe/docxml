@@ -3,8 +3,6 @@ import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { create } from '../utilities/dom.ts';
-
 
 /**
  * Represents the various 'scheme' elements that comprise a theme.
@@ -100,7 +98,6 @@ export class ThemeXml extends XmlFile {
 
 		const newTheme = new ThemeXml(location);
 		newTheme.themeElements.fontScheme = newFontScheme;
-		console.log(newFontScheme);
 		return Promise.resolve(newTheme);
 	}
 }

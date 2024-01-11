@@ -1,13 +1,14 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
-import { parse } from '../utilities/dom.ts';
+import { parse, serialize } from '../utilities/dom.ts';
 import { Archive } from '../classes/Archive.ts';
 import { ThemeXml, FontScheme, LatinFont, Font } from './ThemeXml.ts';
 
 describe('Themes', () => {
 	it('Serializes implemented theme elements correctly', async () => {
 		const fakeArchive = new Archive();
-		const fakeThemeXml = parse(`
-			<a:themeElements xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Office Theme">
+		const fakeThemeXml = `
+		<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+			<a:themeElements>
 				<a:fontScheme name="Office">
 					<a:majorFont>
 						<a:latin typeface="Calibri Light" panose="020F0302020204030204"/>
@@ -20,9 +21,10 @@ describe('Themes', () => {
 						<a:font script="Hang" typeface="this"/>
 					</a:minorFont>
 				</a:fontScheme>
-			</a:themeElements>`
-		);
-		const themeXml = await ThemeXml.fromArchive(fakeArchive, undefined, fakeThemeXml);
+			</a:themeElements>
+		</a:theme>`;
+		const fakeThemeDocument = parse(fakeThemeXml);
+		const themeXml = await ThemeXml.fromArchive(fakeArchive, undefined, fakeThemeDocument);
 		const testFontScheme: FontScheme = {
 			name: "Office",
 			majorFont: {
@@ -59,6 +61,7 @@ describe('Themes', () => {
 			}
 		};
 		expect(themeXml.themeElements.fontScheme).toEqual(testFontScheme);
+		expect(serialize(themeXml.toNode())).toEqual(fakeThemeXml.replace(/\n|\t/g, ''));
 	});
 });
 

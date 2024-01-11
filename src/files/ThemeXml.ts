@@ -3,6 +3,7 @@ import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import { create } from '../utilities/dom.ts';
 
 /**
  * Represents the various 'scheme' elements that comprise a theme.
@@ -14,7 +15,7 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
  * @TODO Implement ColorScheme and FormatScheme
  */
 export type ThemeElements = {
-	fontScheme: FontScheme | null;
+	fontScheme: FontScheme;
 }
 
 export type FontScheme = {
@@ -48,6 +49,51 @@ export class ThemeXml extends XmlFile {
 		this.themeElements = newThemeElements;
 	}
 
+	public toNode(): Document {
+		return create(
+			`<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+			{
+				element a:themeElements {
+					element a:fontScheme {
+						attribute name { $fontSchemeName },
+						element a:majorFont {
+							element a:latin {
+								attribute typeface { $majorFontLatinTypeface },
+								attribute panose { $majorFontLatinPanose }
+							},
+							for $font in array:flatten($majorOtherFonts)
+							return element a:font {
+								attribute script { $font('script') },
+								attribute typeface { $font('typeface') }
+							}
+						},
+						element a:minorFont {
+							element a:latin {
+								attribute typeface { $minorFontLatinTypeface },
+								attribute panose { $minorFontLatinPanose }
+							},
+							for $font in array:flatten($minorOtherFonts)
+							return element a:font {
+								attribute script { $font('script') },
+								attribute typeface { $font('typeface') }
+							}
+						}
+					}
+				}
+			}</a:theme>`,
+			{
+				fontSchemeName: this.themeElements.fontScheme.name,
+				majorFontLatinTypeface: this.themeElements.fontScheme.majorFont.latinFont.typeface,
+				majorFontLatinPanose: this.themeElements.fontScheme.majorFont.latinFont.panose,
+				majorOtherFonts: this.themeElements.fontScheme.majorFont.otherFonts,
+				minorFontLatinTypeface: this.themeElements.fontScheme.minorFont.latinFont.typeface,
+				minorFontLatinPanose: this.themeElements.fontScheme.minorFont.latinFont.panose,
+				minorOtherFonts: this.themeElements.fontScheme.minorFont.otherFonts
+			},
+			true
+		);
+	}
+
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
@@ -56,7 +102,7 @@ export class ThemeXml extends XmlFile {
 		location = location ?? 'word/theme/theme1.xml';
 		const themeDocument = archive.hasFile(location) ? await archive.readXml(location) : xml;
 		const fontScheme: Record<string, string | Font[]> = evaluateXPathToMap(`
-			//${QNS.a}fontScheme/map {
+			//${QNS.a}theme/${QNS.a}themeElements/${QNS.a}fontScheme/map {
 				"name": @name/string(),
 				"majorFontLatinTypeface": ${QNS.a}majorFont/${QNS.a}latin/@typeface/string(),
 				"majorFontLatinPanose": ${QNS.a}majorFont/${QNS.a}latin/@panose/string(),

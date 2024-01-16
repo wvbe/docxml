@@ -21,7 +21,6 @@ import {
 } from '../properties/table-properties.ts';
 import {
 	type TextProperties,
-	type FontEncodingProperties,
 	textPropertiesFromNode,
 	textPropertiesToNode,
 } from '../properties/text-properties.ts';
@@ -262,14 +261,22 @@ export class StylesXml extends XmlFile {
 		} as DocumentDefaults);
 
 		//We should not get here unless there's *NOTHING* telling us what to do.
-		if (instance.#docDefaultStyles?.defaultRunProperties?.font
-			&& typeof instance.#docDefaultStyles.defaultRunProperties.font !== 'string'
+		let instanceFontProperties: TextProperties['font'] = instance.#docDefaultStyles?.defaultRunProperties?.font;
+		if (instanceFontProperties
+			&& typeof instanceFontProperties !== 'string'
 			&& theme) {
-			for (const key in instance.#docDefaultStyles.defaultRunProperties.font) {
-				if (instance.#docDefaultStyles.defaultRunProperties.font[key as keyof FontEncodingProperties] === null) {
-					instance.#docDefaultStyles.defaultRunProperties.font[key as keyof FontEncodingProperties] = theme.themeElements.fontScheme?.minorFont.latinFont.typeface;
+			console.log(theme);
+			for (const key in instanceFontProperties) {
+				if (instanceFontProperties[key as keyof TextProperties['font']] === null) {
+					// instanceFontProperties[key as keyof TextProperties['font']] = theme.getMinorFonts().latinFont.typeface;
+					instanceFontProperties = {
+						[key]: theme.fontScheme.minorFont.latinFont.typeface
+					}
+					console.log(instanceFontProperties);
 				}
+
 			}
+			console.log(instanceFontProperties);
 		}
 
 		// Warning! Untyped objects
@@ -289,16 +296,17 @@ export class StylesXml extends XmlFile {
 				dom,
 			).map(({ ppr, rpr, tblpr, tblStylePr, ...json }) => {
 				const runProperties = textPropertiesFromNode(rpr);
+				const instanceFont = instance.#docDefaultStyles?.defaultRunProperties?.font;
 				if (json.isDefault) {
 					if (runProperties.font === undefined || runProperties.font === null) {
-						runProperties.font = instance.#docDefaultStyles!.defaultRunProperties!.font;
+						runProperties.font = instanceFont;
 					}
 					if (runProperties.font && typeof runProperties.font !== 'string') {
 						for (const key in runProperties.font) {
-							if (runProperties.font[key as keyof FontEncodingProperties] === null
-								&& instance.#docDefaultStyles.defaultRunProperties?.font
-								&& typeof instance.#docDefaultStyles.defaultRunProperties.font !== 'string') {
-								runProperties.font[key as keyof FontEncodingProperties] = instance.#docDefaultStyles.defaultRunProperties.font[key as keyof FontEncodingProperties];
+							if (runProperties.font[key as keyof TextProperties['font']] === null
+								&& instanceFont
+								&& typeof instanceFont !== 'string') {
+								runProperties.font[key as keyof TextProperties['font']] = instanceFont[key as keyof TextProperties['font']];
 							}
 						}
 					}

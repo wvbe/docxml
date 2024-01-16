@@ -24,9 +24,8 @@ describe('Themes', () => {
 			</a:themeElements>
 		</a:theme>`;
 		const fakeThemeDocument = parse(fakeThemeXml);
-		const themeXml = await ThemeXml.fromArchive(fakeArchive, undefined, fakeThemeDocument);
+		const themeXml = await ThemeXml.fromArchive(fakeArchive, undefined);
 		const testFontScheme: FontScheme = {
-			name: "Office",
 			majorFont: {
 				latinFont: {
 					typeface: "Calibri Light",
@@ -60,7 +59,7 @@ describe('Themes', () => {
 				]
 			}
 		};
-		expect(themeXml.themeElements.fontScheme).toEqual(testFontScheme);
+		expect(themeXml.fontScheme).toEqual(testFontScheme);
 		expect(serialize(themeXml.toNode())).toEqual(fakeThemeXml.replace(/\n|\t/g, ''));
 	});
 });

@@ -26,13 +26,6 @@ function explodeSimpleOrComplex<Generic>(
 	};
 }
 
-export interface FontEncodingProperties
-{
-	cs?: string;
-	ascii?: string;
-	hAnsi?: string;
-}
-
 /**
  * All the formatting options that can be given on a text run (inline text).
  *
@@ -120,7 +113,13 @@ export type TextProperties = {
 	 * The name of the font family used for this text. Set as either a string, or as an object if you
 	 * want more control over different font variations.
 	 */
-	font?: string | FontEncodingProperties;
+	font?: string |
+	{
+		cs?: string;
+		ascii?: string;
+		hAnsi?: string;
+	}
+
 }
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {

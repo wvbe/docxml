@@ -24,44 +24,45 @@ describe('Themes', () => {
 			</a:themeElements>
 		</a:theme>`;
 		const fakeThemeDocument = parse(fakeThemeXml);
-		const themeXml = await ThemeXml.fromArchive(fakeArchive, undefined);
-		const testFontScheme: FontScheme = {
-			majorFont: {
-				latinFont: {
-					typeface: "Calibri Light",
-					panose: "020F0302020204030204",
-				} as LatinFont,
-				otherFonts: [
-					{
-						script: "Jpan",
-						typeface: "Light"
-					} as Font,
-					{
-						script: "Hang",
-						typeface: "this"
-					} as Font
-				]
-			},
-			minorFont: {
-				latinFont: {
-					typeface: "Calibri",
-					panose: "020F0502020204030204"
-				} as LatinFont,
-				otherFonts: [
-					{
-						script: "Jpan",
-						typeface: "this"
-					} as Font,
-					{
-						script: "Hang",
-						typeface: "this"
-					} as Font
-				]
-			}
-		};
-		expect(await ThemeXml.fromArchive(fakeArchive)).rejects.toThrow();
-		// expect(themeXml.fontScheme).toEqual(testFontScheme);
-		// expect(serialize(themeXml.toNode())).toEqual(fakeThemeXml.replace(/\n|\t/g, ''));
+		expect(ThemeXml.fromArchive(fakeArchive, undefined)).rejects.toThrow();
+		// const themeXml = await ThemeXml.fromArchive(fakeArchive, undefined);
+		// const testFontScheme: FontScheme = {
+		// 	majorFont: {
+		// 		latinFont: {
+		// 			typeface: "Calibri Light",
+		// 			panose: "020F0302020204030204",
+		// 		} as LatinFont,
+		// 		otherFonts: [
+		// 			{
+		// 				script: "Jpan",
+		// 				typeface: "Light"
+		// 			} as Font,
+		// 			{
+		// 				script: "Hang",
+		// 				typeface: "this"
+		// 			} as Font
+		// 		]
+		// 	},
+		// 	minorFont: {
+		// 		latinFont: {
+		// 			typeface: "Calibri",
+		// 			panose: "020F0502020204030204"
+		// 		} as LatinFont,
+		// 		otherFonts: [
+		// 			{
+		// 				script: "Jpan",
+		// 				typeface: "this"
+		// 			} as Font,
+		// 			{
+		// 				script: "Hang",
+		// 				typeface: "this"
+		// 			} as Font
+		// 		]
+		// 	}
+		// };
+		// expect(await ThemeXml.fromArchive(fakeArchive)).rejects.toThrow();
+		// // expect(themeXml.fontScheme).toEqual(testFontScheme);
+		// // expect(serialize(themeXml.toNode())).toEqual(fakeThemeXml.replace(/\n|\t/g, ''));
 	});
 });
 

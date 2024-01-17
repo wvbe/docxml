@@ -155,22 +155,8 @@ export class ThemeXml extends XmlFile {
 	 */
 	public static async fromArchive(archive: Archive, location?: string): Promise<ThemeXml> {
 		// If a location is supplied, use that, otherwise use the default location for theme files.
-		location = location ?? 'word/theme/theme1.xml';
-		let themeDocument: Document;
-		let newTheme: ThemeXml;
-
-		// Check to make sure the files in the archive can be accessed.
-		try {
-			themeDocument = await archive.readXml(location);
-			newTheme = await this.fromDom(themeDocument!, location);
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				throw error;
-			}
-		}
-		
-		themeDocument = await archive.readXml(location);
-		newTheme = await this.fromDom(themeDocument!, location);
-		return Promise.resolve(newTheme!);
+		location = location ?? 'word/theme/theme1.xml';		
+		const themeDocument = await archive.readXml(location);
+		return this.fromDom(themeDocument!, location);
 	}
 }

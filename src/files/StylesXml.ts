@@ -265,18 +265,14 @@ export class StylesXml extends XmlFile {
 		if (instanceFontProperties
 			&& typeof instanceFontProperties !== 'string'
 			&& theme) {
-			console.log(theme);
 			for (const key in instanceFontProperties) {
 				if (instanceFontProperties[key as keyof TextProperties['font']] === null) {
 					// instanceFontProperties[key as keyof TextProperties['font']] = theme.getMinorFonts().latinFont.typeface;
 					instanceFontProperties = {
 						[key]: theme.fontScheme.minorFont.latinFont.typeface
 					}
-					console.log(instanceFontProperties);
 				}
-
 			}
-			console.log(instanceFontProperties);
 		}
 
 		// Warning! Untyped objects

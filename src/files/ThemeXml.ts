@@ -2,7 +2,7 @@ import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
 import { QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToArray, evaluateXPathToMap } from '../utilities/xquery.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import { create } from '../utilities/dom.ts';
 
 /**
@@ -125,54 +125,52 @@ export class ThemeXml extends XmlFile {
 		);
 	}
 
+	public static fromDom(dom: Document, location: string): Promise<ThemeXml> {
+		const fontScheme = evaluateXPathToMap<FontScheme>(`
+		./${QNS.a}theme/${QNS.a}themeElements/${QNS.a}fontScheme/map {
+			"majorFont": map {
+				"latinFont": map {
+					"typeface": ${QNS.a}majorFont/${QNS.a}latin/@typeface/string(),
+					"panose":  ${QNS.a}majorFont/${QNS.a}latin/@panose/string()
+				},
+				"otherFonts": array{${QNS.a}majorFont/${QNS.a}font/map { "script": @script/string(), "typeface": @typeface/string()}}
+			},
+			"minorFont": map {
+				"latinFont": map {
+					"typeface": ${QNS.a}minorFont/${QNS.a}latin/@typeface/string(),
+					"panose": ${QNS.a}minorFont/${QNS.a}latin/@panose/string()
+				},
+				"otherFonts": array{${QNS.a}minorFont/${QNS.a}font/map { "script": @script/string(), "typeface": @typeface/string()}}
+			}
+		}`,
+		dom,
+		);
+		const newTheme = new ThemeXml(location);
+		newTheme.fontScheme = fontScheme;
+		return Promise.resolve(newTheme);
+	}
+
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
 	public static async fromArchive(archive: Archive, location?: string): Promise<ThemeXml> {
 		// If a location is supplied, use that, otherwise use the default location for theme files.
 		location = location ?? 'word/theme/theme1.xml';
-		const themeDocument = await archive.readXml(location);
-		const test = evaluateXPathToMap(`
-			./${QNS.a}theme/${QNS.a}themeElements/${QNS.a}fontScheme/map {
-				"majorFontLatinTypeface": ${QNS.a}majorFont/${QNS.a}latin/@typeface/string(),
-				"majorFontLatinPanose": ${QNS.a}majorFont/${QNS.a}latin/@panose/string(),
-				"majorFontOthers": array{${QNS.a}majorFont/${QNS.a}font/map { "script": @script/string(), "typeface": @typeface/string()}},
-				"minorFontLatinTypeface": ${QNS.a}minorFont/${QNS.a}latin/@typeface/string(),
-				"minorFontLatinPanose": ${QNS.a}minorFont/${QNS.a}latin/@panose/string(),
-				"minorFontOthers": array{${QNS.a}minorFont/${QNS.a}font/map { "script": @script/string(), "typeface": @typeface/string()}}
+		let themeDocument: Document;
+		let newTheme: ThemeXml;
+
+		// Check to make sure the files in the archive can be accessed.
+		try {
+			themeDocument = await archive.readXml(location);
+			newTheme = await this.fromDom(themeDocument!, location);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				throw error;
 			}
-		// `, themeDocument)
-		// .map(({
-		// 	majorFontLatinTypeface,
-		// 	majorFontLatinPanose,
-		// 	majorFontOthers,
-		// 	minorFontLatinTypeface,
-		// 	minorFontLatinPanose,
-		// 	minorFontOthers
-		// }) => {
-		// 	return {
-		// 		majorFont: {
-		// 			latinFont: {
-		// 				typeface: majorFontLatinTypeface,
-		// 				panose: majorFontLatinPanose
-		// 			},
-		// 			otherFonts: majorFontOthers
-		// 		},
-		// 		minorFont: {
-		// 			latinFont: {
-		// 				typeface: minorFontLatinTypeface,
-		// 				panose: minorFontLatinPanose
-		// 			},
-		// 			otherFonts: minorFontOthers
-		// 		}
-		// 	} as FontScheme
-		// })
-		// }
-
-
-		const newTheme = new ThemeXml(location);
-		console.log(test);
-		// newTheme.fontScheme = fontScheme;
-		return Promise.resolve(newTheme);
+		}
+		
+		themeDocument = await archive.readXml(location);
+		newTheme = await this.fromDom(themeDocument!, location);
+		return Promise.resolve(newTheme!);
 	}
 }

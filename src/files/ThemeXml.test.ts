@@ -4,7 +4,7 @@ import { Archive } from '../classes/Archive.ts';
 import { ThemeXml, FontScheme, LatinFont, Font } from './ThemeXml.ts';
 
 describe('Themes', () => {
-	it('Throws an error when the archive is unreadable', async () => {
+	it('Throws an error when the archive is unreadable', () => {
 		const fakeArchive = new Archive();
 		expect(ThemeXml.fromArchive(fakeArchive, undefined)).rejects.toThrow();
 	});
@@ -62,7 +62,7 @@ describe('Themes', () => {
 					} as Font
 				]
 			}
-		};
+		}
 		expect(themeXml.fontScheme).toEqual(testFontScheme);
 		expect(serialize(themeXml.toNode())).toEqual(fakeThemeXml.replace(/\n|\t/g, ''));
 	});

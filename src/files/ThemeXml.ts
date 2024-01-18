@@ -64,6 +64,14 @@ export class ThemeXml extends XmlFile {
 		}
 	}
 
+	public setFontScheme(fontScheme: FontScheme): void {
+		this.fontScheme = fontScheme;
+	};
+
+	public getFontScheme(): FontScheme {
+		return this.fontScheme;
+	};
+
 	public setMajorFonts(latin: LatinFont, others: Font[]): void {
 		this.fontScheme.majorFont.latinFont = latin;
 		this.fontScheme.majorFont.otherFonts = others;
@@ -146,7 +154,7 @@ export class ThemeXml extends XmlFile {
 		dom,
 		);
 		const newTheme = new ThemeXml(location);
-		newTheme.fontScheme = fontScheme;
+		newTheme.setFontScheme(fontScheme);
 		return Promise.resolve(newTheme);
 	}
 
@@ -155,7 +163,7 @@ export class ThemeXml extends XmlFile {
 	 */
 	public static async fromArchive(archive: Archive, location?: string): Promise<ThemeXml> {
 		// If a location is supplied, use that, otherwise use the default location for theme files.
-		location = location ?? 'word/theme/theme1.xml';		
+		location = location ?? 'word/theme/theme1.xml';
 		const themeDocument = await archive.readXml(location);
 		return this.fromDom(themeDocument!, location);
 	}

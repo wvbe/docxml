@@ -66,16 +66,16 @@ export class ThemeXml extends XmlFile {
 
 	public setFontScheme(fontScheme: FontScheme): void {
 		this.fontScheme = fontScheme;
-	};
+	}
 
 	public getFontScheme(): FontScheme {
 		return this.fontScheme;
-	};
+	}
 
 	public setMajorFonts(latin: LatinFont, others: Font[]): void {
 		this.fontScheme.majorFont.latinFont = latin;
 		this.fontScheme.majorFont.otherFonts = others;
-	};
+	}
 
 	public getMajorFonts() {
 		return this.fontScheme.majorFont

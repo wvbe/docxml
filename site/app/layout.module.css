@@ -1,0 +1,20 @@
+.wrapper {
+	max-width: 800px;
+	margin: 4em auto;
+}
+.header {
+	font-size: 18px;
+}
+.header > * {
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+	vertical-align: middle;
+}
+
+.header > svg {
+	height: 1.6em;
+	margin-right: 1em;
+}
+.header > h1 {
+}

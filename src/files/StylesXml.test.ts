@@ -72,7 +72,7 @@ describe('Styles', () => {
 			</w:styles>`.replace(/\n|\t/g, ''),
 		);
 
-		const reparsed = (await StylesXml.fromDom(node, 'derp')).get('test');
+		const reparsed = (StylesXml.fromDom(node, 'derp')).get('test');
 		expect(reparsed?.table?.conditions?.lastCol?.cell?.borders?.top).toEqual({
 			type: null,
 			width: null,

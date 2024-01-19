@@ -15,7 +15,7 @@ import { EndnotesXml } from './wip/EndnotesXml.ts';
 import { ExtendedPropertiesXml } from './wip/ExtendedPropertiesXml.ts';
 import { FontTableXml } from './wip/FontTableXml.ts';
 import { FootnotesXml } from './wip/FootnotesXml.ts';
-import { ThemeXml } from './wip/ThemeXml.ts';
+import { ThemeXml } from './ThemeXml.ts';
 import { WebSettingsXml } from './wip/WebSettingsXml.ts';
 
 /**

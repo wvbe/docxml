@@ -1,6 +1,8 @@
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
+import { ThemeXml } from './ThemeXml.ts';
+import { evaluateXPathToFirstNode } from '../utilities/xquery.ts';
 import {
 	type ParagraphProperties,
 	paragraphPropertiesFromNode,
@@ -69,11 +71,20 @@ type LatentStyle = {
 	qFormat?: boolean | null;
 };
 
+type DocumentDefaults = {
+	defaultRunProperties?: TextProperties | null;
+	defaultParagraphProperties?: ParagraphProperties | null;
+}
+
 export class StylesXml extends XmlFile {
 	public static contentType = FileMime.styles;
 
 	readonly #latentStyles: LatentStyle[] = [];
 	readonly #styles: AnyStyleDefinition[] = [];
+	readonly #docDefaultStyles: DocumentDefaults = {
+		defaultRunProperties: null,
+		defaultParagraphProperties: null
+	};
 
 	public constructor(location: string) {
 		super(location);
@@ -203,6 +214,14 @@ export class StylesXml extends XmlFile {
 	}
 
 	/**
+	 * Adds default styles.
+	 */
+	public addDefaults(properties: DocumentDefaults) {
+		this.#docDefaultStyles.defaultRunProperties = properties.defaultRunProperties;
+		this.#docDefaultStyles.defaultParagraphProperties = properties.defaultParagraphProperties;
+	}
+
+	/**
 	 * Adds a latent style, which means that the Word processor should determine its actual properties
 	 */
 	public addLatent(properties: LatentStyle) {
@@ -226,8 +245,36 @@ export class StylesXml extends XmlFile {
 		return this.#styles.find((style) => style.id === id);
 	}
 
-	public static fromDom(dom: Document, location: string): StylesXml {
+	public static fromDom(dom: Document, location: string, theme?: ThemeXml): StylesXml {
 		const instance = new StylesXml(location);
+
+		const defaultRunProperties = textPropertiesFromNode(
+			evaluateXPathToFirstNode(`/*/${QNS.w}docDefaults/${QNS.w}rPrDefault/${QNS.w}rPr`, dom)
+		);
+		const defaultParagraphProperties = paragraphPropertiesFromNode(
+			evaluateXPathToFirstNode(`/*/${QNS.w}docDefaults/${QNS.w}pPrDefault/${QNS.w}pPr`, dom)
+		);
+
+		instance.addDefaults({
+			defaultRunProperties: defaultRunProperties,
+			defaultParagraphProperties: defaultParagraphProperties
+		} as DocumentDefaults);
+
+		//We should not get here unless there's *NOTHING* telling us what to do.
+		let instanceFontProperties: TextProperties['font'] = instance.#docDefaultStyles?.defaultRunProperties?.font;
+		if (instanceFontProperties
+			&& typeof instanceFontProperties !== 'string'
+			&& theme) {
+			for (const key in instanceFontProperties) {
+				if (instanceFontProperties[key as keyof TextProperties['font']] === null) {
+					// instanceFontProperties[key as keyof TextProperties['font']] = theme.getMinorFonts().latinFont.typeface;
+					instanceFontProperties = {
+						[key]: theme.fontScheme.minorFont.latinFont.typeface
+					}
+				}
+			}
+		}
+
 		// Warning! Untyped objects
 		instance.addStyles(
 			evaluateXPathToArray(
@@ -243,14 +290,31 @@ export class StylesXml extends XmlFile {
 					"rpr": ./${QNS.w}rPr
 				}}`,
 				dom,
-			).map(({ ppr, rpr, tblpr, tblStylePr, ...json }) => ({
-				...json,
-				paragraph: paragraphPropertiesFromNode(ppr),
-				text: textPropertiesFromNode(rpr),
-				table: {
-					...tablePropertiesFromNode(tblpr),
-					...(tblStylePr.length
-						? {
+			).map(({ ppr, rpr, tblpr, tblStylePr, ...json }) => {
+				const runProperties = textPropertiesFromNode(rpr);
+				const instanceFont = instance.#docDefaultStyles?.defaultRunProperties?.font;
+				if (json.isDefault) {
+					if (runProperties.font === undefined || runProperties.font === null) {
+						runProperties.font = instanceFont;
+					}
+					if (runProperties.font && typeof runProperties.font !== 'string') {
+						for (const key in runProperties.font) {
+							if (runProperties.font[key as keyof TextProperties['font']] === null
+								&& instanceFont
+								&& typeof instanceFont !== 'string') {
+								runProperties.font[key as keyof TextProperties['font']] = instanceFont[key as keyof TextProperties['font']];
+							}
+						}
+					}
+				}
+				return {
+					...json,
+					paragraph: paragraphPropertiesFromNode(ppr),
+					text: runProperties,
+					table: {
+						...tablePropertiesFromNode(tblpr),
+						...(tblStylePr.length
+							? {
 								conditions: (
 									tblStylePr.map(tableConditionalPropertiesFromNode) as TableConditionalProperties[]
 								).reduce(
@@ -260,10 +324,12 @@ export class StylesXml extends XmlFile {
 										}),
 									{},
 								),
-						  }
-						: {}),
-				},
-			})),
+							}
+							: {}),
+					},
+				}
+			}
+			),
 		);
 
 		// Warning! Untyped objects
@@ -287,8 +353,9 @@ export class StylesXml extends XmlFile {
 	 */
 	public static async fromArchive(archive: Archive, location: string): Promise<StylesXml> {
 		if (archive.hasFile(location)) {
+			const theme = await ThemeXml.fromArchive(archive);
 			const dom = await archive.readXml(location);
-			return this.fromDom(dom, location);
+			return this.fromDom(dom, location, theme);
 		}
 		return Promise.resolve(new StylesXml(location));
 	}

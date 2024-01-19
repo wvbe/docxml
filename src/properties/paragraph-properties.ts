@@ -103,7 +103,7 @@ export type ParagraphProperties = {
 			leader: 'dot' | 'heavy' | 'hyphen' | 'middleDot' | 'none' | 'underscore' | null;
 			position: Length | null;
 		}>
-	>;	
+	>;
 };
 
 export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProperties {
@@ -273,7 +273,7 @@ export function paragraphPropertiesToNode(
 					attribute ${QNS.w}date { $change('date') },
 					$change('node')
 				} else (),
-				
+
 				if (exists($tabs)) then element ${QNS.w}tabs {
 					for $tab in array:flatten($tabs)
 						return element ${QNS.w}tab {
@@ -335,7 +335,7 @@ export function paragraphPropertiesToNode(
 				: null,
 			rpr: textPropertiesToNode(data.pilcrow || undefined),
 			sectpr: sectionProperties && sectionPropertiesToNode(sectionProperties),
-			tabs: data.tabs?.length ? 
+			tabs: data.tabs?.length ?
 				data.tabs?.map(tab => ({
 					type: tab.type,
 					leader: tab.leader,

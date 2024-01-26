@@ -3,6 +3,7 @@
 import './Row.ts';
 import './RowAddition.ts';
 import './RowDeletion.ts';
+import { checkForForbiddenParameters } from '../utilities/argument-checking.ts';
 
 import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
 import {
@@ -47,11 +48,16 @@ export class Table extends Component<TableProps, TableChild> {
 	 */
 	public readonly model = new TableGridModel(this);
 
+	public constructor(tableProps: TableProps, ...tableChildren: TableChild[]) {
+		checkForForbiddenParameters(tableProps, (x) => { return typeof x === 'number' && Number.isNaN(x) }, true);
+		super(tableProps, ...tableChildren);
+	}
+
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
-		return create(
+		const node = create(
 			`
 				element ${QNS.w}tbl {
 					$tablePropertiesNode,
@@ -71,6 +77,7 @@ export class Table extends Component<TableProps, TableChild> {
 				children: await this.childrenToNode(ancestry),
 			},
 		);
+		return node;
 	}
 
 	/**

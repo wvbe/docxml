@@ -9,12 +9,14 @@
  * The callback will be used recursively if objectToCheck has nested values.
  *
  * @param callbackFailureValue The boolean value that will indicate a failure of the callback function.
+ *
+ * @returns An array representing all the parameter values of the object, flattened.
  */
 
 export function checkForForbiddenParameters<ObjectToCheck>(
 	objectToCheck: ObjectToCheck,
 	callback: (object: unknown) => boolean,
-	callbackFailureValue: unknown,
+	callbackFailureValue: boolean,
 ): unknown[] {
 	const values: unknown[] = [];
 	// Recurse through an object and flatten it to key-value pairs.
@@ -34,12 +36,13 @@ export function checkForForbiddenParameters<ObjectToCheck>(
 	// Iterate over an object's values until we hit one that causes the callback
 	// function to equal the failure value.
 	const flattenedObjectArray = flattenedObject(objectToCheck, values);
-	flattenedObjectArray.forEach((value) => {
-		if (callback(value) === callbackFailureValue) {
+	return flattenedObjectArray.map((value) => {
+		if (callback(value)) {
 			throw new Error(
-				`Error when checking parameter ${value} in function ${callback}.\nExpected function to return ${callbackFailureValue}.`,
+				`Error when checking parameters.\nCallback returned ${callback(value)}, but expected callback to return ${callbackFailureValue}.`,
 			);
+		} else {
+			return value;
 		}
 	});
-	return flattenedObjectArray;
 }

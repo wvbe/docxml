@@ -1,6 +1,6 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { checkForForbiddenParameters } from './parameter-checking.ts';
+import { checkForForbiddenParameters, isValidNumber } from './parameter-checking.ts';
 
 describe('Checking for bad object parameters', () => {
 	type fakeNestedType = {
@@ -42,25 +42,18 @@ describe('Checking for bad object parameters', () => {
 	}
 
 	it('ensure that NaN is caught when used as a parameter of type number', () => {
-		const objArray = checkForForbiddenParameters(
+		const objTest = checkForForbiddenParameters(
 			passingOuterObject,
-			(propValue: unknown) => {
-				return typeof propValue === 'number' && Number.isNaN(propValue);
-			},
+			isValidNumber,
 			true,
 		);
-		// Should return the array of the object parameter values.
+		expect(objTest).toBe(true);
 
-		console.log(objArray);
-		expect(objArray.length).toBe(6);
-		expect(objArray).toEqual([0xA4, 123, 'darkness', 4, false, 0b111]);
 
 		expect(
 			() => checkForForbiddenParameters(
 				failingOuterObject,
-				(propValue: unknown) => {
-					return (typeof propValue === 'number' && Number.isNaN(propValue));
-				},
+				isValidNumber,
 				true
 			)
 		).toThrow()

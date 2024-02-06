@@ -3,7 +3,7 @@
 import './Row.ts';
 import './RowAddition.ts';
 import './RowDeletion.ts';
-import { checkForForbiddenParameters } from '../utilities/parameter-checking.ts';
+import { checkForForbiddenParameters, isValidNumber } from '../utilities/parameter-checking.ts';
 
 import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
 import {
@@ -49,7 +49,7 @@ export class Table extends Component<TableProps, TableChild> {
 	public readonly model = new TableGridModel(this);
 
 	public constructor(tableProps: TableProps, ...tableChildren: TableChild[]) {
-		checkForForbiddenParameters(tableProps, (propVal) => { return typeof propVal === 'number' && Number.isNaN(propVal) }, true);
+		checkForForbiddenParameters(tableProps, isValidNumber, true);
 		super(tableProps, ...tableChildren);
 	}
 

@@ -3,6 +3,7 @@ import {
 	type TableCellProperties,
 	tableCellPropertiesToNode,
 } from '../properties/table-cell-properties.ts';
+import { checkForForbiddenParameters, isValidNumber } from '../utilities/parameter-checking.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
@@ -37,6 +38,12 @@ export class Cell extends Component<CellProps, CellChild> {
 		'BookmarkRangeEnd',
 	];
 	public static readonly mixed: boolean = false;
+
+	public constructor(cellProps: CellProps, ...cellChild: CellChild[]) {
+		// Ensure that properties of type `number` are not `NaN`.
+		checkForForbiddenParameters(cellProps, isValidNumber, true);
+		super(cellProps, ...cellChild);
+	}
 
 	/**
 	 * Creates an XML DOM node for this component instance.

@@ -1,3 +1,5 @@
+import { checkForForbiddenParameters, isValidNumber } from '../utilities/parameter-checking.ts';
+
 /**
  * An object that describes a size or length in various cross-computable units. Useful for telling the
  * library how centimeters you would like one thing to be, while the one thing is defined as twentieth-
@@ -51,6 +53,8 @@ export type Length = {
 };
 
 function _convert(points: number): Length {
+	// Ensure points is not NaN
+	checkForForbiddenParameters(points, isValidNumber, true);
 	return {
 		pt: points,
 		emu: points * 12700,

@@ -128,24 +128,28 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 		return create(
 			`
 				element ${QNS.relationshipsDocument}Relationships {
-					for $relationship in array:flatten($relationships)
-						return element ${QNS.relationshipsDocument}Relationship {
-							attribute Id { $relationship('id') },
-							attribute Type { $relationship('type') },
-							attribute Target { $relationship('target') },
-							if ($relationship('isExternal')) then attribute TargetMode {
-								"External"
-							} else ()
-						}
+					$relationships
 				}
 			`,
 			{
-				relationships: this.meta.map((meta) => ({
-					...meta,
-					target: meta.isExternal
-						? meta.target
-						: path.relative(path.dirname(path.dirname(this.location)), meta.target),
-				})),
+				relationships: this.meta.map((meta) =>
+					create(
+						`element ${QNS.relationshipsDocument}Relationship {
+							attribute Id { $id },
+							attribute Type { $type },
+							attribute Target { $target },
+							if ($isExternal) then attribute TargetMode {
+								"External"
+							} else ()
+						}`,
+						{
+							...meta,
+							target: meta.isExternal
+								? meta.target
+								: path.relative(path.dirname(path.dirname(this.location)), meta.target),
+						},
+					),
+				),
 			},
 			true,
 		);

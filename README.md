@@ -1,30 +1,28 @@
 # DOCX Markup Language
 
-This is a [NodeJS](https://nodejs.org/)/[Deno](https://deno.land) module for making `.docx` files from scratch or from
-an existing DOCX/DOTX template.
+This is a [NodeJS](https://nodejs.org/)/[Deno](https://deno.land) module for making `.docx` documents from scratch or from
+an existing `.docx` or `.dotx` template.
 
 You could use `docxml` to:
 
 - Create an MS Word file without ever opening MS Word
-- Create a parameterized template file, and render it to DOCX with your data parameters
-- Convert JSON, XML or other data structures to DOCX
-- Parse content from an existing DOCX file
-- Extract style definitions from a DOTX/DOCX file
+- Create a parameterized template file and render it to `.docx` with your data parameters
+- Write JSON, XML or other data structures to `.docx`
+- Parse content from an existing `.docx` file
+- Extract style information from a `.docx` or `.dotx` file
 
 This documentation for this lib is available at various locations:
 
-[👉 Documentation site](https://wvbe.github.io/docxml)<br />
-[👉 GitHub source](http://github.com/wvbe/docxml)<br />
+[👉 Documentation site](https://github.com/fontoxml/docxml/wiki)<br />
+[👉 GitHub source](http://github.com/fontoxml/docxml)<br />
 [👉 Deno mirror](http://deno.land/x/docxml)<br />
 [👉 npm mirror](http://npmjs.org/package/docxml)
 
 #### For Deno or for NodeJS
 
-[👉 Main article](./docs/setup/deno-or-node.md)
+[👉 Main article](https://github.com/fontoxml/docxml/wiki/Deno-or-Node)
 
-`docxml` can be used in [NodeJS](https://nodejs.org/) and [Deno](https://deno.land) according to the traditions in those
-ecosystems. For Node users, simply `npm install docxml` and then `require()` or `import` as you wish. For Deno users,
-`import "deno.land/x/docxml/mod.ts"` or use an import map if you wish.
+`docxml` can be used in [NodeJS](https://nodejs.org/) and [Deno](https://deno.land) according to the conventions of those ecosystems. For Node users, simply `npm install docxml` and then `require()` or `import` as you wish. For Deno users, `import "deno.land/x/docxml/mod.ts"` or use an import map.
 
 ```js
 // NodeJS using CommonJS:
@@ -39,10 +37,9 @@ import Docxml, { Paragraph } from 'https://deno.land/x/docxml/mod.ts';
 
 #### For JSX or for vanilla
 
-[👉 Main article](./docs/setup/jsx-or-not.md)
+[👉 Main article](https://github.com/fontoxml/docxml/wiki/JSX-or-Not)
 
-`docxml` is designed to be used in vanilla JavaScript using class component instances, or using JSX if you're on Deno or
-want to use NodeJS and a transpiler like Babel:
+`docxml` is designed to be used in vanilla JavaScript using class component instances, or using JSX if you're on Deno or want to use NodeJS and a transpiler like Babel:
 
 ```ts
 const para = new Paragraph({ alignment: 'center' }, new Text({}, 'I want a cookie'));
@@ -82,10 +79,10 @@ await Docx.fromNothing()
 
 #### Features
 
-To great or small extend, the following features work in the current version of `docxml`. Some items are not ticked off
+To great or small extent, the following features work in the current version of `docxml`. Some items are not ticked off
 yet -- they are not available, but hopefully soon.
 
-[👉 See code examples of some or the more intricate features](https://github.com/wvbe/docxml/wiki/Examples)
+[👉 See code examples of some or the more intricate features](https://github.com/fontoxml/docxml/wiki/Examples)
 
 **API features:**
 
@@ -143,22 +140,13 @@ yet -- they are not available, but hopefully soon.
 
 #### Differences with actual MS Word DOCX
 
-Obviously `docxml` is a TypeScript project, which is already very different from how you would normally interact
-with a DOCX document. More meaningfully however, `docxml` is meant to make writing DOCX _easier_ than going straight
-to OOXML. For example;
-
-- All sizes are of type `Length`, which means it doesn't matter wether you input them as points, centimeters,
-  inches, 1/2, 1/8th or 1/20th points, English Metric Units, and so on.
-- The JSX pragma will try to correct components that would lead to invalid XML structures, by splitting the parents of
-  invalidly placed components recursively until the new position is valid. Moreover, string content in unexpected places
-  is automatically wrapped in `<Text>` when using JSX. This makes the configuration of a new DOCX a little more
-  forgiving.
+Obviously `docxml` is a TypeScript project, which is already very different from how you would normally interact with a `.docx` file. More meaningfully however, `docxml` is meant to make writing Word document files _easier_ than going straight to OOXML. For example:
+- All sizes are of type `Length`, which means it doesn't matter wether you input them as points, centimeters, inches, 1/2, 1/8th or 1/20th points, English Metric Units, and so on.
+- The JSX pragma will try to correct components that would lead to invalid XML structures, by splitting the parents of invalidly placed components recursively until the new position is valid. Moreover, string content in unexpected places is automatically wrapped in `<Text>` when using JSX. This makes the configuration of a new DOCX a little more forgiving.
 - Using the `<Image>` or `<Comment>` components will automatically create all required relationships etc.
 - Some of the words have changed, generally speaking `docxml` is more verbose than the DOCX verbiage.
-- Generally speaking `docxml` prefers formal (JS) references over references-by-identifier. In those cases the
-  identifiers are randomly generated for you when the `.docx` file is written.
-- Especially in tables and images, a lot of formatting details are automatically applied. In a lot of cases there
-  is no API _yet_ to change them.
+- Generally speaking `docxml` prefers formal (JS) references over references-by-identifier. In those cases the identifiers are randomly generated for you when the `.docx` file is written.
+- Especially in tables and images, a lot of formatting details are automatically applied. In a lot of cases there is no API _yet_ to change them.
 
 #### For contributors
 

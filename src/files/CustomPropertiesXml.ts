@@ -20,7 +20,7 @@ type CustomProperty = {
 };
 
 export class CustomPropertiesXml extends XmlFile {
-	public static contentType = FileMime.customProperties;
+	public static override contentType = FileMime.customProperties;
 
 	private readonly properties = new NumberMap<CustomProperty>(2);
 
@@ -32,7 +32,7 @@ export class CustomPropertiesXml extends XmlFile {
 		return Array.from(this.properties.values());
 	}
 
-	public toNode(): Document {
+	public override toNode(): Document {
 		return create(
 			`
 				<op:Properties ${ALL_NAMESPACE_DECLARATIONS}>
@@ -60,7 +60,7 @@ export class CustomPropertiesXml extends XmlFile {
 		);
 	}
 
-	public isEmpty() {
+	public override isEmpty() {
 		return !this.properties.size;
 	}
 
@@ -84,7 +84,7 @@ export class CustomPropertiesXml extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(
+	public static override async fromArchive(
 		archive: Archive,
 		location: string,
 	): Promise<CustomPropertiesXml> {

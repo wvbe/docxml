@@ -18,15 +18,15 @@ export type FieldRangeEndProps = { [key: string]: never };
  * The end of a range associated with a complex field.
  */
 export class FieldRangeEnd extends Component<FieldRangeEndProps, FieldRangeEndChild> {
-	public static readonly children: string[] = [];
+	public static override readonly children: string[] = [];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toNode(_ancestry: ComponentAncestor[]): Node {
+	public override toNode(_ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}fldChar {
@@ -40,14 +40,14 @@ export class FieldRangeEnd extends Component<FieldRangeEndProps, FieldRangeEndCh
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return evaluateXPathToBoolean('self::w:fldChar and @w:fldCharType = "end"', node);
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(): FieldRangeEnd {
+	static override fromNode(): FieldRangeEnd {
 		return new FieldRangeEnd({});
 	}
 }

@@ -30,13 +30,13 @@ export type TextAdditionProps = ChangeInformation;
  * A component that represents a change-tracked text that was inserted.
  */
 export class TextAddition extends Component<TextAdditionProps, TextAdditionChild> {
-	public static readonly children: string[] = ['Text', this.name, 'TextDeletion'];
-	public static readonly mixed: boolean = false;
+	public static override readonly children: string[] = ['Text', this.name, 'TextDeletion'];
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
 				element ${QNS.w}ins {
@@ -57,14 +57,14 @@ export class TextAddition extends Component<TextAdditionProps, TextAdditionChild
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:ins';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, context: ComponentContext): TextAddition {
+	static override fromNode(node: Node, context: ComponentContext): TextAddition {
 		const props = getChangeInformation(node);
 		return new TextAddition(
 			props,

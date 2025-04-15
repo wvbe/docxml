@@ -57,7 +57,7 @@ export type TextProps = TextProperties;
  * are in fact different props or styles on the `<Text>` component.
  */
 export class Text extends Component<TextProps, TextChild> {
-	public static readonly children: string[] = [
+	public static override readonly children: string[] = [
 		'Break',
 		'FieldRangeEnd',
 		'FieldRangeInstruction',
@@ -68,12 +68,12 @@ export class Text extends Component<TextProps, TextChild> {
 		'Symbol',
 		'Tab',
 	];
-	public static readonly mixed: boolean = true;
+	public static override readonly mixed: boolean = true;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		const asTextDeletion = ancestry.some((ancestor) => ancestor instanceof TextDeletion);
 		const anc = [this, ...ancestry];
 		return create(
@@ -108,14 +108,14 @@ export class Text extends Component<TextProps, TextChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:r';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, context: ComponentContext): Text {
+	static override fromNode(node: Node, context: ComponentContext): Text {
 		const { children, rpr } = evaluateXPathToMap<{ rpr: Node; children: Node[] }>(
 			`
 				map {

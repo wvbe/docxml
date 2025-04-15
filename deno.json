@@ -1,13 +1,16 @@
 {
-	"$schema": "https://deno.land/x/deno@v1.22.1/cli/schemas/config-file.v1.json",
+	"version": "2.1.12",
 	"compilerOptions": {
-		"lib": ["deno.ns"]
+		"strict": true, 
+		"lib": ["deno.ns", "dom", "dom.iterable"], 
+		"useUnknownInCatchVariables": true, 
+		"noImplicitAny": true
 	},
 	"tasks": {
 		"dnt": "deno run -A dnt.ts $(git describe --tags)",
 		"test": "deno test -A src",
 		"test:coverage": "TMP=$(mktemp -d) && deno task test --coverage=$TMP && deno coverage --exclude='utils/xml-validation/fontoxml' $TMP --lcov > $TMP/lcov.lcov && genhtml -o coverage $TMP/lcov.lcov",
-		"lint": "deno lint src && npm run lint",
+		"lint": "deno lint src",
 		"precommit": "deno task lint && deno task test"
 	}
 }

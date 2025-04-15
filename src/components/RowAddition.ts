@@ -32,13 +32,13 @@ export type RowAdditionProps = ChangeInformation & TableRowProperties;
  * a normal row, but requires some props describing the change.
  */
 export class RowAddition extends Component<RowAdditionProps, RowAdditionChild> {
-	public static readonly children: string[] = Row.children;
-	public static readonly mixed: boolean = Row.mixed;
+	public static override readonly children: string[] = Row.children;
+	public static override readonly mixed: boolean = Row.mixed;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		const node = await createNodeFromRow(this, ancestry);
 
 		let trPr = evaluateXPathToFirstNode(`./${QNS.w}trPr`, node);
@@ -70,7 +70,7 @@ export class RowAddition extends Component<RowAdditionProps, RowAdditionChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return evaluateXPathToBoolean(
 			`
 				self::${QNS.w}tr and
@@ -84,7 +84,7 @@ export class RowAddition extends Component<RowAdditionProps, RowAdditionChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, context: ComponentContext): RowAddition {
+	static override fromNode(node: Node, context: ComponentContext): RowAddition {
 		const { children, ...rowProps } = parsePropsAndChildNodes(node);
 		const changeProps = getChangeInformation(evaluateXPathToFirstNode(`./${QNS.w}trPr`, node));
 

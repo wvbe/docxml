@@ -22,15 +22,15 @@ export type BookmarkRangeEndProps =
  * The end of a range associated with a comment.
  */
 export class BookmarkRangeEnd extends Component<BookmarkRangeEndProps, BookmarkRangeEndChild> {
-	public static readonly children: string[] = [];
+	public static override readonly children: string[] = [];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toNode(_ancestry: ComponentAncestor[]): Node {
+	public override toNode(_ancestry: ComponentAncestor[]): Node {
 		return create(
 			`element ${QNS.w}bookmarkEnd {
 				attribute ${QNS.w}id { $id }
@@ -44,14 +44,14 @@ export class BookmarkRangeEnd extends Component<BookmarkRangeEndProps, BookmarkR
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:bookmarkEnd';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): BookmarkRangeEnd {
+	static override fromNode(node: Node): BookmarkRangeEnd {
 		return new BookmarkRangeEnd(
 			evaluateXPathToMap<BookmarkRangeEndProps>(
 				`map {

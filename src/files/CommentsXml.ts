@@ -20,15 +20,15 @@ type Comment = {
 };
 
 export class CommentsXml extends XmlFileWithContentTypes {
-	public static contentType = FileMime.comments;
+	public static override contentType = FileMime.comments;
 
 	#comments = new NumberMap<Comment>();
 
-	public isEmpty() {
+	public override isEmpty() {
 		return !this.#comments.size;
 	}
 
-	protected async toNode(): Promise<Document> {
+	protected override async toNode(): Promise<Document> {
 		return create(
 			`
 				<w:comments ${ALL_NAMESPACE_DECLARATIONS}>
@@ -84,7 +84,7 @@ export class CommentsXml extends XmlFileWithContentTypes {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(
+	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
 		location: string,

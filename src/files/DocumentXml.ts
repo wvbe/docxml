@@ -24,7 +24,7 @@ export type DocumentChild = SectionChild | Section;
 export type DocumentRoot = DocumentChild | DocumentChild[] | Promise<DocumentChild[]>;
 
 export class DocumentXml extends XmlFileWithContentTypes {
-	public static contentType = FileMime.mainDocument;
+	public static override contentType = FileMime.mainDocument;
 
 	public readonly relationships: RelationshipsXml;
 	#root: DocumentRoot | null = null;
@@ -125,7 +125,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 			);
 	}
 
-	protected async toNode(): Promise<Document> {
+	protected override async toNode(): Promise<Document> {
 		const children = await this.children;
 		return create(
 			`
@@ -153,7 +153,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 	 * Get all XmlFile instances related to this one, including self. This helps the system
 	 * serialize itself back to DOCX fullly. Probably not useful for consumers of the library.
 	 */
-	public getRelated(): File[] {
+	public override getRelated(): File[] {
 		return [this, ...this.relationships.getRelated()];
 	}
 
@@ -198,7 +198,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(
+	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
 		location: string,

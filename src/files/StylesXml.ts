@@ -77,7 +77,7 @@ type DocumentDefaults = {
 }
 
 export class StylesXml extends XmlFile {
-	public static contentType = FileMime.styles;
+	public static override contentType = FileMime.styles;
 
 	readonly #latentStyles: LatentStyle[] = [];
 	readonly #styles: AnyStyleDefinition[] = [];
@@ -106,11 +106,11 @@ export class StylesXml extends XmlFile {
 		}
 	}
 
-	public isEmpty() {
+	public override isEmpty() {
 		return !this.#styles.length && !this.#latentStyles.length;
 	}
 
-	protected toNode(): Document {
+	protected override toNode(): Document {
 		// @TODO look at attribute w:document@mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh wp14"
 		return create(
 			`<w:styles ${ALL_NAMESPACE_DECLARATIONS}>
@@ -351,7 +351,7 @@ export class StylesXml extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<StylesXml> {
+	public static override async fromArchive(archive: Archive, location: string): Promise<StylesXml> {
 		if (archive.hasFile(location)) {
 			const theme = await ThemeXml.fromArchive(archive);
 			const dom = await archive.readXml(location);

@@ -10,7 +10,7 @@ it('Hyperlinks register their relationship on serialization time', async () => {
 	await doc1.toArchive();
 	expect(doc1.document.relationships.meta).toHaveLength(1);
 
-	const doc2 = Docx.fromJsx(<Hyperlink url={'http://nerf'} />);
+	const doc2 = Docx.fromJsx(<Hyperlink url='http://nerf' />);
 	await doc2.toArchive();
 	expect(doc2.document.relationships.meta).toHaveLength(2);
 });

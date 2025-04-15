@@ -75,7 +75,7 @@ export class ContentTypesXml extends XmlFile {
 		}
 	}
 
-	protected toNode(): Document {
+	protected override toNode(): Document {
 		return create(
 			`
 				element ${QNS.contentTypesDocument}Types {
@@ -102,7 +102,7 @@ export class ContentTypesXml extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string) {
+	public static override async fromArchive(archive: Archive, location: string) {
 		const dom = await archive.readXml(location);
 		const instance = new ContentTypesXml(location);
 

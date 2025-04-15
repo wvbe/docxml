@@ -18,15 +18,15 @@ export type TabProps = { [key: string]: never };
  * this in one of the `<Text>`, `<TextAddition>` or `<TextDeletion>` components.
  */
 export class Tab extends Component<TabProps, TabChild> {
-	public static readonly children: string[] = [];
+	public static override readonly children: string[] = [];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toNode(_ancestry: ComponentAncestor[]): Node {
+	public override toNode(_ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}tab {}
@@ -38,7 +38,7 @@ export class Tab extends Component<TabProps, TabChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:tab';
 	}
 
@@ -46,7 +46,7 @@ export class Tab extends Component<TabProps, TabChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	static fromNode(_node: Node): Tab {
+	static override fromNode(_node: Node): Tab {
 		return new Tab({});
 	}
 }

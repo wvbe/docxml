@@ -80,7 +80,7 @@ const settingsMeta: Array<SettingMeta> = [
 ];
 
 export class SettingsXml extends XmlFileWithContentTypes {
-	public static contentType = FileMime.settings;
+	public static override contentType = FileMime.settings;
 
 	public readonly relationships: RelationshipsXml;
 
@@ -142,7 +142,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 		>;
 	}
 
-	protected toNode(): Document {
+	protected override toNode(): Document {
 		return create(
 			`<w:settings ${ALL_NAMESPACE_DECLARATIONS}>
 				{
@@ -176,14 +176,14 @@ export class SettingsXml extends XmlFileWithContentTypes {
 	 *
 	 * By default only returns the instance itself but no other related instances.
 	 */
-	public getRelated(): File[] {
+	public override getRelated(): File[] {
 		return [this, ...this.relationships.getRelated()];
 	}
 
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(
+	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
 		location: string,

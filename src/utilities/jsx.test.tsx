@@ -15,12 +15,12 @@ describe('JSX', () => {
 
 describe('JSX fixing', () => {
 	class Bar extends Component<{ [key: string]: never }, string> {
-		static children = [];
-		static mixed = true;
+		static override children = [];
+		static override mixed = true;
 	}
 
 	class Foo extends Component<{ [key: string]: never }, Text | Bar> {
-		static children = [Text.name, Bar.name];
+		static override children = [Text.name, Bar.name];
 		static false = true;
 	}
 

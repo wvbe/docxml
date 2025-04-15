@@ -62,14 +62,14 @@ class HeaderFooterAbstractionXml<Child extends AnyComponent> extends XmlFileWith
 	 * Get all XmlFile instances related to this one, including self. This helps the system
 	 * serialize itself back to DOCX fullly. Probably not useful for consumers of the library.
 	 */
-	public getRelated(): File[] {
+	public override getRelated(): File[] {
 		if (!this.relationships) {
 			return [this];
 		}
 		return [this, ...this.relationships.getRelated()];
 	}
 
-	protected async toNode(): Promise<Document> {
+	protected override async toNode(): Promise<Document> {
 		const children = await this.children;
 		return create(
 			`
@@ -95,7 +95,7 @@ class HeaderFooterAbstractionXml<Child extends AnyComponent> extends XmlFileWith
 }
 
 export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | WatermarkText> {
-	public static contentType = FileMime.header;
+	public static override contentType = FileMime.header;
 
 	constructor(location: string, relationships: RelationshipsXml | null) {
 		super(location, 'hdr', relationships);
@@ -104,7 +104,7 @@ export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | Wa
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(
+	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
 		location: string,
@@ -143,7 +143,7 @@ export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | Wa
 }
 
 export class FooterXml extends HeaderFooterAbstractionXml<HeaderFooterChild> {
-	public static contentType = FileMime.footer;
+	public static override contentType = FileMime.footer;
 
 	constructor(location: string, relationships: RelationshipsXml | null) {
 		super(location, 'ftr', relationships);
@@ -152,7 +152,7 @@ export class FooterXml extends HeaderFooterAbstractionXml<HeaderFooterChild> {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(
+	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
 		location: string,

@@ -37,8 +37,8 @@ export type TableProps = TableProperties & {
  * A component that represents a table.
  */
 export class Table extends Component<TableProps, TableChild> {
-	public static readonly children: string[] = ['Row', 'RowAddition', 'RowDeletion'];
-	public static readonly mixed: boolean = false;
+	public static override readonly children: string[] = ['Row', 'RowAddition', 'RowDeletion'];
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * A conceptual description of how the cells, columns, rows and spans of this table make sense.
@@ -56,7 +56,7 @@ export class Table extends Component<TableProps, TableChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		const node = create(
 			`
 				element ${QNS.w}tbl {
@@ -83,14 +83,14 @@ export class Table extends Component<TableProps, TableChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:tbl';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, context: ComponentContext): Table {
+	static override fromNode(node: Node, context: ComponentContext): Table {
 		const { children, tblpr, ...props } = evaluateXPathToMap<{
 			tblpr: Node;
 			children: Node[];

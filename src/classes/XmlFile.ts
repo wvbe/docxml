@@ -82,11 +82,11 @@ export class UnhandledXmlFile extends XmlFile {
 		this.#xml = xml;
 	}
 
-	protected toNode(): Document {
+	protected override toNode(): Document {
 		return parse(this.#xml);
 	}
 
-	public static async fromArchive(archive: Archive, location: string) {
+	public static override async fromArchive(archive: Archive, location: string) {
 		return new UnhandledXmlFile(location, await archive.readText(location));
 	}
 }

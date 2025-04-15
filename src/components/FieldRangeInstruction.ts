@@ -21,15 +21,15 @@ export class FieldRangeInstruction extends Component<
 	FieldRangeInstructionProps,
 	FieldRangeInstructionChild
 > {
-	public static readonly children: string[] = [];
+	public static override readonly children: string[] = [];
 
-	public static readonly mixed: boolean = true;
+	public static override readonly mixed: boolean = true;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
 				element ${QNS.w}instrText {
@@ -45,14 +45,14 @@ export class FieldRangeInstruction extends Component<
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return evaluateXPathToBoolean('self::w:instrText', node);
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, context: ComponentContext): FieldRangeInstruction {
+	static override fromNode(node: Node, context: ComponentContext): FieldRangeInstruction {
 		const { children } = evaluateXPathToMap<{ rpr: Node; children: Node[] }>(
 			`
 				map {

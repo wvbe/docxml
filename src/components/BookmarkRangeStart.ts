@@ -33,15 +33,15 @@ export class BookmarkRangeStart extends Component<
 	BookmarkRangeStartProps,
 	BookmarkRangeStartChild
 > {
-	public static readonly children: string[] = [];
+	public static override readonly children: string[] = [];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toNode(_ancestry: ComponentAncestor[]): Node {
+	public override toNode(_ancestry: ComponentAncestor[]): Node {
 		return create(
 			`element ${QNS.w}bookmarkStart {
 				attribute ${QNS.w}id { $id },
@@ -57,14 +57,14 @@ export class BookmarkRangeStart extends Component<
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:bookmarkStart';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): BookmarkRangeStart {
+	static override fromNode(node: Node): BookmarkRangeStart {
 		return new BookmarkRangeStart(
 			evaluateXPathToMap<BookmarkRangeStartProps>(
 				`map {

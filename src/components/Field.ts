@@ -54,7 +54,7 @@ export type FieldProps = {
  * A component that represents a (simple) instruction field.
  */
 export class Field extends Component<FieldProps, FieldChild> {
-	public static readonly children: string[] = [
+	public static override readonly children: string[] = [
 		'BookmarkRangeStart',
 		'BookmarkRangeEnd',
 		'CommentRangeStart',
@@ -65,13 +65,13 @@ export class Field extends Component<FieldProps, FieldChild> {
 		'Hyperlink',
 	];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
 				element ${QNS.w}fldSimple {
@@ -93,14 +93,14 @@ export class Field extends Component<FieldProps, FieldChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:fldSimple';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, context: ComponentContext): Field {
+	static override fromNode(node: Node, context: ComponentContext): Field {
 		const { children, ...props } = evaluateXPathToMap<FieldProps & { children: Node[] }>(
 			`map {
 				"instruction": ./@${QNS.w}instruction/string(),

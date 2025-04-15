@@ -30,19 +30,19 @@ export type TextDeletionProps = ChangeInformation;
  * A component that represents a change-tracked text that was deleted.
  */
 export class TextDeletion extends Component<TextDeletionProps, TextDeletionChild> {
-	public static readonly children: string[] = [
+	public static override readonly children: string[] = [
 		'Text',
 		'TextAddition',
 		// Sometimes deletions nested into themselves work well? At other times, they don't.
 		// For safety, keep it disabled now (or put it behind a flag possibly)
 		// 'TextDeletion',
 	];
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
 				element ${QNS.w}del {
@@ -63,14 +63,14 @@ export class TextDeletion extends Component<TextDeletionProps, TextDeletionChild
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:del';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, context: ComponentContext): TextDeletion {
+	static override fromNode(node: Node, context: ComponentContext): TextDeletion {
 		const props = getChangeInformation(node);
 		return new TextDeletion(
 			props,

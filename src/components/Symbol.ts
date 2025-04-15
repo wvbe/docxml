@@ -27,15 +27,15 @@ export type SymbolProps = {
  * A component that represents a special character from a different font.
  */
 export class Symbol extends Component<SymbolProps, SymbolChild> {
-	public static readonly children: string[] = [];
+	public static override readonly children: string[] = [];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toNode(_ancestry: ComponentAncestor[]): Node {
+	public override toNode(_ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}sym {
@@ -53,7 +53,7 @@ export class Symbol extends Component<SymbolProps, SymbolChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:sym';
 	}
 
@@ -61,7 +61,7 @@ export class Symbol extends Component<SymbolProps, SymbolChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	static fromNode(node: Node): Symbol {
+	static override fromNode(node: Node): Symbol {
 		const { font, char } = evaluateXPathToMap<{ font: string; char: string }>(
 			`map {
 				"font": ./@${QNS.w}font/string(),

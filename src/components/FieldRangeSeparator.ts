@@ -21,15 +21,15 @@ export class FieldRangeSeparator extends Component<
 	FieldRangeSeparatorProps,
 	FieldRangeSeparatorChild
 > {
-	public static readonly children: string[] = [];
+	public static override readonly children: string[] = [];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toNode(_ancestry: ComponentAncestor[]): Node {
+	public override toNode(_ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}fldChar {
@@ -43,14 +43,14 @@ export class FieldRangeSeparator extends Component<
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return evaluateXPathToBoolean('self::w:fldChar and @w:fldCharType = "separate"', node);
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(): FieldRangeSeparator {
+	static override fromNode(): FieldRangeSeparator {
 		return new FieldRangeSeparator({});
 	}
 }

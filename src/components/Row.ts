@@ -94,13 +94,13 @@ export async function createNodeFromRow(
  * A component that represents a table row.
  */
 export class Row extends Component<RowProps, RowChild> {
-	public static readonly children: string[] = ['Cell'];
-	public static readonly mixed: boolean = false;
+	public static override readonly children: string[] = ['Cell'];
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		const node = await createNodeFromRow(this, ancestry);
 		return node;
 	}
@@ -108,7 +108,7 @@ export class Row extends Component<RowProps, RowChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return evaluateXPathToBoolean(
 			`
 				self::${QNS.w}tr and
@@ -122,7 +122,7 @@ export class Row extends Component<RowProps, RowChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, context: ComponentContext): Row {
+	static override fromNode(node: Node, context: ComponentContext): Row {
 		const { children, ...props } = parsePropsAndChildNodes(node);
 		return new Row(
 			props,

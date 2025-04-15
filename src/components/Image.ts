@@ -50,9 +50,9 @@ export type ImageProps = {
  * or from a web request.
  */
 export class Image extends Component<ImageProps, ImageChild> {
-	public static readonly children: string[] = [];
+	public static override readonly children: string[] = [];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	#meta: {
 		location: string;
@@ -134,7 +134,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 * An event hook with which this component can ensure that the correct relationship type is
 	 * recorded to the relationship XML.
 	 */
-	public async ensureRelationship(relationships: RelationshipsXml) {
+	public override async ensureRelationship(relationships: RelationshipsXml) {
 		const { location, mime, extensions } = this.meta;
 
 		this.#meta.relationshipId = relationships.add(
@@ -158,7 +158,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(_ancestry: ComponentAncestor[]): Node {
+	public override toNode(_ancestry: ComponentAncestor[]): Node {
 		if (!this.#meta.relationshipId) {
 			throw new Error('Cannot serialize an image outside the context of an Document');
 		}
@@ -270,14 +270,14 @@ export class Image extends Component<ImageProps, ImageChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:drawing';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, { archive, relationships }: ComponentContext): Image {
+	static override fromNode(node: Node, { archive, relationships }: ComponentContext): Image {
 		// Important nodes
 		const inlineNode = evaluateXPathToFirstNode(`./${QNS.wp}inline`, node);
 		const picNode = evaluateXPathToFirstNode(

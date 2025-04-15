@@ -6,7 +6,7 @@ import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../../utilities/xquery.ts';
 
 export class CorePropertiesXml extends XmlFile {
-	public static contentType = FileMime.coreProperties;
+	public static override contentType = FileMime.coreProperties;
 
 	public created: Date = new Date();
 	public creator: string | null = null;
@@ -22,7 +22,7 @@ export class CorePropertiesXml extends XmlFile {
 		super(location);
 	}
 
-	public toNode(): Document {
+	public override toNode(): Document {
 		return create(
 			`
 				<cp:coreProperties ${ALL_NAMESPACE_DECLARATIONS}>
@@ -55,7 +55,7 @@ export class CorePropertiesXml extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(archive: Archive, location: string): Promise<CorePropertiesXml> {
+	public static override async fromArchive(archive: Archive, location: string): Promise<CorePropertiesXml> {
 		const dom = await archive.readXml(location);
 		const instance = new CorePropertiesXml(location);
 		Object.assign(

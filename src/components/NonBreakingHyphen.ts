@@ -17,28 +17,28 @@ export type NonBreakingHyphenProps = { [key: string]: never };
  * A component that represents a non-breaking hyphen. Place this in the `<Text>` component.
  */
 export class NonBreakingHyphen extends Component<NonBreakingHyphenProps, NonBreakingHyphenChild> {
-	public static readonly children: string[] = [];
+	public static override readonly children: string[] = [];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(): Node {
+	public override toNode(): Node {
 		return create(`element ${QNS.w}noBreakHyphen {}`);
 	}
 
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:noBreakHyphen';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(): NonBreakingHyphen {
+	static override fromNode(): NonBreakingHyphen {
 		return new NonBreakingHyphen({});
 	}
 }

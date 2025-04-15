@@ -50,8 +50,8 @@ export type WatermarkTextProps = {
  *
  */
 export class WatermarkText extends Component<WatermarkTextProps, WatermarkTextChild> {
-	public static readonly children: string[] = [];
-	public static readonly mixed: boolean = false;
+	public static override readonly children: string[] = [];
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
@@ -60,7 +60,7 @@ export class WatermarkText extends Component<WatermarkTextProps, WatermarkTextCh
 	 *
 	 *
 	 */
-	public toNode(): Node {
+	public override toNode(): Node {
 		return create(
 			`
 			element ${QNS.w}p {
@@ -127,7 +127,7 @@ export class WatermarkText extends Component<WatermarkTextProps, WatermarkTextCh
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		// This will possibly have false positives on "real" Word content
 		return evaluateXPathToBoolean('self::w:p[./w:r/w:pict]', node);
 	}
@@ -135,7 +135,7 @@ export class WatermarkText extends Component<WatermarkTextProps, WatermarkTextCh
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): WatermarkText {
+	static override fromNode(node: Node): WatermarkText {
 		const props = evaluateXPathToMap<WatermarkTextProps>(
 			`map {
 

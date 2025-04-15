@@ -22,7 +22,7 @@ export type RelationshipMeta = {
 export type File = XmlFile | BinaryFile;
 
 export class RelationshipsXml extends XmlFileWithContentTypes {
-	public static contentType = FileMime.relationships;
+	public static override contentType = FileMime.relationships;
 
 	/**
 	 * All relationship data
@@ -124,7 +124,7 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 		return doc;
 	}
 
-	protected toNode(): Document {
+	protected override toNode(): Document {
 		return create(
 			`
 				element ${QNS.relationshipsDocument}Relationships {
@@ -161,7 +161,7 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 	 *
 	 * By default only returns the instance itself but no other related instances.
 	 */
-	public getRelated(): File[] {
+	public override getRelated(): File[] {
 		const related: File[] = [this];
 		this.#instances.forEach((inst) => {
 			if (inst.isEmpty()) {
@@ -173,14 +173,14 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 		return related;
 	}
 
-	public async addToArchive(archive: Archive): Promise<void> {
+	public override async addToArchive(archive: Archive): Promise<void> {
 		await super.addToArchive(archive);
 	}
 
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static async fromArchive(
+	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
 		location: string,

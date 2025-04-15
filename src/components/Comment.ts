@@ -21,14 +21,14 @@ export type CommentProps = {
  * The start of a range associated with a comment.
  */
 export class Comment extends Component<CommentProps, CommentChild> {
-	public static readonly children: string[] = [];
+	public static override readonly children: string[] = [];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public toNode(ancestry: ComponentAncestor[]): Node {
+	public override toNode(ancestry: ComponentAncestor[]): Node {
 		const doc = ancestry.find(
 			(ancestor): ancestor is DocumentXml => ancestor instanceof DocumentXml,
 		);
@@ -57,14 +57,14 @@ export class Comment extends Component<CommentProps, CommentChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:commentRangeStart';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): Comment {
+	static override fromNode(node: Node): Comment {
 		return new Comment(
 			evaluateXPathToMap<CommentProps>(
 				`

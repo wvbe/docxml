@@ -43,13 +43,13 @@ export type HyperlinkProps =
  * A component that represents a hyperlink to another part of the same document.
  */
 export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
-	public static readonly children: string[] = ['Text', 'Field'];
+	public static override readonly children: string[] = ['Text', 'Field'];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	#relationshipId: string | null = null;
 
-	public ensureRelationship(relationships: RelationshipsXml) {
+	public override ensureRelationship(relationships: RelationshipsXml) {
 		if (!this.props.url) {
 			return;
 		}
@@ -60,7 +60,7 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
 				element ${QNS.w}hyperlink {
@@ -82,14 +82,14 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:hyperlink';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, context: ComponentContext): Hyperlink {
+	static override fromNode(node: Node, context: ComponentContext): Hyperlink {
 		const { children, ...props } = evaluateXPathToMap<HyperlinkProps & { children: Node[] }>(
 			`map {
 				"anchor": ./@${QNS.w}anchor/string(),

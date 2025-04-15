@@ -31,13 +31,13 @@ export type CellProps = Omit<TableCellProperties, 'width'>;
  * quietly fix that for you if you don't have a paragraph there already.
  */
 export class Cell extends Component<CellProps, CellChild> {
-	public static readonly children: string[] = [
+	public static override readonly children: string[] = [
 		'Paragraph',
 		'Table',
 		'BookmarkRangeStart',
 		'BookmarkRangeEnd',
 	];
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	public constructor(cellProps: CellProps, ...cellChild: CellChild[]) {
 		// Ensure that properties of type `number` are not `NaN`.
@@ -48,7 +48,7 @@ export class Cell extends Component<CellProps, CellChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		const table = ancestry.find((ancestor): ancestor is Table => ancestor instanceof Table);
 		if (!table) {
 			throw new Error('A cell cannot be rendered outside the context of a table');
@@ -147,14 +147,14 @@ export class Cell extends Component<CellProps, CellChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:tc';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, context: ComponentContext): null | Cell {
+	static override fromNode(node: Node, context: ComponentContext): null | Cell {
 		const { mergedAway, children, ...props } = evaluateXPathToMap<
 			CellProps & { mergedAway: boolean; children: Node[] }
 		>(

@@ -30,15 +30,15 @@ export type BreakProps = {
  * this in one of the `<Text>`, `<TextAddition>` or `<TextDeletion>` components.
  */
 export class Break extends Component<BreakProps, BreakChild> {
-	public static readonly children: string[] = [];
+	public static override readonly children: string[] = [];
 
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toNode(_ancestry: ComponentAncestor[]): Node {
+	public override toNode(_ancestry: ComponentAncestor[]): Node {
 		return create(
 			`
 				element ${QNS.w}br {
@@ -56,14 +56,14 @@ export class Break extends Component<BreakProps, BreakChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:br';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node): Break {
+	static override fromNode(node: Node): Break {
 		return new Break(
 			evaluateXPathToMap<BreakProps>(
 				`map {

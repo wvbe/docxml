@@ -65,7 +65,7 @@ export type ParagraphProps = ParagraphProperties;
  * A paragraph is a block-level element and contains text and inlines, see also {@link Text}.
  */
 export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
-	public static readonly children: string[] = [
+	public static override readonly children: string[] = [
 		'BookmarkRangeEnd',
 		'BookmarkRangeStart',
 		'Comment',
@@ -77,7 +77,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'TextDeletion',
 		'Field',
 	];
-	public static readonly mixed: boolean = false;
+	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;
 
 	/**
@@ -92,7 +92,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
 				element ${QNS.w}p {
@@ -110,14 +110,14 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	/**
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
-	static matchesNode(node: Node): boolean {
+	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:p';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static fromNode(node: Node, context: ComponentContext): Paragraph {
+	static override fromNode(node: Node, context: ComponentContext): Paragraph {
 		const { children, ppr, ...props } = evaluateXPathToMap<{
 			ppr: Node;
 			children: Node[];

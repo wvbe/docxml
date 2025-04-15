@@ -64,7 +64,7 @@ type ConcreteNumbering = {
 };
 
 export class NumberingXml extends XmlFile {
-	public static contentType = FileMime.numbering;
+	public static override contentType = FileMime.numbering;
 
 	/**
 	 * The abstract numbering rules.
@@ -80,7 +80,7 @@ export class NumberingXml extends XmlFile {
 	 */
 	private readonly implementations = new NumberMap<ConcreteNumbering>(1);
 
-	public isEmpty() {
+	public override isEmpty() {
 		return !this.abstracts.size;
 	}
 
@@ -125,7 +125,7 @@ export class NumberingXml extends XmlFile {
 		return this.addImplementation(abstract);
 	}
 
-	protected toNode(): Document {
+	protected override toNode(): Document {
 		return create(
 			`<w:numbering ${ALL_NAMESPACE_DECLARATIONS}>
 				{
@@ -225,7 +225,7 @@ export class NumberingXml extends XmlFile {
 		return instance;
 	}
 
-	public static async fromArchive(archive: Archive, location: string): Promise<NumberingXml> {
+	public static override async fromArchive(archive: Archive, location: string): Promise<NumberingXml> {
 		return this.fromNode(await archive.readXml(location), location);
 	}
 

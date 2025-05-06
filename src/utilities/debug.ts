@@ -1,4 +1,4 @@
-import { blue, dim, green, red } from 'https://deno.land/std@0.187.0/fmt/colors.ts';
+import { blue, dim, green, red } from 'std/fmt/colors'; 
 
 import { AnyComponent } from '../classes/Component.ts';
 import { Length } from './length.ts';

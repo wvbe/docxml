@@ -1,4 +1,5 @@
-import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { describe, it } from 'std/testing/bdd';
+import { expect } from 'std/expect'; 
 
 import { NumberMap } from './NumberMap.ts';
 
@@ -15,5 +16,3 @@ describe('NumberMap', () => {
 		expect(map.array()).toEqual([true, true, true]);
 	});
 });
-
-run();

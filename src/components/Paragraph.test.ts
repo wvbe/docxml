@@ -1,4 +1,5 @@
-import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect } from 'std/expect'; 
+import { describe, it } from 'std/testing/bdd'; 
 
 import { Archive } from '../classes/Archive.ts';
 import { ComponentContext } from '../classes/Component.ts';
@@ -91,5 +92,3 @@ describe('Paragraph with style change', () => {
 		);
 	});
 });
-
-run();

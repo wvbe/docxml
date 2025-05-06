@@ -1,4 +1,5 @@
-import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect } from 'std/expect'; 
+import { describe, it } from 'std/testing/bdd'; 
 
 import { Text } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
@@ -52,5 +53,3 @@ describe('Text', () => {
 		);
 	});
 });
-
-run();

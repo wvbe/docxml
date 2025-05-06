@@ -1,4 +1,6 @@
-import { beforeAll, describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect } from 'std/expect'; 
+import { beforeAll, describe, it } from "std/testing/bdd";
+
 
 import { Docx } from './Docx.ts';
 import { FileLocation } from './enums.ts';
@@ -63,5 +65,3 @@ describe('Docx', () => {
 		expect(clone.document.settings.get('attachedTemplate')).toBe('derp');
 	});
 });
-
-run();

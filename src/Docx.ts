@@ -1,4 +1,4 @@
-import { GenericRenderer } from 'https://deno.land/x/xml_renderer@5.0.7/mod.ts';
+import { GenericRenderer } from 'xml_renderer'; 
 
 import { Archive } from './classes/Archive.ts';
 import { Bookmarks } from './classes/Bookmarks.ts';

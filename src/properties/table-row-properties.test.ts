@@ -1,4 +1,4 @@
-import { describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { describe } from 'std/testing/bdd'; 
 
 import { pt } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
@@ -28,5 +28,3 @@ describe('Table row formatting', () => {
 		},
 	);
 });
-
-run();

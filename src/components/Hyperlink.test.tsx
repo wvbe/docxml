@@ -1,6 +1,6 @@
 /** @jsx Docx.jsx */
-
-import { expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect } from 'std/expect'; 
+import { it } from 'std/testing/bdd'; 
 
 import { Docx } from '../Docx.ts';
 import { Hyperlink } from './Hyperlink.ts';
@@ -14,5 +14,3 @@ it('Hyperlinks register their relationship on serialization time', async () => {
 	await doc2.toArchive();
 	expect(doc2.document.relationships.meta).toHaveLength(2);
 });
-
-run();

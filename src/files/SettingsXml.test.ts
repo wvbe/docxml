@@ -1,4 +1,5 @@
-import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect } from 'std/expect'; 
+import { describe, it } from 'std/testing/bdd'; 
 
 import { RelationshipType } from '../enums.ts';
 import { pt } from '../utilities/length.ts';
@@ -35,5 +36,3 @@ describe('SettingsXml', () => {
 		expect(settings.get('defaultTabStop')).toEqual(pt(50));
 	});
 });
-
-run();

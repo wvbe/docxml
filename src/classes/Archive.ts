@@ -1,4 +1,4 @@
-import { JSZip, readZip } from 'https://deno.land/x/jszip@0.11.0/mod.ts';
+import { JSZip, readZip } from 'jszip'; 
 
 import { parse, serialize } from '../utilities/dom.ts';
 

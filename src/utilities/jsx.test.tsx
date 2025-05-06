@@ -1,5 +1,6 @@
 /** @jsx jsx */
-import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect } from 'std/expect'; 
+import { describe, it } from 'std/testing/bdd'; 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { jsx, Text } from '../../mod.ts';
@@ -105,5 +106,3 @@ describe('JSX fixing', () => {
 		);
 	});
 });
-
-run();

@@ -24,8 +24,8 @@ docx.document.set([
 	<Section pageOrientation={'landscape'}>
 		<BookmarkRangeStart bookmark={bookmark} />
 		<Paragraph>
-			<Hyperlink url="https://github.com/wvbe/docxml">
-				<Text>This is a hyperlink to external target "github.com/wvbe/docxml"</Text>
+			<Hyperlink url="https://github.com/fontoxml/docxml">
+				<Text>This is a hyperlink to external target "github.com/fontoxml/docxml"</Text>
 			</Hyperlink>
 		</Paragraph>
 		<BookmarkRangeEnd bookmark={bookmark} />

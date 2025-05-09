@@ -28,4 +28,4 @@ formatting options.
 </Paragraph>
 ```
 
-[👉 Jump to the type definition of paragraph properties](https://github.com/wvbe/docxml/blob/develop/src/properties/paragraph-properties.ts#L20)
+[👉 Jump to the type definition of paragraph properties](https://github.com/fontoxml/docxml/blob/develop/src/properties/paragraph-properties.ts#L20)

@@ -3,7 +3,7 @@ import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v121';
 import { convert } from './length.ts';
 import { QNS } from './namespaces.ts';
 
-export const DOCXML_NS_URI = 'https://github.com/wvbe/docxml';
+export const DOCXML_NS_URI = 'https://github.com/fontoxml/docxml';
 
 fontoxpath.registerCustomXPathFunction(
 	{ namespaceURI: DOCXML_NS_URI, localName: 'length' },

@@ -4,20 +4,55 @@ import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
 /**
- * All the formatting options that can be given on a text run (inline text).
- *
- * Serializes to the <w:rPr> element.
- *   https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_rPr_topic_ID0EIEKM.html
+ * Formatting options that are applied on the Section level.
+ * For more on how OOXML secitons are structured: http://officeopenxml.com/WPsection.php
  */
+
 export type SectionProperties = {
+	/**
+	 * The column layout for this section.
+	 */
+	columns?: {
+		/**
+		 * The number of columns in a section of text. If  this property is present it must
+		 * be an integer greater than 0 and less than or equal to 45.
+		 */
+		numberOfColumns?: number;
+		/**
+		 * Specifies whether all columns are of equal width.
+		 */
+		equalWidth?: boolean;
+		/**
+		 * Specifies whether a vertical line is to be drawn between each column. If set to true, then the line is drawn in the center of the space between the columns.
+		 */
+		separator?: boolean;
+		/**
+		 * The width of a column of text. If an array of columns is provided in the `columnDefs`
+		 * property, then this value is ignored.
+		 */
+		columnSpace?: Length;
+		/**
+		 * To create sections that use columns of different widths or uneven spacing, you can define
+		 * columns as an array of objects. This is _only_ used by Word if the `equalWidth`
+		 * property is not true.
+		 */
+		columnDefs?: { columnWidth: Length; columnSpace?: Length }[];
+	};
+
 	/**
 	 * A reference to the header portion on every page in this section.
 	 */
-	headers?: null | string | { first?: string | null; even?: string | null; odd?: string | null };
+	headers?:
+		| null
+		| string
+		| { first?: string | null; even?: string | null; odd?: string | null };
 	/**
 	 * A reference to the footer portion on every page in this section.
 	 */
-	footers?: null | string | { first?: string | null; even?: string | null; odd?: string | null };
+	footers?:
+		| null
+		| string
+		| { first?: string | null; even?: string | null; odd?: string | null };
 	/**
 	 * The width of any page in this section.
 	 */
@@ -44,18 +79,20 @@ export type SectionProperties = {
 		footer?: null | Length;
 		gutter?: null | Length;
 	};
-
 	/**
 	 * Specifies whether sections in the document shall have different headers and footers for even and odd pages.
 	 */
 	isTitlePage?: null | boolean;
 };
 
-export function sectionPropertiesFromNode(node?: Node | null): SectionProperties {
+export function sectionPropertiesFromNode(
+	node?: Node | null
+): SectionProperties {
 	if (!node) {
 		return {};
 	}
-	const data = evaluateXPathToMap<SectionProperties>(
+
+	return evaluateXPathToMap<SectionProperties>(
 		`map {
 			"headers": map {
 				"first": ./${QNS.w}headerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
@@ -66,6 +103,18 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 				"first": ./${QNS.w}footerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
 				"even": ./${QNS.w}footerReference[@${QNS.w}type = 'even']/@${QNS.r}id/string(),
 				"odd": ./${QNS.w}footerReference[@${QNS.w}type = 'default']/@${QNS.r}id/string()
+			},
+			"columns": map {
+				"numberOfColumns": ./${QNS.w}cols/@${QNS.w}num/number(),
+				"equalWidth": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}equalwidth),
+				"separator": if (exists(./${QNS.w}cols/@${QNS.w}sep)) then docxml:st-on-off(./${QNS.w}cols/@${QNS.w}sep) else (),
+				"columnSpace": docxml:length(./${QNS.w}cols/@${QNS.w}space, 'twip'),
+				"columnDefs": array{
+						./${QNS.w}cols/${QNS.w}col/map{ 
+							"columnWidth": docxml:length(@${QNS.w}w, 'twip'), 
+							"columnSpace": docxml:length(@${QNS.w}space, 'twip')
+					}
+				}
 			},
 			"pageWidth": docxml:length(${QNS.w}pgSz/@${QNS.w}w, 'twip'),
 			"pageHeight": docxml:length(${QNS.w}pgSz/@${QNS.w}h, 'twip'),
@@ -81,10 +130,8 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 			},
 			"isTitlePage": exists(./${QNS.w}titlePg) and (not(./${QNS.w}titlePg/@${QNS.w}val) or docxml:st-on-off(./${QNS.w}titlePg/@${QNS.w}val))
 		}`,
-		node,
+		node
 	);
-
-	return data;
 }
 
 export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
@@ -114,6 +161,33 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				attribute ${QNS.r}id { $footers('odd') },
 				attribute ${QNS.w}type { 'default' }
 			} else (),
+			if (exists($columns)) then element ${QNS.w}cols {
+				if (exists($columns('separator'))) then attribute ${QNS.w}sep { 
+					$columns('separator') } 
+				else (),
+				if (exists($columns('equalWidth'))) then attribute ${QNS.w}equalwidth {
+					$columns('equalWidth') 
+				} else (
+					if (count($columns('columnDefs')) > 1)
+					then (
+						attribute ${QNS.w}equalwidth { false }
+					)
+					else () 
+				),
+				if (exists($columns('numberOfColumns'))) then attribute ${QNS.w}num {
+					$columns('numberOfColumns') 
+				} else (),
+				if (exists($columns('columnSpace'))) then attribute ${QNS.w}space {
+					round($columns('columnSpace')('twip')) 
+				} else (),
+ 				if (docxml:st-on-off(string($columns('equalWidth')))) then ()
+ 				else for $column in array:flatten($columns('columnDefs'))
+ 					return element ${QNS.w}col {
+ 						attribute ${QNS.w}w { round($column('columnWidth')('twip')) },
+ 						if (not(exists($column('columnSpace')))) then ()
+ 							else attribute ${QNS.w}space { round($column('columnSpace')('twip')) }
+ 					}
+			} else (), 
 			if (exists($pageWidth) or exists($pageHeight) or $pageOrientation) then element ${QNS.w}pgSz {
 				if (exists($pageWidth)) then attribute ${QNS.w}w {
 					round($pageWidth('twip'))
@@ -151,17 +225,26 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 		{
 			headers:
 				typeof data.headers === 'string'
-					? { first: data.headers, even: data.headers, odd: data.headers }
+					? {
+							first: data.headers,
+							even: data.headers,
+							odd: data.headers,
+					  }
 					: data.headers || {},
 			footers:
 				typeof data.footers === 'string'
-					? { first: data.footers, even: data.footers, odd: data.footers }
+					? {
+							first: data.footers,
+							even: data.footers,
+							odd: data.footers,
+					  }
 					: data.footers || {},
+			columns: data.columns || {},
 			pageWidth: data.pageWidth || null,
 			pageHeight: data.pageHeight || null,
 			pageMargin: data.pageMargin || null,
 			pageOrientation: data.pageOrientation || null,
 			isTitlePage: data.isTitlePage || null,
-		},
+		}
 	);
 }

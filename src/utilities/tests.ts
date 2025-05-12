@@ -108,6 +108,40 @@ export async function expectDocumentToContain(
 	return expect(evaluateXPathToBoolean(test, dom.documentElement)).toBeTruthy();
 }
 
+
+function localAssert(
+	prop: string | number,
+	p1: Record<string, unknown> | Array<unknown>,
+	e1: Record<string, unknown> | Array<unknown>,
+	p2: Record<string, unknown> | Array<unknown>,
+): void {
+	const value = p1[prop as keyof typeof p1];
+	const expectation = e1[prop as keyof typeof e1];
+	const reparsed = p2[prop as keyof typeof p2];
+
+	if (expectation && typeof expectation === 'object') {
+		describe(`.${String(prop)}`, () => {
+			if(Array.isArray(expectation)) {
+				it('Has the expected length', () => {
+					expect(value).toHaveLength(expectation.length);
+				});
+			}
+			for (const p in expectation) {
+				localAssert(
+					p,
+					value as Record<string, unknown> | Array<unknown>,
+					expectation as Record<string, unknown> | Array<unknown>,
+					reparsed as Record<string, unknown> | Array<unknown>,
+				);
+			}
+		});
+	} else {
+		it(`.${String(prop)}`, () => {
+			expect(value).toBe(expectation);
+			expect(reparsed).toBe(expectation);
+		});
+	}
+}
 /**
  * Creates a small test suite to assert that an object can succesfully be parsed from XML, serialized
  * to XML again and then parses a 2nd time to the same object as before.
@@ -118,39 +152,6 @@ export function createXmlRoundRobinTest<ObjectShape extends { [key: string]: unk
 	fromNode: (n: Node | null) => ObjectShape,
 	toNode: (n: ObjectShape) => Node | null,
 ) {
-	function assert(
-		prop: string | number,
-		p1: Record<string, unknown> | Array<unknown>,
-		e1: Record<string, unknown> | Array<unknown>,
-		p2: Record<string, unknown> | Array<unknown>,
-	): void {
-		const value = p1[prop as keyof typeof p1];
-		const expectation = e1[prop as keyof typeof e1];
-		const reparsed = p2[prop as keyof typeof p2];
-
-		if (expectation && typeof expectation === 'object') {
-			describe(`.${String(prop)}`, () => {
-				if(Array.isArray(expectation)) {
-					it('Has the expected length', () => {
-						expect(value).toHaveLength(expectation.length);
-					});
-				}
-				for (const p in expectation) {
-					assert(
-						p,
-						value as Record<string, unknown> | Array<unknown>,
-						expectation as Record<string, unknown> | Array<unknown>,
-						reparsed as Record<string, unknown> | Array<unknown>,
-					);
-				}
-			});
-		} else {
-			it(`.${String(prop)}`, () => {
-				expect(value).toBe(expectation);
-				expect(reparsed).toBe(expectation);
-			});
-		}
-	}
 
 	return function test(xml: Node | string, parsedExpectation: ObjectShape) {
 		const dom = typeof xml === 'string' ? create(xml) : xml;
@@ -162,7 +163,29 @@ export function createXmlRoundRobinTest<ObjectShape extends { [key: string]: unk
 		}
 		const p2 = fromNode(serializedAgain);
 		for (const prop in parsedExpectation) {
-			assert(prop, p1, parsedExpectation, p2);
+			localAssert(prop, p1, parsedExpectation, p2);
 		}
 	};
+}
+
+export function createObjectRoundRobinTest<ObjectShape extends { [key:string]: unknown }> (
+	fromObject: (o: ObjectShape) => Node, 
+	toObject: (n: Node) => ObjectShape
+) {
+
+	return function test(testObject: ObjectShape, expectedXml: Node | string) {
+		const dom = typeof expectedXml === 'string' ? create(expectedXml) : expectedXml; 
+		const ob1 = toObject(dom); 
+		const convertedToDomAgain = fromObject(ob1);
+		if (typeof expectedXml !== 'string') { 
+			expectedXml.parentElement?.insertBefore(convertedToDomAgain, expectedXml);
+			expectedXml.parentElement?.removeChild(expectedXml);
+		}
+		const ob2 = toObject(convertedToDomAgain); 
+		
+		for (const prop in testObject) { 
+			localAssert(prop, ob1, testObject, ob2)
+		}
+	}
+
 }

@@ -1,4 +1,4 @@
-import * as path from 'std/path'; 
+import * as path from 'std/path';
 
 import { ContentTypesXml } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
@@ -14,7 +14,7 @@ import { RelationshipsXml } from './RelationshipsXml.ts';
 type Comment = {
 	id: number;
 	author: string;
-	initials: string;
+	initials?: string | null;
 	date: Date;
 	contents: Paragraph[] | Promise<Paragraph[]>;
 };
@@ -37,7 +37,7 @@ export class CommentsXml extends XmlFileWithContentTypes {
 							return element ${QNS.w}comment {
 								attribute ${QNS.w}id { $comment('id') },
 								attribute ${QNS.w}author { $comment('author') },
-								attribute ${QNS.w}initials { $comment('initials') },
+								if (exists($comment('initials'))) then attribute ${QNS.w}initials { $comment('initials') } else (),
 								attribute ${QNS.w}date { $comment('date') },
 								$comment('contents')
 							}
@@ -50,12 +50,14 @@ export class CommentsXml extends XmlFileWithContentTypes {
 						...comment,
 						date: comment.date.toISOString(),
 						contents: await Promise.all(
-							(await comment.contents).map((paragraph) => paragraph.toNode([])),
+							(
+								await comment.contents
+							).map((paragraph) => paragraph.toNode([]))
 						),
-					})),
+					}))
 				),
 			},
-			true,
+			true
 		);
 	}
 
@@ -64,7 +66,10 @@ export class CommentsXml extends XmlFileWithContentTypes {
 	 * identifier from the document using the {@link Comment}, {@link CommentRangeStart} and
 	 * {@link CommentRangeEnd} components.
 	 */
-	public add(meta: Omit<Comment, 'id' | 'contents'>, contents: Comment['contents']) {
+	public add(
+		meta: Omit<Comment, 'id' | 'contents'>,
+		contents: Comment['contents']
+	) {
 		const id = this.#comments.getNextAvailableKey();
 		this.#comments.set(id, {
 			id,
@@ -87,13 +92,19 @@ export class CommentsXml extends XmlFileWithContentTypes {
 	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
-		location: string,
+		location: string
 	): Promise<CommentsXml> {
 		const dom = await archive.readXml(location);
 
-		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
+		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(
+			location
+		)}.rels`;
 		const relationships = archive.hasFile(relsLocation)
-			? await RelationshipsXml.fromArchive(archive, contentTypes, relsLocation)
+			? await RelationshipsXml.fromArchive(
+					archive,
+					contentTypes,
+					relsLocation
+			  )
 			: null;
 
 		const inst = new this(location);
@@ -108,7 +119,7 @@ export class CommentsXml extends XmlFileWithContentTypes {
 					"contents": array { ./${QNS.w}p }
 				}}
 			`,
-			dom,
+			dom
 		).forEach(({ contents, date, ...rest }) =>
 			inst.add(
 				{
@@ -119,11 +130,18 @@ export class CommentsXml extends XmlFileWithContentTypes {
 					Paragraph.fromNode(node, {
 						archive,
 						relationships,
-					}),
-				),
-			),
+					})
+				)
+			)
 		);
 
 		return inst;
+	}
+
+	/**
+	 * @deprecated FOR TEST PURPOSES ONLY
+	 */
+	public override $$$toNode() {
+		return this.toNode();
 	}
 }

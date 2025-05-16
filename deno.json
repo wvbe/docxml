@@ -1,6 +1,6 @@
 {
 	"name": "@fontoxml/docxml",
-	"version": "5.15.4",
+	"version": "5.15.5",
 	"exports": "./mod.ts",
 	"compilerOptions": {
 		"strict": true,

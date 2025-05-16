@@ -1,27 +1,38 @@
 import * as path from 'std/path';
 
-import { ContentTypesXml } from '../../mod.ts';
-import { Archive } from '../classes/Archive.ts';
-import { ComponentContext } from '../classes/Component.ts';
+import type { ContentTypesXml } from '../../mod.ts';
+import type { Archive } from '../classes/Archive.ts';
+import type { ComponentContext } from '../classes/Component.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
-import { Paragraph } from '../components/Paragraph.ts';
-import { type SectionChild, Section, sectionChildComponentNames } from '../components/Section.ts';
-import { Table } from '../components/Table.ts';
+import type { Paragraph } from '../components/Paragraph.ts';
+import {
+	type SectionChild,
+	Section,
+	sectionChildComponentNames,
+} from '../components/Section.ts';
+import type { Table } from '../components/Table.ts';
 import { FileLocation, FileMime, RelationshipType } from '../enums.ts';
 import { createChildComponentsFromNodes } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import { CommentsXml } from './CommentsXml.ts';
-import { type HeaderFooterRoot, FooterXml, HeaderXml } from './HeaderFooterXml.ts';
+import {
+	type HeaderFooterRoot,
+	FooterXml,
+	HeaderXml,
+} from './HeaderFooterXml.ts';
 import { NumberingXml } from './NumberingXml.ts';
-import { File, RelationshipsXml } from './RelationshipsXml.ts';
+import { type File, RelationshipsXml } from './RelationshipsXml.ts';
 import { SettingsXml } from './SettingsXml.ts';
 import { StylesXml } from './StylesXml.ts';
 
 export type DocumentChild = SectionChild | Section;
 
-export type DocumentRoot = DocumentChild | DocumentChild[] | Promise<DocumentChild[]>;
+export type DocumentRoot =
+	| DocumentChild
+	| DocumentChild[]
+	| Promise<DocumentChild[]>;
 
 export class DocumentXml extends XmlFileWithContentTypes {
 	public static override contentType = FileMime.mainDocument;
@@ -31,9 +42,9 @@ export class DocumentXml extends XmlFileWithContentTypes {
 
 	public constructor(
 		location: string,
-		relationships = new RelationshipsXml(
-			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
-		),
+		relationships: RelationshipsXml = new RelationshipsXml(
+			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`
+		)
 	) {
 		super(location);
 		this.relationships = relationships;
@@ -49,7 +60,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 		if (!this.#styles) {
 			this.#styles = this.relationships.ensureRelationship(
 				RelationshipType.styles,
-				() => new StylesXml(FileLocation.styles),
+				() => new StylesXml(FileLocation.styles)
 			);
 		}
 		return this.#styles;
@@ -65,7 +76,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 		if (!this.#settings) {
 			this.#settings = this.relationships.ensureRelationship(
 				RelationshipType.settings,
-				() => new SettingsXml(FileLocation.settings),
+				() => new SettingsXml(FileLocation.settings)
 			);
 		}
 		return this.#settings;
@@ -80,7 +91,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 		if (!this.#comments) {
 			this.#comments = this.relationships.ensureRelationship(
 				RelationshipType.comments,
-				() => new CommentsXml(FileLocation.comments),
+				() => new CommentsXml(FileLocation.comments)
 			);
 		}
 		return this.#comments;
@@ -95,7 +106,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 		if (!this.#numbering) {
 			this.#numbering = this.relationships.ensureRelationship(
 				RelationshipType.numbering,
-				() => new NumberingXml(FileLocation.numbering),
+				() => new NumberingXml(FileLocation.numbering)
 			);
 		}
 		return this.#numbering;
@@ -113,15 +124,21 @@ export class DocumentXml extends XmlFileWithContentTypes {
 			.then((roots) =>
 				roots.reduce<Promise<DocumentChild[]>>(async function flatten(
 					flatPromise,
-					childPromise,
+					childPromise
 				): Promise<DocumentChild[]> {
 					const child = await childPromise;
 					const flat = await flatPromise;
 					return Array.isArray(child)
-						? [...flat, ...(await child.reduce(flatten, Promise.resolve([])))]
+						? [
+								...flat,
+								...(await child.reduce(
+									flatten,
+									Promise.resolve([])
+								)),
+						  ]
 						: [...flat, child];
 				},
-				Promise.resolve([])),
+				Promise.resolve([]))
 			);
 	}
 
@@ -136,9 +153,11 @@ export class DocumentXml extends XmlFileWithContentTypes {
 				</w:document>
 			`,
 			{
-				children: await Promise.all(children.map((child) => child.toNode([this]))),
+				children: await Promise.all(
+					children.map((child) => child.toNode([this]))
+				),
 			},
-			true,
+			true
 		);
 	}
 
@@ -161,17 +180,23 @@ export class DocumentXml extends XmlFileWithContentTypes {
 		/**
 		 * Creates a new header instance and returns the relationship identifier.
 		 */
-		add: (location: string, root: HeaderFooterRoot) => {
+		add: (location: string, root: HeaderFooterRoot): string => {
 			const inst = new HeaderXml(
 				location,
-				new RelationshipsXml(`${path.dirname(location)}/_rels/${path.basename(location)}.rels`),
+				new RelationshipsXml(
+					`${path.dirname(location)}/_rels/${path.basename(
+						location
+					)}.rels`
+				)
 			);
 			inst.set(root);
 			return this.relationships.add(RelationshipType.header, inst);
 		},
-		map: <Out>(cb: (header: HeaderXml) => Out) => {
+		map: <Out>(cb: (header: HeaderXml) => Out): Out[] => {
 			return this.relationships
-				.filterInstances((meta) => meta.type === RelationshipType.header)
+				.filterInstances(
+					(meta) => meta.type === RelationshipType.header
+				)
 				.map((file) => cb(file as HeaderXml));
 		},
 	};
@@ -180,17 +205,23 @@ export class DocumentXml extends XmlFileWithContentTypes {
 		/**
 		 * Creates a new footer instance and returns the relationship identifier.
 		 */
-		add: (location: string, root: HeaderFooterRoot) => {
+		add: (location: string, root: HeaderFooterRoot): string => {
 			const inst = new FooterXml(
 				location,
-				new RelationshipsXml(`${path.dirname(location)}/_rels/${path.basename(location)}.rels`),
+				new RelationshipsXml(
+					`${path.dirname(location)}/_rels/${path.basename(
+						location
+					)}.rels`
+				)
 			);
 			inst.set(root);
 			return this.relationships.add(RelationshipType.footer, inst);
 		},
-		map: <Out>(cb: (footer: FooterXml) => Out) => {
+		map: <Out>(cb: (footer: FooterXml) => Out): Out[] => {
 			return this.relationships
-				.filterInstances((meta) => meta.type === RelationshipType.footer)
+				.filterInstances(
+					(meta) => meta.type === RelationshipType.footer
+				)
 				.map((file) => cb(file as FooterXml));
 		},
 	};
@@ -201,18 +232,18 @@ export class DocumentXml extends XmlFileWithContentTypes {
 	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
-		location: string,
+		location: string
 	): Promise<DocumentXml> {
 		const relationships = await RelationshipsXml.fromArchive(
 			archive,
 			contentTypes,
-			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
+			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`
 		);
 		const doc = new DocumentXml(location, relationships);
 		const dom = await archive.readXml(location);
 		const sections = evaluateXPathToNodes(
 			`/*/${QNS.w}body/(${QNS.w}p/${QNS.w}pPr/${QNS.w}sectPr | ${QNS.w}sectPr)`,
-			dom,
+			dom
 		);
 		const context: ComponentContext = {
 			archive,
@@ -224,8 +255,8 @@ export class DocumentXml extends XmlFileWithContentTypes {
 				: createChildComponentsFromNodes<Table | Paragraph>(
 						sectionChildComponentNames,
 						evaluateXPathToNodes(`/*/${QNS.w}body/*`, dom),
-						context,
-				  ),
+						context
+				  )
 		);
 		return doc;
 	}

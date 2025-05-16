@@ -1,6 +1,6 @@
-import {
-	type AnyComponent,
-	type ComponentDefinition,
+import type {
+	AnyComponent,
+	ComponentDefinition,
 	ComponentContext,
 } from '../classes/Component.ts';
 

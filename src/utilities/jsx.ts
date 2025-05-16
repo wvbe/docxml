@@ -1,9 +1,9 @@
 import {
 	Component,
-	ComponentChild,
-	ComponentDefinition,
-	ComponentFunction,
-	ComponentProps,
+	type ComponentChild,
+	type ComponentDefinition,
+	type ComponentFunction,
+	type ComponentProps,
 	isComponentDefinition,
 } from '../classes/Component.ts';
 import { Text } from '../components/Text.ts';

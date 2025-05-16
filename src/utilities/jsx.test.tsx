@@ -1,8 +1,8 @@
 /** @jsx jsx */
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { describe, it } from 'std/testing/bdd';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// deno-lint-ignore verbatim-module-syntax
 import { jsx, Text } from '../../mod.ts';
 import { Component } from '../classes/Component.ts';
 
@@ -33,8 +33,10 @@ describe('JSX fixing', () => {
 						a<Bar>b</Bar>c
 					</Bar>
 				</Foo>
-			),
-		).toEqual([new Foo({}, new Bar({}, 'a'), new Bar({}, 'b'), new Bar({}, 'c'))]);
+			)
+		).toEqual([
+			new Foo({}, new Bar({}, 'a'), new Bar({}, 'b'), new Bar({}, 'c')),
+		]);
 	});
 
 	it('splits invalid node nesting II', async () => {
@@ -43,7 +45,7 @@ describe('JSX fixing', () => {
 				<Bar>
 					a<Bar>b</Bar>c
 				</Bar>
-			),
+			)
 		).toEqual([new Bar({}, 'a'), new Bar({}, 'b'), new Bar({}, 'c')]);
 	});
 
@@ -53,9 +55,11 @@ describe('JSX fixing', () => {
 				<Foo>
 					<Text>bar</Text>
 				</Foo>
-			),
+			)
 		);
-		expect(await (<Foo>bar</Foo>)).toEqual([new Foo({}, new Text({}, 'bar'))]);
+		expect(await (<Foo>bar</Foo>)).toEqual([
+			new Foo({}, new Text({}, 'bar')),
+		]);
 	});
 
 	it('cleans up empty <Text>', async () => {
@@ -65,7 +69,7 @@ describe('JSX fixing', () => {
 					<Text>bar</Text>
 					<Text />
 				</Text>
-			),
+			)
 		).toEqual(await (<Text>bar</Text>));
 	});
 
@@ -87,7 +91,7 @@ describe('JSX fixing', () => {
 						baap
 					</Text>
 				</Foo>
-			),
+			)
 		).toEqual(
 			await (
 				<Foo>
@@ -102,7 +106,7 @@ describe('JSX fixing', () => {
 						baap
 					</Text>
 				</Foo>
-			),
+			)
 		);
 	});
 });

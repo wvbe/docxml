@@ -7,9 +7,9 @@ import { expect} from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
 import { Archive } from '../classes/Archive.ts';
-import { XmlFile } from '../classes/XmlFile.ts';
-import { Docx } from '../Docx.ts';
-import { FileLocation, RelationshipType } from '../enums.ts';
+import type { XmlFile } from '../classes/XmlFile.ts';
+import type { Docx } from '../Docx.ts';
+import { FileLocation, type RelationshipType } from '../enums.ts';
 import { ContentTypesXml } from '../files/ContentTypesXml.ts';
 import { castRelationshipToClass } from '../files/index.ts';
 import { create } from './dom.ts';

@@ -1,7 +1,7 @@
-import { ContentTypesXml } from '../../mod.ts';
-import { FileMime } from '../enums.ts';
-import { type File } from '../files/RelationshipsXml.ts';
-import { Archive } from './Archive.ts';
+import type { ContentTypesXml } from '../../mod.ts';
+import type { FileMime } from '../enums.ts';
+import type { File } from '../files/RelationshipsXml.ts';
+import type { Archive } from './Archive.ts';
 
 type BinaryFileReader = () => Promise<Uint8Array>;
 
@@ -15,7 +15,11 @@ export class BinaryFile {
 
 	readonly #reader: BinaryFileReader;
 
-	protected constructor(location: string, reader: BinaryFileReader, mime: FileMime) {
+	protected constructor(
+		location: string,
+		reader: BinaryFileReader,
+		mime: FileMime
+	) {
 		this.location = location;
 		this.mime = mime;
 		this.#reader = reader;
@@ -38,33 +42,45 @@ export class BinaryFile {
 	/**
 	 * Let a file tell the system when it is effectively empty, so it can be omitted from the archive.
 	 */
-	public isEmpty() {
+	public isEmpty(): boolean {
 		return false;
 	}
 
 	public static fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
-		location: string,
+		location: string
 	): BinaryFile {
 		const mime = contentTypes.getType(location);
 		if (mime === undefined) {
 			throw new Error(
-				'Error creating BinaryFile from Archive. No matching content type found in ContentTypesXml',
+				'Error creating BinaryFile from Archive. No matching content type found in ContentTypesXml'
 			);
 		}
 
-		return new BinaryFile(location, () => archive.readBinary(location), mime);
+		return new BinaryFile(
+			location,
+			() => archive.readBinary(location),
+			mime
+		);
 	}
 
-	public static fromDisk(diskLocation: string, location: string, mime: FileMime): BinaryFile {
-		return new BinaryFile(location, () => Deno.readFile(diskLocation), mime);
+	public static fromDisk(
+		diskLocation: string,
+		location: string,
+		mime: FileMime
+	): BinaryFile {
+		return new BinaryFile(
+			location,
+			() => Deno.readFile(diskLocation),
+			mime
+		);
 	}
 
 	public static fromData(
 		data: Uint8Array | Promise<Uint8Array>,
 		location: string,
-		mime: FileMime,
+		mime: FileMime
 	): BinaryFile {
 		return new BinaryFile(location, () => Promise.resolve(data), mime);
 	}

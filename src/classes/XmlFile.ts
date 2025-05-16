@@ -1,8 +1,8 @@
 import { FileMime } from '../enums.ts';
-import { ContentTypesXml } from '../files/ContentTypesXml.ts';
+import type { ContentTypesXml } from '../files/ContentTypesXml.ts';
 import { parse } from '../utilities/dom.ts';
-import { type Archive } from './Archive.ts';
-import { type BinaryFile } from './BinaryFile.ts';
+import type { Archive } from './Archive.ts';
+import type { BinaryFile } from './BinaryFile.ts';
 
 abstract class XmlFileBase {
 	public static readonly contentType: FileMime = FileMime.xml;
@@ -28,7 +28,7 @@ abstract class XmlFileBase {
 	/**
 	 * @deprecated FOR TEST PURPOSES ONLY
 	 */
-	public $$$toNode() {
+	public $$$toNode(): Document | Promise<Document> {
 		return this.toNode();
 	}
 
@@ -45,7 +45,7 @@ abstract class XmlFileBase {
 	/**
 	 * Let a file tell the system when it is effectively empty, so it can be omitted from the archive.
 	 */
-	public isEmpty() {
+	public isEmpty(): boolean {
 		return false;
 	}
 
@@ -56,11 +56,14 @@ abstract class XmlFileBase {
 		await Promise.all(
 			this.getRelated().map(async (related) => {
 				if (related instanceof XmlFileBase) {
-					archive.addXmlFile(related.location, await related.toNode());
+					archive.addXmlFile(
+						related.location,
+						await related.toNode()
+					);
 				} else {
 					related.addToArchive(archive);
 				}
-			}),
+			})
 		);
 	}
 }
@@ -69,7 +72,10 @@ export class XmlFile extends XmlFileBase {
 	/**
 	 * Promise a new JS instance of this file based on the given archive.
 	 */
-	public static fromArchive(_archive: Archive, location: string): Promise<XmlFile> {
+	public static fromArchive(
+		_archive: Archive,
+		location: string
+	): Promise<XmlFile> {
 		return Promise.resolve(new XmlFile(location));
 	}
 }
@@ -86,7 +92,10 @@ export class UnhandledXmlFile extends XmlFile {
 		return parse(this.#xml);
 	}
 
-	public static override async fromArchive(archive: Archive, location: string) {
+	public static override async fromArchive(
+		archive: Archive,
+		location: string
+	) {
 		return new UnhandledXmlFile(location, await archive.readText(location));
 	}
 }
@@ -95,7 +104,7 @@ export class XmlFileWithContentTypes extends XmlFileBase {
 	public static fromArchive(
 		_archive: Archive,
 		_contentTypes: ContentTypesXml,
-		location: string,
+		location: string
 	): Promise<XmlFile> {
 		return Promise.resolve(new XmlFile(location));
 	}

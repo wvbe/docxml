@@ -1,12 +1,14 @@
 {
-	"version": "2.1.12",
+	"name": "@fontoxml/docxml",
+	"version": "5.15.4",
+	"exports": "./mod.ts",
 	"compilerOptions": {
-		"strict": true, 
-		"lib": ["deno.ns", "dom", "dom.iterable"], 
-		"useUnknownInCatchVariables": true, 
+		"strict": true,
+		"lib": ["deno.ns", "dom", "dom.iterable"],
+		"useUnknownInCatchVariables": true,
 		"noImplicitAny": true
 	},
-	"importMap": "imports.json", 
+	"importMap": "imports.json",
 	"tasks": {
 		"test": "deno test -A src",
 		"test:coverage": "TMP=$(mktemp -d) && deno task test --coverage=$TMP && deno coverage --exclude='utils/xml-validation/fontoxml' $TMP --lcov > $TMP/lcov.lcov && genhtml -o coverage $TMP/lcov.lcov",

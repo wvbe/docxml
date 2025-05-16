@@ -1,12 +1,14 @@
 {
-    "imports" : { 
-        "jszip": "https://deno.land/x/jszip@0.11.0/mod.ts",
-        "slimdom": "npm:slimdom@4.3.5",
-        "std/expect": "jsr:@std/expect@1.0.15", 
-        "std/fmt/colors": "jsr:@std/fmt@1.0.7/colors",
-        "std/path": "jsr:@std/path@1.0.9",
-        "std/testing/bdd": "jsr:@std/testing@1.0.9/bdd",
-        "std/fmt": "jsr:@std/fmt@1.0.7",
-        "xml_renderer": "https://deno.land/x/xml_renderer@6.0.1/mod.ts"
-    }
+	"imports": {
+		"slimdom": "npm:slimdom@4.3.5",
+		"fontoxpath": "npm:fontoxpath@3.33.0",
+		"std/expect": "jsr:@std/expect@1.0.15",
+		"std/fmt/colors": "jsr:@std/fmt@1.0.7/colors",
+		"std/path": "jsr:@std/path@1.0.9",
+		"std/testing/bdd": "jsr:@std/testing@1.0.9/bdd",
+		"std/fmt": "jsr:@std/fmt@1.0.7",
+
+		"jszip": "./vendor/jszip/mod.ts",
+		"xml_renderer": "./vendor/xml_renderer/mod.ts"
+	}
 }

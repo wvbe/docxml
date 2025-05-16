@@ -1,4 +1,4 @@
-import { Archive } from '../classes/Archive.ts';
+import type { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
@@ -36,7 +36,9 @@ export class ContentTypesXml extends XmlFile {
 	 * Add a default content type association for a file extension.
 	 */
 	public addDefault(extension: string, contentType: FileMime): void {
-		const exists = this.#defaults.findIndex((item) => item.extension === extension);
+		const exists = this.#defaults.findIndex(
+			(item) => item.extension === extension
+		);
 		if (exists >= 0) {
 			this.#defaults.splice(exists, 1);
 		}
@@ -48,7 +50,9 @@ export class ContentTypesXml extends XmlFile {
 	 * an existing content type register.
 	 */
 	public addDefaults(defaults: Array<ContentTypeDefault>): void {
-		defaults.forEach(({ extension, contentType }) => this.addDefault(extension, contentType));
+		defaults.forEach(({ extension, contentType }) =>
+			this.addDefault(extension, contentType)
+		);
 	}
 
 	public get defaults(): Array<ContentTypeDefault> {
@@ -56,7 +60,9 @@ export class ContentTypesXml extends XmlFile {
 	}
 
 	public addOverride(partName: string, contentType: FileMime) {
-		const exists = this.#overrides.findIndex((item) => item.partName === partName);
+		const exists = this.#overrides.findIndex(
+			(item) => item.partName === partName
+		);
 		if (exists >= 0) {
 			this.#overrides.splice(exists, 1);
 		}
@@ -64,12 +70,16 @@ export class ContentTypesXml extends XmlFile {
 	}
 
 	public getType(location: string): FileMime | undefined {
-		const indexInOverides = this.#overrides.findIndex((item) => item.partName === location);
+		const indexInOverides = this.#overrides.findIndex(
+			(item) => item.partName === location
+		);
 		if (indexInOverides >= 0) {
 			return this.#overrides[indexInOverides].contentType;
 		}
 
-		const indexInDefaults = this.#defaults.findIndex((item) => location.endsWith(item.extension));
+		const indexInDefaults = this.#defaults.findIndex((item) =>
+			location.endsWith(item.extension)
+		);
 		if (indexInDefaults >= 0) {
 			return this.#defaults[indexInDefaults].contentType;
 		}
@@ -95,14 +105,17 @@ export class ContentTypesXml extends XmlFile {
 				defaults: this.#defaults,
 				overrides: this.#overrides,
 			},
-			true,
+			true
 		);
 	}
 
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static override async fromArchive(archive: Archive, location: string) {
+	public static override async fromArchive(
+		archive: Archive,
+		location: string
+	): Promise<ContentTypesXml> {
 		const dom = await archive.readXml(location);
 		const instance = new ContentTypesXml(location);
 
@@ -113,14 +126,14 @@ export class ContentTypesXml extends XmlFile {
 					"contentType": string(@ContentType)
 				}}
 			`,
-			dom,
+			dom
 		).forEach(({ partName, contentType }: ContentTypeOverride) =>
 			instance.addOverride(
 				// In JS, all file names are relative paths (from the DOCX root). In DOCX, all file names
 				// are stored with a preceding "/".
 				partName.startsWith('/') ? partName.substring(1) : partName,
-				contentType,
-			),
+				contentType
+			)
 		);
 
 		evaluateXPathToArray(
@@ -130,8 +143,10 @@ export class ContentTypesXml extends XmlFile {
 					"contentType": string(@ContentType)
 				}}
 			`,
-			dom,
-		).forEach(({ extension, contentType }) => instance.addDefault(extension, contentType));
+			dom
+		).forEach(({ extension, contentType }) =>
+			instance.addDefault(extension, contentType)
+		);
 
 		return instance;
 	}

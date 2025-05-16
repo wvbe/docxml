@@ -1,25 +1,35 @@
 // Import without assignment ensures Deno does not tree-shake this component. To avoid circular
 // definitions, components register themselves in a side-effect of their module.
+import {
+	checkForForbiddenParameters,
+	isValidNumber,
+} from '../utilities/parameter-checking.ts';
 import './Row.ts';
 import './RowAddition.ts';
 import './RowDeletion.ts';
-import { checkForForbiddenParameters, isValidNumber } from '../utilities/parameter-checking.ts';
 
-import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
+import {
+	Component,
+	type ComponentAncestor,
+	type ComponentContext,
+} from '../classes/Component.ts';
 import {
 	type TableProperties,
 	tablePropertiesFromNode,
 	tablePropertiesToNode,
 } from '../properties/table-properties.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { type Length, twip } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { TableGridModel } from '../utilities/tables.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { type Row } from './Row.ts';
-import { type RowAddition } from './RowAddition.ts';
-import { type RowDeletion } from './RowDeletion.ts';
+import type { Row } from './Row.ts';
+import type { RowAddition } from './RowAddition.ts';
+import type { RowDeletion } from './RowDeletion.ts';
 
 /**
  * A type describing the components accepted as children of {@link Table}.
@@ -37,7 +47,11 @@ export type TableProps = TableProperties & {
  * A component that represents a table.
  */
 export class Table extends Component<TableProps, TableChild> {
-	public static override readonly children: string[] = ['Row', 'RowAddition', 'RowDeletion'];
+	public static override readonly children: string[] = [
+		'Row',
+		'RowAddition',
+		'RowDeletion',
+	];
 	public static override readonly mixed: boolean = false;
 
 	/**
@@ -46,7 +60,7 @@ export class Table extends Component<TableProps, TableChild> {
 	 * Exposed so it can be accessed by {@link Row} and {@link Cell} descendants, but not meant
 	 * to be used otherwise.
 	 */
-	public readonly model = new TableGridModel(this);
+	public readonly model: TableGridModel = new TableGridModel(this);
 
 	public constructor(tableProps: TableProps, ...tableChildren: TableChild[]) {
 		checkForForbiddenParameters(tableProps, isValidNumber, true);
@@ -72,10 +86,12 @@ export class Table extends Component<TableProps, TableChild> {
 			{
 				tablePropertiesNode: tablePropertiesToNode(this.props),
 				columnWidths: this.props.columnWidths?.length
-					? this.props.columnWidths.map((width) => Math.round(width.twip))
+					? this.props.columnWidths.map((width) =>
+							Math.round(width.twip)
+					  )
 					: null,
 				children: await this.childrenToNode(ancestry),
-			},
+			}
 		);
 		return node;
 	}
@@ -105,14 +121,20 @@ export class Table extends Component<TableProps, TableChild> {
 					"children": array{ ./(${QNS.w}tr) }
 				}
 			`,
-			node,
+			node
 		);
 		return new Table(
 			{
-				columnWidths: props.columnWidths.map((size: number) => twip(size)),
+				columnWidths: props.columnWidths.map((size: number) =>
+					twip(size)
+				),
 				...tablePropertiesFromNode(tblpr),
 			},
-			...createChildComponentsFromNodes<TableChild>(this.children, children, context),
+			...createChildComponentsFromNodes<TableChild>(
+				this.children,
+				children,
+				context
+			)
 		);
 	}
 }

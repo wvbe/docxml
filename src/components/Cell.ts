@@ -1,15 +1,25 @@
-import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
+import {
+	Component,
+	type ComponentAncestor,
+	type ComponentContext,
+} from '../classes/Component.ts';
 import {
 	type TableCellProperties,
 	tableCellPropertiesToNode,
 } from '../properties/table-cell-properties.ts';
-import { checkForForbiddenParameters, isValidNumber } from '../utilities/parameter-checking.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
+import {
+	checkForForbiddenParameters,
+	isValidNumber,
+} from '../utilities/parameter-checking.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
-import { BookmarkRangeStart } from './BookmarkRangeStart.ts';
+import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
+import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import { Paragraph } from './Paragraph.ts';
 import { Row } from './Row.ts';
 import { Table } from './Table.ts';
@@ -17,7 +27,11 @@ import { Table } from './Table.ts';
 /**
  * A type describing the components accepted as children of {@link Cell}.
  */
-export type CellChild = Paragraph | Table | BookmarkRangeStart | BookmarkRangeEnd;
+export type CellChild =
+	| Paragraph
+	| Table
+	| BookmarkRangeStart
+	| BookmarkRangeEnd;
 
 /**
  * A type describing the props accepted by {@link Cell}.
@@ -49,9 +63,13 @@ export class Cell extends Component<CellProps, CellChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
-		const table = ancestry.find((ancestor): ancestor is Table => ancestor instanceof Table);
+		const table = ancestry.find(
+			(ancestor): ancestor is Table => ancestor instanceof Table
+		);
 		if (!table) {
-			throw new Error('A cell cannot be rendered outside the context of a table');
+			throw new Error(
+				'A cell cannot be rendered outside the context of a table'
+			);
 		}
 
 		const children = (await this.childrenToNode(ancestry)) as Node[];
@@ -71,21 +89,32 @@ export class Cell extends Component<CellProps, CellChild> {
 					{
 						colSpan: this.getColSpan(),
 						rowSpan: this.getRowSpan(),
-						width: table.props.columnWidths?.[table.model.getCellInfo(this).column] || null,
+						width:
+							table.props.columnWidths?.[
+								table.model.getCellInfo(this).column
+							] || null,
 						...this.props,
 					},
-					false,
+					false
 				),
 				children,
-			},
+			}
 		);
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toRepeatingNode(ancestry: ComponentAncestor[], column: number, _row: number): Node | null {
-		const table = ancestry.find((ancestor): ancestor is Table => ancestor instanceof Table);
+	public toRepeatingNode(
+		ancestry: ComponentAncestor[],
+		column: number,
+		_row: number
+	): Node | null {
+		const table = ancestry.find(
+			(ancestor): ancestor is Table => ancestor instanceof Table
+		);
 		if (!table) {
-			throw new Error('A cell cannot be rendered outside the context of a table');
+			throw new Error(
+				'A cell cannot be rendered outside the context of a table'
+			);
 		}
 
 		const info = table.model.getCellInfo(this);
@@ -107,9 +136,9 @@ export class Cell extends Component<CellProps, CellChild> {
 						rowSpan: this.getRowSpan(),
 						...this.props,
 					},
-					true,
+					true
 				),
-			},
+			}
 		);
 	}
 
@@ -118,13 +147,21 @@ export class Cell extends Component<CellProps, CellChild> {
 	 * spanning neighbour overlaps it.
 	 */
 	public isMergedAway(ancestry: ComponentAncestor[]): boolean {
-		const row = ancestry.find((ancestor): ancestor is Row => ancestor instanceof Row);
+		const row = ancestry.find(
+			(ancestor): ancestor is Row => ancestor instanceof Row
+		);
 		if (!row) {
-			throw new Error('A cell cannot be rendered outside the context of a row');
+			throw new Error(
+				'A cell cannot be rendered outside the context of a row'
+			);
 		}
-		const table = ancestry.find((ancestor): ancestor is Table => ancestor instanceof Table);
+		const table = ancestry.find(
+			(ancestor): ancestor is Table => ancestor instanceof Table
+		);
 		if (!table) {
-			throw new Error('A cell cannot be rendered outside the context of a table');
+			throw new Error(
+				'A cell cannot be rendered outside the context of a table'
+			);
 		}
 		const x = row.children.indexOf(this);
 		const y = table.children.indexOf(row);
@@ -136,11 +173,11 @@ export class Cell extends Component<CellProps, CellChild> {
 		return info.column !== x || info.row !== y;
 	}
 
-	public getColSpan() {
+	public getColSpan(): number {
 		return this.props.colSpan || 1;
 	}
 
-	public getRowSpan() {
+	public getRowSpan(): number {
 		return this.props.rowSpan || 1;
 	}
 
@@ -154,7 +191,10 @@ export class Cell extends Component<CellProps, CellChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): null | Cell {
+	static override fromNode(
+		node: Node,
+		context: ComponentContext
+	): null | Cell {
 		const { mergedAway, children, ...props } = evaluateXPathToMap<
 			CellProps & { mergedAway: boolean; children: Node[] }
 		>(
@@ -188,14 +228,18 @@ export class Cell extends Component<CellProps, CellChild> {
 					"verticalAlignment": ./${QNS.w}tcPr/${QNS.w}vAlign/@${QNS.w}val/string()
 				}
 			`,
-			node,
+			node
 		);
 		if (mergedAway) {
 			return null;
 		}
 		return new Cell(
 			props,
-			...createChildComponentsFromNodes<CellChild>(this.children, children, context),
+			...createChildComponentsFromNodes<CellChild>(
+				this.children,
+				children,
+				context
+			)
 		);
 	}
 }

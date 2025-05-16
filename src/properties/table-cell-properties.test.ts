@@ -6,7 +6,7 @@ import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { createXmlRoundRobinTest } from '../utilities/tests.ts';
 import { evaluateXPathToFirstNode } from '../utilities/xquery.ts';
 import {
-	TableCellProperties,
+	type TableCellProperties,
 	tableCellPropertiesFromNode,
 	tableCellPropertiesToNode,
 } from './table-cell-properties.ts';

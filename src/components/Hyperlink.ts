@@ -1,15 +1,15 @@
 import './Text.ts';
 
-import { Bookmark } from '../classes/Bookmarks.ts';
-import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
+import type { Bookmark } from '../classes/Bookmarks.ts';
+import { type ComponentAncestor, Component, type ComponentContext } from '../classes/Component.ts';
 import { RelationshipType } from '../enums.ts';
-import { type RelationshipsXml } from '../files/RelationshipsXml.ts';
+import type { RelationshipsXml } from '../files/RelationshipsXml.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { type Field } from './Field.ts';
-import { type Text } from './Text.ts';
+import type { Field } from './Field.ts';
+import type { Text } from './Text.ts';
 
 /**
  * A type describing the components accepted as children of {@link Hyperlink}.

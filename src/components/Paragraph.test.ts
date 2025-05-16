@@ -2,7 +2,7 @@ import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd'; 
 
 import { Archive } from '../classes/Archive.ts';
-import { ComponentContext } from '../classes/Component.ts';
+import type { ComponentContext } from '../classes/Component.ts';
 import { create, serialize } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
 import { Paragraph } from './Paragraph.ts';

@@ -4,7 +4,7 @@ import { opt, pt } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { createXmlRoundRobinTest } from '../utilities/tests.ts';
 import {
-	TableConditionalProperties,
+	type TableConditionalProperties,
 	tableConditionalPropertiesFromNode,
 	tableConditionalPropertiesToNode,
 } from './table-conditional-properties.ts';

@@ -3,7 +3,7 @@ import { describe, it } from 'std/testing/bdd';
 
 import { Cell } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
-import { ComponentContext } from '../classes/Component.ts';
+import type { ComponentContext } from '../classes/Component.ts';
 import { create } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
 import { evaluateXPathToFirstNode } from '../utilities/xquery.ts';

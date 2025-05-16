@@ -1,4 +1,4 @@
-import { Archive } from '../../classes/Archive.ts';
+import type { Archive } from '../../classes/Archive.ts';
 import { XmlFile } from '../../classes/XmlFile.ts';
 import { FileMime } from '../../enums.ts';
 import { create } from '../../utilities/dom.ts';

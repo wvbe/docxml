@@ -1,5 +1,5 @@
-import { type Cell } from '../components/Cell.ts';
-import { type Table } from '../components/Table.ts';
+import type { Cell } from '../components/Cell.ts';
+import type { Table } from '../components/Table.ts';
 
 type CellCoordinate = `${number},${number}`;
 
@@ -45,7 +45,11 @@ export class TableGridModel {
 			row.children.forEach((cell) => {
 				const colIndex = this.#getFirstAvailableColumnOnRow(rowIndex);
 				for (let y = rowIndex; y < rowIndex + cell.getRowSpan(); y++) {
-					for (let x = colIndex; x < colIndex + cell.getColSpan(); x++) {
+					for (
+						let x = colIndex;
+						x < colIndex + cell.getColSpan();
+						x++
+					) {
 						const key = coord(x, y);
 						if (this.#occupancy.has(key)) {
 							// This should never happen so long as the colspans/rowspans make sense.
@@ -93,7 +97,7 @@ export class TableGridModel {
 	/**
 	 * Get the number of columns in a row, even if some cells span multiple columns.
 	 */
-	public getCellsInRow(row: number) {
+	public getCellsInRow(row: number): Cell[] {
 		// TODO could be simplified if we knew the table is rectangular
 		return (
 			Array.from(this.#occupancy.keys())

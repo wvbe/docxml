@@ -1,17 +1,20 @@
-import { Archive } from '../classes/Archive.ts';
+import type { Archive } from '../classes/Archive.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';
 import {
-	type ComponentAncestor,
-	type ComponentDefinition,
 	Component,
-	ComponentContext,
+	type ComponentAncestor,
+	type ComponentContext,
+	type ComponentDefinition,
 } from '../classes/Component.ts';
 import { FileMime, RelationshipType } from '../enums.ts';
-import { RelationshipsXml } from '../files/RelationshipsXml.ts';
+import type { RelationshipsXml } from '../files/RelationshipsXml.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { extensionListUris } from '../utilities/drawingml-extensions.ts';
-import { createRandomId, createUniqueNumericIdentifier } from '../utilities/identifiers.ts';
+import {
+	createRandomId,
+	createUniqueNumericIdentifier,
+} from '../utilities/identifiers.ts';
 import { type Length, emu } from '../utilities/length.ts';
 import { getMimeTypeForUint8Array } from '../utilities/mime-types.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
@@ -66,7 +69,19 @@ export class Image extends Component<ImageProps, ImageChild> {
 			};
 		};
 	};
-	get meta() {
+	get meta(): {
+		readonly location: string;
+		readonly mime: Promise<FileMime>;
+		readonly relationshipId: string | null;
+		readonly extensions: {
+			readonly svg:
+				| {
+						readonly location: string;
+						readonly relationshipId: string | null;
+				  }
+				| undefined;
+		};
+	} {
 		const embedMeta = this.#meta;
 		const props = this.props;
 
@@ -139,18 +154,24 @@ export class Image extends Component<ImageProps, ImageChild> {
 
 		this.#meta.relationshipId = relationships.add(
 			RelationshipType.image,
-			BinaryFile.fromData(this.props.data, location, await mime),
+			BinaryFile.fromData(this.props.data, location, await mime)
 		);
 
 		const { svg } = extensions;
-		if (this.#meta.extensions.svg && svg && this.props.dataExtensions?.svg) {
+		if (
+			this.#meta.extensions.svg &&
+			svg &&
+			this.props.dataExtensions?.svg
+		) {
 			this.#meta.extensions.svg.relationshipId = relationships.add(
 				RelationshipType.image,
 				BinaryFile.fromData(
-					new TextEncoder().encode(await this.props.dataExtensions.svg),
+					new TextEncoder().encode(
+						await this.props.dataExtensions.svg
+					),
 					svg.location,
-					FileMime.svg,
-				),
+					FileMime.svg
+				)
 			);
 		}
 	}
@@ -160,7 +181,9 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 */
 	public override toNode(_ancestry: ComponentAncestor[]): Node {
 		if (!this.#meta.relationshipId) {
-			throw new Error('Cannot serialize an image outside the context of an Document');
+			throw new Error(
+				'Cannot serialize an image outside the context of an Document'
+			);
 		}
 
 		let extensionList: Node | null = null;
@@ -187,7 +210,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 					relationshipId: svg.relationshipId,
 					extLstUseLocalDpi: extensionListUris.useLocalDpi,
 					extLstSvg: extensionListUris.svg,
-				},
+				}
 			);
 		}
 
@@ -263,7 +286,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 				name: this.props.title || '',
 				desc: this.props.alt || '',
 				extensionList,
-			},
+			}
 		);
 	}
 
@@ -277,31 +300,50 @@ export class Image extends Component<ImageProps, ImageChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, { archive, relationships }: ComponentContext): Image {
+	static override fromNode(
+		node: Node,
+		{ archive, relationships }: ComponentContext
+	): Image {
 		// Important nodes
 		const inlineNode = evaluateXPathToFirstNode(`./${QNS.wp}inline`, node);
 		const picNode = evaluateXPathToFirstNode(
 			`./${QNS.a}graphic/${QNS.a}graphicData/${QNS.pic}pic`,
-			inlineNode,
+			inlineNode
 		);
 
-		const title = evaluateXPathToString(`./${QNS.wp}docPr/@name/string()`, inlineNode);
+		const title = evaluateXPathToString(
+			`./${QNS.wp}docPr/@name/string()`,
+			inlineNode
+		);
 
-		const width = emu(evaluateXPathToNumber(`./${QNS.wp}extent/@cx/number()`, inlineNode));
-		const height = emu(evaluateXPathToNumber(`./${QNS.wp}extent/@cy/number()`, inlineNode));
+		const width = emu(
+			evaluateXPathToNumber(`./${QNS.wp}extent/@cx/number()`, inlineNode)
+		);
+		const height = emu(
+			evaluateXPathToNumber(`./${QNS.wp}extent/@cy/number()`, inlineNode)
+		);
 
 		if (relationships === null) {
 			// Our simplified images are always expected to reference a relationship ID
 			throw new Error(
-				'Failed to load image. The image is referencing a relationship ID but RelationhipsXml is null in the context.',
+				'Failed to load image. The image is referencing a relationship ID but RelationhipsXml is null in the context.'
 			);
 		}
 
-		const blipNode = evaluateXPathToFirstNode(`${QNS.pic}blipFill/${QNS.a}blip`, picNode);
+		const blipNode = evaluateXPathToFirstNode(
+			`${QNS.pic}blipFill/${QNS.a}blip`,
+			picNode
+		);
 		if (blipNode === null) {
-			throw new Error('Failed to load image. No blip found inside a blipFill.');
+			throw new Error(
+				'Failed to load image. No blip found inside a blipFill.'
+			);
 		}
-		const { main, svg } = extractDataFromBlipNode(archive, relationships, blipNode);
+		const { main, svg } = extractDataFromBlipNode(
+			archive,
+			relationships,
+			blipNode
+		);
 
 		const dataExtensions: DataExtensions = {};
 		if (svg) {
@@ -343,9 +385,12 @@ type ExtractedBlipNodeData = {
 function extractDataFromBlipNode(
 	archive: Archive,
 	relationships: RelationshipsXml,
-	blipNode: Node,
+	blipNode: Node
 ): ExtractedBlipNodeData {
-	const blipEmbedRel = evaluateXPathToString(`@${QNS.r}embed/string()`, blipNode);
+	const blipEmbedRel = evaluateXPathToString(
+		`@${QNS.r}embed/string()`,
+		blipNode
+	);
 	const location = relationships.getTarget(blipEmbedRel);
 	const data = archive.readBinary(location);
 
@@ -365,10 +410,13 @@ function extractDataFromBlipNode(
 		const extensionUri = element.getAttribute('uri');
 
 		if (extensionUri === extensionListUris.svg) {
-			const extensionRel = element.children[0].getAttributeNS(NamespaceUri.r, 'embed');
+			const extensionRel = element.children[0].getAttributeNS(
+				NamespaceUri.r,
+				'embed'
+			);
 			if (extensionRel === null) {
 				throw new Error(
-					'Failed to load image SVG extension. SVG extension URI found in extLst but its node does not follow the known format.',
+					'Failed to load image SVG extension. SVG extension URI found in extLst but its node does not follow the known format.'
 				);
 			}
 			const location = relationships.getTarget(extensionRel);

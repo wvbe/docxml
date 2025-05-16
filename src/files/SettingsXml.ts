@@ -1,14 +1,17 @@
-import * as path from 'std/path'; 
+import * as path from 'std/path';
 
-import { ContentTypesXml, Length } from '../../mod.ts';
-import { Archive } from '../classes/Archive.ts';
+import type { ContentTypesXml, Length } from '../../mod.ts';
+import type { Archive } from '../classes/Archive.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { FileMime, RelationshipType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToMap, evaluateXPathToNumber } from '../utilities/xquery.ts';
-import { File, RelationshipsXml } from './RelationshipsXml.ts';
+import {
+	evaluateXPathToMap,
+	evaluateXPathToNumber,
+} from '../utilities/xquery.ts';
+import { type File, RelationshipsXml } from './RelationshipsXml.ts';
 
 export type SettingsI = {
 	isTrackChangesEnabled: boolean;
@@ -88,10 +91,10 @@ export class SettingsXml extends XmlFileWithContentTypes {
 
 	public constructor(
 		location: string,
-		relationships = new RelationshipsXml(
-			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`,
+		relationships: RelationshipsXml = new RelationshipsXml(
+			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`
 		),
-		settings: Partial<SettingsI> = {},
+		settings: Partial<SettingsI> = {}
 	) {
 		super(location);
 		this.relationships = relationships;
@@ -101,14 +104,20 @@ export class SettingsXml extends XmlFileWithContentTypes {
 	/**
 	 * Set a setting.
 	 */
-	public set<Key extends keyof SettingsI>(key: Key, value: SettingsI[Key]): void {
+	public set<Key extends keyof SettingsI>(
+		key: Key,
+		value: SettingsI[Key]
+	): void {
 		const meta = settingsMeta.find((meta) => meta.docxmlName === key);
 		if (!meta) {
 			throw new Error(`Unsupported setting "${key}"`);
 		}
 		if (meta.ooxmlType === SettingType.Relationship) {
 			this.#props[key] = value
-				? (this.relationships.add(meta.ooxmlRelationshipType, value as string) as SettingsI[Key])
+				? (this.relationships.add(
+						meta.ooxmlRelationshipType,
+						value as string
+				  ) as SettingsI[Key])
 				: value;
 		} else {
 			this.#props[key] = value;
@@ -125,7 +134,9 @@ export class SettingsXml extends XmlFileWithContentTypes {
 		}
 		if (meta.ooxmlType === SettingType.Relationship) {
 			return this.#props[key]
-				? (this.relationships.getTarget(this.#props[key] as string) as SettingsI[Key])
+				? (this.relationships.getTarget(
+						this.#props[key] as string
+				  ) as SettingsI[Key])
 				: (this.#props[key] as SettingsI[Key]);
 		} else {
 			return this.#props[key];
@@ -136,10 +147,11 @@ export class SettingsXml extends XmlFileWithContentTypes {
 	 * Returns a list of setting key values (similar to `Object.entries`). Useful for cloning these
 	 * settings into a new instance.
 	 */
-	public entries() {
-		return Object.keys(this.#props).map((key) => [key, this.get(key as keyof SettingsI)]) as Array<
-			[keyof SettingsI, SettingsI[keyof SettingsI]]
-		>;
+	public entries(): Array<[keyof SettingsI, SettingsI[keyof SettingsI]]> {
+		return Object.keys(this.#props).map((key) => [
+			key,
+			this.get(key as keyof SettingsI),
+		]) as Array<[keyof SettingsI, SettingsI[keyof SettingsI]]>;
 	}
 
 	protected override toNode(): Document {
@@ -166,7 +178,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 				}
 			</w:settings>`,
 			this.#props,
-			true,
+			true
 		);
 	}
 
@@ -186,16 +198,18 @@ export class SettingsXml extends XmlFileWithContentTypes {
 	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
-		location: string,
+		location: string
 	): Promise<SettingsXml> {
 		let relationships;
 
-		const relationshipsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
+		const relationshipsLocation = `${path.dirname(
+			location
+		)}/_rels/${path.basename(location)}.rels`;
 		try {
 			relationships = await RelationshipsXml.fromArchive(
 				archive,
 				contentTypes,
-				relationshipsLocation,
+				relationshipsLocation
 			);
 		} catch (_error: unknown) {
 			// console.error(
@@ -211,12 +225,12 @@ export class SettingsXml extends XmlFileWithContentTypes {
 				"isTrackChangesEnabled": docxml:ct-on-off(./${QNS.w}trackChanges),
 				"evenAndOddHeaders": docxml:ct-on-off(./${QNS.w}evenAndOddHeaders)
 			}`,
-			xml,
+			xml
 		);
 
 		const defaultTabStopTwips = evaluateXPathToNumber(
 			`number(/*/${QNS.w}defaultTabStop/@${QNS.w}val)`,
-			xml,
+			xml
 		);
 		if (defaultTabStopTwips !== null) {
 			settings.defaultTabStop = twip(defaultTabStopTwips);
@@ -225,7 +239,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 		return new SettingsXml(
 			location,
 			relationships || new RelationshipsXml(relationshipsLocation),
-			settings,
+			settings
 		);
 	}
 }

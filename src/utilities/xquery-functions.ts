@@ -1,4 +1,4 @@
-import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v121';
+import fontoxpath from 'fontoxpath';
 
 import { convert } from './length.ts';
 import { QNS } from './namespaces.ts';
@@ -9,7 +9,7 @@ fontoxpath.registerCustomXPathFunction(
 	{ namespaceURI: DOCXML_NS_URI, localName: 'length' },
 	['xs:float?', 'xs:string'],
 	'map(*)?',
-	(_facade, value, unit) => (value === null ? null : convert(value, unit)),
+	(_facade, value, unit) => (value === null ? null : convert(value, unit))
 );
 
 fontoxpath.registerXQueryModule(`

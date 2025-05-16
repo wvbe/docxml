@@ -1,12 +1,16 @@
-import fontoxpath from 'https://esm.sh/fontoxpath@3.28.2?pin=v121';
+import fontoxpath from 'fontoxpath';
 import {
-	Document as SlimdomDocument,
-	Node as SlimdomNode,
 	parseXmlDocument,
 	serializeToWellFormedString,
-} from 'https://esm.sh/slimdom@4.0.2?pin=v121';
+	Document as SlimdomDocument,
+	type Node as SlimdomNode,
+} from 'slimdom';
 
-import { evaluateXPathToFirstNode, INodesFactory, XQUERY_3_1_LANGUAGE } from './xquery.ts';
+import {
+	evaluateXPathToFirstNode,
+	type INodesFactory,
+	XQUERY_3_1_LANGUAGE,
+} from './xquery.ts';
 
 /**
  * Serialize an XML node to string using Slimdom's own serializer function, but with the "standard"
@@ -30,11 +34,19 @@ type UnknownObject = { [key: string]: unknown };
 /**
  * Create a new XML DOM node using XQuery.
  */
-export function create(query: string, variables?: UnknownObject, asDocument?: false): Node;
+export function create(
+	query: string,
+	variables?: UnknownObject,
+	asDocument?: false
+): Node;
 /**
  * Create a new XML DOM element using XQuery, and return it as a Document.
  */
-export function create(query: string, variables: UnknownObject, asDocument: true): Document;
+export function create(
+	query: string,
+	variables: UnknownObject,
+	asDocument: true
+): Document;
 /**
  * Create a new XML DOM node using XQuery.
  *
@@ -45,7 +57,7 @@ export function create(query: string, variables: UnknownObject, asDocument: true
 export function create(
 	query: string,
 	variables: UnknownObject = {},
-	asDocument = false,
+	asDocument = false
 ): Node | Document {
 	const node = evaluateXPathToFirstNode(query, null, null, variables, {
 		language: XQUERY_3_1_LANGUAGE,
@@ -67,11 +79,20 @@ export function create(
  *
  * Updates by references, returns an empty promise.
  */
-export function update(dom: Node | Document, expression: string, times = 1): void {
+export function update(
+	dom: Node | Document,
+	expression: string,
+	times = 1
+): void {
 	while (times-- > 0) {
 		fontoxpath.executePendingUpdateList(
-			fontoxpath.evaluateUpdatingExpressionSync(expression, dom, null, {}, { debug: true })
-				.pendingUpdateList,
+			fontoxpath.evaluateUpdatingExpressionSync(
+				expression,
+				dom,
+				null,
+				{},
+				{ debug: true }
+			).pendingUpdateList
 		);
 	}
 }

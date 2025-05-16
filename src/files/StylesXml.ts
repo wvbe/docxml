@@ -1,8 +1,6 @@
-import { Archive } from '../classes/Archive.ts';
+import type { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
-import { ThemeXml } from './ThemeXml.ts';
-import { evaluateXPathToFirstNode } from '../utilities/xquery.ts';
 import {
 	type ParagraphProperties,
 	paragraphPropertiesFromNode,
@@ -27,7 +25,11 @@ import {
 import { create } from '../utilities/dom.ts';
 import { createRandomId } from '../utilities/identifiers.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToArray } from '../utilities/xquery.ts';
+import {
+	evaluateXPathToArray,
+	evaluateXPathToFirstNode,
+} from '../utilities/xquery.ts';
+import { ThemeXml } from './ThemeXml.ts';
 
 type ParagraphStyle = {
 	type: 'paragraph';
@@ -48,7 +50,12 @@ type TableStyle = {
 	paragraph?: null;
 	text?: null;
 	table?: TableProperties & {
-		conditions?: Partial<Record<TableConditionalTypes, Omit<TableConditionalProperties, 'type'>>>;
+		conditions?: Partial<
+			Record<
+				TableConditionalTypes,
+				Omit<TableConditionalProperties, 'type'>
+			>
+		>;
 	};
 };
 
@@ -74,7 +81,7 @@ type LatentStyle = {
 type DocumentDefaults = {
 	defaultRunProperties?: TextProperties | null;
 	defaultParagraphProperties?: ParagraphProperties | null;
-}
+};
 
 export class StylesXml extends XmlFile {
 	public static override contentType = FileMime.styles;
@@ -83,7 +90,7 @@ export class StylesXml extends XmlFile {
 	readonly #styles: AnyStyleDefinition[] = [];
 	readonly #docDefaultStyles: DocumentDefaults = {
 		defaultRunProperties: null,
-		defaultParagraphProperties: null
+		defaultParagraphProperties: null,
 	};
 
 	public constructor(location: string) {
@@ -96,7 +103,7 @@ export class StylesXml extends XmlFile {
 	 *
 	 * @deprecated This is probably an incorrect approach to fixing missing styles.
 	 */
-	public ensureStyle(id: string) {
+	public ensureStyle(id: string): void {
 		if (id && !this.hasStyle(id)) {
 			this.add({
 				id: id,
@@ -106,7 +113,7 @@ export class StylesXml extends XmlFile {
 		}
 	}
 
-	public override isEmpty() {
+	public override isEmpty(): boolean {
 		return !this.#styles.length && !this.#latentStyles.length;
 	}
 
@@ -159,23 +166,32 @@ export class StylesXml extends XmlFile {
 				}
 			</w:styles>`,
 			{
-				styles: this.#styles.map(({ paragraph, text, table, ...style }) => ({
-					...style,
-					ppr: paragraphPropertiesToNode(paragraph as ParagraphStyle['paragraph']),
-					rpr: textPropertiesToNode(text as ParagraphStyle['text']),
-					tblpr: tablePropertiesToNode(table as TableStyle['table']),
-					conditions: table?.conditions
-						? Object.entries(table.conditions).map(([type, properties]) =>
-								tableConditionalPropertiesToNode({
-									...properties,
-									type: type as TableConditionalTypes,
-								}),
-						  )
-						: null,
-				})),
+				styles: this.#styles.map(
+					({ paragraph, text, table, ...style }) => ({
+						...style,
+						ppr: paragraphPropertiesToNode(
+							paragraph as ParagraphStyle['paragraph']
+						),
+						rpr: textPropertiesToNode(
+							text as ParagraphStyle['text']
+						),
+						tblpr: tablePropertiesToNode(
+							table as TableStyle['table']
+						),
+						conditions: table?.conditions
+							? Object.entries(table.conditions).map(
+									([type, properties]) =>
+										tableConditionalPropertiesToNode({
+											...properties,
+											type: type as TableConditionalTypes,
+										})
+							  )
+							: null,
+					})
+				),
 				latentStyles: this.#latentStyles,
 			},
-			true,
+			true
 		);
 	}
 
@@ -184,9 +200,13 @@ export class StylesXml extends XmlFile {
 	 * the system will propose an identifier based on the style name, or create a unique GUID. This
 	 * method throws when the identifier is not unique.
 	 */
-	public add(properties: Omit<AnyStyleDefinition, 'id'> & { id?: string }) {
+	public add(
+		properties: Omit<AnyStyleDefinition, 'id'> & { id?: string }
+	): string {
 		const id =
-			properties.id || properties.name?.replace(/[^a-zA-Z0-9]/g, '') || createRandomId('style');
+			properties.id ||
+			properties.name?.replace(/[^a-zA-Z0-9]/g, '') ||
+			createRandomId('style');
 		if (this.hasStyle(id)) {
 			throw new Error(`A style with identifier "${id}" already exists.`);
 		}
@@ -216,22 +236,24 @@ export class StylesXml extends XmlFile {
 	/**
 	 * Adds default styles.
 	 */
-	public addDefaults(properties: DocumentDefaults) {
-		this.#docDefaultStyles.defaultRunProperties = properties.defaultRunProperties;
-		this.#docDefaultStyles.defaultParagraphProperties = properties.defaultParagraphProperties;
+	public addDefaults(properties: DocumentDefaults): void {
+		this.#docDefaultStyles.defaultRunProperties =
+			properties.defaultRunProperties;
+		this.#docDefaultStyles.defaultParagraphProperties =
+			properties.defaultParagraphProperties;
 	}
 
 	/**
 	 * Adds a latent style, which means that the Word processor should determine its actual properties
 	 */
-	public addLatent(properties: LatentStyle) {
+	public addLatent(properties: LatentStyle): void {
 		this.#latentStyles.push(properties);
 	}
 
 	/**
 	 * Checks wether a custom style or a latent style with this identifier already exists.
 	 */
-	public hasStyle(id: string) {
+	public hasStyle(id: string): boolean {
 		return (
 			this.#styles.some((style) => style.id === id) ||
 			this.#latentStyles.some((style) => style.name === id)
@@ -241,36 +263,53 @@ export class StylesXml extends XmlFile {
 	/**
 	 * Gets the style data by its identifier.
 	 */
-	public get(id: string) {
+	public get(id: string): AnyStyleDefinition | undefined {
 		return this.#styles.find((style) => style.id === id);
 	}
 
-	public static fromDom(dom: Document, location: string, theme?: ThemeXml): StylesXml {
+	public static fromDom(
+		dom: Document,
+		location: string,
+		theme?: ThemeXml
+	): StylesXml {
 		const instance = new StylesXml(location);
 
 		const defaultRunProperties = textPropertiesFromNode(
-			evaluateXPathToFirstNode(`/*/${QNS.w}docDefaults/${QNS.w}rPrDefault/${QNS.w}rPr`, dom)
+			evaluateXPathToFirstNode(
+				`/*/${QNS.w}docDefaults/${QNS.w}rPrDefault/${QNS.w}rPr`,
+				dom
+			)
 		);
 		const defaultParagraphProperties = paragraphPropertiesFromNode(
-			evaluateXPathToFirstNode(`/*/${QNS.w}docDefaults/${QNS.w}pPrDefault/${QNS.w}pPr`, dom)
+			evaluateXPathToFirstNode(
+				`/*/${QNS.w}docDefaults/${QNS.w}pPrDefault/${QNS.w}pPr`,
+				dom
+			)
 		);
 
 		instance.addDefaults({
 			defaultRunProperties: defaultRunProperties,
-			defaultParagraphProperties: defaultParagraphProperties
+			defaultParagraphProperties: defaultParagraphProperties,
 		} as DocumentDefaults);
 
 		//We should not get here unless there's *NOTHING* telling us what to do.
-		let instanceFontProperties: TextProperties['font'] = instance.#docDefaultStyles?.defaultRunProperties?.font;
-		if (instanceFontProperties
-			&& typeof instanceFontProperties !== 'string'
-			&& theme) {
+		let instanceFontProperties: TextProperties['font'] =
+			instance.#docDefaultStyles?.defaultRunProperties?.font;
+		if (
+			instanceFontProperties &&
+			typeof instanceFontProperties !== 'string' &&
+			theme
+		) {
 			for (const key in instanceFontProperties) {
-				if (instanceFontProperties[key as keyof TextProperties['font']] === null) {
+				if (
+					instanceFontProperties[
+						key as keyof TextProperties['font']
+					] === null
+				) {
 					// instanceFontProperties[key as keyof TextProperties['font']] = theme.getMinorFonts().latinFont.typeface;
 					instanceFontProperties = {
-						[key]: theme.fontScheme.minorFont.latinFont.typeface
-					}
+						[key]: theme.fontScheme.minorFont.latinFont.typeface,
+					};
 				}
 			}
 		}
@@ -289,20 +328,36 @@ export class StylesXml extends XmlFile {
 					"ppr": ./${QNS.w}pPr,
 					"rpr": ./${QNS.w}rPr
 				}}`,
-				dom,
+				dom
 			).map(({ ppr, rpr, tblpr, tblStylePr, ...json }) => {
 				const runProperties = textPropertiesFromNode(rpr);
-				const instanceFont = instance.#docDefaultStyles?.defaultRunProperties?.font;
+				const instanceFont =
+					instance.#docDefaultStyles?.defaultRunProperties?.font;
 				if (json.isDefault) {
-					if (runProperties.font === undefined || runProperties.font === null) {
+					if (
+						runProperties.font === undefined ||
+						runProperties.font === null
+					) {
 						runProperties.font = instanceFont;
 					}
-					if (runProperties.font && typeof runProperties.font !== 'string') {
+					if (
+						runProperties.font &&
+						typeof runProperties.font !== 'string'
+					) {
 						for (const key in runProperties.font) {
-							if (runProperties.font[key as keyof TextProperties['font']] === null
-								&& instanceFont
-								&& typeof instanceFont !== 'string') {
-								runProperties.font[key as keyof TextProperties['font']] = instanceFont[key as keyof TextProperties['font']];
+							if (
+								runProperties.font[
+									key as keyof TextProperties['font']
+								] === null &&
+								instanceFont &&
+								typeof instanceFont !== 'string'
+							) {
+								runProperties.font[
+									key as keyof TextProperties['font']
+								] =
+									instanceFont[
+										key as keyof TextProperties['font']
+									];
 							}
 						}
 					}
@@ -315,21 +370,22 @@ export class StylesXml extends XmlFile {
 						...tablePropertiesFromNode(tblpr),
 						...(tblStylePr.length
 							? {
-								conditions: (
-									tblStylePr.map(tableConditionalPropertiesFromNode) as TableConditionalProperties[]
-								).reduce(
-									(m, { type, ...style }) =>
-										Object.assign(m, {
-											[type]: style,
-										}),
-									{},
-								),
-							}
+									conditions: (
+										tblStylePr.map(
+											tableConditionalPropertiesFromNode
+										) as TableConditionalProperties[]
+									).reduce(
+										(m, { type, ...style }) =>
+											Object.assign(m, {
+												[type]: style,
+											}),
+										{}
+									),
+							  }
 							: {}),
 					},
-				}
-			}
-			),
+				};
+			})
 		);
 
 		// Warning! Untyped objects
@@ -342,7 +398,7 @@ export class StylesXml extends XmlFile {
 				"locked": docxml:st-on-off(@${QNS.w}locked),
 				"semiHidden": docxml:st-on-off(@${QNS.w}semiHidden)
 			}}`,
-			dom,
+			dom
 		).forEach((json) => instance.addLatent(json));
 
 		return instance;
@@ -351,7 +407,10 @@ export class StylesXml extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static override async fromArchive(archive: Archive, location: string): Promise<StylesXml> {
+	public static override async fromArchive(
+		archive: Archive,
+		location: string
+	): Promise<StylesXml> {
 		if (archive.hasFile(location)) {
 			const theme = await ThemeXml.fromArchive(archive);
 			const dom = await archive.readXml(location);

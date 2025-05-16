@@ -6,24 +6,24 @@ import './Table.ts';
 import {
 	type ComponentAncestor,
 	type ComponentDefinition,
-	AnyComponent,
+	type AnyComponent,
 	Component,
-	ComponentContext,
-	ComponentNodes,
+	type ComponentContext,
+	type ComponentNodes,
 	isComponentDefinition,
 } from '../classes/Component.ts';
 import {
-	SectionProperties,
+	type SectionProperties,
 	sectionPropertiesFromNode,
 	sectionPropertiesToNode,
 } from '../properties/section-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { type BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
-import { type BookmarkRangeStart } from './BookmarkRangeStart.ts';
+import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
+import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import { Paragraph } from './Paragraph.ts';
-import { Table } from './Table.ts';
+import type { Table } from './Table.ts';
 
 /**
  * A type describing the components accepted as children of {@link Section}.

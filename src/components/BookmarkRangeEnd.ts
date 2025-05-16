@@ -1,4 +1,4 @@
-import { type Bookmark } from '../classes/Bookmarks.ts';
+import type { Bookmark } from '../classes/Bookmarks.ts';
 import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';

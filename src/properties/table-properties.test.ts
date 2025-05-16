@@ -4,7 +4,7 @@ import { hpt, opt, pt, twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { createXmlRoundRobinTest } from '../utilities/tests.ts';
 import {
-	TableProperties,
+	type TableProperties,
 	tablePropertiesFromNode,
 	tablePropertiesToNode,
 } from './table-properties.ts';

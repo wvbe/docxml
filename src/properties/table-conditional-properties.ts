@@ -2,7 +2,7 @@ import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import {
-	ParagraphProperties,
+	type ParagraphProperties,
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from './paragraph-properties.ts';
@@ -12,11 +12,11 @@ import {
 	tableCellPropertiesToNode,
 } from './table-cell-properties.ts';
 import {
-	TableProperties,
+	type TableProperties,
 	tablePropertiesFromNode,
 	tablePropertiesToNode,
 } from './table-properties.ts';
-import { TextProperties, textPropertiesFromNode, textPropertiesToNode } from './text-properties.ts';
+import { type TextProperties, textPropertiesFromNode, textPropertiesToNode } from './text-properties.ts';
 
 export type TableConditionalTypes =
 	// The formatting applies to odd numbered groupings of rows

@@ -10,7 +10,7 @@ import './NonBreakingHyphen.ts';
 import './Symbol.ts';
 import './Tab.ts';
 
-import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
+import { type ComponentAncestor, Component, type ComponentContext } from '../classes/Component.ts';
 import {
 	type TextProperties,
 	textPropertiesFromNode,
@@ -20,15 +20,15 @@ import { createChildComponentsFromNodes, registerComponent } from '../utilities/
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { type Break } from './Break.ts';
-import { type FieldRangeEnd } from './FieldRangeEnd.ts';
-import { type FieldRangeInstruction } from './FieldRangeInstruction.ts';
-import { type FieldRangeSeparator } from './FieldRangeSeparator.ts';
-import { type FieldRangeStart } from './FieldRangeStart.ts';
-import { type Image } from './Image.ts';
-import { type NonBreakingHyphen } from './NonBreakingHyphen.ts';
-import { type Symbol } from './Symbol.ts';
-import { type Tab } from './Tab.ts';
+import type { Break } from './Break.ts';
+import type { FieldRangeEnd } from './FieldRangeEnd.ts';
+import type { FieldRangeInstruction } from './FieldRangeInstruction.ts';
+import type { FieldRangeSeparator } from './FieldRangeSeparator.ts';
+import type { FieldRangeStart } from './FieldRangeStart.ts';
+import type { Image } from './Image.ts';
+import type { NonBreakingHyphen } from './NonBreakingHyphen.ts';
+import type { Symbol } from './Symbol.ts';
+import type { Tab } from './Tab.ts';
 import { TextDeletion } from './TextDeletion.ts';
 
 /**

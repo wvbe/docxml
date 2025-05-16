@@ -1,14 +1,14 @@
-import { Archive } from '../classes/Archive.ts';
+import type { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
 import {
-	ParagraphProperties,
+	type ParagraphProperties,
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from '../properties/paragraph-properties.ts';
 import {
-	TextProperties,
+	type TextProperties,
 	textPropertiesFromNode,
 	textPropertiesToNode,
 } from '../properties/text-properties.ts';
@@ -56,7 +56,9 @@ type AbstractNumbering = {
 	}>;
 };
 
-type AbstractNumberingWithOptionalId = Omit<AbstractNumbering, 'id'> & { id?: number };
+type AbstractNumberingWithOptionalId = Omit<AbstractNumbering, 'id'> & {
+	id?: number;
+};
 
 type ConcreteNumbering = {
 	id: number;
@@ -80,7 +82,7 @@ export class NumberingXml extends XmlFile {
 	 */
 	private readonly implementations = new NumberMap<ConcreteNumbering>(1);
 
-	public override isEmpty() {
+	public override isEmpty(): boolean {
 		return !this.abstracts.size;
 	}
 
@@ -167,15 +169,19 @@ export class NumberingXml extends XmlFile {
 			{
 				abstracts: this.abstracts.array().map((abstract) => ({
 					...abstract,
-					levels: abstract.levels.map(({ paragraph, text, ...level }) => ({
-						...level,
-						pPr: paragraph ? paragraphPropertiesToNode(paragraph) : null,
-						rPr: text ? textPropertiesToNode(text) : null,
-					})),
+					levels: abstract.levels.map(
+						({ paragraph, text, ...level }) => ({
+							...level,
+							pPr: paragraph
+								? paragraphPropertiesToNode(paragraph)
+								: null,
+							rPr: text ? textPropertiesToNode(text) : null,
+						})
+					),
 				})),
 				implementations: this.implementations.array(),
 			},
-			true,
+			true
 		);
 	}
 
@@ -184,7 +190,9 @@ export class NumberingXml extends XmlFile {
 		const { implementations, abstracts } = evaluateXPathToMap<{
 			implementations: ConcreteNumbering[];
 			abstracts: (Omit<AbstractNumbering, 'levels'> & {
-				levels: ((AbstractNumbering['levels'] extends Array<infer P> ? P : never) & {
+				levels: ((AbstractNumbering['levels'] extends Array<infer P>
+					? P
+					: never) & {
 					pPr: Element | null;
 					rPr: Element | null;
 				})[];
@@ -208,7 +216,7 @@ export class NumberingXml extends XmlFile {
 					"abstract": ./${QNS.w}abstractNumId/@${QNS.w}val/number()
 				}}
 			}`,
-			dom,
+			dom
 		);
 		abstracts.forEach((abstract) =>
 			instance.addAbstract({
@@ -218,14 +226,19 @@ export class NumberingXml extends XmlFile {
 					paragraph: paragraphPropertiesFromNode(pPr),
 					text: textPropertiesFromNode(rPr),
 				})),
-			}),
+			})
 		);
-		implementations.forEach((concrete) => instance.implementations.set(concrete.id, concrete));
+		implementations.forEach((concrete) =>
+			instance.implementations.set(concrete.id, concrete)
+		);
 
 		return instance;
 	}
 
-	public static override async fromArchive(archive: Archive, location: string): Promise<NumberingXml> {
+	public static override async fromArchive(
+		archive: Archive,
+		location: string
+	): Promise<NumberingXml> {
 		return this.fromNode(await archive.readXml(location), location);
 	}
 

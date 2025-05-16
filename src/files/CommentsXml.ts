@@ -1,7 +1,7 @@
 import * as path from 'std/path';
 
-import { ContentTypesXml } from '../../mod.ts';
-import { Archive } from '../classes/Archive.ts';
+import type { ContentTypesXml } from '../../mod.ts';
+import type { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
@@ -24,7 +24,7 @@ export class CommentsXml extends XmlFileWithContentTypes {
 
 	#comments = new NumberMap<Comment>();
 
-	public override isEmpty() {
+	public override isEmpty(): boolean {
 		return !this.#comments.size;
 	}
 
@@ -69,7 +69,7 @@ export class CommentsXml extends XmlFileWithContentTypes {
 	public add(
 		meta: Omit<Comment, 'id' | 'contents'>,
 		contents: Comment['contents']
-	) {
+	): number {
 		const id = this.#comments.getNextAvailableKey();
 		this.#comments.set(id, {
 			id,
@@ -82,7 +82,7 @@ export class CommentsXml extends XmlFileWithContentTypes {
 	/**
 	 * Check whether or not a comment with the given identifier already exists.
 	 */
-	public has(id: number) {
+	public has(id: number): boolean {
 		return this.#comments.has(id);
 	}
 
@@ -141,7 +141,7 @@ export class CommentsXml extends XmlFileWithContentTypes {
 	/**
 	 * @deprecated FOR TEST PURPOSES ONLY
 	 */
-	public override $$$toNode() {
+	public override $$$toNode(): Promise<Document> {
 		return this.toNode();
 	}
 }

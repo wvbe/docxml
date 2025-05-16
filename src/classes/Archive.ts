@@ -1,4 +1,4 @@
-import { JSZip, readZip } from 'jszip'; 
+import { JSZip, readZip } from '../../vendor/jszip/mod.ts';
 
 import { parse, serialize } from '../utilities/dom.ts';
 
@@ -14,7 +14,10 @@ export class Archive {
 	/**
 	 * @deprecated For testing purposes only.
 	 */
-	get $$$fileNames() {
+	get $$$fileNames(): {
+		// deno-lint-ignore no-explicit-any
+		[key: string]: any;
+	} {
 		return this.#zip.files();
 	}
 
@@ -32,7 +35,9 @@ export class Archive {
 			throw new Error(
 				`Could not read "${location}" from archive: ${
 					(error as Error).message
-				}. The only files in this archive are: ${Object.keys(this.#zip.files()).join(', ')}`,
+				}. The only files in this archive are: ${Object.keys(
+					this.#zip.files()
+				).join(', ')}`
 			);
 		}
 	}
@@ -58,7 +63,9 @@ export class Archive {
 	public addXmlFile(location: string, node: Node | Document): this {
 		return this.addTextFile(
 			location,
-			`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>${serialize(node)}`,
+			`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>${serialize(
+				node
+			)}`
 		);
 	}
 
@@ -78,7 +85,8 @@ export class Archive {
 		return this;
 	}
 
-	readonly #promises: { location: string; promise: Promise<Uint8Array> }[] = [];
+	readonly #promises: { location: string; promise: Promise<Uint8Array> }[] =
+		[];
 
 	/**
 	 * Create a new text file in the DOCX archive.
@@ -87,12 +95,15 @@ export class Archive {
 	 * we're only writing a promise to memory for now and leave the asynchronous operations for
 	 * output time (see also Archive#toUint8Array).
 	 */
-	public addBinaryFile(location: string, promised: Promise<Uint8Array>): this {
+	public addBinaryFile(
+		location: string,
+		promised: Promise<Uint8Array>
+	): this {
 		this.#promises.push({ location, promise: promised });
 		return this;
 	}
 
-	public static async fromUInt8Array(data: Uint8Array) {
+	public static async fromUInt8Array(data: Uint8Array): Promise<Archive> {
 		return new Archive(await new JSZip().loadAsync(data));
 	}
 

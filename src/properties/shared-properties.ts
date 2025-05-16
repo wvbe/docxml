@@ -1,4 +1,4 @@
-import { Length } from '../utilities/length.ts';
+import type { Length } from '../utilities/length.ts';
 
 export type Border<Type extends string> = {
 	color?: null | string;

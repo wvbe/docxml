@@ -1,12 +1,12 @@
-import * as path from 'std/path'; 
+import * as path from 'std/path';
 
-import { ContentTypesXml } from '../../mod.ts';
-import { Archive } from '../classes/Archive.ts';
-import { type AnyComponent } from '../classes/Component.ts';
+import type { ContentTypesXml } from '../../mod.ts';
+import type { Archive } from '../classes/Archive.ts';
+import type { AnyComponent } from '../classes/Component.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Table } from '../components/Table.ts';
-import { WatermarkText } from '../components/WatermarkText.ts';
+import type { WatermarkText } from '../components/WatermarkText.ts';
 import { FileMime } from '../enums.ts';
 import { createChildComponentsFromNodes } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
@@ -16,19 +16,28 @@ import { type File, RelationshipsXml } from './RelationshipsXml.ts';
 
 export type HeaderFooterChild = Paragraph | Table;
 
-export type HeaderFooterRoot<Child = HeaderFooterChild> = Child | Child[] | Promise<Child[]>;
+export type HeaderFooterRoot<Child = HeaderFooterChild> =
+	| Child
+	| Child[]
+	| Promise<Child[]>;
 
 /**
  * Somewhat generic implementation of either the Header or Footer helper classes.
  */
-class HeaderFooterAbstractionXml<Child extends AnyComponent> extends XmlFileWithContentTypes {
+class HeaderFooterAbstractionXml<
+	Child extends AnyComponent
+> extends XmlFileWithContentTypes {
 	#nodeName: string;
 
 	#root: HeaderFooterRoot<Child> | null = null;
 
 	public readonly relationships: RelationshipsXml | null;
 
-	constructor(location: string, nodeName: string, relationships: RelationshipsXml | null = null) {
+	constructor(
+		location: string,
+		nodeName: string,
+		relationships: RelationshipsXml | null = null
+	) {
 		super(location);
 		this.#nodeName = nodeName;
 		this.relationships = relationships;
@@ -46,15 +55,21 @@ class HeaderFooterAbstractionXml<Child extends AnyComponent> extends XmlFileWith
 			.then((roots) =>
 				roots.reduce<Promise<Child[]>>(async function flatten(
 					flatPromise,
-					childPromise,
+					childPromise
 				): Promise<Child[]> {
 					const child = await childPromise;
 					const flat = await flatPromise;
 					return Array.isArray(child)
-						? [...flat, ...(await child.reduce(flatten, Promise.resolve([])))]
+						? [
+								...flat,
+								...(await child.reduce(
+									flatten,
+									Promise.resolve([])
+								)),
+						  ]
 						: [...flat, child];
 				},
-				Promise.resolve([])),
+				Promise.resolve([]))
 			);
 	}
 
@@ -79,10 +94,12 @@ class HeaderFooterAbstractionXml<Child extends AnyComponent> extends XmlFileWith
 			`,
 			{
 				children: await Promise.all(
-					children.map((child) => child.toNode([this as unknown as HeaderXml | FooterXml])),
+					children.map((child) =>
+						child.toNode([this as unknown as HeaderXml | FooterXml])
+					)
 				),
 			},
-			true,
+			true
 		);
 	}
 
@@ -94,7 +111,9 @@ class HeaderFooterAbstractionXml<Child extends AnyComponent> extends XmlFileWith
 	}
 }
 
-export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | WatermarkText> {
+export class HeaderXml extends HeaderFooterAbstractionXml<
+	HeaderFooterChild | WatermarkText
+> {
 	public static override contentType = FileMime.header;
 
 	constructor(location: string, relationships: RelationshipsXml | null) {
@@ -107,12 +126,18 @@ export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | Wa
 	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
-		location: string,
-	) {
+		location: string
+	): Promise<HeaderXml> {
 		const dom = await archive.readXml(location);
-		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
+		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(
+			location
+		)}.rels`;
 		const relationships = archive.hasFile(relsLocation)
-			? await RelationshipsXml.fromArchive(archive, contentTypes, relsLocation)
+			? await RelationshipsXml.fromArchive(
+					archive,
+					contentTypes,
+					relsLocation
+			  )
 			: null;
 		const inst = new this(location, relationships);
 		inst.set(
@@ -122,8 +147,8 @@ export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | Wa
 				{
 					archive,
 					relationships: inst.relationships,
-				},
-			),
+				}
+			)
 		);
 		return inst;
 	}
@@ -134,8 +159,8 @@ export class HeaderXml extends HeaderFooterAbstractionXml<HeaderFooterChild | Wa
 	 */
 	public static fromJsx(
 		location: string,
-		roots: HeaderFooterRoot<HeaderFooterChild | WatermarkText>,
-	) {
+		roots: HeaderFooterRoot<HeaderFooterChild | WatermarkText>
+	): HeaderXml {
 		const inst = new this(location, null);
 		inst.set(roots);
 		return inst;
@@ -155,12 +180,18 @@ export class FooterXml extends HeaderFooterAbstractionXml<HeaderFooterChild> {
 	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
-		location: string,
-	) {
+		location: string
+	): Promise<FooterXml> {
 		const dom = await archive.readXml(location);
-		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(location)}.rels`;
+		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(
+			location
+		)}.rels`;
 		const relationships = archive.hasFile(relsLocation)
-			? await RelationshipsXml.fromArchive(archive, contentTypes, relsLocation)
+			? await RelationshipsXml.fromArchive(
+					archive,
+					contentTypes,
+					relsLocation
+			  )
 			: null;
 		const inst = new this(location, relationships);
 		inst.set(
@@ -170,8 +201,8 @@ export class FooterXml extends HeaderFooterAbstractionXml<HeaderFooterChild> {
 				{
 					archive,
 					relationships: inst.relationships,
-				},
-			),
+				}
+			)
 		);
 		return inst;
 	}
@@ -180,7 +211,10 @@ export class FooterXml extends HeaderFooterAbstractionXml<HeaderFooterChild> {
 	 * Create a new DOCX with contents composed by this library's components. Needs a single JSX component
 	 * as root, for example `<Section>` or `<Paragragh>`.
 	 */
-	public static fromJsx(location: string, roots: HeaderFooterRoot) {
+	public static fromJsx(
+		location: string,
+		roots: HeaderFooterRoot
+	): FooterXml {
 		const inst = new this(location, null);
 		inst.set(roots);
 		return inst;

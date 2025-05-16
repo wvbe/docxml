@@ -2,7 +2,7 @@ import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd'; 
 import { parse, serialize } from '../utilities/dom.ts';
 import { Archive } from '../classes/Archive.ts';
-import { ThemeXml, FontScheme, LatinFont, Font } from './ThemeXml.ts';
+import { ThemeXml, type FontScheme, type LatinFont, type Font } from './ThemeXml.ts';
 
 describe('Themes', () => {
 	it('Throws an error when the archive is unreadable', () => {

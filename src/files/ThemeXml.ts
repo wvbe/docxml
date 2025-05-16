@@ -1,9 +1,9 @@
-import { Archive } from '../classes/Archive.ts';
+import type { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
+import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { create } from '../utilities/dom.ts';
 
 /**
  * Represents the various 'scheme' elements that comprise a theme.
@@ -18,7 +18,7 @@ import { create } from '../utilities/dom.ts';
 export type Font = {
 	script?: string;
 	typeface: string;
-}
+};
 
 export interface LatinFont extends Font {
 	typeface: string;
@@ -38,9 +38,9 @@ export type FontScheme = {
 	};
 	minorFont: {
 		latinFont: LatinFont;
-		otherFonts: Font[]
-	}
-}
+		otherFonts: Font[];
+	};
+};
 
 export class ThemeXml extends XmlFile {
 	public static override contentType = FileMime.theme;
@@ -50,18 +50,18 @@ export class ThemeXml extends XmlFile {
 		const fallbackLatinFont = {
 			typeface: 'Times New Roman',
 			panose: '020206030504020304',
-		}
+		};
 		super(location);
 		this.fontScheme = {
 			majorFont: {
 				latinFont: fallbackLatinFont,
-				otherFonts: []
+				otherFonts: [],
 			},
 			minorFont: {
 				latinFont: fallbackLatinFont,
-				otherFonts: []
-			}
-		}
+				otherFonts: [],
+			},
+		};
 	}
 
 	public setFontScheme(fontScheme: FontScheme): void {
@@ -77,8 +77,11 @@ export class ThemeXml extends XmlFile {
 		this.fontScheme.majorFont.otherFonts = others;
 	}
 
-	public getMajorFonts() {
-		return this.fontScheme.majorFont
+	public getMajorFonts(): {
+		latinFont: LatinFont;
+		otherFonts: Font[];
+	} {
+		return this.fontScheme.majorFont;
 	}
 
 	public setMinorFonts(latin: LatinFont, others: Font[]): void {
@@ -86,7 +89,10 @@ export class ThemeXml extends XmlFile {
 		this.fontScheme.minorFont.otherFonts = others;
 	}
 
-	public getMinorFonts() {
+	public getMinorFonts(): {
+		latinFont: LatinFont;
+		otherFonts: Font[];
+	} {
 		return this.fontScheme.minorFont;
 	}
 
@@ -122,19 +128,24 @@ export class ThemeXml extends XmlFile {
 				}
 			}</a:theme>`,
 			{
-				majorFontLatinTypeface: this.fontScheme.majorFont.latinFont.typeface,
-				majorFontLatinPanose: this.fontScheme.majorFont.latinFont.panose,
+				majorFontLatinTypeface:
+					this.fontScheme.majorFont.latinFont.typeface,
+				majorFontLatinPanose:
+					this.fontScheme.majorFont.latinFont.panose,
 				majorOtherFonts: this.fontScheme.majorFont.otherFonts,
-				minorFontLatinTypeface: this.fontScheme.minorFont.latinFont.typeface,
-				minorFontLatinPanose: this.fontScheme.minorFont.latinFont.panose,
-				minorOtherFonts: this.fontScheme.minorFont.otherFonts
+				minorFontLatinTypeface:
+					this.fontScheme.minorFont.latinFont.typeface,
+				minorFontLatinPanose:
+					this.fontScheme.minorFont.latinFont.panose,
+				minorOtherFonts: this.fontScheme.minorFont.otherFonts,
 			},
-			true,
+			true
 		);
 	}
 
 	public static fromDom(dom: Document, location: string): Promise<ThemeXml> {
-		const fontScheme = evaluateXPathToMap<FontScheme>(`
+		const fontScheme = evaluateXPathToMap<FontScheme>(
+			`
 		./${QNS.a}theme/${QNS.a}themeElements/${QNS.a}fontScheme/map {
 			"majorFont": map {
 				"latinFont": map {
@@ -151,7 +162,7 @@ export class ThemeXml extends XmlFile {
 				"otherFonts": array{${QNS.a}minorFont/${QNS.a}font/map { "script": @script/string(), "typeface": @typeface/string()}}
 			}
 		}`,
-		dom,
+			dom
 		);
 		const newTheme = new ThemeXml(location);
 		newTheme.setFontScheme(fontScheme);
@@ -161,7 +172,10 @@ export class ThemeXml extends XmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static override async fromArchive(archive: Archive, location?: string): Promise<ThemeXml> {
+	public static override async fromArchive(
+		archive: Archive,
+		location?: string
+	): Promise<ThemeXml> {
 		// If a location is supplied, use that, otherwise use the default location for theme files.
 		location = location ?? 'word/theme/theme1.xml';
 		const themeDocument = await archive.readXml(location);

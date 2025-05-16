@@ -5,11 +5,11 @@
 
 import {
 	Component,
-	ComponentAncestor,
-	ComponentContext,
-	ComponentDefinition,
+	type ComponentAncestor,
+	type ComponentContext,
+	type ComponentDefinition,
 } from '../classes/Component.ts';
-import { type TableRowProperties } from '../properties/table-row-properties.ts';
+import type { TableRowProperties } from '../properties/table-row-properties.ts';
 import { type ChangeInformation, getChangeInformation } from '../utilities/changes.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';

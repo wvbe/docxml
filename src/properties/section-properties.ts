@@ -1,5 +1,5 @@
 import { create } from '../utilities/dom.ts';
-import { Length } from '../utilities/length.ts';
+import type { Length } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 

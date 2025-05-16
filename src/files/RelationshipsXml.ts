@@ -1,8 +1,8 @@
 import * as path from 'std/path';
-import { ContentTypesXml } from '../../mod.ts';
-import { Archive } from '../classes/Archive.ts';
+import type { ContentTypesXml } from '../../mod.ts';
+import type { Archive } from '../classes/Archive.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';
-import { XmlFile, XmlFileWithContentTypes } from '../classes/XmlFile.ts';
+import { type XmlFile, XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { FileMime, RelationshipType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { createRandomId } from '../utilities/identifiers.ts';
@@ -36,7 +36,7 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 	public constructor(
 		location: string,
 		meta: RelationshipMeta[] = [],
-		instances = new Map<string, File>(),
+		instances: Map<string, File> = new Map<string, File>()
 	) {
 		super(location);
 		this.meta = meta;
@@ -59,7 +59,9 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 	/**
 	 * @deprecated Use {@link RelationshipXml.findInstance} instead.
 	 */
-	public find<R extends File = File>(cb: (meta: RelationshipMeta) => boolean): R | null {
+	public find<R extends File = File>(
+		cb: (meta: RelationshipMeta) => boolean
+	): R | null {
 		return this.findInstance(cb);
 	}
 	/**
@@ -69,7 +71,9 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 	 * @note So far this function is only used for testing. It may be removed in the future, so if you
 	 * have a valid use case for it please submit an issue on GitHub.
 	 */
-	public findInstance<R extends File = File>(cb: (meta: RelationshipMeta) => boolean): R | null {
+	public findInstance<R extends File = File>(
+		cb: (meta: RelationshipMeta) => boolean
+	): R | null {
 		const id = this.meta.find(cb)?.id;
 		if (!id) {
 			return null;
@@ -77,8 +81,12 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 		return (this.#instances.get(id) as R) || null;
 	}
 
-	public filterInstances<R extends File = File>(cb: (meta: RelationshipMeta) => boolean): R[] {
-		return this.meta.filter(cb).map((meta) => this.#instances.get(meta.id) as R);
+	public filterInstances<R extends File = File>(
+		cb: (meta: RelationshipMeta) => boolean
+	): R[] {
+		return this.meta
+			.filter(cb)
+			.map((meta) => this.#instances.get(meta.id) as R);
 	}
 
 	/**
@@ -89,7 +97,9 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 			id: createRandomId('relationship'),
 			type,
 			target: typeof target === 'string' ? target : target.location,
-			isExternal: type === RelationshipType.hyperlink || type === RelationshipType.attachedTemplate,
+			isExternal:
+				type === RelationshipType.hyperlink ||
+				type === RelationshipType.attachedTemplate,
 			isBinary: type === RelationshipType.image,
 		};
 		this.meta.push(meta);
@@ -99,7 +109,7 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 		return meta.id;
 	}
 
-	public getTarget(id: string) {
+	public getTarget(id: string): string {
 		const meta = this.meta.find((meta) => meta.id === id);
 		if (!meta) {
 			throw new Error(`Unknown relationship ID "${id}"`);
@@ -107,18 +117,23 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 		return meta.target;
 	}
 
-	public hasType(type: RelationshipType) {
+	public hasType(type: RelationshipType): boolean {
 		return this.meta.some((meta) => meta.type === type);
 	}
 
-	public ensureRelationship<C extends File>(type: RelationshipType, createInstance: () => C): C {
+	public ensureRelationship<C extends File>(
+		type: RelationshipType,
+		createInstance: () => C
+	): C {
 		let doc = this.find<C>((meta) => meta.type === type);
 		if (!doc) {
 			doc = createInstance();
 			this.add(type, doc);
 		}
 		if (!doc) {
-			throw new Error(`Could not find or create a relationship of type "${type}"`);
+			throw new Error(
+				`Could not find or create a relationship of type "${type}"`
+			);
 		}
 		return doc;
 	}
@@ -145,12 +160,17 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 							...meta,
 							target: meta.isExternal
 								? meta.target
-								: path.relative(path.dirname(path.dirname(this.location)), meta.target),
-						},
-					),
+								: path.relative(
+										path.dirname(
+											path.dirname(this.location)
+										),
+										meta.target
+								  ),
+						}
+					)
 				),
 			},
-			true,
+			true
 		);
 	}
 
@@ -182,7 +202,7 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
-		location: string,
+		location: string
 	): Promise<RelationshipsXml> {
 		const meta = evaluateXPathToArray(
 			`
@@ -193,10 +213,12 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 					"isExternal": boolean(@TargetMode = "External")
 				}}
 			`,
-			await archive.readXml(location),
+			await archive.readXml(location)
 		).map((meta) => ({
 			...meta,
-			target: meta.isExternal ? meta.target : path.join(path.dirname(location), '..', meta.target),
+			target: meta.isExternal
+				? meta.target
+				: path.join(path.dirname(location), '..', meta.target),
 			isBinary: meta.type === RelationshipType.image,
 		})) as RelationshipMeta[];
 
@@ -207,12 +229,20 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 					.map(async (meta) => ({
 						...meta,
 						instance: meta.isBinary
-							? await BinaryFile.fromArchive(archive, contentTypes, meta.target)
-							: await castRelationshipToClass(archive, contentTypes, {
-									type: meta.type,
-									target: meta.target,
-							  }),
-					})),
+							? await BinaryFile.fromArchive(
+									archive,
+									contentTypes,
+									meta.target
+							  )
+							: await castRelationshipToClass(
+									archive,
+									contentTypes,
+									{
+										type: meta.type,
+										target: meta.target,
+									}
+							  ),
+					}))
 			)
 		).reduce((map, { id, instance }) => {
 			map.set(id, instance);

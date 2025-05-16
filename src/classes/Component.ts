@@ -1,7 +1,7 @@
-import { type DocumentXml } from '../files/DocumentXml.ts';
-import { type FooterXml, type HeaderXml } from '../files/HeaderFooterXml.ts';
-import { type RelationshipsXml } from '../files/RelationshipsXml.ts';
-import { Archive } from './Archive.ts';
+import type { DocumentXml } from '../files/DocumentXml.ts';
+import type { FooterXml, HeaderXml } from '../files/HeaderFooterXml.ts';
+import type { RelationshipsXml } from '../files/RelationshipsXml.ts';
+import type { Archive } from './Archive.ts';
 
 /**
  * An ancestor of a component at serialization time, or the {@link DocumentXml} instance that is the
@@ -9,20 +9,29 @@ import { Archive } from './Archive.ts';
  *
  * Having this ancestry allows context-aware serialization.
  */
-export type ComponentAncestor = DocumentXml | HeaderXml | FooterXml | AnyComponent;
+export type ComponentAncestor =
+	| DocumentXml
+	| HeaderXml
+	| FooterXml
+	| AnyComponent;
 
 /**
  * Any component instance, uncaring of which one or which props/children it has. Knows nothing,
  * assumes everything.
  */
-export type AnyComponent = Component<{ [key: string]: unknown }, AnyComponent | string>;
+export type AnyComponent = Component<
+	{ [key: string]: unknown },
+	AnyComponent | string
+>;
 
 /**
  * Utility type to retrieve the prop types of an Component
  */
 export type ComponentProps<ComponentGeneric extends Component | unknown> =
 	// deno-lint-ignore no-explicit-any
-	ComponentGeneric extends Component<infer P, any> ? P : { [key: string]: never };
+	ComponentGeneric extends Component<infer P, any>
+		? P
+		: { [key: string]: never };
 
 /**
  * Utility type to retrieve the children types of an Component
@@ -50,13 +59,15 @@ export type ComponentContext = {
  * A secret property with which we can test wether or not a Class (or "Function" in JS land)
  * extends from Component
  */
-const IS_COMPONENT = Symbol();
+const IS_COMPONENT: unique symbol = Symbol();
 
 /**
  * The interface to which a class definition of an XML component must adhere -- ie.
  * it must have a `children` and `mixed` static properties.
  */
-export interface ComponentDefinition<C extends AnyComponent | unknown = AnyComponent> {
+export interface ComponentDefinition<
+	C extends AnyComponent | unknown = AnyComponent
+> {
 	new (props: ComponentProps<C>, ...children: ComponentChild<C>[]): C;
 	children: string[];
 	mixed: boolean;
@@ -71,8 +82,10 @@ export interface ComponentDefinition<C extends AnyComponent | unknown = AnyCompo
  */
 export type ComponentFunction<
 	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
-	ChildGeneric extends AnyComponent | string = never,
-> = (props: PropsGeneric & { children?: ChildGeneric | ChildGeneric[] }) => AnyComponent;
+	ChildGeneric extends AnyComponent | string = never
+> = (
+	props: PropsGeneric & { children?: ChildGeneric | ChildGeneric[] }
+) => AnyComponent;
 
 /**
  * A component serializes to a string, or to an XML DOM node.
@@ -84,14 +97,16 @@ type ComponentNode = string | Node;
  */
 export type ComponentNodes = ComponentNode | ComponentNode[];
 
-// deno-lint-ignore no-explicit-any
-export function isComponentDefinition(Def: ComponentDefinition | any): Def is ComponentDefinition {
+export function isComponentDefinition(
+	// deno-lint-ignore no-explicit-any
+	Def: ComponentDefinition | any
+): Def is ComponentDefinition {
 	return Def && typeof Def === 'function' && Def[IS_COMPONENT] === true;
 }
 
 export abstract class Component<
 	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
-	ChildGeneric extends AnyComponent | string = never,
+	ChildGeneric extends AnyComponent | string = never
 > {
 	// eslint-disable-next-line @typescript-eslint/prefer-as-const
 	public static [IS_COMPONENT]: true = true;
@@ -145,18 +160,25 @@ export abstract class Component<
 		return false;
 	}
 
-	public static fromNode(_node: Node, _context: ComponentContext): null | AnyComponent {
+	public static fromNode(
+		_node: Node,
+		_context: ComponentContext
+	): null | AnyComponent {
 		throw new Error('Not implemented');
 	}
 
-	protected async childrenToNode(ancestry: Array<ComponentAncestor>): Promise<ComponentNode[]> {
+	protected async childrenToNode(
+		ancestry: Array<ComponentAncestor>
+	): Promise<ComponentNode[]> {
 		const anc = [this, ...ancestry];
 		const nodes = await Promise.all(
-			this.children.map((child) => (typeof child === 'string' ? child : child.toNode(anc))),
+			this.children.map((child) =>
+				typeof child === 'string' ? child : child.toNode(anc)
+			)
 		);
 		return nodes.reduce<ComponentNode[]>(
 			(flat, s) => (Array.isArray(s) ? flat.concat(s) : [...flat, s]),
-			[],
+			[]
 		);
 	}
 
@@ -166,7 +188,9 @@ export abstract class Component<
 	 * By default, an XML component would serialize to its children and string contents -- like a
 	 * fragment. Most components have an override to use specific OOXML elememnts, such as <w:p>.
 	 */
-	public toNode(ancestry: Array<ComponentAncestor>): ComponentNodes | Promise<ComponentNodes> {
+	public toNode(
+		ancestry: Array<ComponentAncestor>
+	): ComponentNodes | Promise<ComponentNodes> {
 		return this.childrenToNode(ancestry);
 	}
 }

@@ -7,7 +7,7 @@ import {
 	createXmlRoundRobinTest,
 } from '../utilities/tests.ts';
 import {
-	SectionProperties,
+	type SectionProperties,
 	sectionPropertiesFromNode,
 	sectionPropertiesToNode,
 } from './section-properties.ts';

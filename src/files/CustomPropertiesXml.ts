@@ -1,9 +1,13 @@
-import { Archive } from '../classes/Archive.ts';
+import type { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
-import { ALL_NAMESPACE_DECLARATIONS, NamespaceUri, QNS } from '../utilities/namespaces.ts';
+import {
+	ALL_NAMESPACE_DECLARATIONS,
+	NamespaceUri,
+	QNS,
+} from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
 
 export enum CustomPropertyType {
@@ -47,29 +51,35 @@ export class CustomPropertiesXml extends XmlFile {
 				</op:Properties>
 			`,
 			{
-				properties: Array.from(this.properties.entries()).map(([key, data]) => ({
-					key: String(key),
-					type: data.type,
-					name: data.name,
-					value: String(data.value),
-				})),
+				properties: Array.from(this.properties.entries()).map(
+					([key, data]) => ({
+						key: String(key),
+						type: data.type,
+						name: data.name,
+						value: String(data.value),
+					})
+				),
 				// For some reason, this identifier is always the same;
 				fmtid: '{D5CDD505-2E9C-101B-9397-08002B2CF9AE}',
 			},
-			true,
+			true
 		);
 	}
 
-	public override isEmpty() {
+	public override isEmpty(): boolean {
 		return !this.properties.size;
 	}
 
 	public add(name: Array<CustomProperty>): void;
-	public add(name: string, type: CustomPropertyType, value: string | number | boolean): void;
+	public add(
+		name: string,
+		type: CustomPropertyType,
+		value: string | number | boolean
+	): void;
 	public add(
 		nameOrMultiple: Array<CustomProperty> | string,
 		type?: CustomPropertyType,
-		value?: string | number | boolean,
+		value?: string | number | boolean
 	): void {
 		if (Array.isArray(nameOrMultiple)) {
 			nameOrMultiple.forEach((property) => this.properties.add(property));
@@ -86,7 +96,7 @@ export class CustomPropertiesXml extends XmlFile {
 	 */
 	public static override async fromArchive(
 		archive: Archive,
-		location: string,
+		location: string
 	): Promise<CustomPropertiesXml> {
 		const dom = await archive.readXml(location);
 		const instance = new CustomPropertiesXml(location);
@@ -98,7 +108,7 @@ export class CustomPropertiesXml extends XmlFile {
 					"value": string(./*)
 				}}
 			`,
-			dom,
+			dom
 		).forEach(({ name, type, value }) => instance.add(name, type, value));
 		return instance;
 	}

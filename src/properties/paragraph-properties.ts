@@ -1,9 +1,9 @@
 import { create } from '../utilities/dom.ts';
-import { type Length } from '../utilities/length.ts';
+import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../utilities/xquery.ts';
 import { type SectionProperties, sectionPropertiesToNode } from './section-properties.ts';
-import { type Border, type LineBorderType, type Shading } from './shared-properties.ts';
+import type { Border, LineBorderType, Shading } from './shared-properties.ts';
 import {
 	type TextProperties,
 	textPropertiesFromNode,

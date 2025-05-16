@@ -13,27 +13,27 @@ import './Text.ts';
 import './TextAddition.ts';
 import './TextDeletion.ts';
 
-import { type Hyperlink } from '../../mod.ts';
-import { type ComponentAncestor, Component, ComponentContext } from '../classes/Component.ts';
-import { type ParagraphProperties } from '../properties/paragraph-properties.ts';
+import type { Hyperlink } from '../../mod.ts';
+import { type ComponentAncestor, Component, type ComponentContext } from '../classes/Component.ts';
+import type { ParagraphProperties } from '../properties/paragraph-properties.ts';
 import {
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from '../properties/paragraph-properties.ts';
-import { type SectionProperties } from '../properties/section-properties.ts';
+import type { SectionProperties } from '../properties/section-properties.ts';
 import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { type BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
-import { type BookmarkRangeStart } from './BookmarkRangeStart.ts';
-import { type Comment } from './Comment.ts';
-import { type CommentRangeEnd } from './CommentRangeEnd.ts';
-import { type CommentRangeStart } from './CommentRangeStart.ts';
-import { type Field } from './Field.ts';
-import { type Text } from './Text.ts';
-import { type TextAddition } from './TextAddition.ts';
-import { type TextDeletion } from './TextDeletion.ts';
+import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
+import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
+import type { Comment } from './Comment.ts';
+import type { CommentRangeEnd } from './CommentRangeEnd.ts';
+import type { CommentRangeStart } from './CommentRangeStart.ts';
+import type { Field } from './Field.ts';
+import type { Text } from './Text.ts';
+import type { TextAddition } from './TextAddition.ts';
+import type { TextDeletion } from './TextDeletion.ts';
 
 /**
  * A type describing the components accepted as children of {@link Paragraph}.

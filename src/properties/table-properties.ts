@@ -1,8 +1,8 @@
 import { create } from '../utilities/dom.ts';
-import { Length } from '../utilities/length.ts';
+import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { type ArtBorderType, type Border, type LineBorderType } from './shared-properties.ts';
+import type { ArtBorderType, Border, LineBorderType } from './shared-properties.ts';
 
 export type TableProperties = {
 	/**

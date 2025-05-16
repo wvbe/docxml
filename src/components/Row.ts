@@ -7,7 +7,7 @@ import {
 	type ComponentAncestor,
 	type ComponentDefinition,
 	Component,
-	ComponentContext,
+	type ComponentContext,
 } from '../classes/Component.ts';
 import {
 	type TableRowProperties,
@@ -22,9 +22,9 @@ import {
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 } from '../utilities/xquery.ts';
-import { type Cell } from './Cell.ts';
-import { type RowAddition } from './RowAddition.ts';
-import { type RowDeletion } from './RowDeletion.ts';
+import type { Cell } from './Cell.ts';
+import type { RowAddition } from './RowAddition.ts';
+import type { RowDeletion } from './RowDeletion.ts';
 import { Table } from './Table.ts';
 
 /**

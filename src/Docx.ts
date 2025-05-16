@@ -1,14 +1,18 @@
-import { GenericRenderer } from 'xml_renderer'; 
+import { GenericRenderer } from 'xml_renderer';
 
 import { Archive } from './classes/Archive.ts';
 import { Bookmarks } from './classes/Bookmarks.ts';
-import { type AnyComponent } from './classes/Component.ts';
+import type { AnyComponent } from './classes/Component.ts';
 import { FileLocation, RelationshipType } from './enums.ts';
 import { ContentTypesXml } from './files/ContentTypesXml.ts';
 import { CustomPropertiesXml } from './files/CustomPropertiesXml.ts';
-import { type DocumentChild, DocumentRoot, DocumentXml } from './files/DocumentXml.ts';
+import {
+	type DocumentChild,
+	type DocumentRoot,
+	DocumentXml,
+} from './files/DocumentXml.ts';
 import { RelationshipsXml } from './files/RelationshipsXml.ts';
-import { type SettingsI } from './files/SettingsXml.ts';
+import type { SettingsI } from './files/SettingsXml.ts';
 import { parse } from './utilities/dom.ts';
 import { jsx } from './utilities/jsx.ts';
 
@@ -24,7 +28,9 @@ type RuleResult = SyncRuleResult | AsyncRuleResult | Array<RuleResult>;
  * An instance of this class can access other classes that represent the various XML files in a
  * DOCX archive, such as `ContentTypes.xml`, `word/document.xml`, and `_rels/.rels`.
  */
-export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: string]: never }> {
+export class Docx<
+	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never }
+> {
 	/**
 	 * The JSX pragma.
 	 */
@@ -50,12 +56,19 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 */
 	public readonly relationships: RelationshipsXml;
 
-	public readonly bookmarks = new Bookmarks();
+	public readonly bookmarks: Bookmarks = new Bookmarks();
 
 	protected constructor(
-		contentTypes = new ContentTypesXml(FileLocation.contentTypes),
-		relationships = new RelationshipsXml(FileLocation.relationships),
-		rules: GenericRenderer<RuleResult, { document: DocumentXml } & PropsGeneric> | null = null,
+		contentTypes: ContentTypesXml = new ContentTypesXml(
+			FileLocation.contentTypes
+		),
+		relationships: RelationshipsXml = new RelationshipsXml(
+			FileLocation.relationships
+		),
+		rules: GenericRenderer<
+			RuleResult,
+			{ document: DocumentXml } & PropsGeneric
+		> | null = null
 	) {
 		this.contentTypes = contentTypes;
 		this.relationships = relationships;
@@ -67,7 +80,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		if (!this.relationships.hasType(RelationshipType.officeDocument)) {
 			this.relationships.add(
 				RelationshipType.officeDocument,
-				new DocumentXml(FileLocation.mainDocument),
+				new DocumentXml(FileLocation.mainDocument)
 			);
 		}
 	}
@@ -83,7 +96,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		if (!this.#officeDocument) {
 			this.#officeDocument = this.relationships.ensureRelationship(
 				RelationshipType.officeDocument,
-				() => new DocumentXml(FileLocation.mainDocument),
+				() => new DocumentXml(FileLocation.mainDocument)
 			);
 		}
 		return this.#officeDocument;
@@ -98,7 +111,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		if (!this.#customProperties) {
 			this.#customProperties = this.relationships.ensureRelationship(
 				RelationshipType.customProperties,
-				() => new CustomPropertiesXml(FileLocation.customProperties),
+				() => new CustomPropertiesXml(FileLocation.customProperties)
 			);
 		}
 		return this.#customProperties;
@@ -127,7 +140,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 
 		async function walkChildComponentsFromRoot(
 			children: Promise<AnyComponent[]>,
-			relationships: RelationshipsXml | null,
+			relationships: RelationshipsXml | null
 		) {
 			// Loop over all content to ensure styles are registered, relationships created etc.
 			await Promise.all(
@@ -139,11 +152,14 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 						return;
 					}
 					if (Array.isArray(component)) {
-						await Promise.all((component as AnyComponent[]).map(walk));
+						await Promise.all(
+							(component as AnyComponent[]).map(walk)
+						);
 						return;
 					}
 
-					const styleName = (component.props as { style?: string }).style;
+					const styleName = (component.props as { style?: string })
+						.style;
 					if (styleName) {
 						styles.ensureStyle(styleName);
 					}
@@ -152,15 +168,17 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 						await component.ensureRelationship(relationships);
 					}
 
-					await Promise.all((component.children as AnyComponent[]).map(walk));
-				}),
+					await Promise.all(
+						(component.children as AnyComponent[]).map(walk)
+					);
+				})
 			);
 		}
 
 		await Promise.all(
 			roots.map(({ relationships, componentRoot }) =>
-				walkChildComponentsFromRoot(componentRoot, relationships),
-			),
+				walkChildComponentsFromRoot(componentRoot, relationships)
+			)
 		);
 
 		const archive = new Archive();
@@ -174,8 +192,11 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 				.getRelated()
 				.filter((related) => !(related instanceof RelationshipsXml))
 				.map(async (related) => {
-					this.contentTypes.addOverride(related.location, await related.contentType);
-				}),
+					this.contentTypes.addOverride(
+						related.location,
+						await related.contentType
+					);
+				})
 		);
 		await this.contentTypes.addToArchive(archive);
 
@@ -194,7 +215,9 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * Instantiate this class by giving it a `.docx` file if it is already loaded as a {@link Archive} instance.
 	 */
 	public static async fromArchive<
-		PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
+		PropsGeneric extends { [key: string]: unknown } = {
+			[key: string]: never;
+		}
 	>(archive: Archive): Promise<Docx<PropsGeneric>>;
 
 	/**
@@ -203,14 +226,16 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	public static async fromArchive<
 		PropsGeneric extends { [key: string]: unknown } = {
 			[key: string]: never;
-		},
+		}
 	>(data: Uint8Array): Promise<Docx<PropsGeneric>>;
 
 	/**
 	 * Instantiate this class by pointing at a `.docx` file location.
 	 */
 	public static async fromArchive<
-		PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
+		PropsGeneric extends { [key: string]: unknown } = {
+			[key: string]: never;
+		}
 	>(location: string): Promise<Docx<PropsGeneric>>;
 
 	/**
@@ -219,8 +244,10 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	public static async fromArchive<
 		PropsGeneric extends { [key: string]: unknown } = {
 			[key: string]: never;
-		},
-	>(locationOrZipArchive: string | Archive | Uint8Array): Promise<Docx<PropsGeneric>> {
+		}
+	>(
+		locationOrZipArchive: string | Archive | Uint8Array
+	): Promise<Docx<PropsGeneric>> {
 		const archive =
 			typeof locationOrZipArchive === 'string'
 				? await Archive.fromFile(locationOrZipArchive)
@@ -228,11 +255,14 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 				? await Archive.fromUInt8Array(locationOrZipArchive)
 				: locationOrZipArchive;
 
-		const contentTypes = await ContentTypesXml.fromArchive(archive, FileLocation.contentTypes);
+		const contentTypes = await ContentTypesXml.fromArchive(
+			archive,
+			FileLocation.contentTypes
+		);
 		const relationships = await RelationshipsXml.fromArchive(
 			archive,
 			contentTypes,
-			FileLocation.relationships,
+			FileLocation.relationships
 		);
 
 		return new Docx<PropsGeneric>(contentTypes, relationships);
@@ -242,8 +272,10 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * Create an empty DOCX, and populate it with the minimum viable contents to appease MS Word.
 	 */
 	public static fromNothing<
-		PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
-	>() {
+		PropsGeneric extends { [key: string]: unknown } = {
+			[key: string]: never;
+		}
+	>(): Docx<PropsGeneric> {
 		return new Docx<PropsGeneric>();
 	}
 
@@ -251,7 +283,11 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * Create a new DOCX with contents composed by this library's components. Needs a single JSX component
 	 * as root, for example `<Section>` or `<Paragragh>`.
 	 */
-	public static fromJsx(roots: DocumentChild[] | Promise<DocumentChild[]>) {
+	public static fromJsx(
+		roots: DocumentChild[] | Promise<DocumentChild[]>
+	): Docx<{
+		[key: string]: never;
+	}> {
 		const docx = Docx.fromNothing();
 		docx.document.set(roots);
 		return docx;
@@ -261,7 +297,10 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * The XML renderer instance containing translation rules, going from your XML to this library's
 	 * OOXML components.
 	 */
-	readonly #renderer = new GenericRenderer<RuleResult, { document: DocumentXml } & PropsGeneric>();
+	readonly #renderer = new GenericRenderer<
+		RuleResult,
+		{ document: DocumentXml } & PropsGeneric
+	>();
 
 	/**
 	 * Add an XML translation rule, applied to an element that matches the given XPath test.
@@ -271,8 +310,11 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	public withXmlRule(
 		xPathTest: string,
 		transformer: Parameters<
-			GenericRenderer<RuleResult, { document: DocumentXml } & PropsGeneric>['add']
-		>[1],
+			GenericRenderer<
+				RuleResult,
+				{ document: DocumentXml } & PropsGeneric
+			>['add']
+		>[1]
 	): this {
 		this.#renderer.add(xPathTest, transformer);
 		return this;
@@ -283,7 +325,10 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 	 * cloning.
 	 */
 	private withXmlRules(
-		renderer: GenericRenderer<RuleResult, { document: DocumentXml } & PropsGeneric>,
+		renderer: GenericRenderer<
+			RuleResult,
+			{ document: DocumentXml } & PropsGeneric
+		>
 	): this {
 		this.#renderer.merge(renderer);
 		return this;
@@ -309,7 +354,7 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 		}
 		if (!this.#renderer.length) {
 			throw new Error(
-				'No XML transformation rules were configured, creating a DOCX from XML is therefore not possible.',
+				'No XML transformation rules were configured, creating a DOCX from XML is therefore not possible.'
 			);
 		}
 
@@ -318,22 +363,27 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 			...props,
 		});
 
-		const root = [ast].reduce<Promise<AnyComponent[]>>(async function flatten(
-			flatPromise,
-			childPromise,
-		): Promise<AnyComponent[]> {
-			const flat = await flatPromise;
-			const child = await childPromise;
-			if (child === null || typeof child === 'string') {
+		const root = [ast].reduce<Promise<AnyComponent[]>>(
+			async function flatten(
+				flatPromise,
+				childPromise
+			): Promise<AnyComponent[]> {
+				const flat = await flatPromise;
+				const child = await childPromise;
+				if (child === null || typeof child === 'string') {
+					return flat;
+				}
+				if (Array.isArray(child)) {
+					return [
+						...flat,
+						...(await child.reduce(flatten, Promise.resolve([]))),
+					];
+				}
+				flat.push(child);
 				return flat;
-			}
-			if (Array.isArray(child)) {
-				return [...flat, ...(await child.reduce(flatten, Promise.resolve([])))];
-			}
-			flat.push(child);
-			return flat;
-		},
-		Promise.resolve([]));
+			},
+			Promise.resolve([])
+		);
 
 		// There is no guarantee that the rendering rules produce schema-valid XML.
 		// @TODO implement some kind of an errr-out mechanism
@@ -367,8 +417,8 @@ export class Docx<PropsGeneric extends { [key: string]: unknown } = { [key: stri
 					...dict,
 					[key]: value,
 				}),
-				{},
-			),
+				{}
+			)
 		);
 		clone.customProperties.add(this.customProperties.values());
 		clone.contentTypes.addDefaults(this.contentTypes.defaults);

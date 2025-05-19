@@ -1,6 +1,6 @@
 {
 	"name": "@fontoxml/docxml",
-	"version": "5.15.5",
+	"version": "5.15.6",
 	"description": "A module for making .docx documents from scratch or from an existing .docx or .dotx template.",
 	"license": "MIT",
 	"homepage": "https://jsr.io/@fontoxml/docxml",

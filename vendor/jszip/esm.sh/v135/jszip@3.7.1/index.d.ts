@@ -1,4 +1,5 @@
-import type { Buffer } from 'node:buffer';
+// deno-lint-ignore no-explicit-any
+type Buffer = any;
 
 interface JSZipSupport {
 	arraybuffer: boolean;
@@ -25,7 +26,7 @@ interface InputByType {
 	uint8array: Uint8Array;
 	arraybuffer: ArrayBuffer;
 	blob: Blob;
-	stream: NodeJS.ReadableStream;
+	stream: ReadableStream;
 }
 
 interface OutputByType {
@@ -81,7 +82,7 @@ declare namespace JSZip {
 		nodeStream(
 			type?: 'nodebuffer',
 			onUpdate?: OnUpdateCallback
-		): NodeJS.ReadableStream;
+		): ReadableStream;
 	}
 
 	interface JSZipFileOptions {
@@ -249,7 +250,7 @@ interface JSZip {
 	generateNodeStream(
 		options?: JSZip.JSZipGeneratorOptions<'nodebuffer'>,
 		onUpdate?: OnUpdateCallback
-	): NodeJS.ReadableStream;
+	): ReadableStream;
 
 	/**
 	 * Deserialize zip file asynchronously

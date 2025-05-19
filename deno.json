@@ -1,6 +1,13 @@
 {
 	"name": "@fontoxml/docxml",
 	"version": "5.15.5",
+	"description": "A module for making .docx documents from scratch or from an existing .docx or .dotx template.",
+	"license": "MIT",
+	"homepage": "https://jsr.io/@fontoxml/docxml",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/fontoxml/docxml"
+	},
 	"exports": "./mod.ts",
 	"compilerOptions": {
 		"strict": true,

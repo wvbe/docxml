@@ -1,6 +1,6 @@
 # DOCX Markup Language
 
-This is a [NodeJS](https://nodejs.org/)/[Deno](https://deno.land) module for making `.docx` documents from scratch or from
+This is a [Deno](https://deno.land) module for making `.docx` documents from scratch or from
 an existing `.docx` or `.dotx` template.
 
 You could use `docxml` to:
@@ -18,28 +18,22 @@ This documentation for this lib is available at various locations:
 [👉 Deno mirror](http://jsr.io/@fontoxml/docxml)<br />
 [👉 npm mirror](http://npmjs.org/package/docxml)
 
-#### For Deno or for NodeJS
+#### For Deno
 
 [👉 Main article](https://github.com/fontoxml/docxml/wiki/Deno-or-Node)
 
-`docxml` can be used in [NodeJS](https://nodejs.org/) and [Deno](https://deno.land) according to the conventions of those ecosystems. For Node users, simply `npm install docxml` and then `require()` or `import` as you wish. For Deno users, `import "deno.land/x/docxml/mod.ts"` or use an import map.
+`docxml` can be used in [Deno](https://deno.land) using `import * from 'jsr:@fontoxml/docxml'` or using an import map.
 
 ```js
-// NodeJS using CommonJS:
-const { default: Docxml, Paragraph } = require('docxml');
-
-// NodeJS using ES6 modules, or Deno with an import map
-import Docxml, { Paragraph } from 'docxml';
-
 // Deno without an import map
-import Docxml, { Paragraph } from 'https://deno.land/x/docxml/mod.ts';
+import Docxml, { Paragraph } from 'jsr:@fontoxml/docxml';
 ```
 
 #### For JSX or for vanilla
 
 [👉 Main article](https://github.com/fontoxml/docxml/wiki/JSX-or-Not)
 
-`docxml` is designed to be used in vanilla JavaScript using class component instances, or using JSX if you're on Deno or want to use NodeJS and a transpiler like Babel:
+`docxml` is designed to be used in vanilla JavaScript using class component instances, or using JSX if you're on Deno:
 
 ```ts
 const para = new Paragraph(

@@ -7,8 +7,8 @@
 		"std/path": "jsr:@std/path@1.0.9",
 		"std/testing/bdd": "jsr:@std/testing@1.0.9/bdd",
 		"std/fmt": "jsr:@std/fmt@1.0.7",
+		"jszip": "npm:jszip@3.10.1",
 
-		"jszip": "./vendor/jszip/mod.ts",
 		"xml_renderer": "./vendor/xml_renderer/mod.ts"
 	}
 }

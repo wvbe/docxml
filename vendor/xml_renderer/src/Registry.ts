@@ -1,6 +1,6 @@
 import fontoxpath from 'fontoxpath';
 
-import { type Options } from './types.ts';
+import type { Options } from './types.ts';
 
 /**
  * An XPath expression that must evaluate to truthy or falsy for a given node, which determines wether or not the

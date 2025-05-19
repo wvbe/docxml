@@ -17,10 +17,12 @@ export class GenericRenderer<
 }
 
 export class ReactRenderer<
-	// deno-lint-ignore no-explicit-any
 	CreateElementGeneric extends (
+		// deno-lint-ignore no-explicit-any
 		Component: any,
+		// deno-lint-ignore no-explicit-any
 		props: any,
+		// deno-lint-ignore no-explicit-any
 		...children: any[]
 	) => unknown,
 	PropsGeneric extends { [key: string]: unknown } | undefined = undefined

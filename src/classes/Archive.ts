@@ -1,4 +1,5 @@
 import JSZip from 'jszip';
+import { normalize } from 'std/path';
 
 import { parse, serialize } from '../utilities/dom.ts';
 
@@ -21,31 +22,36 @@ export class Archive {
 	}
 
 	hasFile(location: string): boolean {
-		return location in this.#files;
+		const normalizedLocation = normalize(location);
+		return normalizedLocation in this.#files;
 	}
 
 	readText(location: string): Promise<string> {
-		const data = this.#files[location];
+		const normalizedLocation = normalize(location);
+		const data = this.#files[normalizedLocation];
 		if (!data) {
-			throw new Error(`File not found: ${location}`);
+			throw new Error(`File not found: ${normalizedLocation}`);
 		}
 		return Promise.resolve(new TextDecoder().decode(data));
 	}
 
 	async readXml(location: string): Promise<Document> {
-		return parse(await this.readText(location));
+		const normalizedLocation = normalize(location);
+		return parse(await this.readText(normalizedLocation));
 	}
 
 	readBinary(location: string): Promise<Uint8Array> {
-		const data = this.#files[location];
+		const normalizedLocation = normalize(location);
+		const data = this.#files[normalizedLocation];
 		if (!data) {
-			throw new Error(`File not found: ${location}`);
+			throw new Error(`File not found: ${normalizedLocation}`);
 		}
 		return Promise.resolve(data);
 	}
 
 	addTextFile(location: string, contents: string): this {
-		this.#files[location] = new TextEncoder().encode(contents);
+		const normalizedLocation = normalize(location);
+		this.#files[normalizedLocation] = new TextEncoder().encode(contents);
 		return this;
 	}
 
@@ -63,7 +69,10 @@ export class Archive {
 	}
 
 	addBinaryFile(location: string, promised: Promise<Uint8Array>): this {
-		this.#promises.push({ location, promise: promised });
+		this.#promises.push({
+			location: normalize(location),
+			promise: promised,
+		});
 		return this;
 	}
 
@@ -86,8 +95,9 @@ export class Archive {
 
 		zip.forEach((path, file) => {
 			if (!file.dir) {
+				const normalizedPath = normalize(path);
 				const p = file.async('uint8array').then((contents) => {
-					files[path] = contents;
+					files[normalizedPath] = contents;
 				});
 				promises.push(p);
 			}
@@ -98,11 +108,13 @@ export class Archive {
 	}
 
 	static async fromFile(location: string): Promise<Archive> {
-		const data = await Deno.readFile(location);
+		const normalizedLocation = normalize(location);
+		const data = await Deno.readFile(normalizedLocation);
 		return Archive.fromUInt8Array(data);
 	}
 
 	async toFile(location: string): Promise<void> {
-		await Deno.writeFile(location, await this.asUint8Array());
+		const normalizedLocation = normalize(location);
+		await Deno.writeFile(normalizedLocation, await this.asUint8Array());
 	}
 }

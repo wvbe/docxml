@@ -2,6 +2,7 @@ import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import { DocumentXml } from '../files/DocumentXml.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
+import { type Id, int } from '../utilities/id.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
@@ -14,7 +15,7 @@ export type CommentChild = never;
  * A type describing the props accepted by {@link Comment}.
  */
 export type CommentProps = {
-	id: number;
+	id: Id;
 };
 
 /**
@@ -30,10 +31,11 @@ export class Comment extends Component<CommentProps, CommentChild> {
 	 */
 	public override toNode(ancestry: ComponentAncestor[]): Node {
 		const doc = ancestry.find(
-			(ancestor): ancestor is DocumentXml => ancestor instanceof DocumentXml,
+			(ancestor): ancestor is DocumentXml =>
+				ancestor instanceof DocumentXml
 		);
-		if (!doc || !doc.comments.has(this.props.id)) {
-			throw new Error(`Comment "${this.props.id}" does not exist`);
+		if (!doc || !doc.comments.has(this.props.id.int)) {
+			throw new Error(`Comment "${this.props.id.int}" does not exist`);
 		}
 		return create(
 			`
@@ -49,8 +51,8 @@ export class Comment extends Component<CommentProps, CommentChild> {
 				}
 			`,
 			{
-				id: this.props.id,
-			},
+				id: this.props.id.int,
+			}
 		);
 	}
 
@@ -65,16 +67,15 @@ export class Comment extends Component<CommentProps, CommentChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node): Comment {
-		return new Comment(
-			evaluateXPathToMap<CommentProps>(
-				`
+		const { id } = evaluateXPathToMap<{ id: number }>(
+			`
 					map {
 						"id": ./@${QNS.w}id/number()
 					}
 				`,
-				node,
-			),
+			node
 		);
+		return new Comment({ id: int(id) });
 	}
 }
 

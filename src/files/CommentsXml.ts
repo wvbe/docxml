@@ -5,24 +5,34 @@ import type { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
-import { FileMime } from '../enums.ts';
+import { FileLocation, FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
+import { type Id, int } from '../utilities/id.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
+import { CommentsExtendedXml } from './CommentsExtendedXml.ts';
 import { RelationshipsXml } from './RelationshipsXml.ts';
 
 type Comment = {
-	id: number;
+	id: Id;
 	author: string;
 	initials?: string | null;
 	date: Date;
 	contents: Paragraph[] | Promise<Paragraph[]>;
+	parentId?: Id;
 };
 
 export class CommentsXml extends XmlFileWithContentTypes {
 	public static override contentType = FileMime.comments;
 
-	#comments = new NumberMap<Comment>();
+	#commentsExtended: CommentsExtendedXml | null = null;
+
+	// Sometimes MSWord doesn't like ids that have a 0 value.
+	#comments = new NumberMap<Comment>(1);
+
+	public set commentsExtended(commentsEx: CommentsExtendedXml) {
+		this.#commentsExtended = commentsEx;
+	}
 
 	public override isEmpty(): boolean {
 		return !this.#comments.size;
@@ -48,11 +58,18 @@ export class CommentsXml extends XmlFileWithContentTypes {
 				comments: await Promise.all(
 					this.#comments.array().map(async (comment) => ({
 						...comment,
+						id: comment.id.int,
 						date: comment.date.toISOString(),
 						contents: await Promise.all(
 							(
 								await comment.contents
-							).map((paragraph) => paragraph.toNode([]))
+							).map((paragraph) => {
+								// Using the comment identifier as paragraph identifier here.
+								// Comment ids are unique, and we only need paragraphs ids in order to track
+								// replies, so we're good here.
+								paragraph.id = comment.id;
+								return paragraph.toNode([]);
+							})
 						),
 					}))
 				),
@@ -71,8 +88,15 @@ export class CommentsXml extends XmlFileWithContentTypes {
 		contents: Comment['contents']
 	): number {
 		const id = this.#comments.getNextAvailableKey();
+
+		// Add the extended comment.
+		this.#commentsExtended?.add({
+			id: int(id),
+			parentId: meta.parentId,
+		});
+
 		this.#comments.set(id, {
-			id,
+			id: int(id),
 			...meta,
 			contents,
 		});
@@ -141,7 +165,16 @@ export class CommentsXml extends XmlFileWithContentTypes {
 	/**
 	 * @deprecated FOR TEST PURPOSES ONLY
 	 */
-	public override $$$toNode(): Promise<Document> {
-		return this.toNode();
+	public get $$$commentsExtended(): CommentsExtendedXml {
+		return this.#commentsExtended!;
+	}
+
+	/**
+	 * @deprecated FOR TEST PURPOSES ONLY
+	 */
+	public $$$initializeCommentsExtended() {
+		this.#commentsExtended = new CommentsExtendedXml(
+			FileLocation.commentsExtended
+		);
 	}
 }

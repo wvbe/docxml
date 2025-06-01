@@ -134,6 +134,7 @@ export {
 
 // Utility functions
 export { RelationshipType } from './src/enums.ts';
+export { hex, int, type Id } from './src/utilities/id.ts';
 export { jsx } from './src/utilities/jsx.ts';
 export {
 	cm,

@@ -6,6 +6,7 @@ export enum FileLocation {
 	// sensible/conventional defaults:
 
 	comments = 'word/comments.xml',
+	commentsExtended = 'word/commentsExtended.xml',
 	coreProperties = 'docProps/core.xml',
 	mainDocument = 'word/document.xml',
 	numbering = 'word/numbering.xml',
@@ -36,6 +37,7 @@ export enum FileMime {
 	theme = 'application/vnd.openxmlformats-officedocument.theme+xml',
 	webSettings = 'application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml',
 	comments = 'application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml',
+	commentsExtended = 'application/vnd.openxmlformats-officedocument.wordprocessingml.commentsExtended+xml',
 	numbering = 'application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml',
 
 	// Images
@@ -73,6 +75,6 @@ export enum RelationshipType {
 	// For dotx created with office 2020
 	classificationlabels = 'http://schemas.microsoft.com/office/2020/02/relationships/classificationlabels',
 	// Legacy template (.dot)
-	downRev = "http://schemas.microsoft.com/office/2006/relationships/downRev",
-	graphicFrameDoc = "http://schemas.microsoft.com/office/2006/relationships/graphicFrameDoc",
+	downRev = 'http://schemas.microsoft.com/office/2006/relationships/downRev',
+	graphicFrameDoc = 'http://schemas.microsoft.com/office/2006/relationships/graphicFrameDoc',
 }

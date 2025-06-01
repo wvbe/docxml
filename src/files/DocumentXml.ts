@@ -16,6 +16,7 @@ import { createChildComponentsFromNodes } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
+import { CommentsExtendedXml } from './CommentsExtendedXml.ts';
 import { CommentsXml } from './CommentsXml.ts';
 import {
 	type HeaderFooterRoot,
@@ -93,6 +94,13 @@ export class DocumentXml extends XmlFileWithContentTypes {
 				RelationshipType.comments,
 				() => new CommentsXml(FileLocation.comments)
 			);
+
+			// Create the extendedComments.xml file.
+			this.#comments.commentsExtended =
+				this.relationships.ensureRelationship(
+					RelationshipType.commentsExtended,
+					() => new CommentsExtendedXml(FileLocation.commentsExtended)
+				);
 		}
 		return this.#comments;
 	}

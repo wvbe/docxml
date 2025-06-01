@@ -1,5 +1,5 @@
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { describe, it } from 'std/testing/bdd';
 
 import { Archive } from '../classes/Archive.ts';
 import type { ComponentContext } from '../classes/Component.ts';
@@ -30,7 +30,7 @@ describe('Paragraph from XML', () => {
 				</w:r>
 			</w:p>
 		`),
-		emptyContext,
+		emptyContext
 	);
 
 	it('parses props correctly', () => {
@@ -45,21 +45,21 @@ describe('Paragraph from XML', () => {
 	it('serializes correctly', async () => {
 		expect(serialize(await paragraph.toNode([]))).toBe(
 			`
-			<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+			<p xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w14}" ns1:paraId="4CE0D358">
 				<pPr>
-					<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="Header"/>
+					<pStyle xmlns:ns2="${NamespaceUri.w}" ns2:val="Header"/>
 					<rPr>
-						<lang xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:val="en-GB"/>
+						<lang xmlns:ns3="${NamespaceUri.w}" ns3:val="en-GB"/>
 					</rPr>
 				</pPr>
 				<r>
 					<rPr>
-						<lang xmlns:ns3="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns3:val="nl-NL"/>
+						<lang xmlns:ns4="${NamespaceUri.w}" ns4:val="nl-NL"/>
 					</rPr>
 					<t xml:space="preserve">My custom template</t>
 				</r>
 			</p>
-			`.replace(/\n|\t/g, ''),
+			`.replace(/\n|\t/g, '')
 		);
 	});
 });
@@ -78,17 +78,19 @@ describe('Paragraph with style change', () => {
 	it('serializes correctly', async () => {
 		expect(serialize(await paragraph.toNode([]))).toBe(
 			`
-				<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+				<p xmlns="${NamespaceUri.w}">
 					<pPr>
-						<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="StyleNew"/>
-						<pPrChange xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:id="0" ns2:author="Wybe" ns2:date="${now.toISOString()}">
+						<pStyle xmlns:ns1="${NamespaceUri.w}" ns1:val="StyleNew"/>
+						<pPrChange xmlns:ns2="${
+							NamespaceUri.w
+						}" ns2:id="0" ns2:author="Wybe" ns2:date="${now.toISOString()}">
 							<pPr>
 								<pStyle ns2:val="StyleOld"/>
 						</pPr>
 						</pPrChange>
 					</pPr>
 				</p>
-			`.replace(/\n|\t/g, ''),
+			`.replace(/\n|\t/g, '')
 		);
 	});
 });

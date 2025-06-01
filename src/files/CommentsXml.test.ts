@@ -4,6 +4,7 @@ import { beforeEach, describe, it } from 'std/testing/bdd';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Text } from '../components/Text.ts';
 import { parse, serialize } from '../utilities/dom.ts';
+import { int } from '../utilities/id.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { archive } from '../utilities/tests.ts';
 import { CommentsXml } from './CommentsXml.ts';
@@ -28,6 +29,7 @@ describe('Comments', () => {
 			contentTypes,
 			'word/comments.xml'
 		);
+		comments.$$$initializeCommentsExtended();
 	});
 
 	it('serializes correctly if there are no comments', async () => {
@@ -89,7 +91,7 @@ describe('Comments', () => {
 		);
 		const expectedComment = `
 			<w:comment w:id="${commentId}" w:author="Foo Bar" w:initials="FB" w:date="${date.toISOString()}">
-				<w:p>
+				<w:p xmlns:ns1="http://schemas.microsoft.com/office/word/2010/wordml" ns1:paraId="00000001">
 					<w:r>
 						<w:t xml:space="preserve">Hello world.</w:t>
 					</w:r>
@@ -102,6 +104,59 @@ describe('Comments', () => {
 				<w:comments xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					${expectedComment}
 				</w:comments>	
+			`.replace(/\n|\t/g, '')
+		);
+	});
+
+	it('can add a comment with parent identifier', async () => {
+		const date = new Date();
+
+		const parent = comments.add(
+			{ author: 'Foo Bar', date, initials: 'FB' },
+			[new Paragraph({}, new Text({}, 'Hello'))]
+		);
+		const child = comments.add(
+			{ author: 'Foo Bar', date, initials: 'FB', parentId: int(parent) },
+			[new Paragraph({}, new Text({}, 'world!'))]
+		);
+
+		const expectedParentComment = `
+			<w:comment w:id="${parent}" w:author="Foo Bar" w:initials="FB" w:date="${date.toISOString()}">
+				<w:p xmlns:ns1="http://schemas.microsoft.com/office/word/2010/wordml" ns1:paraId="00000001">
+					<w:r>
+						<w:t xml:space="preserve">Hello</w:t>
+					</w:r>
+				</w:p>
+			</w:comment>
+		`;
+		const expectedParentCommentExtended = `<w15:commentEx w15:paraId="0000000${parent}"/>`;
+
+		const expectedChildComment = `
+			<w:comment w:id="${child}" w:author="Foo Bar" w:initials="FB" w:date="${date.toISOString()}">
+				<w:p xmlns:ns2="http://schemas.microsoft.com/office/word/2010/wordml" ns2:paraId="00000002">
+					<w:r>
+						<w:t xml:space="preserve">world!</w:t>
+					</w:r>
+				</w:p>
+			</w:comment>
+		`;
+		const expectedChildCommentExtended = `<w15:commentEx w15:paraId="0000000${child}" w15:paraIdParent="0000000${parent}"/>`;
+
+		expect(serialize(await comments.$$$toNode())).toBe(
+			`
+				<w:comments xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+					${expectedParentComment}
+					${expectedChildComment}
+				</w:comments>	
+			`.replace(/\n|\t/g, '')
+		);
+
+		expect(serialize(comments.$$$commentsExtended.$$$toNode())).toBe(
+			`
+				<w15:commentsEx xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml">
+					${expectedParentCommentExtended}
+					${expectedChildCommentExtended}
+				</w15:commentsEx>	
 			`.replace(/\n|\t/g, '')
 		);
 	});

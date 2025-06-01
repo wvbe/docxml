@@ -86,7 +86,7 @@ export class CommentsXml extends XmlFileWithContentTypes {
 	public add(
 		meta: Omit<Comment, 'id' | 'contents'>,
 		contents: Comment['contents']
-	): number {
+	): Id {
 		const id = this.#comments.getNextAvailableKey();
 
 		// Add the extended comment.
@@ -100,7 +100,7 @@ export class CommentsXml extends XmlFileWithContentTypes {
 			...meta,
 			contents,
 		});
-		return id;
+		return int(id);
 	}
 
 	/**

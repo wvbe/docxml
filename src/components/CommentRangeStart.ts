@@ -1,6 +1,7 @@
-import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { Component, type ComponentAncestor } from '../classes/Component.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
+import { int, type Id } from '../utilities/id.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
@@ -13,13 +14,16 @@ export type CommentRangeStartChild = never;
  * A type describing the props accepted by {@link CommentRangeStart}.
  */
 export type CommentRangeStartProps = {
-	id: number;
+	id: Id;
 };
 
 /**
  * The start of a range associated with a comment.
  */
-export class CommentRangeStart extends Component<CommentRangeStartProps, CommentRangeStartChild> {
+export class CommentRangeStart extends Component<
+	CommentRangeStartProps,
+	CommentRangeStartChild
+> {
 	public static override readonly children: string[] = [];
 
 	public static override readonly mixed: boolean = false;
@@ -36,8 +40,8 @@ export class CommentRangeStart extends Component<CommentRangeStartProps, Comment
 				}
 			`,
 			{
-				id: this.props.id,
-			},
+				id: this.props.id.int,
+			}
 		);
 	}
 
@@ -52,16 +56,15 @@ export class CommentRangeStart extends Component<CommentRangeStartProps, Comment
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node): CommentRangeStart {
-		return new CommentRangeStart(
-			evaluateXPathToMap<CommentRangeStartProps>(
-				`
+		const { id } = evaluateXPathToMap<{ id: number }>(
+			`
 					map {
 						"id": ./@${QNS.w}id/number()
 					}
 				`,
-				node,
-			),
+			node
 		);
+		return new CommentRangeStart({ id: int(id) });
 	}
 }
 

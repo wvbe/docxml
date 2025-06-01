@@ -1,6 +1,7 @@
-import { type ComponentAncestor, Component } from '../classes/Component.ts';
+import { Component, type ComponentAncestor } from '../classes/Component.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
+import { int, type Id } from '../utilities/id.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
@@ -13,13 +14,16 @@ export type CommentRangeEndChild = never;
  * A type describing the props accepted by {@link CommentRangeEnd}.
  */
 export type CommentRangeEndProps = {
-	id: number;
+	id: Id;
 };
 
 /**
  * The end of a range associated with a comment.
  */
-export class CommentRangeEnd extends Component<CommentRangeEndProps, CommentRangeEndChild> {
+export class CommentRangeEnd extends Component<
+	CommentRangeEndProps,
+	CommentRangeEndChild
+> {
 	public static override readonly children: string[] = [];
 
 	public static override readonly mixed: boolean = false;
@@ -36,8 +40,8 @@ export class CommentRangeEnd extends Component<CommentRangeEndProps, CommentRang
 				}
 			`,
 			{
-				id: this.props.id,
-			},
+				id: this.props.id.int,
+			}
 		);
 	}
 
@@ -52,16 +56,15 @@ export class CommentRangeEnd extends Component<CommentRangeEndProps, CommentRang
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node): CommentRangeEnd {
-		return new CommentRangeEnd(
-			evaluateXPathToMap<CommentRangeEndProps>(
-				`
-					map {
-						"id": ./@${QNS.w}id/number()
-					}
-				`,
-				node,
-			),
+		const { id } = evaluateXPathToMap<{ id: number }>(
+			`
+							map {
+								"id": ./@${QNS.w}id/number()
+							}
+						`,
+			node
 		);
+		return new CommentRangeEnd({ id: int(id) });
 	}
 }
 

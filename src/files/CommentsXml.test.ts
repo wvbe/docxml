@@ -4,7 +4,6 @@ import { beforeEach, describe, it } from 'std/testing/bdd';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Text } from '../components/Text.ts';
 import { parse, serialize } from '../utilities/dom.ts';
-import { int } from '../utilities/id.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { archive } from '../utilities/tests.ts';
 import { CommentsXml } from './CommentsXml.ts';
@@ -45,7 +44,9 @@ describe('Comments', () => {
 		const date = new Date();
 
 		const commentId = comments.add({ author: 'foo', date }, []);
-		const expectedComment = `<w:comment w:id="${commentId}" w:author="foo" w:date="${date.toISOString()}"/>`;
+		const expectedComment = `<w:comment w:id="${
+			commentId.int
+		}" w:author="foo" w:date="${date.toISOString()}"/>`;
 
 		expect(serialize(await comments.$$$toNode())).toBe(
 			`
@@ -63,13 +64,17 @@ describe('Comments', () => {
 			{ author: 'Foo Bar', date, initials: 'FB' },
 			[]
 		);
-		const expectedComment = `<w:comment w:id="${commentId}" w:author="Foo Bar" w:initials="FB" w:date="${date.toISOString()}"/>`;
+		const expectedComment = `<w:comment w:id="${
+			commentId.int
+		}" w:author="Foo Bar" w:initials="FB" w:date="${date.toISOString()}"/>`;
 
 		const commentId2 = comments.add(
 			{ author: 'Foo Bar', date, initials: null },
 			[]
 		);
-		const expectedComment2 = `<w:comment w:id="${commentId2}" w:author="Foo Bar" w:date="${date.toISOString()}"/>`;
+		const expectedComment2 = `<w:comment w:id="${
+			commentId2.int
+		}" w:author="Foo Bar" w:date="${date.toISOString()}"/>`;
 
 		expect(serialize(await comments.$$$toNode())).toBe(
 			`
@@ -90,7 +95,9 @@ describe('Comments', () => {
 			[para]
 		);
 		const expectedComment = `
-			<w:comment w:id="${commentId}" w:author="Foo Bar" w:initials="FB" w:date="${date.toISOString()}">
+			<w:comment w:id="${
+				commentId.int
+			}" w:author="Foo Bar" w:initials="FB" w:date="${date.toISOString()}">
 				<w:p xmlns:ns1="http://schemas.microsoft.com/office/word/2010/wordml" ns1:paraId="00000001">
 					<w:r>
 						<w:t xml:space="preserve">Hello world.</w:t>
@@ -116,12 +123,14 @@ describe('Comments', () => {
 			[new Paragraph({}, new Text({}, 'Hello'))]
 		);
 		const child = comments.add(
-			{ author: 'Foo Bar', date, initials: 'FB', parentId: int(parent) },
+			{ author: 'Foo Bar', date, initials: 'FB', parentId: parent },
 			[new Paragraph({}, new Text({}, 'world!'))]
 		);
 
 		const expectedParentComment = `
-			<w:comment w:id="${parent}" w:author="Foo Bar" w:initials="FB" w:date="${date.toISOString()}">
+			<w:comment w:id="${
+				parent.int
+			}" w:author="Foo Bar" w:initials="FB" w:date="${date.toISOString()}">
 				<w:p xmlns:ns1="http://schemas.microsoft.com/office/word/2010/wordml" ns1:paraId="00000001">
 					<w:r>
 						<w:t xml:space="preserve">Hello</w:t>
@@ -129,10 +138,12 @@ describe('Comments', () => {
 				</w:p>
 			</w:comment>
 		`;
-		const expectedParentCommentExtended = `<w15:commentEx w15:paraId="0000000${parent}"/>`;
+		const expectedParentCommentExtended = `<w15:commentEx w15:paraId="0000000${parent.int}"/>`;
 
 		const expectedChildComment = `
-			<w:comment w:id="${child}" w:author="Foo Bar" w:initials="FB" w:date="${date.toISOString()}">
+			<w:comment w:id="${
+				child.int
+			}" w:author="Foo Bar" w:initials="FB" w:date="${date.toISOString()}">
 				<w:p xmlns:ns2="http://schemas.microsoft.com/office/word/2010/wordml" ns2:paraId="00000002">
 					<w:r>
 						<w:t xml:space="preserve">world!</w:t>
@@ -140,7 +151,7 @@ describe('Comments', () => {
 				</w:p>
 			</w:comment>
 		`;
-		const expectedChildCommentExtended = `<w15:commentEx w15:paraId="0000000${child}" w15:paraIdParent="0000000${parent}"/>`;
+		const expectedChildCommentExtended = `<w15:commentEx w15:paraId="0000000${child.int}" w15:paraIdParent="0000000${parent.int}"/>`;
 
 		expect(serialize(await comments.$$$toNode())).toBe(
 			`

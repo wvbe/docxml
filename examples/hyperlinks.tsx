@@ -14,14 +14,14 @@ const docx = Docx.fromNothing();
 const bookmark = docx.bookmarks.create();
 
 docx.document.set([
-	<Section pageOrientation={'portrait'}>
+	<Section pageOrientation="portrait">
 		<Paragraph>
 			<Hyperlink bookmark={bookmark}>
 				<Text>This is a cross-reference to the next section</Text>
 			</Hyperlink>
 		</Paragraph>
 	</Section>,
-	<Section pageOrientation={'landscape'}>
+	<Section pageOrientation="landscape">
 		<BookmarkRangeStart bookmark={bookmark} />
 		<Paragraph>
 			<Hyperlink url="https://github.com/fontoxml/docxml">

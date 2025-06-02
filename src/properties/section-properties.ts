@@ -1,3 +1,4 @@
+import type { FootnoteProps } from '../components/FootnoteReference.ts';
 import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
@@ -53,6 +54,8 @@ export type SectionProperties = {
 		| null
 		| string
 		| { first?: string | null; even?: string | null; odd?: string | null };
+
+	footnotes?: null | FootnoteProps;
 	/**
 	 * The width of any page in this section.
 	 */
@@ -137,6 +140,20 @@ export function sectionPropertiesFromNode(
 export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 	return create(
 		`element ${QNS.w}sectPr {
+			if (exists($footnotes)) then element ${QNS.w}footnotePr {
+				if (exists($footnotes('numberingFormat')))
+				then element ${QNS.w}numFmt { 
+					attribute ${QNS.w}val { $footnotes('numberingFormat')}
+				} else (),
+				if (exists($footnotes('position')))
+				then element ${QNS.w}pos { 
+					attribute ${QNS.w}val { $footnotes('position')}
+				} else (),
+				if (exists($footnotes('restart'))) 
+				then element ${QNS.w}numRestart { 
+					attribute ${QNS.w}val { $footnotes('restart')}
+				} else ()
+			} else (), 
 			if (exists($headers('first'))) then element ${QNS.w}headerReference {
 				attribute ${QNS.r}id { $headers('first') },
 				attribute ${QNS.w}type { 'first' }
@@ -239,6 +256,7 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 							odd: data.footers,
 					  }
 					: data.footers || {},
+			footnotes: data.footnotes || {},
 			columns: data.columns || {},
 			pageWidth: data.pageWidth || null,
 			pageHeight: data.pageHeight || null,

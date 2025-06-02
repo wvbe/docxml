@@ -1,6 +1,5 @@
-import { expect } from 'std/expect'; 
-import { beforeAll, describe, it } from "std/testing/bdd";
-
+import { expect } from 'std/expect';
+import { beforeAll, describe, it } from 'std/testing/bdd';
 
 import { Docx } from './Docx.ts';
 import { FileLocation } from './enums.ts';
@@ -14,10 +13,11 @@ describe('Docx', () => {
 
 	it('correct files', async () => {
 		const archive = await bundle.toArchive();
+
 		expect(
 			Object.keys(archive.$$$fileNames)
 				.filter((name) => !name.endsWith('/'))
-				.sort(),
+				.sort()
 		).toEqual(
 			[
 				FileLocation.contentTypes,
@@ -40,9 +40,8 @@ describe('Docx', () => {
 				'word/footer3.xml',
 				'word/endnotes.xml',
 				'word/header3.xml',
-				'word/footnotes.xml',
 				'word/footer2.xml',
-			].sort(),
+			].sort()
 		);
 	});
 

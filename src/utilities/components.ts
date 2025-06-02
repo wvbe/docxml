@@ -1,7 +1,7 @@
 import type {
 	AnyComponent,
-	ComponentDefinition,
 	ComponentContext,
+	ComponentDefinition,
 } from '../classes/Component.ts';
 
 const componentByName = new Map<string, ComponentDefinition>();
@@ -15,7 +15,9 @@ const componentByName = new Map<string, ComponentDefinition>();
  * This helps avoid circular dependencies in components that can be a descendant of themselves.
  * For example, Table --> Row --> Cell --> Table
  */
-export function registerComponent<C extends AnyComponent>(component: ComponentDefinition<C>) {
+export function registerComponent<C extends AnyComponent>(
+	component: ComponentDefinition<C>
+) {
 	componentByName.set(component.name, component);
 	return component;
 }
@@ -29,7 +31,7 @@ export function registerComponent<C extends AnyComponent>(component: ComponentDe
 export function createChildComponentsFromNodes<T extends AnyComponent | string>(
 	names: string[],
 	nodes: Node[],
-	context: ComponentContext,
+	context: ComponentContext
 ): T[] {
 	const children = names.map((name) => {
 		const component = componentByName.get(name);
@@ -43,9 +45,9 @@ export function createChildComponentsFromNodes<T extends AnyComponent | string>(
 			(node) =>
 				(node.nodeType === 3
 					? node.nodeValue
-					: children.find((Child) => Child.matchesNode(node))?.fromNode(node, context)) as
-					| T
-					| undefined,
+					: children
+							.find((Child) => Child.matchesNode(node))
+							?.fromNode(node, context)) as T | undefined
 		)
 		.filter((child): child is T => !!child);
 }

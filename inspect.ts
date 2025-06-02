@@ -6,7 +6,7 @@
  *   deno run --allow-read inspect.ts test/simple.docx
  */
 
-import Docx, { FooterXml, HeaderXml, RelationshipType } from './mod.ts';
+import Docx, { type FooterXml, type HeaderXml, RelationshipType } from './mod.ts';
 import { getColorizedJsxForComponent } from './src/utilities/debug.ts';
 
 const docx = await Docx.fromArchive(Deno.args[0]);

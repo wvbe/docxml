@@ -18,6 +18,7 @@ import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import { CommentsExtendedXml } from './CommentsExtendedXml.ts';
 import { CommentsXml } from './CommentsXml.ts';
+import { FootnotesXml } from './FootnotesXml.ts';
 import {
 	type HeaderFooterRoot,
 	FooterXml,
@@ -103,6 +104,21 @@ export class DocumentXml extends XmlFileWithContentTypes {
 				);
 		}
 		return this.#comments;
+	}
+
+	#footnotes: FootnotesXml | null = null;
+
+	/**
+	 * The API representing "footnotes.xml" and all the footnotes in this document.
+	 */
+	public get footnotes(): FootnotesXml {
+		if (!this.#footnotes) {
+			this.#footnotes = this.relationships.ensureRelationship(
+				RelationshipType.footnotes,
+				() => new FootnotesXml(FileLocation.footnotes)
+			);
+		}
+		return this.#footnotes;
 	}
 
 	#numbering: NumberingXml | null = null;

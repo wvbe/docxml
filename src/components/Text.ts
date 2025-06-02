@@ -10,13 +10,20 @@ import './NonBreakingHyphen.ts';
 import './Symbol.ts';
 import './Tab.ts';
 
-import { type ComponentAncestor, Component, type ComponentContext } from '../classes/Component.ts';
+import {
+	Component,
+	type ComponentAncestor,
+	type ComponentContext,
+} from '../classes/Component.ts';
 import {
 	type TextProperties,
 	textPropertiesFromNode,
 	textPropertiesToNode,
 } from '../properties/text-properties.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
@@ -25,6 +32,8 @@ import type { FieldRangeEnd } from './FieldRangeEnd.ts';
 import type { FieldRangeInstruction } from './FieldRangeInstruction.ts';
 import type { FieldRangeSeparator } from './FieldRangeSeparator.ts';
 import type { FieldRangeStart } from './FieldRangeStart.ts';
+import type { FootnoteContinuationSeparator } from './FootnoteContinuationSeparator.ts';
+import type { FootnoteSeparator } from './FootnoteSeparator.ts';
 import type { Image } from './Image.ts';
 import type { NonBreakingHyphen } from './NonBreakingHyphen.ts';
 import type { Symbol } from './Symbol.ts';
@@ -41,6 +50,8 @@ export type TextChild =
 	| FieldRangeInstruction
 	| FieldRangeSeparator
 	| FieldRangeStart
+	| FootnoteSeparator
+	| FootnoteContinuationSeparator
 	| Image
 	| NonBreakingHyphen
 	// eslint-disable-next-line @typescript-eslint/ban-types
@@ -63,6 +74,8 @@ export class Text extends Component<TextProps, TextChild> {
 		'FieldRangeInstruction',
 		'FieldRangeSeparator',
 		'FieldRangeStart',
+		'FootnoteSeparator',
+		'FootnoteContinuationSeparator',
 		'Image',
 		'NonBreakingHyphen',
 		'Symbol',
@@ -74,7 +87,9 @@ export class Text extends Component<TextProps, TextChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
-		const asTextDeletion = ancestry.some((ancestor) => ancestor instanceof TextDeletion);
+		const asTextDeletion = ancestry.some(
+			(ancestor) => ancestor instanceof TextDeletion
+		);
 		const anc = [this, ...ancestry];
 		return create(
 			`
@@ -89,19 +104,21 @@ export class Text extends Component<TextProps, TextChild> {
 					this.children.map((child) => {
 						if (typeof child === 'string') {
 							return create(
-								`element ${QNS.w}${asTextDeletion ? 'delText' : 't'} {
+								`element ${QNS.w}${
+									asTextDeletion ? 'delText' : 't'
+								} {
 									attribute xml:space { "preserve" },
 									$text
 								}`,
 								{
 									text: child,
-								},
+								}
 							);
 						}
 						return child.toNode(anc);
-					}),
+					})
 				),
-			},
+			}
 		);
 	}
 
@@ -116,7 +133,10 @@ export class Text extends Component<TextProps, TextChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node, context: ComponentContext): Text {
-		const { children, rpr } = evaluateXPathToMap<{ rpr: Node; children: Node[] }>(
+		const { children, rpr } = evaluateXPathToMap<{
+			rpr: Node;
+			children: Node[];
+		}>(
 			`
 				map {
 					"rpr": ./${QNS.w}rPr,
@@ -133,11 +153,15 @@ export class Text extends Component<TextProps, TextChild> {
 					}
 				}
 			`,
-			node,
+			node
 		);
 		return new Text(
 			textPropertiesFromNode(rpr),
-			...createChildComponentsFromNodes<TextChild>(this.children, children, context),
+			...createChildComponentsFromNodes<TextChild>(
+				this.children,
+				children,
+				context
+			)
 		);
 	}
 }

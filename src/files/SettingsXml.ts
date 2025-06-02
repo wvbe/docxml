@@ -3,6 +3,7 @@ import * as path from 'std/path';
 import type { ContentTypesXml, Length } from '../../mod.ts';
 import type { Archive } from '../classes/Archive.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
+import type { FootnoteProps } from '../components/FootnoteReference.ts';
 import { FileMime, RelationshipType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { twip } from '../utilities/length.ts';
@@ -26,6 +27,8 @@ export type SettingsI = {
 	attachedTemplate: string | null;
 
 	defaultTabStop: Length | null;
+
+	footnoteProperties?: FootnoteProps | null;
 };
 
 const DEFAULT_SETTINGS: SettingsI = {
@@ -33,12 +36,14 @@ const DEFAULT_SETTINGS: SettingsI = {
 	evenAndOddHeaders: false,
 	attachedTemplate: null,
 	defaultTabStop: null,
+	footnoteProperties: null,
 };
 
 enum SettingType {
 	Length,
 	OnOff,
 	Relationship,
+	Formatting,
 }
 
 type SettingMeta =
@@ -51,6 +56,11 @@ type SettingMeta =
 			docxmlName: keyof SettingsI;
 			ooxmlLocalName: string;
 			ooxmlType: SettingType.OnOff;
+	  }
+	| {
+			docxmlName: keyof SettingsI;
+			ooxmlLocalName: string;
+			ooxmlType: SettingType.Formatting;
 	  }
 	| {
 			docxmlName: keyof SettingsI;
@@ -79,6 +89,11 @@ const settingsMeta: Array<SettingMeta> = [
 		docxmlName: 'defaultTabStop',
 		ooxmlLocalName: 'defaultTabStop',
 		ooxmlType: SettingType.Length,
+	},
+	{
+		docxmlName: 'footnoteProperties',
+		ooxmlLocalName: 'footnotePr',
+		ooxmlType: SettingType.Formatting,
 	},
 ];
 
@@ -155,6 +170,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 	}
 
 	protected override toNode(): Document {
+		// Notice the two footnote elements. MSWord needs those there so it can display the horizontal separator line.
 		return create(
 			`<w:settings ${ALL_NAMESPACE_DECLARATIONS}>
 				{
@@ -167,6 +183,25 @@ export class SettingsXml extends XmlFileWithContentTypes {
 					if ($attachedTemplate) then element ${QNS.w}attachedTemplate {
 						attribute ${QNS.r}id { $attachedTemplate }
 					} else (),
+					if (exists($footnoteProperties)) then (
+						element ${QNS.w}footnotePr {
+							element ${QNS.w}numFmt { 
+								attribute ${QNS.w}val { $footnoteProperties('numberingFormat')}
+							}, 
+							element ${QNS.w}pos{ 
+								attribute ${QNS.w}val { $footnoteProperties('position')}
+							}, 
+							element ${QNS.w}numRestart { 
+								attribute ${QNS.w}val { $footnoteProperties('restart')}
+							},
+							element ${QNS.w}footnote { 
+								attribute ${QNS.w}id { -1 }
+							},
+							element ${QNS.w}footnote { 
+								attribute ${QNS.w}id { 0 }
+							}
+						}
+					) else (), 
 					${
 						this.#props.defaultTabStop
 							? `

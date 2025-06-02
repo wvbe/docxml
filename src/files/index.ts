@@ -5,17 +5,17 @@ import { RelationshipType } from '../enums.ts';
 import { CommentsXml } from './CommentsXml.ts';
 import { CustomPropertiesXml } from './CustomPropertiesXml.ts';
 import { DocumentXml } from './DocumentXml.ts';
+import { FootnotesXml } from './FootnotesXml.ts';
 import { FooterXml, HeaderXml } from './HeaderFooterXml.ts';
 import { NumberingXml } from './NumberingXml.ts';
 import type { RelationshipMeta } from './RelationshipsXml.ts';
 import { SettingsXml } from './SettingsXml.ts';
 import { StylesXml } from './StylesXml.ts';
+import { ThemeXml } from './ThemeXml.ts';
 import { CorePropertiesXml } from './wip/CorePropertiesXml.ts';
 import { EndnotesXml } from './wip/EndnotesXml.ts';
 import { ExtendedPropertiesXml } from './wip/ExtendedPropertiesXml.ts';
 import { FontTableXml } from './wip/FontTableXml.ts';
-import { FootnotesXml } from './wip/FootnotesXml.ts';
-import { ThemeXml } from './ThemeXml.ts';
 import { WebSettingsXml } from './wip/WebSettingsXml.ts';
 
 /**
@@ -25,7 +25,7 @@ import { WebSettingsXml } from './wip/WebSettingsXml.ts';
 export function castRelationshipToClass(
 	archive: Archive,
 	contentTypes: ContentTypesXml,
-	meta: Pick<RelationshipMeta, 'type' | 'target'>,
+	meta: Pick<RelationshipMeta, 'type' | 'target'>
 ) {
 	switch (meta.type) {
 		case RelationshipType.customProperties:
@@ -42,7 +42,7 @@ export function castRelationshipToClass(
 		case RelationshipType.footer:
 			return FooterXml.fromArchive(archive, contentTypes, meta.target);
 		case RelationshipType.footnotes:
-			return FootnotesXml.fromArchive(archive, meta.target);
+			return FootnotesXml.fromArchive(archive, contentTypes, meta.target);
 		case RelationshipType.header:
 			return HeaderXml.fromArchive(archive, contentTypes, meta.target);
 		case RelationshipType.officeDocument:
@@ -67,7 +67,7 @@ export function castRelationshipToClass(
 		case RelationshipType.classificationlabels:
 		case RelationshipType.downRev:
 		case RelationshipType.graphicFrameDoc:
-		case RelationshipType.glossary: 
+		case RelationshipType.glossary:
 			return UnhandledXmlFile.fromArchive(archive, meta.target);
 
 		case RelationshipType.attachedTemplate:

@@ -1,5 +1,5 @@
-import { expect } from 'std/expect'; 
-import { beforeAll, describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { beforeAll, describe, it } from 'std/testing/bdd';
 
 import { serialize } from '../utilities/dom.ts';
 import { archive } from '../utilities/tests.ts';
@@ -11,8 +11,15 @@ describe('Relationships', () => {
 	let contentTypes: ContentTypesXml;
 	beforeAll(async () => {
 		const arch = await archive('test/simple.docx');
-		contentTypes = await ContentTypesXml.fromArchive(arch, '[Content_Types].xml');
-		relationships = await RelationshipsXml.fromArchive(arch, contentTypes, '_rels/.rels');
+		contentTypes = await ContentTypesXml.fromArchive(
+			arch,
+			'[Content_Types].xml'
+		);
+		relationships = await RelationshipsXml.fromArchive(
+			arch,
+			contentTypes,
+			'_rels/.rels'
+		);
 	});
 
 	it('serializes correctly', async () => {
@@ -24,7 +31,7 @@ describe('Relationships', () => {
 					<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
 					<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
 				</Relationships>
-			`.replace(/\n|\t/g, ''),
+			`.replace(/\n|\t/g, '')
 		);
 	});
 });

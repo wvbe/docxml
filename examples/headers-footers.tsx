@@ -28,7 +28,10 @@ const header = docx.document.headers.add('word/header1.xml', [
 		boxHeight={cm(2)}
 	/>,
 ]);
-const footer = docx.document.footers.add('word/footer1.xml', <Paragraph>SKEET FOOTER</Paragraph>);
+const footer = docx.document.footers.add(
+	'word/footer1.xml',
+	<Paragraph>SKEET FOOTER</Paragraph>
+);
 
 docx.document.set([
 	<Section headers={header} footers={footer}>

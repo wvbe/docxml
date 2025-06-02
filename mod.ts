@@ -129,6 +129,7 @@ export {
 	type WatermarkTextChild,
 	type WatermarkTextProps,
 } from './src/components/WatermarkText.ts';
+export { FileMime } from './src/enums.ts';
 
 // Shared properties
 export {

@@ -61,7 +61,10 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 	 * @param style The style used for the reference mark in the body text.
 	 * @returns The identifier of the new footnote.
 	 */
-	public add(content: FootnoteChild | FootnoteChild[], style: string) {
+	public add(
+		content: FootnoteChild | FootnoteChild[],
+		style: string
+	): number {
 		const id = this.#footnotes.getNextAvailableKey();
 		this.#footnotes.set(id, {
 			id,

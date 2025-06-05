@@ -97,7 +97,7 @@ describe('Footnotes', () => {
 						<w:footnoteRef/>
 					</w:r>
 					<w:r>
-						<w:t xml:space="preserve">Hello, this is a footnote.</w:t>
+						<w:t xml:space="preserve"> Hello, this is a footnote.</w:t>
 					</w:r>
 				</w:p>
 			</w:footnote>`;
@@ -144,7 +144,7 @@ describe('Footnotes', () => {
 						<w:footnoteRef/>
 					</w:r>
 					<w:r>
-						<w:t xml:space="preserve">Hello, this is a footnote 1.</w:t>
+						<w:t xml:space="preserve"> Hello, this is a footnote 1.</w:t>
 					</w:r>
 				</w:p>
 				<w:p>

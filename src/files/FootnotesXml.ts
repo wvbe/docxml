@@ -147,8 +147,10 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 					if (firstNode instanceof Paragraph) {
 						// Check if the first child node is an image.
 						const [text] = firstNode.children;
-						const [image] = text ? text.children : [undefined];
-						if (image && image instanceof Image) {
+						const [imageOrText] = text
+							? text.children
+							: [undefined];
+						if (imageOrText && imageOrText instanceof Image) {
 							// The first child is an image. Insert the anchor in a new paragraph.
 							// This is what MSWord does by default.
 							footnote.content.unshift(
@@ -160,6 +162,12 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 								)
 							);
 						} else {
+							if (
+								imageOrText &&
+								typeof imageOrText === 'string'
+							) {
+								text.children[0] = ' '.concat(imageOrText);
+							}
 							firstNode.children.unshift(
 								new FootnoteAnchor({
 									style: footnote.style,
@@ -205,7 +213,7 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 							$footnote('content')
 						)
 						default return (
-							$footnote("content")
+							$footnote('content')
 						) 
 					return (
 						element w:footnote {  

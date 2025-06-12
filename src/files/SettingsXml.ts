@@ -1,4 +1,4 @@
-import * as path from 'std/path';
+import { basename, dirname } from '@util-path';
 
 import type { ContentTypesXml, Length } from '../../mod.ts';
 import type { Archive } from '../classes/Archive.ts';
@@ -107,7 +107,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 	public constructor(
 		location: string,
 		relationships: RelationshipsXml = new RelationshipsXml(
-			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`
+			`${dirname(location)}/_rels/${basename(location)}.rels`
 		),
 		settings: Partial<SettingsI> = {}
 	) {
@@ -237,9 +237,9 @@ export class SettingsXml extends XmlFileWithContentTypes {
 	): Promise<SettingsXml> {
 		let relationships;
 
-		const relationshipsLocation = `${path.dirname(
+		const relationshipsLocation = `${dirname(location)}/_rels/${basename(
 			location
-		)}/_rels/${path.basename(location)}.rels`;
+		)}.rels`;
 		try {
 			relationships = await RelationshipsXml.fromArchive(
 				archive,

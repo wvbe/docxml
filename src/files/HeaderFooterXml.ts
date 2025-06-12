@@ -1,4 +1,4 @@
-import * as path from 'std/path';
+import { basename, dirname } from '@util-path';
 
 import type { ContentTypesXml } from '../../mod.ts';
 import type { Archive } from '../classes/Archive.ts';
@@ -129,7 +129,7 @@ export class HeaderXml extends HeaderFooterAbstractionXml<
 		location: string
 	): Promise<HeaderXml> {
 		const dom = await archive.readXml(location);
-		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(
+		const relsLocation = `${dirname(location)}/_rels/${basename(
 			location
 		)}.rels`;
 		const relationships = archive.hasFile(relsLocation)
@@ -183,7 +183,7 @@ export class FooterXml extends HeaderFooterAbstractionXml<HeaderFooterChild> {
 		location: string
 	): Promise<FooterXml> {
 		const dom = await archive.readXml(location);
-		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(
+		const relsLocation = `${dirname(location)}/_rels/${basename(
 			location
 		)}.rels`;
 		const relationships = archive.hasFile(relsLocation)

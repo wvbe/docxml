@@ -1,10 +1,17 @@
 {
 	"imports": {
+		"@util-path": "./src/utilities/path.ts",
+
 		"slimdom": "npm:slimdom@4.3.5",
 		"fontoxpath": "npm:fontoxpath@3.33.0",
 		"std/expect": "jsr:@std/expect@1.0.15",
 		"std/fmt/colors": "jsr:@std/fmt@1.0.7/colors",
 		"std/path": "jsr:@std/path@1.0.9",
+		"std/path/posix/basename": "jsr:@std/path@1.0.9/posix/basename",
+		"std/path/posix/dirname": "jsr:@std/path@1.0.9/posix/dirname",
+		"std/path/posix/join": "jsr:@std/path@1.0.9/posix/join",
+		"std/path/posix/relative": "jsr:@std/path@1.0.9/posix/relative",
+		"std/path/posix/resolve": "jsr:@std/path@1.0.9/posix/resolve",
 		"std/testing/bdd": "jsr:@std/testing@1.0.9/bdd",
 		"std/fmt": "jsr:@std/fmt@1.0.7",
 		"jszip": "npm:jszip@3.10.1",

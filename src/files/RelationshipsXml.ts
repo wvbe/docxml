@@ -1,4 +1,5 @@
-import * as path from 'std/path';
+import { dirname, join, relative } from '@util-path';
+
 import type { ContentTypesXml } from '../../mod.ts';
 import type { Archive } from '../classes/Archive.ts';
 import { BinaryFile } from '../classes/BinaryFile.ts';
@@ -160,10 +161,8 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 							...meta,
 							target: meta.isExternal
 								? meta.target
-								: path.relative(
-										path.dirname(
-											path.dirname(this.location)
-										),
+								: relative(
+										dirname(dirname(this.location)),
 										meta.target
 								  ),
 						}
@@ -218,7 +217,7 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 			...meta,
 			target: meta.isExternal
 				? meta.target
-				: path.join(path.dirname(location), '..', meta.target),
+				: join(dirname(location), '..', meta.target),
 			isBinary: meta.type === RelationshipType.image,
 		})) as RelationshipMeta[];
 

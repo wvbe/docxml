@@ -1,4 +1,4 @@
-import * as path from 'std/path';
+import { dirname, basename } from '@util-path';
 
 import type { ContentTypesXml } from '../../mod.ts';
 import type { Archive } from '../classes/Archive.ts';
@@ -120,7 +120,7 @@ export class CommentsXml extends XmlFileWithContentTypes {
 	): Promise<CommentsXml> {
 		const dom = await archive.readXml(location);
 
-		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(
+		const relsLocation = `${dirname(location)}/_rels/${basename(
 			location
 		)}.rels`;
 		const relationships = archive.hasFile(relsLocation)

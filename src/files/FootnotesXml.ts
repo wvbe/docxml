@@ -1,4 +1,5 @@
-import * as path from 'std/path';
+import { basename, dirname } from '@util-path';
+
 import type { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
@@ -44,7 +45,7 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 	public constructor(
 		location: string,
 		relationships: RelationshipsXml = new RelationshipsXml(
-			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`
+			`${dirname(location)}/_rels/${basename(location)}.rels`
 		)
 	) {
 		super(location);
@@ -242,9 +243,7 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 		contentTypes: ContentTypesXml,
 		location: string
 	): Promise<FootnotesXml> {
-		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(
-			location
-		)}`;
+		const relsLocation = `${dirname(location)}/_rels/${basename(location)}`;
 		const inst = new this(location);
 		if (archive.hasFile(relsLocation)) {
 			const relsDom = await archive.readXml(location);

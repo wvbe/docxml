@@ -1,4 +1,4 @@
-import * as path from 'std/path';
+import { basename, dirname } from '@util-path';
 
 import type { ContentTypesXml } from '../../mod.ts';
 import type { Archive } from '../classes/Archive.ts';
@@ -45,7 +45,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 	public constructor(
 		location: string,
 		relationships: RelationshipsXml = new RelationshipsXml(
-			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`
+			`${dirname(location)}/_rels/${basename(location)}.rels`
 		)
 	) {
 		super(location);
@@ -208,9 +208,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 			const inst = new HeaderXml(
 				location,
 				new RelationshipsXml(
-					`${path.dirname(location)}/_rels/${path.basename(
-						location
-					)}.rels`
+					`${dirname(location)}/_rels/${basename(location)}.rels`
 				)
 			);
 			inst.set(root);
@@ -233,9 +231,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 			const inst = new FooterXml(
 				location,
 				new RelationshipsXml(
-					`${path.dirname(location)}/_rels/${path.basename(
-						location
-					)}.rels`
+					`${dirname(location)}/_rels/${basename(location)}.rels`
 				)
 			);
 			inst.set(root);
@@ -261,7 +257,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 		const relationships = await RelationshipsXml.fromArchive(
 			archive,
 			contentTypes,
-			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`
+			`${dirname(location)}/_rels/${basename(location)}.rels`
 		);
 		const doc = new DocumentXml(location, relationships);
 		const dom = await archive.readXml(location);

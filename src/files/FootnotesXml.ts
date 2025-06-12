@@ -1,6 +1,7 @@
 import { basename, dirname } from '@util-path';
 
 import type { Archive } from '../classes/Archive.ts';
+import type { Component } from '../classes/Component.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { FootnoteAnchor } from '../components/FootnoteAnchor.ts';
@@ -62,14 +63,22 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 	 * @param style The style used for the reference mark in the body text.
 	 * @returns The identifier of the new footnote.
 	 */
-	public add(
+	public async add(
 		content: FootnoteChild | FootnoteChild[],
 		style: string
-	): number {
+	): Promise<number> {
 		const id = this.#footnotes.getNextAvailableKey();
+
+		const contentArray = Array.isArray(content) ? content : [content];
+
+		// Get all descendant images and register them.
+		for await (const image of findDescendantImages(contentArray)) {
+			await image.ensureRelationship(this.relationships);
+		}
+
 		this.#footnotes.set(id, {
 			id,
-			content: Array.isArray(content) ? content : [content],
+			content: contentArray,
 			type: 'normal',
 			style,
 		});
@@ -193,7 +202,9 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 				return {
 					...footnote,
 					content: await Promise.all(
-						footnote.content.map(async (n) => await n.toNode([]))
+						footnote.content.map(
+							async (node) => await node.toNode([])
+						)
 					),
 				};
 			})
@@ -282,4 +293,27 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 	public $$$clearFootnotes(): void {
 		this.#footnotes.clear();
 	}
+}
+
+/**
+ * Finds all descendant images.
+ */
+function findDescendantImages(
+	nodes: Component<
+		// deno-lint-ignore ban-types
+		{},
+		// deno-lint-ignore no-explicit-any
+		any
+	>[]
+): Image[] {
+	const images: Image[] = [];
+	nodes.forEach((node) => {
+		if (node instanceof Image) {
+			images.push(node);
+		}
+
+		images.push(...findDescendantImages(node.children || []));
+	});
+
+	return images;
 }

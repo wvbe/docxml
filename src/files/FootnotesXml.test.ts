@@ -1,7 +1,7 @@
 import { expect } from 'std/expect';
 import { beforeAll, describe, it } from 'std/testing/bdd';
-
 import { Cell } from '../components/Cell.ts';
+import { Image } from '../components/Image.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Row } from '../components/Row.ts';
 import { Table } from '../components/Table.ts';
@@ -56,7 +56,7 @@ describe('Footnotes', () => {
 
 	it('can add a footnote with minimum information', async () => {
 		footnotes.$$$clearFootnotes();
-		const footnoteId = footnotes.add([], 'MyStyle');
+		const footnoteId = await footnotes.add([], 'MyStyle');
 		const expectedFootnote = `<w:footnote w:id="${footnoteId}"><w:p><w:r><w:rPr><w:rStyle w:val="MyStyle"/></w:rPr><w:footnoteRef/></w:r></w:p></w:footnote>`;
 
 		expect(serialize(await footnotes.$$$toNode())).toBe(
@@ -83,7 +83,7 @@ describe('Footnotes', () => {
 
 	it('can add a footnote with paragraphs', async () => {
 		footnotes.$$$clearFootnotes();
-		const footnoteId = footnotes.add(
+		const footnoteId = await footnotes.add(
 			[new Paragraph({}, new Text({}, 'Hello, this is a footnote.'))],
 			'MyStyle'
 		);
@@ -127,7 +127,7 @@ describe('Footnotes', () => {
 	it('can add a footnote with multiple paragraphs', async () => {
 		footnotes.$$$clearFootnotes();
 
-		const footnoteId = footnotes.add(
+		const footnoteId = await footnotes.add(
 			[
 				new Paragraph({}, new Text({}, 'Hello, this is a footnote 1.')),
 				new Paragraph({}, new Text({}, 'Hello, this is a footnote 2.')),
@@ -179,7 +179,7 @@ describe('Footnotes', () => {
 	it('can add a footnote with tables', async () => {
 		footnotes.$$$clearFootnotes();
 
-		const footnoteId = footnotes.add(
+		const footnoteId = await footnotes.add(
 			[
 				new Table(
 					{
@@ -272,6 +272,32 @@ describe('Footnotes', () => {
 				${expectedFootnote}
 			</w:footnotes>	
 			`.replace(/\n|\t/g, '')
+		);
+	});
+
+	it('Images are added with correct relationships', async () => {
+		const image = new Image({
+			data: Deno.readFile('test/spacekees.jpeg'),
+			width: cm(2.54),
+			height: cm(2.54),
+			title: 'Title',
+			alt: 'Alt',
+		});
+		await footnotes.add(new Paragraph({}, new Text({}, image)), 'MyStyle');
+
+		// A _rels file is created for our footnotes.
+		expect(footnotes.relationships.location).toBe(
+			'word/_rels/footnotes.xml.rels'
+		);
+
+		// That _rels file contains a reference to our image.
+		// This should be our only RelationshipsXml file at this point, so we can use meta[0].
+		expect(footnotes.relationships.meta[0].id).toBe(
+			image.meta.relationshipId
+		);
+
+		expect(footnotes.relationships.meta[0].target).toBe(
+			image.meta.location
 		);
 	});
 });

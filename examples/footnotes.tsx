@@ -17,11 +17,11 @@ const footnoteProps: FootnoteProps = {
 
 const footnoteReferenceStyleName = 'FootnoteReference';
 
-const footnote1 = docxFile.document.footnotes.add(
+const footnote1 = await docxFile.document.footnotes.add(
 	new Paragraph({}, new Text({}, 'Hello, this is a footnote.')),
 	footnoteReferenceStyleName
 );
-const footnote2 = docxFile.document.footnotes.add(
+const footnote2 = await docxFile.document.footnotes.add(
 	[
 		new Paragraph({}, new Text({}, 'And this is an additional footnote.')),
 		new Paragraph(
@@ -39,14 +39,13 @@ const image = new Image({
 	title: 'Title',
 	alt: 'Alt',
 });
-await image.ensureRelationship(docxFile.document.footnotes.relationships);
 
-const footnote3 = docxFile.document.footnotes.add(
+const footnote3 = await docxFile.document.footnotes.add(
 	new Paragraph({}, new Text({}, image)),
 	footnoteReferenceStyleName
 );
 
-const footnote4 = docxFile.document.footnotes.add(
+const footnote4 = await docxFile.document.footnotes.add(
 	new Table(
 		{
 			columnWidths: [cm(3)],

@@ -60,7 +60,7 @@ describe('Section formatting', () => {
 describe('Section column formatting for equally sized columns', () => {
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
-			<w:cols w:num="3" w:equalwidth="1" w:sep="0" w:space="720"/> 
+			<w:cols w:num="3" w:equalWidth="1" w:sep="0" w:space="720"/> 
 		</w:sectPr>`,
 		{
 			columns: {
@@ -77,11 +77,11 @@ describe('Section column formatting for equally sized columns', () => {
 describe('Section column formatting for differently sized columns', () => {
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
-			<w:cols w:num="3" w:equalwidth="0" w:sep="1" w:space="720" >
-				<w:col w:w="1440" w:space="720"/> 
-				<w:col w:w="1440" w:space="720" /> 
-				<w:col w:w="2880" /> 
-			</w:cols> 
+			<w:cols w:num="3" w:equalWidth="0" w:sep="1" w:space="720" >
+				<w:col w:w="1440" w:space="720"/>
+				<w:col w:w="1440" w:space="720" />
+				<w:col w:w="2880" />
+			</w:cols>
 		</w:sectPr>`,
 		{
 			columns: {
@@ -108,7 +108,7 @@ describe('Section column formatting for with missing properties', () => {
 			},
 		},
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
-			<w:cols w:num="3" w:equalwidth="1" /> 
+			<w:cols w:num="3" w:equalWidth="1" />
 		</w:sectPr>`
 	);
 
@@ -122,9 +122,9 @@ describe('Section column formatting for with missing properties', () => {
 			},
 		},
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
-			<w:cols w:num="2" w:equalwidth="0"> 
-				<w:col w:w="1440" w:space="720" /> 
-				<w:col w:w="1440"/> 
+			<w:cols w:num="2" w:equalWidth="0">
+				<w:col w:w="1440" w:space="720" />
+				<w:col w:w="1440"/>
 			</w:cols>
 		</w:sectPr>`
 	);

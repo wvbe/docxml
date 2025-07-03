@@ -2,7 +2,7 @@
  * @file
  * Note this file is 99% the same as RowDeletion. Please maintain both accordingly.
  */
-
+import { Row } from '../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -10,12 +10,25 @@ import {
 	type ComponentDefinition,
 } from '../classes/Component.ts';
 import type { TableRowProperties } from '../properties/table-row-properties.ts';
-import { type ChangeInformation, getChangeInformation } from '../utilities/changes.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	type ChangeInformation,
+	getChangeInformation,
+} from '../utilities/changes.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToBoolean, evaluateXPathToFirstNode } from '../utilities/xquery.ts';
-import { type RowChild, createNodeFromRow, parsePropsAndChildNodes, Row } from './Row.ts';
+import {
+	evaluateXPathToBoolean,
+	evaluateXPathToFirstNode,
+} from '../utilities/xquery.ts';
+import {
+	createNodeFromRow,
+	parsePropsAndChildNodes,
+	type RowChild,
+} from './Row.ts';
 
 /**
  * A type describing the components accepted as children of {@link RowDeletion}.
@@ -59,9 +72,9 @@ export class RowDeletion extends Component<RowDeletionProps, RowDeletionChild> {
 				{
 					...this.props,
 					date: this.props.date.toISOString(),
-				},
+				}
 			),
-			null,
+			null
 		);
 
 		return node;
@@ -77,23 +90,32 @@ export class RowDeletion extends Component<RowDeletionProps, RowDeletionChild> {
 				./${QNS.w}trPr/${QNS.w}del and
 				not(./${QNS.w}trPr/${QNS.w}ins)
 			`,
-			node,
+			node
 		);
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): RowDeletion {
+	static override fromNode(
+		node: Node,
+		context: ComponentContext
+	): RowDeletion {
 		const { children, ...rowProps } = parsePropsAndChildNodes(node);
-		const changeProps = getChangeInformation(evaluateXPathToFirstNode(`./${QNS.w}trPr`, node));
+		const changeProps = getChangeInformation(
+			evaluateXPathToFirstNode(`./${QNS.w}trPr/${QNS.w}del`, node)
+		);
 
 		return new RowDeletion(
 			{
 				...rowProps,
 				...changeProps,
 			},
-			...createChildComponentsFromNodes<RowDeletionChild>(this.children, children, context),
+			...createChildComponentsFromNodes<RowDeletionChild>(
+				this.children,
+				children,
+				context
+			)
 		);
 	}
 }

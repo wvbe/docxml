@@ -1,4 +1,4 @@
-import { describe } from 'std/testing/bdd'; 
+import { describe } from 'std/testing/bdd';
 
 import { hpt, opt, pt, twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
@@ -11,7 +11,7 @@ import {
 
 const test = createXmlRoundRobinTest<TableProperties>(
 	tablePropertiesFromNode,
-	tablePropertiesToNode,
+	tablePropertiesToNode
 );
 
 describe('Table formatting', () => {
@@ -70,13 +70,28 @@ describe('Table formatting', () => {
 			borders: {
 				top: { type: null, width: opt(8), spacing: 1, color: 'red' },
 				end: { type: 'seattle', width: null, spacing: 1, color: 'red' },
-				bottom: { type: 'peopleHats', width: pt(1), spacing: null, color: 'red' },
-				start: { type: 'dashed', width: hpt(2), spacing: 1, color: null },
-				insideH: { type: 'heartBalloon', width: twip(20), spacing: 1, color: 'red' },
+				bottom: {
+					type: 'peopleHats',
+					width: pt(1),
+					spacing: null,
+					color: 'red',
+				},
+				start: {
+					type: 'dashed',
+					width: hpt(2),
+					spacing: 1,
+					color: null,
+				},
+				insideH: {
+					type: 'heartBalloon',
+					width: twip(20),
+					spacing: 1,
+					color: 'red',
+				},
 				insideV: null,
 			},
 			strictColumnWidths: true,
-		},
+		}
 	);
 
 	describe('Legacy schema for cellPadding', () => {
@@ -94,7 +109,7 @@ describe('Table formatting', () => {
 					start: twip(432),
 					end: twip(144),
 				},
-			},
+			}
 		);
 	});
 
@@ -105,7 +120,7 @@ describe('Table formatting', () => {
 			</w:tblPr>`,
 			{
 				width: { length: '100%', unit: 'nil' },
-			},
+			}
 		);
 	});
 
@@ -116,7 +131,7 @@ describe('Table formatting', () => {
 			</w:tblPr>`,
 			{
 				width: { length: '420', unit: 'nil' },
-			},
+			}
 		);
 	});
 
@@ -147,7 +162,7 @@ describe('Table formatting', () => {
 					insideH: null,
 					insideV: null,
 				},
-			},
+			}
 		);
 	});
 });

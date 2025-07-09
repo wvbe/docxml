@@ -16,7 +16,10 @@ export type NonBreakingHyphenProps = { [key: string]: never };
 /**
  * A component that represents a non-breaking hyphen. Place this in the `<Text>` component.
  */
-export class NonBreakingHyphen extends Component<NonBreakingHyphenProps, NonBreakingHyphenChild> {
+export class NonBreakingHyphen extends Component<
+	NonBreakingHyphenProps,
+	NonBreakingHyphenChild
+> {
 	public static override readonly children: string[] = [];
 
 	public static override readonly mixed: boolean = false;

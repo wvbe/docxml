@@ -1,7 +1,14 @@
 import './Text.ts';
 
-import { type ComponentAncestor, Component, type ComponentContext } from '../classes/Component.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	Component,
+	type ComponentAncestor,
+	type ComponentContext,
+} from '../classes/Component.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
@@ -86,7 +93,7 @@ export class Field extends Component<FieldProps, FieldChild> {
 				isDirty: !!this.props.isDirty,
 				isLocked: !!this.props.isLocked,
 				children: await this.childrenToNode(ancestry),
-			},
+			}
 		);
 	}
 
@@ -101,7 +108,9 @@ export class Field extends Component<FieldProps, FieldChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node, context: ComponentContext): Field {
-		const { children, ...props } = evaluateXPathToMap<FieldProps & { children: Node[] }>(
+		const { children, ...props } = evaluateXPathToMap<
+			FieldProps & { children: Node[] }
+		>(
 			`map {
 				"instruction": ./@${QNS.w}instruction/string(),
 				"isDirty": docxml:st-on-off(@${QNS.w}dirty),
@@ -117,11 +126,15 @@ export class Field extends Component<FieldProps, FieldChild> {
 					${QNS.w}bookmarkRangeEnd
 				) }
 			}`,
-			node,
+			node
 		);
 		return new Field(
 			props,
-			...createChildComponentsFromNodes<FieldChild>(this.children, children, context),
+			...createChildComponentsFromNodes<FieldChild>(
+				this.children,
+				children,
+				context
+			)
 		);
 	}
 }

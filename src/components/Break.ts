@@ -49,7 +49,7 @@ export class Break extends Component<BreakProps, BreakChild> {
 			{
 				type: this.props.type || null,
 				clear: this.props.clear || null,
-			},
+			}
 		);
 	}
 
@@ -70,8 +70,8 @@ export class Break extends Component<BreakProps, BreakChild> {
 					"type": ./@${QNS.w}type/string(),
 					"clear": ./@${QNS.w}clear/string()
 				}`,
-				node,
-			),
+				node
+			)
 		);
 	}
 }

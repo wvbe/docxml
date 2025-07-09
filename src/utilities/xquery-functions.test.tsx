@@ -1,6 +1,6 @@
 /** @jsx Docx.jsx */
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { describe, it } from 'std/testing/bdd';
 import { Cell } from '../components/Cell.ts';
 import { Row } from '../components/Row.ts';
 import { Table } from '../components/Table.ts';
@@ -8,7 +8,11 @@ import { Docx } from '../Docx.ts';
 import { parse } from './dom.ts';
 import { cm, emu, hpt, inch, pt, twip } from './length.ts';
 import { NamespaceUri, QNS } from './namespaces.ts';
-import { evaluateXPath, evaluateXPathToMap, evaluateXPathToNumber } from './xquery.ts';
+import {
+	evaluateXPath,
+	evaluateXPathToMap,
+	evaluateXPathToNumber,
+} from './xquery.ts';
 
 describe('XQuery functions', () => {
 	it('docxml:length', () => {
@@ -32,12 +36,18 @@ describe('XQuery functions', () => {
 					<Cell colSpan={2} />
 					<Cell />
 				</Row>
-			</Table>,
+			</Table>
 		).toArchive();
 		const dom = await archive.readXml('word/document.xml');
-		expect(evaluateXPathToNumber(`docxml:cell-column(//${QNS.w}tc[1])`, dom)).toBe(0);
-		expect(evaluateXPathToNumber(`docxml:cell-column(//${QNS.w}tc[2])`, dom)).toBe(1);
-		expect(evaluateXPathToNumber(`docxml:cell-column(//${QNS.w}tc[3])`, dom)).toBe(3);
+		expect(
+			evaluateXPathToNumber(`docxml:cell-column(//${QNS.w}tc[1])`, dom)
+		).toBe(0);
+		expect(
+			evaluateXPathToNumber(`docxml:cell-column(//${QNS.w}tc[2])`, dom)
+		).toBe(1);
+		expect(
+			evaluateXPathToNumber(`docxml:cell-column(//${QNS.w}tc[3])`, dom)
+		).toBe(3);
 	});
 
 	it('docxml:ct-shd', () => {
@@ -47,7 +57,7 @@ describe('XQuery functions', () => {
 				w:fill="abc123"
 				w:color="def456"
 				w:val="thinDiagCross"
-			/>`,
+			/>`
 		);
 		expect(evaluateXPathToMap(`docxml:ct-shd(/*)`, dom)).toEqual({
 			background: 'abc123',
@@ -62,7 +72,7 @@ describe('XQuery functions', () => {
 				<a />
 				<b w:val="efwrgtr" />
 				<c w:val="true" />
-			</x>`,
+			</x>`
 		);
 		expect(evaluateXPath(`docxml:ct-on-off(/x/a)`, dom)).toBe(true);
 		expect(evaluateXPath(`docxml:ct-on-off(/x/b)`, dom)).toBe(false);
@@ -78,4 +88,3 @@ describe('XQuery functions', () => {
 		expect(evaluateXPath(`docxml:st-on-off("false")`)).toBe(false);
 	});
 });
-

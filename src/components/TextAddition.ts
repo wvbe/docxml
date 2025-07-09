@@ -8,8 +8,14 @@ import {
 	type ComponentContext,
 	type ComponentDefinition,
 } from '../classes/Component.ts';
-import { type ChangeInformation, getChangeInformation } from '../utilities/changes.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	type ChangeInformation,
+	getChangeInformation,
+} from '../utilities/changes.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
@@ -29,8 +35,15 @@ export type TextAdditionProps = ChangeInformation;
 /**
  * A component that represents a change-tracked text that was inserted.
  */
-export class TextAddition extends Component<TextAdditionProps, TextAdditionChild> {
-	public static override readonly children: string[] = ['Text', this.name, 'TextDeletion'];
+export class TextAddition extends Component<
+	TextAdditionProps,
+	TextAdditionChild
+> {
+	public static override readonly children: string[] = [
+		'Text',
+		this.name,
+		'TextDeletion',
+	];
 	public static override readonly mixed: boolean = false;
 
 	/**
@@ -50,7 +63,7 @@ export class TextAddition extends Component<TextAdditionProps, TextAdditionChild
 				...this.props,
 				date: this.props.date.toISOString(),
 				children: await this.childrenToNode(ancestry),
-			},
+			}
 		);
 	}
 
@@ -64,15 +77,18 @@ export class TextAddition extends Component<TextAdditionProps, TextAdditionChild
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): TextAddition {
+	static override fromNode(
+		node: Node,
+		context: ComponentContext
+	): TextAddition {
 		const props = getChangeInformation(node);
 		return new TextAddition(
 			props,
 			...createChildComponentsFromNodes<TextAdditionChild>(
 				this.children,
 				evaluateXPathToNodes(`./${QNS.w}r`, node),
-				context,
-			),
+				context
+			)
 		);
 	}
 }

@@ -21,7 +21,10 @@ export type BookmarkRangeEndProps =
 /**
  * The end of a range associated with a comment.
  */
-export class BookmarkRangeEnd extends Component<BookmarkRangeEndProps, BookmarkRangeEndChild> {
+export class BookmarkRangeEnd extends Component<
+	BookmarkRangeEndProps,
+	BookmarkRangeEndChild
+> {
 	public static override readonly children: string[] = [];
 
 	public static override readonly mixed: boolean = false;
@@ -37,7 +40,7 @@ export class BookmarkRangeEnd extends Component<BookmarkRangeEndProps, BookmarkR
 			}`,
 			this.props.bookmark || {
 				id: this.props.id,
-			},
+			}
 		);
 	}
 
@@ -57,8 +60,8 @@ export class BookmarkRangeEnd extends Component<BookmarkRangeEndProps, BookmarkR
 				`map {
 					"id": ./@${QNS.w}id/number()
 				}`,
-				node,
-			),
+				node
+			)
 		);
 	}
 }

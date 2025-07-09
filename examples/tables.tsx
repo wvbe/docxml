@@ -1,9 +1,26 @@
 /** @jsx Docx.jsx */
-import Docx, { Break, Cell, cm, Paragraph, pt, Row, Table, Text } from '../mod.ts';
+import Docx, {
+	Break,
+	Cell,
+	cm,
+	Paragraph,
+	pt,
+	Row,
+	Table,
+	Text,
+} from '../mod.ts';
 
 await Docx.fromJsx(
 	<Table
-		columnWidths={[cm(3), cm(2.5), cm(2.5), cm(2.5), cm(2.5), cm(2.5), cm(2.5)]}
+		columnWidths={[
+			cm(3),
+			cm(2.5),
+			cm(2.5),
+			cm(2.5),
+			cm(2.5),
+			cm(2.5),
+			cm(2.5),
+		]}
 		cellPadding={{
 			top: pt(6),
 			bottom: pt(6),
@@ -891,5 +908,5 @@ await Docx.fromJsx(
 				<Paragraph>622</Paragraph>
 			</Cell>
 		</Row>
-	</Table>,
+	</Table>
 ).toFile('tables.docx');

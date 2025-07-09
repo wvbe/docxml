@@ -1,10 +1,17 @@
 import './Text.ts';
 
 import type { Bookmark } from '../classes/Bookmarks.ts';
-import { type ComponentAncestor, Component, type ComponentContext } from '../classes/Component.ts';
+import {
+	Component,
+	type ComponentAncestor,
+	type ComponentContext,
+} from '../classes/Component.ts';
 import { RelationshipType } from '../enums.ts';
 import type { RelationshipsXml } from '../files/RelationshipsXml.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
@@ -53,7 +60,10 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 		if (!this.props.url) {
 			return;
 		}
-		this.#relationshipId = relationships.add(RelationshipType.hyperlink, this.props.url);
+		this.#relationshipId = relationships.add(
+			RelationshipType.hyperlink,
+			this.props.url
+		);
 	}
 
 	/**
@@ -75,7 +85,7 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 				anchor: this.props.bookmark?.name || this.props.anchor || null,
 				tooltip: this.props.tooltip || null,
 				children: await this.childrenToNode(ancestry),
-			},
+			}
 		);
 	}
 
@@ -90,7 +100,9 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node, context: ComponentContext): Hyperlink {
-		const { children, ...props } = evaluateXPathToMap<HyperlinkProps & { children: Node[] }>(
+		const { children, ...props } = evaluateXPathToMap<
+			HyperlinkProps & { children: Node[] }
+		>(
 			`map {
 				"anchor": ./@${QNS.w}anchor/string(),
 				"tooltip": ./@${QNS.w}tooltip/string(),
@@ -99,11 +111,15 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 					${QNS.w}fldSimple
 				) }
 			}`,
-			node,
+			node
 		);
 		return new Hyperlink(
 			props,
-			...createChildComponentsFromNodes<HyperlinkChild>(this.children, children, context),
+			...createChildComponentsFromNodes<HyperlinkChild>(
+				this.children,
+				children,
+				context
+			)
 		);
 	}
 }

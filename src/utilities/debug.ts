@@ -1,4 +1,4 @@
-import { blue, dim, green, red } from 'std/fmt/colors'; 
+import { blue, dim, green, red } from 'std/fmt/colors';
 
 import type { AnyComponent } from '../classes/Component.ts';
 import type { Length } from './length.ts';
@@ -17,24 +17,35 @@ function convertLengthToString(len: Length) {
 		amount: len[unit as keyof Length],
 	}));
 	const { amount, unit } =
-		lengths.find(({ amount }) => amount === Math.round(amount)) || lengths[0];
+		lengths.find(({ amount }) => amount === Math.round(amount)) ||
+		lengths[0];
 	return `${amount} ${unit}`;
 }
 
 export function getColorizedJsxForComponent(comp: AnyComponent): string[] {
 	const props = comp.props
 		? Object.keys(comp.props)
-				.filter((key) => comp.props[key] !== null && comp.props[key] !== undefined)
+				.filter(
+					(key) =>
+						comp.props[key] !== null &&
+						comp.props[key] !== undefined
+				)
 				.map((key) => {
 					const val = comp.props[key];
 					return `${color.propName(key)}={${color.propValue(
-						(val as Length).twip ? convertLengthToString(val as Length) : JSON.stringify(val),
+						(val as Length).twip
+							? convertLengthToString(val as Length)
+							: JSON.stringify(val)
 					)}}`;
 				})
 				.join(' ')
 		: '';
 	if (!comp.children || !comp.children.length) {
-		return [`<${color.nodeName(comp.constructor.name)}${props ? ' ' + props : ''} />`];
+		return [
+			`<${color.nodeName(comp.constructor.name)}${
+				props ? ' ' + props : ''
+			} />`,
+		];
 	}
 	return [
 		`<${color.nodeName(comp.constructor.name)}${props ? ' ' + props : ''}>`,
@@ -46,9 +57,9 @@ export function getColorizedJsxForComponent(comp: AnyComponent): string[] {
 						? [`"${color.text(child)}"`]
 						: getColorizedJsxForComponent(child)),
 				],
-				[],
+				[]
 			)
-			.map((line) => `${' ' || dim('·')}   ${line}`),
+			.map((line) => `${dim('·')}   ${line}`),
 		`</${color.nodeName(comp.constructor.name)}>`,
 	];
 }

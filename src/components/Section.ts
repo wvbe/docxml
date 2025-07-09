@@ -4,11 +4,11 @@ import './Paragraph.ts';
 import './Table.ts';
 
 import {
-	type ComponentAncestor,
-	type ComponentDefinition,
 	type AnyComponent,
 	Component,
+	type ComponentAncestor,
 	type ComponentContext,
+	type ComponentDefinition,
 	type ComponentNodes,
 	isComponentDefinition,
 } from '../classes/Component.ts';
@@ -17,7 +17,10 @@ import {
 	sectionPropertiesFromNode,
 	sectionPropertiesToNode,
 } from '../properties/section-properties.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
@@ -28,7 +31,11 @@ import type { Table } from './Table.ts';
 /**
  * A type describing the components accepted as children of {@link Section}.
  */
-export type SectionChild = Paragraph | Table | BookmarkRangeStart | BookmarkRangeEnd;
+export type SectionChild =
+	| Paragraph
+	| Table
+	| BookmarkRangeStart
+	| BookmarkRangeEnd;
 
 export const sectionChildComponentNames = [
 	'Table',
@@ -51,16 +58,21 @@ export type SectionProps = SectionProperties;
  * that over in such a way that you can simply put `<Paragraph>` (etc.) inside `<Section>`.
  */
 export class Section extends Component<SectionProps, SectionChild> {
-	public static override readonly children: string[] = sectionChildComponentNames;
+	public static override readonly children: string[] =
+		sectionChildComponentNames;
 	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
-	public override async toNode(ancestry: ComponentAncestor[]): Promise<ComponentNodes> {
+	public override async toNode(
+		ancestry: ComponentAncestor[]
+	): Promise<ComponentNodes> {
 		const parent = ancestry[0];
 		if (!parent) {
-			throw new Error(`Cannot serialize a section without parent context.`);
+			throw new Error(
+				`Cannot serialize a section without parent context.`
+			);
 		}
 		const siblings = isComponentDefinition(parent)
 			? (parent as AnyComponent).children
@@ -68,7 +80,10 @@ export class Section extends Component<SectionProps, SectionChild> {
 		const isLastSection = siblings[siblings.length - 1] === this;
 
 		if (isLastSection) {
-			return [...(await this.childrenToNode(ancestry)), sectionPropertiesToNode(this.props)];
+			return [
+				...(await this.childrenToNode(ancestry)),
+				sectionPropertiesToNode(this.props),
+			];
 		}
 
 		const lastChild = this.children[this.children.length - 1];
@@ -115,12 +130,16 @@ export class Section extends Component<SectionProps, SectionChild> {
 					}
 				}
 			`,
-			node,
+			node
 		);
 
 		return new Section(
 			sectionPropertiesFromNode(node),
-			...createChildComponentsFromNodes<SectionChild>(this.children, children, context),
+			...createChildComponentsFromNodes<SectionChild>(
+				this.children,
+				children,
+				context
+			)
 		);
 	}
 }

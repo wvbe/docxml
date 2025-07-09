@@ -1,5 +1,5 @@
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { describe, it } from 'std/testing/bdd';
 
 import { Cell } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
@@ -55,7 +55,7 @@ describe('Cell', () => {
 		const cell = Cell.fromNode(
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			evaluateXPathToFirstNode('.//*[@xid="cell-1"]', dom)!,
-			emptyContext,
+			emptyContext
 		);
 		it('Colspan', () => expect(cell?.props.colSpan).toBe(1));
 		it('Rowspan', () => expect(cell?.props.rowSpan).toBe(1));
@@ -64,7 +64,7 @@ describe('Cell', () => {
 		const cell = Cell.fromNode(
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			evaluateXPathToFirstNode('.//*[@xid="cell-2"]', dom)!,
-			emptyContext,
+			emptyContext
 		);
 		it('Colspan', () => expect(cell?.props.colSpan).toBe(1));
 		it('Rowspan', () => expect(cell?.props.rowSpan).toBe(1));
@@ -73,7 +73,7 @@ describe('Cell', () => {
 		const cell = Cell.fromNode(
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			evaluateXPathToFirstNode('.//*[@xid="cell-3"]', dom)!,
-			emptyContext,
+			emptyContext
 		);
 		it('Colspan', () => expect(cell?.props.colSpan).toBe(2));
 		it('Rowspan', () => expect(cell?.props.rowSpan).toBe(1));

@@ -1,4 +1,4 @@
-import { describe } from 'std/testing/bdd'; 
+import { describe } from 'std/testing/bdd';
 
 import { hpt, pt, twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
@@ -11,7 +11,7 @@ import {
 
 const test = createXmlRoundRobinTest<ParagraphProperties>(
 	paragraphPropertiesFromNode,
-	paragraphPropertiesToNode,
+	paragraphPropertiesToNode
 );
 
 describe('Paragraph formatting', () => {
@@ -86,19 +86,19 @@ describe('Paragraph formatting', () => {
 				language: 'en-GB',
 				fontSize: { simple: hpt(19) },
 			},
-			tabs: [ 
+			tabs: [
 				{
-					type: "right",
-					leader: "dot",
+					type: 'right',
+					leader: 'dot',
 					position: twip(10),
 				},
 				{
-					type: "left",
-					leader: "dot",
+					type: 'left',
+					leader: 'dot',
 					position: twip(100),
-				}
-			]
-		},
+				},
+			],
+		}
 	);
 
 	describe('Paragraph style with "zero" outline level', () => {
@@ -108,7 +108,7 @@ describe('Paragraph formatting', () => {
 			</w:pPr>`,
 			{
 				outlineLvl: 0,
-			},
+			}
 		);
 	});
 
@@ -122,8 +122,7 @@ describe('Paragraph formatting', () => {
 					start: twip(1440),
 					end: twip(1440),
 				},
-			},
+			}
 		);
 	});
 });
-

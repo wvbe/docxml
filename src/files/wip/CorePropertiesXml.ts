@@ -48,14 +48,17 @@ export class CorePropertiesXml extends XmlFile {
 				created: this.created.toISOString(),
 				modified: this.modified.toISOString(),
 			},
-			true,
+			true
 		);
 	}
 
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static override async fromArchive(archive: Archive, location: string): Promise<CorePropertiesXml> {
+	public static override async fromArchive(
+		archive: Archive,
+		location: string
+	): Promise<CorePropertiesXml> {
 		const dom = await archive.readXml(location);
 		const instance = new CorePropertiesXml(location);
 		Object.assign(
@@ -67,8 +70,8 @@ export class CorePropertiesXml extends XmlFile {
 					"contentType": string(@ContentType)
 				}}
 			`,
-				dom,
-			),
+				dom
+			)
 		);
 		return instance;
 	}

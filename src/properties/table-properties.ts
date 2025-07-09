@@ -2,7 +2,11 @@ import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import type { ArtBorderType, Border, LineBorderType } from './shared-properties.ts';
+import type {
+	ArtBorderType,
+	Border,
+	LineBorderType,
+} from './shared-properties.ts';
 
 export type TableProperties = {
 	/**
@@ -113,7 +117,7 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 					},
 					"strictColumnWidths": boolean(./${QNS.w}tblLayout/@${QNS.w}type = "fixed")
 				}`,
-				node,
+				node
 		  )
 		: {};
 
@@ -212,6 +216,6 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			columnBandingSize: tblpr.columnBandingSize || null,
 			rowBandingSize: tblpr.rowBandingSize || null,
 			strictColumnWidths: tblpr.strictColumnWidths || false,
-		},
+		}
 	);
 }

@@ -1,4 +1,4 @@
-import { describe } from 'std/testing/bdd'; 
+import { describe } from 'std/testing/bdd';
 
 import { opt, pt } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
@@ -11,7 +11,7 @@ import {
 
 const test = createXmlRoundRobinTest<TableConditionalProperties>(
 	(x) => tableConditionalPropertiesFromNode(x as NonNullable<typeof x>),
-	tableConditionalPropertiesToNode,
+	tableConditionalPropertiesToNode
 );
 
 describe('Table conditional formatting', () => {
@@ -99,6 +99,6 @@ describe('Table conditional formatting', () => {
 					},
 				},
 			},
-		},
+		}
 	);
 });

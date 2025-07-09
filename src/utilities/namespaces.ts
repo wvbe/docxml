@@ -25,7 +25,8 @@ export const NamespaceUri = {
 	w16: 'http://schemas.microsoft.com/office/word/2018/wordml',
 	w16cex: 'http://schemas.microsoft.com/office/word/2018/wordml/cex',
 	w16cid: 'http://schemas.microsoft.com/office/word/2016/wordml/cid',
-	w16sdtdh: 'http://schemas.microsoft.com/office/word/2020/wordml/sdtdatahash',
+	w16sdtdh:
+		'http://schemas.microsoft.com/office/word/2020/wordml/sdtdatahash',
 	w16se: 'http://schemas.microsoft.com/office/word/2015/wordml/symex',
 	wne: 'http://schemas.microsoft.com/office/word/2006/wordml',
 	wp: 'http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing',
@@ -36,8 +37,10 @@ export const NamespaceUri = {
 	wps: 'http://schemas.microsoft.com/office/word/2010/wordprocessingShape',
 
 	// Documents
-	relationshipsDocument: 'http://schemas.openxmlformats.org/package/2006/relationships',
-	contentTypesDocument: 'http://schemas.openxmlformats.org/package/2006/content-types',
+	relationshipsDocument:
+		'http://schemas.openxmlformats.org/package/2006/relationships',
+	contentTypesDocument:
+		'http://schemas.openxmlformats.org/package/2006/content-types',
 	cp: 'http://schemas.openxmlformats.org/package/2006/metadata/core-properties',
 	dc: 'http://purl.org/dc/elements/1.1/',
 	dcterms: 'http://purl.org/dc/terms/',
@@ -59,14 +62,21 @@ export const NamespaceUri = {
  *   const query = `/${QNS.w}document`;
  *   // "/Q{https://…}document"
  */
-export const QNS = Object.keys(NamespaceUri).reduce<Record<keyof typeof NamespaceUri, string>>(
+export const QNS = Object.keys(NamespaceUri).reduce<
+	Record<keyof typeof NamespaceUri, string>
+>(
 	(map: Record<keyof typeof NamespaceUri, string>, prefix) => ({
 		...map,
 		[prefix]: `Q{${NamespaceUri[prefix as keyof typeof NamespaceUri]}}`,
 	}),
-	{} as Record<keyof typeof NamespaceUri, string>,
+	{} as Record<keyof typeof NamespaceUri, string>
 );
 
 export const ALL_NAMESPACE_DECLARATIONS = Object.keys(NamespaceUri)
-	.map((prefix) => `xmlns:${prefix}="${NamespaceUri[prefix as keyof typeof NamespaceUri]}"`)
+	.map(
+		(prefix) =>
+			`xmlns:${prefix}="${
+				NamespaceUri[prefix as keyof typeof NamespaceUri]
+			}"`
+	)
 	.join(' ');

@@ -2,7 +2,10 @@ import { type ComponentAncestor, Component } from '../classes/Component.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToBoolean, evaluateXPathToMap } from '../utilities/xquery.ts';
+import {
+	evaluateXPathToBoolean,
+	evaluateXPathToMap,
+} from '../utilities/xquery.ts';
 
 /**
  * A type describing the components accepted as children of {@link FieldRangeStart}.
@@ -20,7 +23,10 @@ export type FieldRangeStartProps = {
 /**
  * The start of a range associated with a complex field.
  */
-export class FieldRangeStart extends Component<FieldRangeStartProps, FieldRangeStartChild> {
+export class FieldRangeStart extends Component<
+	FieldRangeStartProps,
+	FieldRangeStartChild
+> {
 	public static override readonly children: string[] = [];
 
 	public static override readonly mixed: boolean = false;
@@ -41,7 +47,7 @@ export class FieldRangeStart extends Component<FieldRangeStartProps, FieldRangeS
 			{
 				isDirty: !!this.props.isDirty,
 				isLocked: !!this.props.isLocked,
-			},
+			}
 		);
 	}
 
@@ -49,7 +55,10 @@ export class FieldRangeStart extends Component<FieldRangeStartProps, FieldRangeS
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return evaluateXPathToBoolean('self::w:fldChar and @w:fldCharType = "begin"', node);
+		return evaluateXPathToBoolean(
+			'self::w:fldChar and @w:fldCharType = "begin"',
+			node
+		);
 	}
 
 	/**
@@ -64,8 +73,8 @@ export class FieldRangeStart extends Component<FieldRangeStartProps, FieldRangeS
 						"isLocked": docxml:st-on-off(@${QNS.w}fldLock)
 					}
 				`,
-				node,
-			),
+				node
+			)
 		);
 	}
 }

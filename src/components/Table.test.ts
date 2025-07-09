@@ -1,6 +1,6 @@
 /** @jsx jsx */
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { describe, it } from 'std/testing/bdd';
 
 import { Table } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
@@ -134,7 +134,7 @@ describe('Table', () => {
 				</w:tr>
 			</w:tbl>
 		`),
-		emptyContext,
+		emptyContext
 	);
 
 	it('Row 0 has the correct amount of cells', () =>

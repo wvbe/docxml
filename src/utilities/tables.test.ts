@@ -1,5 +1,5 @@
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { describe, it } from 'std/testing/bdd';
 
 import { Cell } from '../components/Cell.ts';
 import { Row } from '../components/Row.ts';
@@ -7,7 +7,10 @@ import { Table } from '../components/Table.ts';
 import { TableGridModel } from './tables.ts';
 
 function getAllCells(table: Table) {
-	return table.children.reduce<Cell[]>((cells, row) => [...cells, ...row.children], []);
+	return table.children.reduce<Cell[]>(
+		(cells, row) => [...cells, ...row.children],
+		[]
+	);
 }
 describe('Table grid models', () => {
 	describe('Simple table', () => {
@@ -21,7 +24,7 @@ describe('Table grid models', () => {
 		const table = new Table(
 			{},
 			new Row({}, new Cell({}), new Cell({}), new Cell({})),
-			new Row({}, new Cell({}), new Cell({}), new Cell({})),
+			new Row({}, new Cell({}), new Cell({}), new Cell({}))
 		);
 		const model = new TableGridModel(table);
 		const cells = getAllCells(table);
@@ -58,7 +61,7 @@ describe('Table grid models', () => {
 		const table = new Table(
 			{},
 			new Row({}, new Cell({ colSpan: 2 }), new Cell({})),
-			new Row({}, new Cell({}), new Cell({ colSpan: 2 })),
+			new Row({}, new Cell({}), new Cell({ colSpan: 2 }))
 		);
 		const model = new TableGridModel(table);
 		const cells = getAllCells(table);
@@ -98,7 +101,7 @@ describe('Table grid models', () => {
 			{},
 			new Row({}, new Cell({ rowSpan: 2 }), new Cell({})),
 			new Row({}, new Cell({ rowSpan: 2 })),
-			new Row({}, new Cell({})),
+			new Row({}, new Cell({}))
 		);
 		const model = new TableGridModel(table);
 		const cells = getAllCells(table);
@@ -138,7 +141,7 @@ describe('Table grid models', () => {
 			new Row({}, new Cell({ colSpan: 2, rowSpan: 2 }), new Cell({})),
 			new Row({}, new Cell({ rowSpan: 2 })),
 			new Row({}, new Cell({ colSpan: 2 })),
-			new Row({}),
+			new Row({})
 		);
 		const model = new TableGridModel(table);
 		const cells = getAllCells(table);

@@ -1,4 +1,4 @@
-import { dirname, basename } from '@util-path';
+import { basename, dirname } from '@util-path';
 
 import type { ContentTypesXml } from '../../mod.ts';
 import type { Archive } from '../classes/Archive.ts';

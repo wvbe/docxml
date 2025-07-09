@@ -1,5 +1,5 @@
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { describe, it } from 'std/testing/bdd';
 
 import { Text } from '../../mod.ts';
 import { Archive } from '../classes/Archive.ts';
@@ -24,7 +24,7 @@ describe('Text', () => {
 				<w:t>a page break</w:t>
 			</w:r>
 		`),
-		emptyContext,
+		emptyContext
 	);
 
 	it('parses props correctly', () => {
@@ -49,7 +49,7 @@ describe('Text', () => {
 					<br xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:type="page"/>
 					<t xml:space="preserve">a page break</t>
 				</r>
-			`.replace(/\n|\t/g, ''),
+			`.replace(/\n|\t/g, '')
 		);
 	});
 });

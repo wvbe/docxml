@@ -1,5 +1,5 @@
+import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
-import { expect } from 'std/expect'; 
 
 import { NumberMap } from './NumberMap.ts';
 

@@ -25,7 +25,10 @@ docx.document.set([
 		<BookmarkRangeStart bookmark={bookmark} />
 		<Paragraph>
 			<Hyperlink url="https://github.com/fontoxml/docxml">
-				<Text>This is a hyperlink to external target "github.com/fontoxml/docxml"</Text>
+				<Text>
+					This is a hyperlink to external target
+					"github.com/fontoxml/docxml"
+				</Text>
 			</Hyperlink>
 		</Paragraph>
 		<BookmarkRangeEnd bookmark={bookmark} />

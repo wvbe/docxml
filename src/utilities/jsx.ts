@@ -29,19 +29,24 @@ export async function jsx<C extends Component>(
 	component: ComponentComponentFunction<C> | ComponentDefinition<C>,
 	props: ComponentProps<C>,
 	...children: Array<ComponentChild<C> | Array<ComponentChild<C>>>
-): Promise<Array<C | ComponentChild<C> | ReturnType<ComponentComponentFunction<C>>>> {
+): Promise<
+	Array<C | ComponentChild<C> | ReturnType<ComponentComponentFunction<C>>>
+> {
 	const flattenedChildren = await children
 		// Flatten the children, which may themselves have been wrapped in an array because they
 		// contained invalid children.
 		// Moreover, any component might at this point still be only the promise thereof. Resolve all.
 		.reduce<Promise<ComponentChild<C>[]>>(async function flatten(
 			flatPromise,
-			childPromise,
+			childPromise
 		): Promise<ComponentChild<C>[]> {
 			const child = await childPromise;
 			const flat = await flatPromise;
 			return Array.isArray(child)
-				? [...flat, ...(await child.reduce(flatten, Promise.resolve([])))]
+				? [
+						...flat,
+						...(await child.reduce(flatten, Promise.resolve([]))),
+				  ]
 				: [...flat, child];
 		},
 		Promise.resolve([]));
@@ -51,7 +56,11 @@ export async function jsx<C extends Component>(
 			// vertically inserted between
 			.reduce<Array<QueuedComponent<C> | ComponentChild<C>>>(
 				(nodes, child) => {
-					if (typeof child === 'string' && isComponentDefinition(component) && !component.mixed) {
+					if (
+						typeof child === 'string' &&
+						isComponentDefinition(component) &&
+						!component.mixed
+					) {
 						child = new Text({}, child) as ComponentChild<C>;
 					}
 					const isValid =
@@ -65,7 +74,10 @@ export async function jsx<C extends Component>(
 						nodes.push(child);
 					} else {
 						const lastQueuedItem = nodes[nodes.length - 1];
-						if (typeof lastQueuedItem === 'string' || lastQueuedItem instanceof Component) {
+						if (
+							typeof lastQueuedItem === 'string' ||
+							lastQueuedItem instanceof Component
+						) {
 							// Queue this item as a simple object, so that its children can be changed
 							// in the next iteration.
 							nodes.push({
@@ -79,7 +91,7 @@ export async function jsx<C extends Component>(
 					}
 					return nodes;
 				},
-				[{ component, props, children: [] }],
+				[{ component, props, children: [] }]
 			)
 			// Instantiate the "queued" items (props/children that haven't been instantiated yet so that
 			// their children could be shuffled around).
@@ -91,18 +103,38 @@ export async function jsx<C extends Component>(
 					return node as ComponentChild<C>;
 				}
 				if (isComponentDefinition(component)) {
-					return new component(node.props || {}, ...(node.children || []));
+					return new component(
+						node.props || {},
+						...(node.children || [])
+					);
 				} else {
-					const x = component({ ...props, children: node.children || [] });
+					const x = component({
+						...props,
+						children: node.children || [],
+					});
 					return x;
 				}
 			})
 			// Flatten again, no telling what came out of a ComponentFunction
-			.reduce<Array<ReturnType<ComponentComponentFunction<C>> | ComponentChild<C>>>(
-				(flat, thing) => (Array.isArray(thing) ? [...flat, ...thing] : [...flat, thing]),
-				[],
+			.reduce<
+				Array<
+					| ReturnType<ComponentComponentFunction<C>>
+					| ComponentChild<C>
+				>
+			>(
+				(flat, thing) =>
+					Array.isArray(thing)
+						? [...flat, ...thing]
+						: [...flat, thing],
+				[]
 			)
 			// Remove empty Text components, they don't do anything
-			.filter((node) => !(node.constructor === Text && !(node as Text).children.length))
+			.filter(
+				(node) =>
+					!(
+						node.constructor === Text &&
+						!(node as Text).children.length
+					)
+			)
 	);
 }

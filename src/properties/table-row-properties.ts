@@ -22,7 +22,9 @@ export type TableRowProperties = {
 	cellSpacing?: null | Length;
 };
 
-export function tableRowPropertiesFromNode(node?: Node | null): TableRowProperties {
+export function tableRowPropertiesFromNode(
+	node?: Node | null
+): TableRowProperties {
 	return node
 		? evaluateXPathToMap<TableRowProperties>(
 				`map {
@@ -30,12 +32,14 @@ export function tableRowPropertiesFromNode(node?: Node | null): TableRowProperti
 					"isUnsplittable": docxml:ct-on-off(./${QNS.w}cantSplit),
 					"cellSpacing": docxml:length(${QNS.w}tblCellSpacing[not(@${QNS.w}type = 'nil')]/@${QNS.w}w, 'twip')
 				}`,
-				node,
+				node
 		  )
 		: {};
 }
 
-export function tableRowPropertiesToNode(tcpr: TableRowProperties = {}): Node | null {
+export function tableRowPropertiesToNode(
+	tcpr: TableRowProperties = {}
+): Node | null {
 	if (!Object.keys(tcpr).length) {
 		return null;
 	}
@@ -52,6 +56,6 @@ export function tableRowPropertiesToNode(tcpr: TableRowProperties = {}): Node | 
 			isHeaderRow: tcpr.isHeaderRow || false,
 			isUnsplittable: tcpr.isUnsplittable || false,
 			cellSpacing: tcpr.cellSpacing || null,
-		},
+		}
 	);
 }

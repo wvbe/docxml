@@ -3,13 +3,19 @@
 import './Text.ts';
 
 import {
-	type ComponentAncestor,
-	type ComponentDefinition,
 	Component,
+	type ComponentAncestor,
 	type ComponentContext,
+	type ComponentDefinition,
 } from '../classes/Component.ts';
-import { type ChangeInformation, getChangeInformation } from '../utilities/changes.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	type ChangeInformation,
+	getChangeInformation,
+} from '../utilities/changes.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
@@ -29,7 +35,10 @@ export type TextDeletionProps = ChangeInformation;
 /**
  * A component that represents a change-tracked text that was deleted.
  */
-export class TextDeletion extends Component<TextDeletionProps, TextDeletionChild> {
+export class TextDeletion extends Component<
+	TextDeletionProps,
+	TextDeletionChild
+> {
 	public static override readonly children: string[] = [
 		'Text',
 		'TextAddition',
@@ -56,7 +65,7 @@ export class TextDeletion extends Component<TextDeletionProps, TextDeletionChild
 				...this.props,
 				date: this.props.date.toISOString(),
 				children: await this.childrenToNode(ancestry),
-			},
+			}
 		);
 	}
 
@@ -70,15 +79,18 @@ export class TextDeletion extends Component<TextDeletionProps, TextDeletionChild
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): TextDeletion {
+	static override fromNode(
+		node: Node,
+		context: ComponentContext
+	): TextDeletion {
 		const props = getChangeInformation(node);
 		return new TextDeletion(
 			props,
 			...createChildComponentsFromNodes<TextDeletionChild>(
 				this.children,
 				evaluateXPathToNodes(`./${QNS.w}r`, node),
-				context,
-			),
+				context
+			)
 		);
 	}
 }

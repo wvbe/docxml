@@ -8,7 +8,10 @@ import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { type Length, cm, pt } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToBoolean, evaluateXPathToMap } from '../utilities/xquery.ts';
+import {
+	evaluateXPathToBoolean,
+	evaluateXPathToMap,
+} from '../utilities/xquery.ts';
 
 /**
  * A type describing the components accepted as children of {@link WatermarkText}.
@@ -49,7 +52,10 @@ export type WatermarkTextProps = {
 /**
  *
  */
-export class WatermarkText extends Component<WatermarkTextProps, WatermarkTextChild> {
+export class WatermarkText extends Component<
+	WatermarkTextProps,
+	WatermarkTextChild
+> {
 	public static override readonly children: string[] = [];
 	public static override readonly mixed: boolean = false;
 
@@ -115,12 +121,13 @@ export class WatermarkText extends Component<WatermarkTextProps, WatermarkTextCh
 				color: this.props.color || '000000',
 				font: this.props.font || 'Arial',
 				opacity:
-					this.props.opacity === null || this.props.opacity === undefined
+					this.props.opacity === null ||
+					this.props.opacity === undefined
 						? '100%'
 						: this.props.opacity * 100 + '%',
 				isBold: !!this.props.isBold,
 				isItalic: !!this.props.isItalic,
-			},
+			}
 		);
 	}
 
@@ -140,7 +147,7 @@ export class WatermarkText extends Component<WatermarkTextProps, WatermarkTextCh
 			`map {
 
 			}`,
-			node,
+			node
 		);
 
 		return new WatermarkText(props);

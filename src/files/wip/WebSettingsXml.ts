@@ -8,7 +8,10 @@ export class WebSettingsXml extends UnhandledXmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static override async fromArchive(archive: Archive, location: string): Promise<WebSettingsXml> {
+	public static override async fromArchive(
+		archive: Archive,
+		location: string
+	): Promise<WebSettingsXml> {
 		return new WebSettingsXml(location, await archive.readText(location));
 	}
 }

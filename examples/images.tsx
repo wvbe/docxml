@@ -15,7 +15,10 @@ await Docx.fromJsx(
 			</Text>
 		</Paragraph>
 		<Paragraph>
-			<Text>Next image will look different if your word processor supports SVG.</Text>
+			<Text>
+				Next image will look different if your word processor supports
+				SVG.
+			</Text>
 		</Paragraph>
 		<Paragraph>
 			<Text>
@@ -31,5 +34,5 @@ await Docx.fromJsx(
 				/>
 			</Text>
 		</Paragraph>
-	</Section>,
+	</Section>
 ).toFile('images.docx');

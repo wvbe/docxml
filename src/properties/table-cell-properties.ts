@@ -46,7 +46,9 @@ export type TableCellProperties = {
 	verticalAlignment?: null | 'bottom' | 'center' | 'top';
 };
 
-export function tableCellPropertiesFromNode(node?: Node | null): TableCellProperties {
+export function tableCellPropertiesFromNode(
+	node?: Node | null
+): TableCellProperties {
 	return node
 		? evaluateXPathToMap<TableCellProperties>(
 				`
@@ -92,14 +94,14 @@ export function tableCellPropertiesFromNode(node?: Node | null): TableCellProper
 					"verticalAlignment": ./${QNS.w}vAlign/@${QNS.w}val/string()
 				}
 				`,
-				node,
+				node
 		  )
 		: {};
 }
 
 export function tableCellPropertiesToNode(
 	tcpr: TableCellProperties = {},
-	asRepeatingNode: boolean,
+	asRepeatingNode: boolean
 ): Node {
 	return create(
 		`element ${QNS.w}tcPr {
@@ -153,6 +155,6 @@ export function tableCellPropertiesToNode(
 				  }
 				: null,
 			verticalAlignment: tcpr.verticalAlignment || null,
-		},
+		}
 	);
 }

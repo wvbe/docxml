@@ -1,8 +1,18 @@
-import { type ComponentAncestor, Component, type ComponentContext } from '../classes/Component.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	Component,
+	type ComponentAncestor,
+	type ComponentContext,
+} from '../classes/Component.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToBoolean, evaluateXPathToMap } from '../utilities/xquery.ts';
+import {
+	evaluateXPathToBoolean,
+	evaluateXPathToMap,
+} from '../utilities/xquery.ts';
 
 /**
  * A type describing the components accepted as children of {@link FieldRangeInstruction}.
@@ -38,7 +48,7 @@ export class FieldRangeInstruction extends Component<
 			`,
 			{
 				children: await this.childrenToNode(ancestry),
-			},
+			}
 		);
 	}
 
@@ -52,8 +62,14 @@ export class FieldRangeInstruction extends Component<
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): FieldRangeInstruction {
-		const { children } = evaluateXPathToMap<{ rpr: Node; children: Node[] }>(
+	static override fromNode(
+		node: Node,
+		context: ComponentContext
+	): FieldRangeInstruction {
+		const { children } = evaluateXPathToMap<{
+			rpr: Node;
+			children: Node[];
+		}>(
 			`
 				map {
 					"children": array{
@@ -61,15 +77,15 @@ export class FieldRangeInstruction extends Component<
 					}
 				}
 			`,
-			node,
+			node
 		);
 		return new FieldRangeInstruction(
 			{},
 			...createChildComponentsFromNodes<FieldRangeInstructionChild>(
 				this.children,
 				children,
-				context,
-			),
+				context
+			)
 		);
 	}
 }

@@ -1,19 +1,22 @@
-import { expect } from 'std/expect'; 
+import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { checkForForbiddenParameters, isValidNumber } from './parameter-checking.ts';
+import {
+	checkForForbiddenParameters,
+	isValidNumber,
+} from './parameter-checking.ts';
 
 describe('Checking for bad object parameters', () => {
 	type fakeNestedType = {
-		first: string,
-		second: number,
-		third: boolean
+		first: string;
+		second: number;
+		third: boolean;
 	};
 	type fakeType = {
-		first: number,
-		second: number,
-		third: fakeNestedType,
-		fourth: number
+		first: number;
+		second: number;
+		third: fakeNestedType;
+		fourth: number;
 	};
 
 	const passingInnerObject: fakeNestedType = {
@@ -29,7 +32,7 @@ describe('Checking for bad object parameters', () => {
 	};
 
 	const passingOuterObject: fakeType = {
-		first: 0xA4,
+		first: 0xa4,
 		second: 123,
 		third: passingInnerObject,
 		fourth: 0b111,
@@ -39,24 +42,19 @@ describe('Checking for bad object parameters', () => {
 		first: 1,
 		second: 2,
 		third: failingInnerObject,
-		fourth: 3
-	}
+		fourth: 3,
+	};
 
 	it('ensure that NaN is caught when used as a parameter of type number', () => {
 		const objTest = checkForForbiddenParameters(
 			passingOuterObject,
 			isValidNumber,
-			true,
+			true
 		);
 		expect(objTest).toBe(true);
 
-
-		expect(
-			() => checkForForbiddenParameters(
-				failingOuterObject,
-				isValidNumber,
-				true
-			)
-		).toThrow()
+		expect(() =>
+			checkForForbiddenParameters(failingOuterObject, isValidNumber, true)
+		).toThrow();
 	});
 });

@@ -1,5 +1,5 @@
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { describe, it } from 'std/testing/bdd';
 
 import { serialize } from '../utilities/dom.ts';
 import { StylesXml } from './StylesXml.ts';
@@ -28,7 +28,7 @@ describe('Styles', () => {
 					</w:pPr>
 					<w:tblPr/>
 				</w:style>
-			</w:styles>`.replace(/\n|\t/g, ''),
+			</w:styles>`.replace(/\n|\t/g, '')
 		);
 	});
 
@@ -70,11 +70,13 @@ describe('Styles', () => {
 						</w:tcPr>
 					</w:tblStylePr>
 				</w:style>
-			</w:styles>`.replace(/\n|\t/g, ''),
+			</w:styles>`.replace(/\n|\t/g, '')
 		);
 
-		const reparsed = (StylesXml.fromDom(node, 'derp')).get('test');
-		expect(reparsed?.table?.conditions?.lastCol?.cell?.borders?.top).toEqual({
+		const reparsed = StylesXml.fromDom(node, 'derp').get('test');
+		expect(
+			reparsed?.table?.conditions?.lastCol?.cell?.borders?.top
+		).toEqual({
 			type: null,
 			width: null,
 			spacing: null,

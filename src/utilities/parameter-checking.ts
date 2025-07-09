@@ -20,18 +20,27 @@
 export function checkForForbiddenParameters<ObjectToCheck>(
 	objectToCheck: ObjectToCheck,
 	callback: (object: unknown) => boolean,
-	callbackFailureValue: boolean,
+	callbackFailureValue: boolean
 ): true {
-	type propObject = { prop: string, value: unknown };
+	type propObject = { prop: string; value: unknown };
 	const values: propObject[] = [];
 	// Recurse through an object and flatten it to key-value pairs.
-	const flattenedObject = (deepObject: unknown, accumulator: propObject[]) => {
+	const flattenedObject = (
+		deepObject: unknown,
+		accumulator: propObject[]
+	) => {
 		if (typeof deepObject === 'object') {
 			for (const key in deepObject) {
 				if (typeof deepObject[key as keyof unknown] === 'object') {
-					flattenedObject(deepObject[key as keyof unknown], accumulator);
+					flattenedObject(
+						deepObject[key as keyof unknown],
+						accumulator
+					);
 				} else {
-					accumulator.push({ prop: key, value: deepObject[key as keyof unknown] });
+					accumulator.push({
+						prop: key,
+						value: deepObject[key as keyof unknown],
+					});
 				}
 			}
 		}
@@ -41,11 +50,13 @@ export function checkForForbiddenParameters<ObjectToCheck>(
 	// Iterate over an object's values until we hit one that causes the callback
 	// function to equal the failure value.
 	const flattenedObjectArray = flattenedObject(objectToCheck, values);
-	flattenedObjectArray.forEach(entry => {
+	flattenedObjectArray.forEach((entry) => {
 		const { prop, value } = entry;
 		if (callback(value) === callbackFailureValue) {
 			throw new Error(
-				`Error when checking parameters.\nCallback for { ${prop}: ${value} } returned ${callback(value)}.`,
+				`Error when checking parameters.\nCallback for { ${prop}: ${value} } returned ${callback(
+					value
+				)}.`
 			);
 		}
 	});

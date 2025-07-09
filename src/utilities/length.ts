@@ -1,4 +1,7 @@
-import { checkForForbiddenParameters, isValidNumber } from '../utilities/parameter-checking.ts';
+import {
+	checkForForbiddenParameters,
+	isValidNumber,
+} from '../utilities/parameter-checking.ts';
 
 /**
  * An object that describes a size or length in various cross-computable units. Useful for telling the

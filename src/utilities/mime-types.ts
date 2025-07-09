@@ -23,7 +23,9 @@ function getMimeTypeFromHexSignature(signature: string): FileMime {
 		// case '504B0304':
 		// 	return 'application/zip';
 		default:
-			throw new Error(`Unsupported file type, signature "${signature}" not recognized.`);
+			throw new Error(
+				`Unsupported file type, signature "${signature}" not recognized.`
+			);
 	}
 }
 

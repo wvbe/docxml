@@ -17,7 +17,10 @@ export type FieldRangeEndProps = { [key: string]: never };
 /**
  * The end of a range associated with a complex field.
  */
-export class FieldRangeEnd extends Component<FieldRangeEndProps, FieldRangeEndChild> {
+export class FieldRangeEnd extends Component<
+	FieldRangeEndProps,
+	FieldRangeEndChild
+> {
 	public static override readonly children: string[] = [];
 
 	public static override readonly mixed: boolean = false;
@@ -33,7 +36,7 @@ export class FieldRangeEnd extends Component<FieldRangeEndProps, FieldRangeEndCh
 					attribute ${QNS.w}fldCharType { "end" }
 				}
 			`,
-			{},
+			{}
 		);
 	}
 
@@ -41,7 +44,10 @@ export class FieldRangeEnd extends Component<FieldRangeEndProps, FieldRangeEndCh
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return evaluateXPathToBoolean('self::w:fldChar and @w:fldCharType = "end"', node);
+		return evaluateXPathToBoolean(
+			'self::w:fldChar and @w:fldCharType = "end"',
+			node
+		);
 	}
 
 	/**

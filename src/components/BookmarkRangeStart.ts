@@ -50,7 +50,7 @@ export class BookmarkRangeStart extends Component<
 			this.props.bookmark || {
 				id: this.props.id,
 				name: this.props.name,
-			},
+			}
 		);
 	}
 
@@ -71,8 +71,8 @@ export class BookmarkRangeStart extends Component<
 					"id": ./@${QNS.w}id/number(),
 					"name": ./@${QNS.w}name/string()
 				}`,
-				node,
-			),
+				node
+			)
 		);
 	}
 }

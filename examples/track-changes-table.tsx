@@ -1,9 +1,6 @@
 /** @jsx  Docx.jsx */
 import Docx, {
-	Break,
-	cm,
 	Paragraph,
-	pt,
 	RowAddition,
 	RowDeletion,
 	Section,

@@ -1,8 +1,14 @@
 import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToFirstNode, evaluateXPathToMap } from '../utilities/xquery.ts';
-import { type SectionProperties, sectionPropertiesToNode } from './section-properties.ts';
+import {
+	evaluateXPathToFirstNode,
+	evaluateXPathToMap,
+} from '../utilities/xquery.ts';
+import {
+	type SectionProperties,
+	sectionPropertiesToNode,
+} from './section-properties.ts';
 import type { Border, LineBorderType, Shading } from './shared-properties.ts';
 import {
 	type TextProperties,
@@ -10,8 +16,12 @@ import {
 	textPropertiesToNode,
 } from './text-properties.ts';
 
-export function getTwipOrNull(length: Length | null | undefined): number | null {
-	return length && length.twip !== undefined && length.twip !== null ? length.twip : null;
+export function getTwipOrNull(
+	length: Length | null | undefined
+): number | null {
+	return length && length.twip !== undefined && length.twip !== null
+		? length.twip
+		: null;
 }
 
 /**
@@ -97,16 +107,34 @@ export type ParagraphProperties = {
 	/**
 	 * Properties in styles for tabs.
 	 */
-	tabs?: Array<Partial<
-		{
-			type: 'bar' | 'center' | 'clear' | 'clear' | 'decimal' | 'left' |  'num' |  'right' | null;
-			leader: 'dot' | 'heavy' | 'hyphen' | 'middleDot' | 'none' | 'underscore' | null;
+	tabs?: Array<
+		Partial<{
+			type:
+				| 'bar'
+				| 'center'
+				| 'clear'
+				| 'clear'
+				| 'decimal'
+				| 'left'
+				| 'num'
+				| 'right'
+				| null;
+			leader:
+				| 'dot'
+				| 'heavy'
+				| 'hyphen'
+				| 'middleDot'
+				| 'none'
+				| 'underscore'
+				| null;
 			position: Length | null;
 		}>
 	>;
 };
 
-export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProperties {
+export function paragraphPropertiesFromNode(
+	node?: Node | null
+): ParagraphProperties {
 	const data = node
 		? // deno-lint-ignore no-explicit-any
 		  evaluateXPathToMap<any>(
@@ -156,7 +184,7 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 						"position": docxml:length(@${QNS.w}pos, 'twip')
 					}}
 				}`,
-				node,
+				node
 		  ) || {}
 		: {};
 
@@ -180,7 +208,7 @@ export function paragraphPropertiesFromNode(node?: Node | null): ParagraphProper
 
 export function paragraphPropertiesToNode(
 	data: ParagraphProperties = {},
-	sectionProperties: SectionProperties | null = null,
+	sectionProperties: SectionProperties | null = null
 ): Node | null {
 	if (!Object.keys(data).length && !sectionProperties) {
 		return null;
@@ -294,7 +322,9 @@ export function paragraphPropertiesToNode(
 			style: data.style || null,
 			alignment: data.alignment || null,
 			outlineLvl:
-				data.outlineLvl === null || data.outlineLvl === undefined ? null : data.outlineLvl,
+				data.outlineLvl === null || data.outlineLvl === undefined
+					? null
+					: data.outlineLvl,
 			indentation: data.indentation
 				? {
 						...data.indentation,
@@ -334,13 +364,15 @@ export function paragraphPropertiesToNode(
 				  }
 				: null,
 			rpr: textPropertiesToNode(data.pilcrow || undefined),
-			sectpr: sectionProperties && sectionPropertiesToNode(sectionProperties),
-			tabs: data.tabs?.length ?
-				data.tabs?.map(tab => ({
-					type: tab.type,
-					leader: tab.leader,
-					position: getTwipOrNull(tab.position),
-				})) : null
-		},
+			sectpr:
+				sectionProperties && sectionPropertiesToNode(sectionProperties),
+			tabs: data.tabs?.length
+				? data.tabs?.map((tab) => ({
+						type: tab.type,
+						leader: tab.leader,
+						position: getTwipOrNull(tab.position),
+				  }))
+				: null,
+		}
 	);
 }

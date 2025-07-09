@@ -17,9 +17,10 @@
 	},
 	"importMap": "imports.json",
 	"tasks": {
-		"test": "deno test -A src",
-		"test:coverage": "TMP=$(mktemp -d) && deno task test --coverage=$TMP && deno coverage --exclude='utils/xml-validation/fontoxml' $TMP --lcov > $TMP/lcov.lcov && genhtml -o coverage $TMP/lcov.lcov",
+		"check": "deno check .",
 		"lint": "deno lint src",
+		"test": "deno lint src && deno task check && deno test -A src",
+		"test:coverage": "deno task test --coverage=coverage && deno coverage --exclude='utils/xml-validation/fontoxml' --exclude='vendor' --lcov --output=coverage/cov.lcov coverage && genhtml --ignore-errors inconsistent --output-directory ./coverage/html_cov ./coverage/cov.lcov && open ./coverage/html_cov/index.html",
 		"precommit": "deno task lint && deno task test"
 	}
 }

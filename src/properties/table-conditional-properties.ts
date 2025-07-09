@@ -16,7 +16,11 @@ import {
 	tablePropertiesFromNode,
 	tablePropertiesToNode,
 } from './table-properties.ts';
-import { type TextProperties, textPropertiesFromNode, textPropertiesToNode } from './text-properties.ts';
+import {
+	type TextProperties,
+	textPropertiesFromNode,
+	textPropertiesToNode,
+} from './text-properties.ts';
 
 export type TableConditionalTypes =
 	// The formatting applies to odd numbered groupings of rows
@@ -58,7 +62,9 @@ export type TableConditionalProperties = {
 	table?: null | TableProperties;
 };
 
-export function tableConditionalPropertiesFromNode(node: Node): TableConditionalProperties {
+export function tableConditionalPropertiesFromNode(
+	node: Node
+): TableConditionalProperties {
 	const { pPr, rPr, tblPr, tcPr, ...rest } = evaluateXPathToMap<{
 		type: TableConditionalTypes;
 		pPr?: Element;
@@ -73,7 +79,7 @@ export function tableConditionalPropertiesFromNode(node: Node): TableConditional
 			"tblPr": ./${QNS.w}tblPr,
 			"tcPr": ./${QNS.w}tcPr
 		}`,
-		node,
+		node
 	);
 
 	const properties: TableConditionalProperties = {
@@ -87,7 +93,9 @@ export function tableConditionalPropertiesFromNode(node: Node): TableConditional
 	return properties;
 }
 
-export function tableConditionalPropertiesToNode(tblpr: TableConditionalProperties): Node {
+export function tableConditionalPropertiesToNode(
+	tblpr: TableConditionalProperties
+): Node {
 	return create(
 		`element ${QNS.w}tblStylePr {
 			attribute ${QNS.w}type { $type },
@@ -98,10 +106,14 @@ export function tableConditionalPropertiesToNode(tblpr: TableConditionalProperti
 		}`,
 		{
 			...tblpr,
-			pPr: tblpr.paragraph ? paragraphPropertiesToNode(tblpr.paragraph) : null,
+			pPr: tblpr.paragraph
+				? paragraphPropertiesToNode(tblpr.paragraph)
+				: null,
 			rPr: tblpr.text ? textPropertiesToNode(tblpr.text) : null,
 			tblPr: tblpr.table ? tablePropertiesToNode(tblpr.table) : null,
-			tcPr: tblpr.cell ? tableCellPropertiesToNode(tblpr.cell, false) : null,
-		},
+			tcPr: tblpr.cell
+				? tableCellPropertiesToNode(tblpr.cell, false)
+				: null,
+		}
 	);
 }

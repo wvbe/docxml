@@ -1,4 +1,4 @@
-import { describe } from 'std/testing/bdd'; 
+import { describe } from 'std/testing/bdd';
 
 import { hpt, twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
@@ -9,7 +9,10 @@ import {
 	textPropertiesToNode,
 } from './text-properties.ts';
 
-const test = createXmlRoundRobinTest<TextProperties>(textPropertiesFromNode, textPropertiesToNode);
+const test = createXmlRoundRobinTest<TextProperties>(
+	textPropertiesFromNode,
+	textPropertiesToNode
+);
 
 describe('Text formatting', () => {
 	test(
@@ -50,7 +53,7 @@ describe('Text formatting', () => {
 				ascii: 'Arial',
 				hAnsi: 'Courier New',
 			},
-		},
+		}
 	);
 
 	describe('Complex character formatting', () => {
@@ -64,7 +67,7 @@ describe('Text formatting', () => {
 				isBold: { simple: false, complex: true },
 				isItalic: { simple: false, complex: true },
 				fontSize: { simple: null, complex: hpt(23) },
-			},
+			}
 		);
 	});
 });

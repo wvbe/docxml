@@ -13,7 +13,7 @@ import {
 
 const test = createXmlRoundRobinTest<TableCellProperties>(
 	tableCellPropertiesFromNode,
-	(n: TableCellProperties) => tableCellPropertiesToNode(n, false),
+	(n: TableCellProperties) => tableCellPropertiesToNode(n, false)
 );
 
 describe('Table cell formatting', () => {
@@ -83,51 +83,57 @@ describe('Table cell formatting', () => {
 			</w:tc>
 		</w:tr>
 	</w:tbl>`);
-	test(evaluateXPathToFirstNode(`//*[@id="colspanning-cell"]/w:tcPr`, dom) as Node, {
-		colSpan: 2,
-		// Rowspan would have been "1" if other cells are not succesfully taken into account:
-		rowSpan: 2,
-		shading: {
-			background: 'B2A1C7',
-			foreground: 'FFFF00',
-			pattern: 'pct45',
-		},
-		borders: {
-			top: {
-				type: 'double',
-				width: opt(24),
-				spacing: 0,
-				color: 'FF0000',
+	test(
+		evaluateXPathToFirstNode(
+			`//*[@id="colspanning-cell"]/w:tcPr`,
+			dom
+		) as Node,
+		{
+			colSpan: 2,
+			// Rowspan would have been "1" if other cells are not succesfully taken into account:
+			rowSpan: 2,
+			shading: {
+				background: 'B2A1C7',
+				foreground: 'FFFF00',
+				pattern: 'pct45',
 			},
-			start: {
-				type: 'double',
-				width: opt(24),
-				spacing: 0,
-				color: 'FF0000',
+			borders: {
+				top: {
+					type: 'double',
+					width: opt(24),
+					spacing: 0,
+					color: 'FF0000',
+				},
+				start: {
+					type: 'double',
+					width: opt(24),
+					spacing: 0,
+					color: 'FF0000',
+				},
+				bottom: {
+					type: 'double',
+					width: opt(24),
+					spacing: 0,
+					color: 'FF0000',
+				},
+				end: {
+					type: 'double',
+					width: opt(24),
+					spacing: 0,
+					color: 'FF0000',
+				},
+				tl2br: {
+					type: 'double',
+					width: opt(24),
+					spacing: 0,
+					color: 'FF0000',
+				},
+				tr2bl: null,
+				insideH: null,
+				insideV: null,
 			},
-			bottom: {
-				type: 'double',
-				width: opt(24),
-				spacing: 0,
-				color: 'FF0000',
-			},
-			end: {
-				type: 'double',
-				width: opt(24),
-				spacing: 0,
-				color: 'FF0000',
-			},
-			tl2br: {
-				type: 'double',
-				width: opt(24),
-				spacing: 0,
-				color: 'FF0000',
-			},
-			tr2bl: null,
-			insideH: null,
-			insideV: null,
-		},
-	});
+		}
+	);
 
 	describe('Legacy "left"/"right"', () => {
 		test(
@@ -158,12 +164,16 @@ describe('Table cell formatting', () => {
 					insideH: null,
 					insideV: null,
 				},
-			},
+			}
 		);
 	});
 
 	describe('verticalAlignment', () => {
-		const options: TableCellProperties['verticalAlignment'][] = ['bottom', 'center', 'top'];
+		const options: TableCellProperties['verticalAlignment'][] = [
+			'bottom',
+			'center',
+			'top',
+		];
 		options.forEach((alignment) => {
 			test(
 				`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
@@ -171,8 +181,8 @@ describe('Table cell formatting', () => {
 				</w:tcPr>`,
 				{
 					verticalAlignment: alignment,
-				},
+				}
 			);
 		});
 	});
-}); 
+});

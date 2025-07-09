@@ -19,7 +19,11 @@ export function getChangeInformation(node?: Node | null) {
 	if (!node) {
 		throw new Error(`Unexpectedly missing node with change information.`);
 	}
-	const props = evaluateXPathToMap<{ id: number; author: string; date: string }>(
+	const props = evaluateXPathToMap<{
+		id: number;
+		author: string;
+		date: string;
+	}>(
 		`
 			map {
 				"id": ./@${QNS.w}id/number(),
@@ -27,7 +31,7 @@ export function getChangeInformation(node?: Node | null) {
 				"date": ./@${QNS.w}date/string()
 			}
 		`,
-		node,
+		node
 	);
 
 	return {

@@ -36,7 +36,7 @@ export class FieldRangeSeparator extends Component<
 					attribute ${QNS.w}fldCharType { "separate" }
 				}
 			`,
-			{},
+			{}
 		);
 	}
 
@@ -44,7 +44,10 @@ export class FieldRangeSeparator extends Component<
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return evaluateXPathToBoolean('self::w:fldChar and @w:fldCharType = "separate"', node);
+		return evaluateXPathToBoolean(
+			'self::w:fldChar and @w:fldCharType = "separate"',
+			node
+		);
 	}
 
 	/**

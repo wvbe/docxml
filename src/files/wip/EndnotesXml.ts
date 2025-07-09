@@ -8,7 +8,10 @@ export class EndnotesXml extends UnhandledXmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static override async fromArchive(archive: Archive, location: string): Promise<EndnotesXml> {
+	public static override async fromArchive(
+		archive: Archive,
+		location: string
+	): Promise<EndnotesXml> {
 		return new EndnotesXml(location, await archive.readText(location));
 	}
 }

@@ -1,5 +1,5 @@
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { describe, it } from 'std/testing/bdd';
 
 import { parse, serialize } from '../utilities/dom.ts';
 import { NumberingXml } from './NumberingXml.ts';
@@ -9,12 +9,12 @@ describe('Numbering', () => {
 		parse(`
 			<numbering xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main" />
 		`),
-		'',
+		''
 	);
 
 	it('serializes correctly as an empty file', async () => {
 		expect(serialize(await numbering.$$$toNode())).toBe(
-			`<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>`,
+			`<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>`
 		);
 	});
 
@@ -42,7 +42,7 @@ describe('Numbering', () => {
 						<w:lvlJc w:val="left"/>
 					</w:lvl>
 				</w:abstractNum>
-			</w:numbering>`.replace(/\t|\n/g, ''),
+			</w:numbering>`.replace(/\t|\n/g, '')
 		);
 	});
 
@@ -62,7 +62,7 @@ describe('Numbering', () => {
 				<w:num w:numId="1">
 					<w:abstractNumId w:val="0"/>
 				</w:num>
-			</w:numbering>`.replace(/\t|\n/g, ''),
+			</w:numbering>`.replace(/\t|\n/g, '')
 		);
 	});
 

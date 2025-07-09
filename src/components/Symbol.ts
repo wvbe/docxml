@@ -45,8 +45,11 @@ export class Symbol extends Component<SymbolProps, SymbolChild> {
 			`,
 			{
 				font: this.props.font,
-				code: this.props.code.toString(16).padStart(4, '0').toUpperCase(),
-			},
+				code: this.props.code
+					.toString(16)
+					.padStart(4, '0')
+					.toUpperCase(),
+			}
 		);
 	}
 
@@ -62,12 +65,15 @@ export class Symbol extends Component<SymbolProps, SymbolChild> {
 	 */
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	static override fromNode(node: Node): Symbol {
-		const { font, char } = evaluateXPathToMap<{ font: string; char: string }>(
+		const { font, char } = evaluateXPathToMap<{
+			font: string;
+			char: string;
+		}>(
 			`map {
 				"font": ./@${QNS.w}font/string(),
 				"char": ./@${QNS.w}char/string()
 			}`,
-			node,
+			node
 		);
 		return new Symbol({
 			font: font || 'Symbol',

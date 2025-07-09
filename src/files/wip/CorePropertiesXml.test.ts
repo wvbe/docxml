@@ -1,5 +1,5 @@
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { describe, it } from 'std/testing/bdd';
 
 import { serialize } from '../../utilities/dom.ts';
 import { CorePropertiesXml } from './CorePropertiesXml.ts';
@@ -9,7 +9,9 @@ describe('CoreProperties', () => {
 		const now = new Date().toISOString();
 		const instance = new CorePropertiesXml('');
 
-		expect(serialize(await instance.$$$toNode()).replace(/(.\d{3})(?=Z)/g, '')).toBe(
+		expect(
+			serialize(await instance.$$$toNode()).replace(/(.\d{3})(?=Z)/g, '')
+		).toBe(
 			// It's more chatty than the original XML, but it is not incorrect.
 			// @TODO maybe report this to slimdom some time
 			`
@@ -25,7 +27,7 @@ describe('CoreProperties', () => {
 				</cp:coreProperties>
 			`
 				.replace(/\n|\t/g, '')
-				.replace(/(.\d{3})(?=Z)/g, ''),
+				.replace(/(.\d{3})(?=Z)/g, '')
 		);
 	});
-}); 
+});

@@ -10,8 +10,11 @@ export class ExtendedPropertiesXml extends UnhandledXmlFile {
 	 */
 	public static override async fromArchive(
 		archive: Archive,
-		location: string,
+		location: string
 	): Promise<ExtendedPropertiesXml> {
-		return new ExtendedPropertiesXml(location, await archive.readText(location));
+		return new ExtendedPropertiesXml(
+			location,
+			await archive.readText(location)
+		);
 	}
 }

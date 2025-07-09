@@ -4,17 +4,20 @@ import './Cell.ts';
 
 import {
 	type AnyComponent,
-	type ComponentAncestor,
-	type ComponentDefinition,
 	Component,
+	type ComponentAncestor,
 	type ComponentContext,
+	type ComponentDefinition,
 } from '../classes/Component.ts';
 import {
 	type TableRowProperties,
 	tableRowPropertiesFromNode,
 	tableRowPropertiesToNode,
 } from '../properties/table-row-properties.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import {
@@ -42,14 +45,18 @@ export type RowProps = TableRowProperties;
  *
  * Parses the children (and no props yet) from an existing XML node.
  */
-export function parsePropsAndChildNodes(node: Node): RowProps & { children: Node[] } {
+export function parsePropsAndChildNodes(
+	node: Node
+): RowProps & { children: Node[] } {
 	return {
-		...tableRowPropertiesFromNode(evaluateXPathToFirstNode(`./${QNS.w}trPr`, node)),
+		...tableRowPropertiesFromNode(
+			evaluateXPathToFirstNode(`./${QNS.w}trPr`, node)
+		),
 		children: evaluateXPathToNodes(
 			`./${QNS.w}tc[
 				not(./${QNS.w}tcPr/${QNS.w}vMerge/@${QNS.w}val = "continue")
 			]`,
-			node,
+			node
 		),
 	};
 }
@@ -61,11 +68,15 @@ export function parsePropsAndChildNodes(node: Node): RowProps & { children: Node
  */
 export async function createNodeFromRow(
 	row: Row | RowAddition | RowDeletion,
-	ancestry: ComponentAncestor[],
+	ancestry: ComponentAncestor[]
 ): Promise<Node> {
-	const table = ancestry.find((ancestor): ancestor is Table => ancestor instanceof Table);
+	const table = ancestry.find(
+		(ancestor): ancestor is Table => ancestor instanceof Table
+	);
 	if (!table) {
-		throw new Error('A row cannot be rendered outside the context of a table');
+		throw new Error(
+			'A row cannot be rendered outside the context of a table'
+		);
 	}
 	const y = (ancestry[0].children as AnyComponent[]).indexOf(row);
 	const anc = [row, ...ancestry];
@@ -84,9 +95,9 @@ export async function createNodeFromRow(
 					return info.column === x && info.row === y
 						? cell.toNode(anc)
 						: cell.toRepeatingNode(anc, x, y);
-				}),
+				})
 			),
-		},
+		}
 	);
 }
 
@@ -115,7 +126,7 @@ export class Row extends Component<RowProps, RowChild> {
 				not(./${QNS.w}trPr/${QNS.w}ins) and
 				not(./${QNS.w}trPr/${QNS.w}del)
 			`,
-			node,
+			node
 		);
 	}
 
@@ -126,7 +137,11 @@ export class Row extends Component<RowProps, RowChild> {
 		const { children, ...props } = parsePropsAndChildNodes(node);
 		return new Row(
 			props,
-			...createChildComponentsFromNodes<RowChild>(this.children, children, context),
+			...createChildComponentsFromNodes<RowChild>(
+				this.children,
+				children,
+				context
+			)
 		);
 	}
 }

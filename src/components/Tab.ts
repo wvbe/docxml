@@ -31,7 +31,7 @@ export class Tab extends Component<TabProps, TabChild> {
 			`
 				element ${QNS.w}tab {}
 			`,
-			{},
+			{}
 		);
 	}
 

@@ -1,4 +1,4 @@
-import { describe } from 'std/testing/bdd'; 
+import { describe } from 'std/testing/bdd';
 
 import { pt } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
@@ -11,7 +11,7 @@ import {
 
 const test = createXmlRoundRobinTest<TableRowProperties>(
 	tableRowPropertiesFromNode,
-	tableRowPropertiesToNode,
+	tableRowPropertiesToNode
 );
 
 describe('Table row formatting', () => {
@@ -25,6 +25,6 @@ describe('Table row formatting', () => {
 			isUnsplittable: true,
 			isHeaderRow: true,
 			cellSpacing: pt(3),
-		},
+		}
 	);
 });

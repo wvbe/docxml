@@ -76,6 +76,7 @@ export {
 	type ImageChild,
 	type ImageProps,
 } from './src/components/Image.ts';
+export { Move, type MoveChild, type MoveProps } from './src/components/Move.ts';
 export {
 	NonBreakingHyphen,
 	type NonBreakingHyphenChild,

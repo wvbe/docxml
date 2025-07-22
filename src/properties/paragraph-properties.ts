@@ -100,7 +100,8 @@ export type ParagraphProperties = {
 				date: Date;
 		  } & Omit<ParagraphProperties, 'change'>);
 	/**
-	 * Formatting of the pilcrow signn
+	 * Used for formatting of the `rPr` elements at the top level of a paragraph. 
+	 * This is text property changes applied to the whole parent paragraph. 
 	 */
 	pilcrow?: TextProperties | null;
 
@@ -206,10 +207,10 @@ export function paragraphPropertiesFromNode(
 	return data;
 }
 
-export function paragraphPropertiesToNode(
+export async function paragraphPropertiesToNode(
 	data: ParagraphProperties = {},
 	sectionProperties: SectionProperties | null = null
-): Node | null {
+): Promise<Node | null> {
 	if (!Object.keys(data).length && !sectionProperties) {
 		return null;
 	}
@@ -360,10 +361,10 @@ export function paragraphPropertiesToNode(
 						id: data.change.id,
 						author: data.change.author,
 						date: data.change.date.toISOString(),
-						node: paragraphPropertiesToNode(data.change),
+						node: await paragraphPropertiesToNode(data.change),
 				  }
 				: null,
-			rpr: textPropertiesToNode(data.pilcrow || undefined),
+			rpr: await textPropertiesToNode(data.pilcrow || undefined),
 			sectpr:
 				sectionProperties && sectionPropertiesToNode(sectionProperties),
 			tabs: data.tabs?.length

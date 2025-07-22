@@ -173,12 +173,15 @@ export function createXmlRoundRobinTest<
 	ObjectShape extends { [key: string]: unknown }
 >(
 	fromNode: (n: Node | null) => ObjectShape,
-	toNode: (n: ObjectShape) => Node | null
+	toNode: (n: ObjectShape) => Node | Promise<Node | null> | null
 ) {
-	return function test(xml: Node | string, parsedExpectation: ObjectShape) {
+	return async function test(
+		xml: Node | string,
+		parsedExpectation: ObjectShape
+	) {
 		const dom = typeof xml === 'string' ? create(xml) : xml;
 		const p1 = fromNode(dom);
-		const serializedAgain = toNode(p1);
+		const serializedAgain = await toNode(p1);
 		if (typeof xml !== 'string') {
 			xml.parentElement?.insertBefore(serializedAgain as Node, xml);
 			xml.parentElement?.removeChild(xml);

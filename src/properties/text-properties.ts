@@ -1,7 +1,11 @@
+import { Move, type MoveProps } from '../components/Move.ts';
 import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import {
+	evaluateXPathToFirstNode,
+	evaluateXPathToMap,
+} from '../utilities/xquery.ts';
 import type { Shading } from './shared-properties.ts';
 
 type SimpleOrComplex<Generic> = {
@@ -123,50 +127,80 @@ export type TextProperties = {
 				ascii?: string;
 				hAnsi?: string;
 		  };
+	/**
+	 * A property used to indicate when an entire paragraph has moved.
+	 *
+	 * If present, the containing paragraph element will appear as a track-change moved paragraph.
+	 *
+	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
+	 */
+	move?: MoveProps | null;
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	if (!node) {
 		return {};
 	}
-	return evaluateXPathToMap<TextProperties>(
-		`
-			map {
-				"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
-				"color": ./${QNS.w}color/@${QNS.w}val/string(),
-				"shading": ./${QNS.w}shd/docxml:ct-shd(.),
-				"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
-				"isBold": map {
-					"simple": docxml:ct-on-off(./${QNS.w}b),
-					"complex": docxml:ct-on-off(./${QNS.w}bCs)
-				},
-				"isItalic": map {
-					"simple": docxml:ct-on-off(./${QNS.w}i),
-					"complex": docxml:ct-on-off(./${QNS.w}iCs)
-				},
-				"isSmallCaps": docxml:ct-on-off(./${QNS.w}smallCaps),
-				"isCaps": docxml:ct-on-off(./${QNS.w}caps),
-				"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
-				"language": ./${QNS.w}lang/@${QNS.w}val/string(),
-				"fontSize": map {
-					"simple": docxml:length(${QNS.w}sz/@${QNS.w}val, "hpt"),
-					"complex": docxml:length(${QNS.w}szCs/@${QNS.w}val, "hpt")
-				},
-				"minimumKerningFontSize": docxml:length(${QNS.w}kern/@${QNS.w}val, "hpt"),
-				"isStrike": docxml:ct-on-off(./${QNS.w}strike),
-				"spacing": docxml:length(${QNS.w}spacing/@${QNS.w}val, 'twip'),
-				"font": ./${QNS.w}rFonts/map {
-					"cs": @${QNS.w}cs/string(),
-					"ascii": @${QNS.w}ascii/string(),
-					"hAnsi": @${QNS.w}hAnsi/string()
-				}
-			}
-		`,
+
+	// Check for a track changes movement element in our node.
+	const nodeName = evaluateXPathToFirstNode<Element>(
+		`./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]`,
 		node
 	);
+
+	const props = evaluateXPathToMap<TextProperties>(
+		`map {
+			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
+			"color": ./${QNS.w}color/@${QNS.w}val/string(),
+			"shading": ./${QNS.w}shd/docxml:ct-shd(.),
+			"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
+			"isBold": map {
+				"simple": docxml:ct-on-off(./${QNS.w}b),
+				"complex": docxml:ct-on-off(./${QNS.w}bCs)
+			},
+			"isItalic": map {
+				"simple": docxml:ct-on-off(./${QNS.w}i),
+				"complex": docxml:ct-on-off(./${QNS.w}iCs)
+			},
+			"isSmallCaps": docxml:ct-on-off(./${QNS.w}smallCaps),
+			"isCaps": docxml:ct-on-off(./${QNS.w}caps),
+			"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
+			"language": ./${QNS.w}lang/@${QNS.w}val/string(),
+			"fontSize": map {
+				"simple": docxml:length(${QNS.w}sz/@${QNS.w}val, "hpt"),
+				"complex": docxml:length(${QNS.w}szCs/@${QNS.w}val, "hpt")
+			},
+			"minimumKerningFontSize": docxml:length(${QNS.w}kern/@${QNS.w}val, "hpt"),
+			"isStrike": docxml:ct-on-off(./${QNS.w}strike),
+			"spacing": docxml:length(${QNS.w}spacing/@${QNS.w}val, 'twip'),
+			"font": ./${QNS.w}rFonts/map {
+				"cs": @${QNS.w}cs/string(),
+				"ascii": @${QNS.w}ascii/string(),
+				"hAnsi": @${QNS.w}hAnsi/string()
+			},
+			"move": ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/map {
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(), 
+				"date": @${QNS.w}date/string(),
+				"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
+			}
+		}`,
+		node,
+		null,
+		{ nodeName: nodeName ? nodeName.localName : null }
+	);
+
+	if (props.move) {
+		// Convert the date string to a Date object.
+		props.move.date = new Date(props.move.date);
+	}
+
+	return props;
 }
 
-export function textPropertiesToNode(data: TextProperties = {}): Node | null {
+export async function textPropertiesToNode(
+	data: TextProperties = {}
+): Promise<Node | null> {
 	if (
 		!data.style &&
 		!data.color &&
@@ -180,10 +214,12 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 		!data.fontSize &&
 		!data.isStrike &&
 		!data.shading &&
-		!data.font
+		!data.font &&
+		!data.move
 	) {
 		return null;
 	}
+
 	return create(
 		`element ${QNS.w}rPr {
 			if ($style) then element ${QNS.w}rStyle {
@@ -231,7 +267,8 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 				if (exists($font('hAnsi'))) then attribute ${QNS.w}hAnsi {
 					$font('hAnsi')
 				} else ()
-			} else ()
+			} else (), 
+			$move
 		}`,
 		{
 			style: data.style || null,
@@ -267,6 +304,12 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 							hAnsi: data.font.hAnsi || null,
 					  }
 					: null,
+			/*
+			 * Although the Move component is used here and it can have children,
+			 * since the move information is sent as properties rather than as an
+			 * object, we can be sure that no more children will ever be created.
+			 */
+			move: data.move ? await new Move(data.move).toNode([]) : null,
 		}
 	);
 }

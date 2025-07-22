@@ -87,13 +87,13 @@ export function evaluateXPathToMap<P = Record<string, unknown>>(
 	}
 }
 
-export function evaluateXPathToFirstNode(
+export function evaluateXPathToFirstNode<NodeGeneric extends Node = Node>(
 	...[query, node, domFacade, variables, options]: Parameters<
 		typeof fontoxpath.evaluateXPathToFirstNode
 	>
 ) {
 	try {
-		return fontoxpath.evaluateXPathToFirstNode<Node>(
+		return fontoxpath.evaluateXPathToFirstNode<NodeGeneric>(
 			query,
 			node,
 			domFacade,

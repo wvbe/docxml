@@ -99,7 +99,7 @@ export class Text extends Component<TextProps, TextChild> {
 				}
 			`,
 			{
-				rpr: textPropertiesToNode(this.props),
+				rpr: await textPropertiesToNode(this.props),
 				children: await Promise.all(
 					this.children.map((child) => {
 						if (typeof child === 'string') {

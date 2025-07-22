@@ -5,7 +5,7 @@ import Docx, {
 	Text,
 	TextAddition,
 	TextDeletion,
-} from '../mod.ts';
+} from '../../mod.ts';
 
 // Create a new .docx file with track changes enabled.
 const docxFile = Docx.fromNothing().withSettings({

@@ -127,7 +127,7 @@ export class NumberingXml extends XmlFile {
 		return this.addImplementation(abstract);
 	}
 
-	protected override toNode(): Document {
+	protected override async toNode(): Promise<Document> {
 		return create(
 			`<w:numbering ${ALL_NAMESPACE_DECLARATIONS}>
 				{
@@ -167,18 +167,26 @@ export class NumberingXml extends XmlFile {
 				}
 			</w:numbering>`,
 			{
-				abstracts: this.abstracts.array().map((abstract) => ({
-					...abstract,
-					levels: abstract.levels.map(
-						({ paragraph, text, ...level }) => ({
-							...level,
-							pPr: paragraph
-								? paragraphPropertiesToNode(paragraph)
-								: null,
-							rPr: text ? textPropertiesToNode(text) : null,
-						})
-					),
-				})),
+				abstracts: await Promise.all(
+					this.abstracts.array().map(async (abstract) => ({
+						...abstract,
+						levels: await Promise.all(
+							abstract.levels.map(
+								async ({ paragraph, text, ...level }) => ({
+									...level,
+									pPr: paragraph
+										? await paragraphPropertiesToNode(
+												paragraph
+										  )
+										: null,
+									rPr: text
+										? await textPropertiesToNode(text)
+										: null,
+								})
+							)
+						),
+					}))
+				),
 				implementations: this.implementations.array(),
 			},
 			true

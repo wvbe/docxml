@@ -6,9 +6,9 @@ import Docx, {
 	Section,
 	Table,
 	Text,
-} from '../mod.ts';
-import { Cell } from '../src/components/Cell.ts';
-import { Row } from '../src/components/Row.ts';
+} from '../../mod.ts';
+import { Cell } from '../../src/components/Cell.ts';
+import { Row } from '../../src/components/Row.ts';
 
 // Create a new .docx file with track changes enabled.
 const docxFile = Docx.fromNothing().withSettings({

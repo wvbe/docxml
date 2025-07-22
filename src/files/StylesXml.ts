@@ -117,7 +117,7 @@ export class StylesXml extends XmlFile {
 		return !this.#styles.length && !this.#latentStyles.length;
 	}
 
-	protected override toNode(): Document {
+	protected override async toNode(): Promise<Document> {
 		// @TODO look at attribute w:document@mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh wp14"
 		return create(
 			`<w:styles ${ALL_NAMESPACE_DECLARATIONS}>
@@ -166,28 +166,34 @@ export class StylesXml extends XmlFile {
 				}
 			</w:styles>`,
 			{
-				styles: this.#styles.map(
-					({ paragraph, text, table, ...style }) => ({
-						...style,
-						ppr: paragraphPropertiesToNode(
-							paragraph as ParagraphStyle['paragraph']
-						),
-						rpr: textPropertiesToNode(
-							text as ParagraphStyle['text']
-						),
-						tblpr: tablePropertiesToNode(
-							table as TableStyle['table']
-						),
-						conditions: table?.conditions
-							? Object.entries(table.conditions).map(
-									([type, properties]) =>
-										tableConditionalPropertiesToNode({
-											...properties,
-											type: type as TableConditionalTypes,
-										})
-							  )
-							: null,
-					})
+				styles: await Promise.all(
+					this.#styles.map(
+						async ({ paragraph, text, table, ...style }) => ({
+							...style,
+							ppr: await paragraphPropertiesToNode(
+								paragraph as ParagraphStyle['paragraph']
+							),
+							rpr: await textPropertiesToNode(
+								text as ParagraphStyle['text']
+							),
+							tblpr: tablePropertiesToNode(
+								table as TableStyle['table']
+							),
+							conditions: table?.conditions
+								? await Promise.all(
+										Object.entries(table.conditions).map(
+											async ([type, properties]) =>
+												await tableConditionalPropertiesToNode(
+													{
+														...properties,
+														type: type as TableConditionalTypes,
+													}
+												)
+										)
+								  )
+								: null,
+						})
+					)
 				),
 				latentStyles: this.#latentStyles,
 			},

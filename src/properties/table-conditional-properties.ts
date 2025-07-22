@@ -93,9 +93,9 @@ export function tableConditionalPropertiesFromNode(
 	return properties;
 }
 
-export function tableConditionalPropertiesToNode(
+export async function tableConditionalPropertiesToNode(
 	tblpr: TableConditionalProperties
-): Node {
+): Promise<Node> {
 	return create(
 		`element ${QNS.w}tblStylePr {
 			attribute ${QNS.w}type { $type },
@@ -107,9 +107,9 @@ export function tableConditionalPropertiesToNode(
 		{
 			...tblpr,
 			pPr: tblpr.paragraph
-				? paragraphPropertiesToNode(tblpr.paragraph)
+				? await paragraphPropertiesToNode(tblpr.paragraph)
 				: null,
-			rPr: tblpr.text ? textPropertiesToNode(tblpr.text) : null,
+			rPr: tblpr.text ? await textPropertiesToNode(tblpr.text) : null,
 			tblPr: tblpr.table ? tablePropertiesToNode(tblpr.table) : null,
 			tcPr: tblpr.cell
 				? tableCellPropertiesToNode(tblpr.cell, false)

@@ -93,7 +93,7 @@ export type TextProperties = {
 	/**
 	 * Display text with a slant, or not.
 	 */
-	isItalic?: SimpleOrComplex<boolean> | null;
+	isItalic?: boolean | SimpleOrComplex<boolean> | null;
 	/**
 	 * Display text as capital letters, or not.
 	 */

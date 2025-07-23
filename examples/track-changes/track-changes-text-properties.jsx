@@ -36,12 +36,14 @@ const testParagraph = new Paragraph(
 		{ id: 1, author: 'Gabe', date: new Date() },
 		new Text(
 			{
+				color: 'red',
 				isItalic: true,
 				change: {
 					author: 'Gabe',
 					id: 22,
 					date: new Date(),
 					isBold: true,
+					color: 'blue',
 				},
 			},
 			` I've come to talk with you again.`

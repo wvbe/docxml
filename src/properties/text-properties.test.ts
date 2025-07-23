@@ -33,6 +33,12 @@ describe('Text formatting', () => {
 				<w:spacing w:val="100" />
 				<w:rFonts w:cs="Tahoma" w:ascii="Arial" w:hAnsi="Courier New" />
 				<w:moveTo w:author="Gabe" w:date="${date.toISOString()}" w:id="1" /> 
+				<w:rPrChange w:author="Angel" w:date="${date.toISOString()}" w:id="99" > 
+					<w:rPr>
+						<w:color w:val="blue" /> 
+						<w:b w:val="false" /> 
+					</w:rPr>
+				</w:rPrChange>
 			</w:rPr>`,
 		{
 			color: 'red',
@@ -61,6 +67,13 @@ describe('Text formatting', () => {
 				type: 'to',
 				date: date,
 				id: 1,
+			},
+			change: {
+				author: 'Angel',
+				date: date,
+				id: 99,
+				color: 'blue',
+				isBold: { simple: false, complex: false} 
 			},
 		}
 	);

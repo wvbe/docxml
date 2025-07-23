@@ -1,5 +1,5 @@
-import { ChangeInformation } from '../utilities/changes.ts';
 import { Move, type MoveProps } from '../components/Move.ts';
+import type { ChangeInformation } from '../utilities/changes.ts';
 import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
@@ -13,11 +13,16 @@ type SimpleOrComplex<Generic> = {
 	simple?: Generic | null;
 	complex?: Generic | null;
 };
+
 function explodeSimpleOrComplex<Generic>(
 	value: Generic | SimpleOrComplex<Generic> | null
 ): Required<SimpleOrComplex<Generic>> | null {
 	if (value === null) {
 		return { simple: null, complex: null };
+	}
+	if (typeof value === 'boolean') {
+		(value as SimpleOrComplex<Generic>).simple === false &&
+			(value as SimpleOrComplex<Generic>).complex === false;
 	}
 	if (
 		(value as SimpleOrComplex<Generic>).simple === undefined &&
@@ -88,7 +93,7 @@ export type TextProperties = {
 	/**
 	 * Display text with a slant, or not.
 	 */
-	isItalic?: boolean | SimpleOrComplex<boolean> | null;
+	isItalic?: SimpleOrComplex<boolean> | null;
 	/**
 	 * Display text as capital letters, or not.
 	 */
@@ -137,7 +142,7 @@ export type TextProperties = {
 	 */
 	move?: MoveProps | null;
 
-	change?: (Omit<TextProperties, 'change'> & ChangeInformation) | null;
+	change?: (ChangeInformation & Omit<TextProperties, 'change'>) | null;
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
@@ -151,8 +156,10 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		node
 	);
 
-	const props = evaluateXPathToMap<TextProperties>(
-		`map {
+	const props = node
+		? // deno-lint-ignore no-explicit-any
+		  evaluateXPathToMap<any>(
+				`map {
 			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
 			"color": ./${QNS.w}color/@${QNS.w}val/string(),
 			"shading": ./${QNS.w}shd/docxml:ct-shd(.),
@@ -186,12 +193,30 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string(),
 				"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
+			}, 
+			"change": ./${QNS.w}rPrChange/map { 
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(), 
+				"date": @${QNS.w}date/string(), 
+				"_node": ./${QNS.w}rPr
 			}
 		}`,
-		node,
-		null,
-		{ nodeName: nodeName ? nodeName.localName : null }
-	);
+				node,
+				null,
+				{ nodeName: nodeName ? nodeName.localName : null }
+		  )
+		: {};
+
+	if (props.change) {
+		props.change = {
+			...props.change,
+			date: new Date(props.change.date),
+			...textPropertiesFromNode(props.change._node),
+			_node: undefined,
+		};
+	} else {
+		delete props.change;
+	}
 
 	if (props.move) {
 		// Convert the date string to a Date object.
@@ -272,14 +297,13 @@ export async function textPropertiesToNode(
 					$font('hAnsi')
 				} else ()
 			} else (),
-		if (exists($change)) then element rPrChange { 
-			attribute id { $change('id') },
-			attribute date { $change('date') },
-			attribute author { $change('author') }, 
-			$change('node')
-		} else () , 
+			if (exists($change)) then element ${QNS.w}rPrChange { 
+				attribute ${QNS.w}date { $change('date') },
+				attribute ${QNS.w}id { $change('id') },
+				attribute ${QNS.w}author { $change('author') }, 
+				$change('node')
+			} else (),
 			$move
-
 		}`,
 		{
 			style: data.style || null,
@@ -318,9 +342,9 @@ export async function textPropertiesToNode(
 			change: data.change
 				? {
 						id: data.change.id,
-						date: new Date(data.change.date).toISOString(),
 						author: data.change.author,
-						node: textPropertiesToNode(data.change),
+						date: new Date(data.change.date).toISOString(),
+						node: await textPropertiesToNode(data.change),
 				  }
 				: null,
 			/*

@@ -6,6 +6,7 @@ import Docx, {
 	TextAddition,
 	TextDeletion,
 } from '../../mod.ts';
+import { inch } from '../../src/utilities/length.ts';
 
 // Create a new .docx file with track changes enabled.
 const docxFile = Docx.fromNothing().withSettings({
@@ -36,7 +37,21 @@ const testParagraph = new Paragraph(
 );
 
 // Create a section as the parent of our new paragraph.
-const testSection = new Section({}, testParagraph);
+const testSection = new Section(
+	{
+		pageWidth: inch(11),
+		pageHeight: inch(8.5),
+		change: {
+			id: 1,
+			author: 'Gabe',
+			date: new Date(),
+			pageOrientation: 'portrait',
+			pageWidth: inch(8.5),
+			pageHeight: inch(11),
+		},
+	},
+	testParagraph
+);
 
 // Set that section as the content of our document.
 docxFile.document.set(testSection);

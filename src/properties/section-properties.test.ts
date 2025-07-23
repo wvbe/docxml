@@ -1,6 +1,6 @@
 import { describe } from 'std/testing/bdd';
 
-import { twip } from '../utilities/length.ts';
+import { Length, twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import {
 	createObjectRoundRobinTest,
@@ -22,36 +22,26 @@ const reverseTest = createObjectRoundRobinTest<SectionProperties>(
 	sectionPropertiesFromNode
 );
 
+const date = new Date();
+
 describe('Section formatting', () => {
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
-			<w:pgSz
-				w:w="1200"
-				w:h="1600"
-				w:orient="landscape"
-			/>
-			<w:pgMar
-				w:top="1000"
-				w:right="1000"
-				w:bottom="1000"
-				w:left="1000"
-				w:header="1000"
-				w:footer="1000"
-				w:gutter="1000"
-			/>
+			<w:pgSz w:orient="portrait"/>
+			<w:sectPrChange w:id="0" w:author="Gabe" w:date="${date.toISOString()}">
+				<w:sectPr>
+					<w:pgSz w:orient="portrait" w:w="12240" w:h="15840" /> 
+				</w:sectPr>
+			</w:sectPrChange> 
 		</w:sectPr>`,
 		{
-			pageWidth: twip(1200),
-			pageHeight: twip(1600),
-			pageOrientation: 'landscape',
-			pageMargin: {
-				top: twip(1000),
-				right: twip(1000),
-				bottom: twip(1000),
-				left: twip(1000),
-				header: twip(1000),
-				footer: twip(1000),
-				gutter: twip(1000),
+			pageOrientation: 'portrait',
+			change: {
+				id: 0,
+				author: 'Gabe',
+				date: date,
+				pageWidth: twip(12240),
+				pageHeight: twip(15840),
 			},
 		}
 	);
@@ -60,7 +50,7 @@ describe('Section formatting', () => {
 describe('Section column formatting for equally sized columns', () => {
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
-			<w:cols w:num="3" w:equalWidth="1" w:sep="0" w:space="720"/> 
+			<w:cols w:num="3" w:equalWidth="1" w:sep="0" w:space="720"/>
 		</w:sectPr>`,
 		{
 			columns: {

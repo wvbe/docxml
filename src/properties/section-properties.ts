@@ -91,6 +91,15 @@ export type SectionProperties = {
 	change?: null | (Omit<SectionProperties, 'change'> & ChangeInformation);
 };
 
+type IntermediateProps = Omit<SectionProperties, 'change'> & {
+	change?: {
+		id: number;
+		author: string;
+		date: Date;
+		node: Node | undefined;
+	};
+};
+
 export function sectionPropertiesFromNode(
 	node?: Node | null
 ): SectionProperties {
@@ -99,8 +108,7 @@ export function sectionPropertiesFromNode(
 	}
 
 	const props = node
-		? // deno-lint-ignore no-explicit-any
-		  evaluateXPathToMap<any>(
+		? evaluateXPathToMap<IntermediateProps>(
 				`map {
 			"headers": map {
 				"first": ./${QNS.w}headerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
@@ -152,16 +160,14 @@ export function sectionPropertiesFromNode(
 		props.change = {
 			...props.change,
 			date: new Date(props.change.date),
-			...sectionPropertiesFromNode(props.change._node),
-			_node: undefined,
+			...sectionPropertiesFromNode(props.change.node),
+			node: undefined,
 		};
 	} else {
 		delete props.change;
 	}
 
-	// console.log(props);
-
-	return props;
+	return props as SectionProperties;
 }
 
 export function sectionPropertiesToNode(data: SectionProperties = {}): Node {

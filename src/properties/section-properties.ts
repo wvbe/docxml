@@ -149,7 +149,7 @@ export function sectionPropertiesFromNode(
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(),
 				"date": @${QNS.w}date/string(),
-				"_node": ./${QNS.w}sectPr
+				"node": ./${QNS.w}sectPr
 			}
 		}`,
 				node

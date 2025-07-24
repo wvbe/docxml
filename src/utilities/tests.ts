@@ -140,8 +140,6 @@ function localAssert(
 	const expectation = e1[prop as keyof typeof e1];
 	const reparsed = p2[prop as keyof typeof p2];
 
-	console.log('prop: ', prop);
-	console.log('p1', p1);
 	if (expectation && typeof expectation === 'object') {
 		describe(`.${String(prop)}`, () => {
 			if (Array.isArray(expectation)) {

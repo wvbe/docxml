@@ -131,6 +131,16 @@ export {
 	type MoveProps,
 } from './lib/components/track-changes/src/Move.ts';
 export {
+	MoveRangeEnd,
+	type MoveRangeEndChild,
+	type MoveRangeEndProps,
+} from './lib/components/track-changes/src/MoveRangeEnd.ts';
+export {
+	MoveRangeStart,
+	type MoveRangeStartChild,
+	type MoveRangeStartProps,
+} from './lib/components/track-changes/src/MoveRangeStart.ts';
+export {
 	RowAddition,
 	type RowAdditionChild,
 	type RowAdditionProps,

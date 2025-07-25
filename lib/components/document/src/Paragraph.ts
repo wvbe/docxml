@@ -38,6 +38,8 @@ import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
 import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
 import type { Text } from '../../document/src/Text.ts';
 import type { Move } from '../../track-changes/src/Move.ts';
+import type { MoveRangeEnd } from '../../track-changes/src/MoveRangeEnd.ts';
+import type { MoveRangeStart } from '../../track-changes/src/MoveRangeStart.ts';
 import type { TextAddition } from '../../track-changes/src/TextAddition.ts';
 import type { TextDeletion } from '../../track-changes/src/TextDeletion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
@@ -62,6 +64,8 @@ export type ParagraphChild =
 	| Field
 	| FootnoteReference
 	| Move
+	| MoveRangeStart
+	| MoveRangeEnd
 	| FootnoteAnchor;
 
 /**
@@ -93,6 +97,8 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'FootnoteReference',
 		'FootnoteAnchor',
 		'Move',
+		'MoveRangeStart',
+		'MoveRangeEnd',
 	];
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;
@@ -180,7 +186,11 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 						${QNS.w}bookmarkStart |
 						${QNS.w}bookmarkEnd | 
 						${QNS.w}moveTo | 
-						${QNS.w}moveFrom 
+						${QNS.w}moveFrom | 
+						${QNS.w}moveToRangeStart | 
+						${QNS.w}moveToRangeEnd | 
+						${QNS.w}moveFromRangeStart | 
+						${QNS.w}moveFromRangeEnd
 					) }
 				}
 			`,

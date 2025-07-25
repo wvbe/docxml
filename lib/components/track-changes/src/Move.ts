@@ -5,6 +5,8 @@ import type {
 	BookmarkRangeStart,
 	CommentRangeEnd,
 	CommentRangeStart,
+	MoveRangeEnd,
+	MoveRangeStart,
 	Text,
 	TextAddition,
 	TextDeletion,
@@ -35,7 +37,9 @@ export type MoveChild =
 	| TextAddition
 	| TextDeletion
 	| Text
-	| Move;
+	| Move
+	| MoveRangeStart
+	| MoveRangeEnd;
 
 /**
  * A type describing the props accepted by {@link Move}.
@@ -61,6 +65,8 @@ export class Move extends Component<MoveProps, MoveChild> {
 		'TextDeletion',
 		'Text',
 		'Move',
+		'MoveRangeStart',
+		'MoveRangeEnd',
 	];
 
 	public static override readonly mixed: boolean = false;

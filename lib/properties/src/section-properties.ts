@@ -1,4 +1,5 @@
 import type { FootnoteProps } from '../../components/document/src/FootnoteReference.ts';
+import type { ChangeInformation } from '../../utilities/src/changes.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { QNS } from '../../utilities/src/namespaces.ts';
@@ -86,6 +87,20 @@ export type SectionProperties = {
 	 * Specifies whether sections in the document shall have different headers and footers for even and odd pages.
 	 */
 	isTitlePage?: null | boolean;
+
+	/**
+	 * Change tracking info about this section--used for Word's track changes feature.
+	 */
+	change?: null | (Omit<SectionProperties, 'change'> & ChangeInformation);
+};
+
+type IntermediateProps = Omit<SectionProperties, 'change'> & {
+	change?: {
+		id: number;
+		author: string;
+		date: Date;
+		node: Node | undefined;
+	};
 };
 
 export function sectionPropertiesFromNode(
@@ -95,8 +110,9 @@ export function sectionPropertiesFromNode(
 		return {};
 	}
 
-	return evaluateXPathToMap<SectionProperties>(
-		`map {
+	const props = node
+		? evaluateXPathToMap<IntermediateProps>(
+				`map {
 			"headers": map {
 				"first": ./${QNS.w}headerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
 				"even": ./${QNS.w}headerReference[@${QNS.w}type = 'even']/@${QNS.r}id/string(),
@@ -131,10 +147,30 @@ export function sectionPropertiesFromNode(
 				"footer": docxml:length(./${QNS.w}pgMar/@${QNS.w}footer, 'twip'),
 				"gutter": docxml:length(./${QNS.w}pgMar/@${QNS.w}gutter, 'twip')
 			},
-			"isTitlePage": exists(./${QNS.w}titlePg) and (not(./${QNS.w}titlePg/@${QNS.w}val) or docxml:st-on-off(./${QNS.w}titlePg/@${QNS.w}val))
+			"isTitlePage": exists(./${QNS.w}titlePg) and (not(./${QNS.w}titlePg/@${QNS.w}val) or docxml:st-on-off(./${QNS.w}titlePg/@${QNS.w}val)), 
+			"change": ./${QNS.w}sectPrChange/map { 
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(),
+				"date": @${QNS.w}date/string(),
+				"node": ./${QNS.w}sectPr
+			}
 		}`,
-		node
-	);
+				node
+		  ) || {}
+		: {};
+
+	if (props.change) {
+		props.change = {
+			...props.change,
+			date: new Date(props.change.date),
+			...sectionPropertiesFromNode(props.change.node),
+			node: undefined,
+		};
+	} else {
+		delete props.change;
+	}
+
+	return props as SectionProperties;
 }
 
 export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
@@ -232,8 +268,14 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 					round($pageMargin('gutter')('twip'))
 				} else ()
 			} else (),
-			if(exists($isTitlePage)) then element ${QNS.w}titlePg { attribute ${QNS.w}val { "1" } } else ()
-		}`,
+			if (exists($isTitlePage)) then element ${QNS.w}titlePg { attribute ${QNS.w}val { "1" } } else (), 
+			if (exists($change)) then element ${QNS.w}sectPrChange { 
+				attribute ${QNS.w}id { $change('id') }, 
+				attribute ${QNS.w}author { $change('author') },
+				attribute ${QNS.w}date { $change('date') }, 
+				$change('node')
+			} else ()
+ 		}`,
 		{
 			headers:
 				typeof data.headers === 'string'
@@ -258,6 +300,14 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 			pageMargin: data.pageMargin || null,
 			pageOrientation: data.pageOrientation || null,
 			isTitlePage: data.isTitlePage || null,
+			change: data.change
+				? {
+						id: data.change.id,
+						author: data.change.author,
+						date: data.change.date.toISOString(),
+						node: sectionPropertiesToNode(data.change),
+				  }
+				: null,
 		}
 	);
 }

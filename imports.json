@@ -1,6 +1,6 @@
 {
 	"imports": {
-		"@util-path": "./src/utilities/path.ts",
+		"@util-path": "./lib/utilities/src/path.ts",
 
 		"eslint/config": "npm:eslint@9.30.1/config",
 		"fontoxpath": "npm:fontoxpath@3.33.2",

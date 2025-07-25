@@ -1,0 +1,82 @@
+import { describe } from 'std/testing/bdd';
+
+import { hpt, twip } from '../../utilities/src/length.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
+import { createXmlRoundRobinTest } from '../../utilities/src/tests.ts';
+import {
+	type TextProperties,
+	textPropertiesFromNode,
+	textPropertiesToNode,
+} from '../src/text-properties.ts';
+
+const test = createXmlRoundRobinTest<TextProperties>(
+	textPropertiesFromNode,
+	textPropertiesToNode
+);
+
+const date = new Date();
+
+describe('Text formatting', () => {
+	test(
+		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:color w:val="red" />
+				<w:u w:val="dashLongHeavy" />
+				<w:b />
+				<w:i />
+				<w:shd w:color="orange" w:fill="yellow" w:val="diagStripe" />
+				<w:smallCaps />
+				<w:caps />
+				<w:vertAlign w:val="subscript" />
+				<w:lang w:val="en-GB" />
+				<w:sz w:val="19" />
+				<w:kern w:val="23" />
+				<w:spacing w:val="100" />
+				<w:rFonts w:cs="Tahoma" w:ascii="Arial" w:hAnsi="Courier New" />
+				<w:moveTo w:author="Gabe" w:date="${date.toISOString()}" w:id="1" /> 
+			</w:rPr>`,
+		{
+			color: 'red',
+			isUnderlined: 'dashLongHeavy',
+			isBold: { simple: true, complex: false },
+			isItalic: { simple: true, complex: false },
+			isSmallCaps: true,
+			shading: {
+				background: 'yellow',
+				foreground: 'orange',
+				pattern: 'diagStripe',
+			},
+			isCaps: true,
+			verticalAlign: 'subscript',
+			language: 'en-GB',
+			fontSize: { simple: hpt(19), complex: null },
+			minimumKerningFontSize: hpt(23),
+			spacing: twip(100),
+			font: {
+				cs: 'Tahoma',
+				ascii: 'Arial',
+				hAnsi: 'Courier New',
+			},
+			move: {
+				author: 'Gabe',
+				type: 'to',
+				date: date,
+				id: 1,
+			},
+		}
+	);
+});
+
+describe('Complex character formatting', () => {
+	test(
+		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+					<w:bCs />
+					<w:iCs />
+					<w:szCs w:val="23" />
+				</w:rPr>`,
+		{
+			isBold: { simple: false, complex: true },
+			isItalic: { simple: false, complex: true },
+			fontSize: { simple: null, complex: hpt(23) },
+		}
+	);
+});

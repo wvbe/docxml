@@ -1,11 +1,11 @@
 /** @jsx  Docx.jsx */
-import Docx, { Cell, Image, Paragraph, Row, Section, Table } from '../mod.ts';
 import {
 	type FootnoteProps,
 	FootnoteReference,
-} from '../src/components/FootnoteReference.ts';
-import { Text } from '../src/components/Text.ts';
-import { cm, inch, pt } from '../src/utilities/length.ts';
+} from '../lib/components/document/src/FootnoteReference.ts';
+import { Text } from '../lib/components/document/src/Text.ts';
+import { cm, inch, pt } from '../lib/utilities/src/length.ts';
+import Docx, { Cell, Image, Paragraph, Row, Section, Table } from '../mod.ts';
 
 const docxFile = Docx.fromNothing();
 

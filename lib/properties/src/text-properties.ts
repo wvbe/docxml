@@ -2,6 +2,7 @@ import {
 	Move,
 	type MoveProps,
 } from '../../components/track-changes/src/Move.ts';
+import type { ChangeInformation } from '../../utilities/src/changes.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
@@ -15,6 +16,7 @@ type SimpleOrComplex<Generic> = {
 	simple?: Generic | null;
 	complex?: Generic | null;
 };
+
 function explodeSimpleOrComplex<Generic>(
 	value: Generic | SimpleOrComplex<Generic> | null
 ): Required<SimpleOrComplex<Generic>> | null {
@@ -138,6 +140,25 @@ export type TextProperties = {
 	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
 	 */
 	move?: MoveProps | null;
+
+	/**
+	 * A property used to indicate that the way this text is deiplayed has changed somehow.
+	 * When track changes are enabled in Word, these properties will apppear as
+	 * having been editied.
+	 *
+	 * Move information about text run propertie can be found here:
+	 * https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_rPrChange_topic_ID0E4JSW.html?hl=rprchange
+	 */
+	change?: (ChangeInformation & Omit<TextProperties, 'change'>) | null;
+};
+
+type IntermediateProps = Omit<TextProperties, 'change'> & {
+	change?: {
+		id: number;
+		author: string;
+		date: Date;
+		node: Node | undefined;
+	};
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
@@ -151,8 +172,9 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		node
 	);
 
-	const props = evaluateXPathToMap<TextProperties>(
-		`map {
+	const props = node
+		? evaluateXPathToMap<IntermediateProps>(
+				`map {
 			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
 			"color": ./${QNS.w}color/@${QNS.w}val/string(),
 			"shading": ./${QNS.w}shd/docxml:ct-shd(.),
@@ -186,19 +208,37 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string(),
 				"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
+			}, 
+			"change": ./${QNS.w}rPrChange/map { 
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(), 
+				"date": @${QNS.w}date/string(), 
+				"node": ./${QNS.w}rPr
 			}
 		}`,
-		node,
-		null,
-		{ nodeName: nodeName ? nodeName.localName : null }
-	);
+				node,
+				null,
+				{ nodeName: nodeName ? nodeName.localName : null }
+		  )
+		: {};
+
+	if (props.change) {
+		props.change = {
+			...props.change,
+			date: new Date(props.change.date),
+			...textPropertiesFromNode(props.change.node),
+			node: undefined,
+		};
+	} else {
+		delete props.change;
+	}
 
 	if (props.move) {
 		// Convert the date string to a Date object.
 		props.move.date = new Date(props.move.date);
 	}
 
-	return props;
+	return props as TextProperties;
 }
 
 export async function textPropertiesToNode(
@@ -218,7 +258,8 @@ export async function textPropertiesToNode(
 		!data.isStrike &&
 		!data.shading &&
 		!data.font &&
-		!data.move
+		!data.move &&
+		!data.change
 	) {
 		return null;
 	}
@@ -270,7 +311,13 @@ export async function textPropertiesToNode(
 				if (exists($font('hAnsi'))) then attribute ${QNS.w}hAnsi {
 					$font('hAnsi')
 				} else ()
-			} else (), 
+			} else (),
+			if (exists($change)) then element ${QNS.w}rPrChange { 
+				attribute ${QNS.w}date { $change('date') },
+				attribute ${QNS.w}id { $change('id') },
+				attribute ${QNS.w}author { $change('author') }, 
+				$change('node')
+			} else (),
 			$move
 		}`,
 		{
@@ -307,6 +354,14 @@ export async function textPropertiesToNode(
 							hAnsi: data.font.hAnsi || null,
 					  }
 					: null,
+			change: data.change
+				? {
+						id: data.change.id,
+						author: data.change.author,
+						date: new Date(data.change.date).toISOString(),
+						node: await textPropertiesToNode(data.change),
+				  }
+				: null,
 			/*
 			 * Although the Move component is used here and it can have children,
 			 * since the move information is sent as properties rather than as an

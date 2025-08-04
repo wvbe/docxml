@@ -126,6 +126,11 @@ export {
 	type WatermarkTextProps,
 } from './lib/components/document/src/WatermarkText.ts';
 export {
+	Deletion,
+	type DeletionChild,
+	type DeletionProps,
+} from './lib/components/track-changes/src/Deletion.ts';
+export {
 	Insertion,
 	type InsertionChild,
 	type InsertionProps,
@@ -150,11 +155,6 @@ export {
 	type RowDeletionChild,
 	type RowDeletionProps,
 } from './lib/components/track-changes/src/RowDeletion.ts';
-export {
-	TextDeletion,
-	type TextDeletionChild,
-	type TextDeletionProps,
-} from './lib/components/track-changes/src/TextDeletion.ts';
 export { FileMime } from './lib/enums.ts';
 
 // Shared properties

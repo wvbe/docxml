@@ -6,7 +6,6 @@ import '../../comments/src/Comment.ts';
 import '../../comments/src/CommentRangeEnd.ts';
 import '../../comments/src/CommentRangeStart.ts';
 import '../../document/src/Text.ts';
-import '../../track-changes/src/TextDeletion.ts';
 import './BookmarkRangeEnd.ts';
 import './BookmarkRangeStart.ts';
 import './Field.ts';
@@ -35,11 +34,11 @@ import type { Comment } from '../../comments/src/Comment.ts';
 import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
 import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
 import type { Text } from '../../document/src/Text.ts';
+import type { Deletion } from '../../track-changes/src/Deletion.ts';
 import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { Move } from '../../track-changes/src/Move.ts';
 import type { MoveRangeEnd } from '../../track-changes/src/MoveRangeEnd.ts';
 import type { MoveRangeStart } from '../../track-changes/src/MoveRangeStart.ts';
-import type { TextDeletion } from '../../track-changes/src/TextDeletion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import type { Field } from './Field.ts';
@@ -52,7 +51,6 @@ import type { Hyperlink } from './Hyperlink.ts';
  */
 export type ParagraphChild =
 	| Text
-	| TextDeletion
 	| CommentRangeStart
 	| CommentRangeEnd
 	| Comment
@@ -65,7 +63,8 @@ export type ParagraphChild =
 	| MoveRangeStart
 	| MoveRangeEnd
 	| FootnoteAnchor
-	| Insertion;
+	| Insertion
+	| Deletion;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
@@ -90,7 +89,6 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'CommentRangeStart',
 		'Hyperlink',
 		'Text',
-		'TextDeletion',
 		'Field',
 		'FootnoteReference',
 		'FootnoteAnchor',
@@ -98,6 +96,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'MoveRangeStart',
 		'MoveRangeEnd',
 		'Insertion',
+		'Deletion',
 	];
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;

@@ -1,12 +1,12 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { RowDeletion } from '../../../../mod.ts';
 import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
 import { Table } from '../../document/src/Table.ts';
+import { RowDeletion } from '../src/RowDeletion.ts';
 
 const emptyContext: ComponentContext = {
 	archive: new Archive(),

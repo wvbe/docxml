@@ -27,7 +27,7 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import { TextDeletion } from '../../track-changes/src/TextDeletion.ts';
+import { Deletion } from '../../track-changes/src/Deletion.ts';
 import type { Break } from './Break.ts';
 import type { FieldRangeEnd } from './FieldRangeEnd.ts';
 import type { FieldRangeInstruction } from './FieldRangeInstruction.ts';
@@ -87,8 +87,11 @@ export class Text extends Component<TextProps, TextChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+		// It's necessary to verify if the text run content node is inside a <del> element,
+		// because according to the schema, the text node should be <delText> instead of <t>
+		// https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0ESZZV.html
 		const asTextDeletion = ancestry.some(
-			(ancestor) => ancestor instanceof TextDeletion
+			(ancestor) => ancestor instanceof Deletion
 		);
 		const anc = [this, ...ancestry];
 		return create(

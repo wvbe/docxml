@@ -1,12 +1,6 @@
 /** @jsx  Docx.jsx */
 import { inch } from '../../lib/utilities/src/length.ts';
-import Docx, {
-	Insertion,
-	Paragraph,
-	Section,
-	Text,
-	TextDeletion,
-} from '../../mod.ts';
+import Docx, { Insertion, Paragraph, Section, Text } from '../../mod.ts';
 
 // Create a new .docx file with track changes enabled.
 const docxFile = Docx.fromNothing().withSettings({
@@ -17,14 +11,6 @@ const docxFile = Docx.fromNothing().withSettings({
 const testParagraph = new Paragraph(
 	{},
 	new Text({}, 'Hello, '),
-	new TextDeletion(
-		{
-			id: 2,
-			author: 'Gabe',
-			date: new Date(),
-		},
-		new Text({}, 'nighttime')
-	),
 	new Insertion(
 		{ id: 2, author: 'Paul Simon', date: new Date() },
 		new Text({}, 'darkness')
@@ -64,9 +50,6 @@ await Docx.fromJsx(
 	<Section>
 		<Paragraph>
 			<Text>Four score and </Text>
-			<TextDeletion id={1} author="Gabe" date={new Date()}>
-				<Text>six</Text>
-			</TextDeletion>
 			<Insertion id={1} author="Gabe" date={new Date()}>
 				<Text>seven</Text>
 			</Insertion>

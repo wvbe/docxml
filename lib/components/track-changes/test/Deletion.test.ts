@@ -9,17 +9,14 @@ import { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
 import { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
 import { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
 import { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
-import { Cell } from '../../document/src/Cell.ts';
 import { Paragraph } from '../../document/src/Paragraph.ts';
-import { Row } from '../../document/src/Row.ts';
-import { Table } from '../../document/src/Table.ts';
 import { Text } from '../../document/src/Text.ts';
-import { Insertion } from '../src/Insertion.ts';
+import { Deletion } from '../src/Deletion.ts';
 import { Move } from '../src/Move.ts';
 import { MoveRangeEnd } from '../src/MoveRangeEnd.ts';
 import { MoveRangeStart } from '../src/MoveRangeStart.ts';
 
-describe('Insertion', () => {
+describe('Deletion', () => {
 	const date = new Date();
 
 	const emptyContext: ComponentContext = {
@@ -27,68 +24,66 @@ describe('Insertion', () => {
 		relationships: null,
 	};
 
-	describe('Inserted run content', () => {
+	describe('Deleted run content', () => {
 		describe('Text', () => {
-			const insertedTextNode = create(
+			const deletedTextNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
-					<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}">
+					<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}">
 						<w:r><w:t>This is a new paragraph</w:t></w:r>
-					</w:ins>
-					<w:ins w:id="2" w:author="Roy" w:date="${date.toISOString()}">
+					</w:del>
+					<w:del w:id="2" w:author="Roy" w:date="${date.toISOString()}">
 						<w:r><w:t>This is a another new paragraph</w:t></w:r>
-					</w:ins>
+					</w:del>
 				</w:p>
 				`,
 				emptyContext
 			);
 
-			const insertedText1 = new Insertion(
+			const deletedText1 = new Deletion(
 				{ author: 'Luis', date: date, id: 1 },
 				new Text({}, 'This is a new paragraph')
 			);
-			const insertedText2 = new Insertion(
+			const deletedText2 = new Deletion(
 				{ author: 'Roy', date: date, id: 2 },
 				new Text({}, 'This is a another new paragraph')
 			);
-			const insertedTextAsObject = new Paragraph(
+			const deletedTextAsObject = new Paragraph(
 				{},
-				insertedText1,
-				insertedText2
+				deletedText1,
+				deletedText2
 			);
 
-			const insertedTextAsNode = Paragraph.fromNode(
-				insertedTextNode,
+			const deletedTextAsNode = Paragraph.fromNode(
+				deletedTextNode,
 				emptyContext
 			);
 
-			it('Text node has expected insertion objects', () => {
-				// It should present the two insertions
-				expect(insertedTextAsNode.children).toHaveLength(2);
-				expect(insertedTextAsNode.children[0]).toEqual(insertedText1);
-				expect(insertedTextAsNode.children[1]).toEqual(insertedText2);
+			it('Text node has expected deletion objects', () => {
+				// It should present the two deletions
+				expect(deletedTextAsNode.children).toHaveLength(2);
+				expect(deletedTextAsNode.children[0]).toEqual(deletedText1);
+				expect(deletedTextAsNode.children[1]).toEqual(deletedText2);
 			});
 
 			it('serializes and deserialized correctly', async () => {
-				expect(
-					serialize(await insertedTextAsObject.toNode([]))
-				).toEqual(
+				expect(serialize(await deletedTextAsObject.toNode([]))).toEqual(
 					serialize(
 						create(
 							`<p xmlns="${NamespaceUri.w}">
-								<ins xmlns:ns1="${
+								<del xmlns:ns1="${
 									NamespaceUri.w
 								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}">
 									<r>
-										<t xml:space="preserve">This is a new paragraph</t>
+										<delText xml:space="preserve">This is a new paragraph</delText>
 									</r>
-								</ins>
-								<ins xmlns:ns2="${
+								</del>
+								<del xmlns:ns2="${
 									NamespaceUri.w
 								}" ns2:id="2" ns2:author="Roy" ns2:date="${date.toISOString()}">
 									<r>
-										<t xml:space="preserve">This is a another new paragraph</t>
+										<delText xml:space="preserve">This is a another new paragraph</delText>
 									</r>
-								</ins>
+								</del>
 								
 							</p>`
 						)
@@ -98,63 +93,60 @@ describe('Insertion', () => {
 		});
 
 		describe('Text without date and author', () => {
-			const insertedTextNode = create(
+			const deletedTextNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
-					<w:ins w:id="1">
+					<w:del w:id="1">
 						<w:r><w:t>This is a new paragraph</w:t></w:r>
-					</w:ins>
-					<w:ins w:id="2">
+					</w:del>
+					<w:del w:id="2">
 						<w:r><w:t>This is a another new paragraph</w:t></w:r>
-					</w:ins>
+					</w:del>
 				</w:p>
 				`,
 				emptyContext
 			);
 
-			const insertedText1 = new Insertion(
+			const deletedText1 = new Deletion(
 				{ id: 1 },
 				new Text({}, 'This is a new paragraph')
 			);
-			const insertedText2 = new Insertion(
+			const deletedText2 = new Deletion(
 				{ id: 2 },
 				new Text({}, 'This is a another new paragraph')
 			);
-			const insertedTextAsObject = new Paragraph(
+			const deletedTextAsObject = new Paragraph(
 				{},
-				insertedText1,
-				insertedText2
+				deletedText1,
+				deletedText2
 			);
 
-			const insertedTextAsNode = Paragraph.fromNode(
-				insertedTextNode,
+			const deletedTextAsNode = Paragraph.fromNode(
+				deletedTextNode,
 				emptyContext
 			);
 
-			it('Text node has expected insertion objects', () => {
-				// It should present the two insertions
-				expect(insertedTextAsNode.children).toHaveLength(2);
-				expect(insertedTextAsNode.children[0]).toEqual(insertedText1);
-				expect(insertedTextAsNode.children[1]).toEqual(insertedText2);
+			it('Text node has expected deletion objects', () => {
+				// It should present the two deletions
+				expect(deletedTextAsNode.children).toHaveLength(2);
+				expect(deletedTextAsNode.children[0]).toEqual(deletedText1);
+				expect(deletedTextAsNode.children[1]).toEqual(deletedText2);
 			});
 
 			it('serializes and deserialized correctly', async () => {
-				expect(
-					serialize(await insertedTextAsObject.toNode([]))
-				).toEqual(
+				expect(serialize(await deletedTextAsObject.toNode([]))).toEqual(
 					serialize(
 						create(
 							`<p xmlns="${NamespaceUri.w}">
-								<ins xmlns:ns1="${NamespaceUri.w}" ns1:id="1">
+								<del xmlns:ns1="${NamespaceUri.w}" ns1:id="1">
 									<r>
-										<t xml:space="preserve">This is a new paragraph</t>
+										<delText xml:space="preserve">This is a new paragraph</delText>
 									</r>
-								</ins>
-								<ins xmlns:ns2="${NamespaceUri.w}" ns2:id="2">
+								</del>
+								<del xmlns:ns2="${NamespaceUri.w}" ns2:id="2">
 									<r>
-										<t xml:space="preserve">This is a another new paragraph</t>
+										<delText xml:space="preserve">This is a another new paragraph</delText>
 									</r>
-								</ins>
-								
+								</del>
 							</p>`
 						)
 					)
@@ -163,72 +155,72 @@ describe('Insertion', () => {
 		});
 
 		describe('BookmarkRangeStart and BookmarkRangeEnd ', () => {
-			const insertedBookmarkRangeNode = create(
+			const deletedBookmarkRangeNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
-					<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}">
+					<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}">
 						<w:bookmarkStart w:id="0" w:name="Test1"/>
 						<w:bookmarkEnd w:id="0"/>
-					</w:ins>
-					<w:ins w:id="2" w:author="Roy" w:date="${date.toISOString()}">
+					</w:del>
+					<w:del w:id="2" w:author="Roy" w:date="${date.toISOString()}">
 						<w:bookmarkStart w:id="1" w:name="Test2"/>
 						<w:bookmarkEnd w:id="1"/>
-					</w:ins>
+					</w:del>
 				</w:p>
 				`,
 				emptyContext
 			);
 
-			const insertedBookmarkRange1 = new Insertion(
+			const deletedBookmarkRange1 = new Deletion(
 				{ author: 'Luis', date: date, id: 1 },
 				new BookmarkRangeStart({ id: 0, name: 'Test1' }),
 				new BookmarkRangeEnd({ id: 0 })
 			);
-			const insertedBookmarkRange2 = new Insertion(
+			const deletedBookmarkRange2 = new Deletion(
 				{ author: 'Roy', date: date, id: 2 },
 				new BookmarkRangeStart({ id: 1, name: 'Test2' }),
 				new BookmarkRangeEnd({ id: 1 })
 			);
-			const insertedBookmarkRangeAsObject = new Paragraph(
+			const deletedBookmarkRangeAsObject = new Paragraph(
 				{},
-				insertedBookmarkRange1,
-				insertedBookmarkRange2
+				deletedBookmarkRange1,
+				deletedBookmarkRange2
 			);
 
-			const insertedBookmarkRangeAsNode = Paragraph.fromNode(
-				insertedBookmarkRangeNode,
+			const deletedBookmarkRangeAsNode = Paragraph.fromNode(
+				deletedBookmarkRangeNode,
 				emptyContext
 			);
 
-			it('BookmarkRangeStart node has expected insertion objects', () => {
-				// It should present the two insertions
-				expect(insertedBookmarkRangeAsNode.children).toHaveLength(2);
-				expect(insertedBookmarkRangeAsNode.children[0]).toEqual(
-					insertedBookmarkRange1
+			it('BookmarkRangeStart node has expected deletion objects', () => {
+				// It should present the two deletions
+				expect(deletedBookmarkRangeAsNode.children).toHaveLength(2);
+				expect(deletedBookmarkRangeAsNode.children[0]).toEqual(
+					deletedBookmarkRange1
 				);
-				expect(insertedBookmarkRangeAsNode.children[1]).toEqual(
-					insertedBookmarkRange2
+				expect(deletedBookmarkRangeAsNode.children[1]).toEqual(
+					deletedBookmarkRange2
 				);
 			});
 
 			it('serializes and deserialized correctly', async () => {
 				expect(
-					serialize(await insertedBookmarkRangeAsObject.toNode([]))
+					serialize(await deletedBookmarkRangeAsObject.toNode([]))
 				).toEqual(
 					serialize(
 						create(
 							`<p xmlns="${NamespaceUri.w}">
-								<ins xmlns:ns1="${
+								<del xmlns:ns1="${
 									NamespaceUri.w
 								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}">
 									<ns1:bookmarkStart ns1:id="0" ns1:name="Test1"/>
 									<ns1:bookmarkEnd ns1:id="0"/>
-								</ins>
-								<ins xmlns:ns2="${
+								</del>
+								<del xmlns:ns2="${
 									NamespaceUri.w
 								}" ns2:id="2" ns2:author="Roy" ns2:date="${date.toISOString()}">
 									<ns2:bookmarkStart ns2:id="1" ns2:name="Test2"/>
 									<ns2:bookmarkEnd ns2:id="1"/>
-								</ins>
+								</del>
 								
 							</p>`
 						)
@@ -238,72 +230,72 @@ describe('Insertion', () => {
 		});
 
 		describe('CommentRangeStart and CommentRangeEnd', () => {
-			const insertedCommentRangeNode = create(
+			const deletedCommentRangeNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
-					<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}">
+					<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}">
 						<w:commentRangeStart w:id="0"/>
 						<w:commentRangeEnd w:id="0"/>
-					</w:ins>
-					<w:ins w:id="2" w:author="Roy" w:date="${date.toISOString()}">
+					</w:del>
+					<w:del w:id="2" w:author="Roy" w:date="${date.toISOString()}">
 						<w:commentRangeStart w:id="1"/>
 						<w:commentRangeEnd w:id="1"/>
-					</w:ins>
+					</w:del>
 				</w:p>
 				`,
 				emptyContext
 			);
 
-			const insertedCommentRange1 = new Insertion(
+			const deletedCommentRange1 = new Deletion(
 				{ author: 'Luis', date: date, id: 1 },
 				new CommentRangeStart({ id: { hex: '00000000', int: 0 } }),
 				new CommentRangeEnd({ id: { hex: '00000000', int: 0 } })
 			);
-			const insertedCommentRange2 = new Insertion(
+			const deletedCommentRange2 = new Deletion(
 				{ author: 'Roy', date: date, id: 2 },
 				new CommentRangeStart({ id: { hex: '00000001', int: 1 } }),
 				new CommentRangeEnd({ id: { hex: '00000001', int: 1 } })
 			);
-			const insertedCommentRangeAsObject = new Paragraph(
+			const deletedCommentRangeAsObject = new Paragraph(
 				{},
-				insertedCommentRange1,
-				insertedCommentRange2
+				deletedCommentRange1,
+				deletedCommentRange2
 			);
 
-			const insertedCommentRangeEndAsNode = Paragraph.fromNode(
-				insertedCommentRangeNode,
+			const deletedCommentRangeEndAsNode = Paragraph.fromNode(
+				deletedCommentRangeNode,
 				emptyContext
 			);
 
-			it('CommentRange nodes have expected insertion objects', () => {
-				// It should present the two insertions
-				expect(insertedCommentRangeEndAsNode.children).toHaveLength(2);
-				expect(insertedCommentRangeEndAsNode.children[0]).toEqual(
-					insertedCommentRange1
+			it('CommentRange nodes have expected deletion objects', () => {
+				// It should present the two deletions
+				expect(deletedCommentRangeEndAsNode.children).toHaveLength(2);
+				expect(deletedCommentRangeEndAsNode.children[0]).toEqual(
+					deletedCommentRange1
 				);
-				expect(insertedCommentRangeEndAsNode.children[1]).toEqual(
-					insertedCommentRange2
+				expect(deletedCommentRangeEndAsNode.children[1]).toEqual(
+					deletedCommentRange2
 				);
 			});
 
 			it('serializes and deserialized correctly', async () => {
 				expect(
-					serialize(await insertedCommentRangeAsObject.toNode([]))
+					serialize(await deletedCommentRangeAsObject.toNode([]))
 				).toEqual(
 					serialize(
 						create(
 							`<p xmlns="${NamespaceUri.w}">
-								<ins xmlns:ns1="${
+								<del xmlns:ns1="${
 									NamespaceUri.w
 								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}">
 									<ns1:commentRangeStart ns1:id="0"/>
 									<ns1:commentRangeEnd ns1:id="0"/>
-								</ins>
-								<ins xmlns:ns2="${
+								</del>
+								<del xmlns:ns2="${
 									NamespaceUri.w
 								}" ns2:id="2" ns2:author="Roy" ns2:date="${date.toISOString()}">
 									<ns2:commentRangeStart ns2:id="1"/>
 									<ns2:commentRangeEnd ns2:id="1"/>
-								</ins>
+								</del>
 								
 							</p>`
 						)
@@ -313,9 +305,9 @@ describe('Insertion', () => {
 		});
 
 		describe('MoveTo and MoveFrom', () => {
-			const insertedMoveToNode = create(
+			const deletedMoveToNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
-					<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}">
+					<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}">
 						<w:moveTo w:id="0" w:author="Gabe" w:date="${date.toISOString()}">
 							<w:r>
 								<w:t xml:space="preserve">Moved content</w:t>
@@ -326,8 +318,8 @@ describe('Insertion', () => {
 								<w:t xml:space="preserve">Moved content</w:t>
 							</w:r>
 						</w:moveFrom>
-					</w:ins>
-					<w:ins w:id="2" w:author="Roy" w:date="${date.toISOString()}">
+					</w:del>
+					<w:del w:id="2" w:author="Roy" w:date="${date.toISOString()}">
 						<w:moveTo w:id="1" w:author="Gabe" w:date="${date.toISOString()}">
 							<w:r>
 								<w:t xml:space="preserve">More moved content</w:t>
@@ -338,13 +330,13 @@ describe('Insertion', () => {
 								<w:t xml:space="preserve">More moved content</w:t>
 							</w:r>
 						</w:moveFrom>
-					</w:ins>
+					</w:del>
 				</w:p>
 				`,
 				emptyContext
 			);
 
-			const insertedMove1 = new Insertion(
+			const deletedMove1 = new Deletion(
 				{ author: 'Luis', date: date, id: 1 },
 				new Move(
 					{
@@ -365,7 +357,7 @@ describe('Insertion', () => {
 					new Text({}, 'Moved content')
 				)
 			);
-			const insertedMove2 = new Insertion(
+			const deletedMove2 = new Deletion(
 				{ author: 'Roy', date: date, id: 2 },
 				new Move(
 					{
@@ -386,71 +378,71 @@ describe('Insertion', () => {
 					new Text({}, 'More moved content')
 				)
 			);
-			const insertedCommentRangeAsObject = new Paragraph(
+			const deletedCommentRangeAsObject = new Paragraph(
 				{},
-				insertedMove1,
-				insertedMove2
+				deletedMove1,
+				deletedMove2
 			);
 
-			const insertedCommentRangeEndAsNode = Paragraph.fromNode(
-				insertedMoveToNode,
+			const deletedCommentRangeEndAsNode = Paragraph.fromNode(
+				deletedMoveToNode,
 				emptyContext
 			);
 
-			it('Move nodes have expected insertion objects', () => {
-				// It should present the two insertions
-				expect(insertedCommentRangeEndAsNode.children).toHaveLength(2);
-				expect(insertedCommentRangeEndAsNode.children[0]).toEqual(
-					insertedMove1
+			it('Move nodes have expected deletion objects', () => {
+				// It should present the two deletions
+				expect(deletedCommentRangeEndAsNode.children).toHaveLength(2);
+				expect(deletedCommentRangeEndAsNode.children[0]).toEqual(
+					deletedMove1
 				);
-				expect(insertedCommentRangeEndAsNode.children[1]).toEqual(
-					insertedMove2
+				expect(deletedCommentRangeEndAsNode.children[1]).toEqual(
+					deletedMove2
 				);
 			});
 
 			it('serializes and deserialized correctly', async () => {
 				expect(
-					serialize(await insertedCommentRangeAsObject.toNode([]))
+					serialize(await deletedCommentRangeAsObject.toNode([]))
 				).toEqual(
 					serialize(
 						create(
 							`<p xmlns="${NamespaceUri.w}">
-								<ins xmlns:ns1="${
+								<del xmlns:ns1="${
 									NamespaceUri.w
 								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}">
 									<moveTo xmlns:ns1="${
 										NamespaceUri.w
 									}" ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe">
 										<r>
-											<t xml:space="preserve">Moved content</t>
+											<delText xml:space="preserve">Moved content</delText>
 										</r>
 									</moveTo>
 									<moveFrom xmlns:ns1="${
 										NamespaceUri.w
 									}" ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe">
 										<r>
-											<t xml:space="preserve">Moved content</t>
+											<delText xml:space="preserve">Moved content</delText>
 										</r>
 									</moveFrom>
-								</ins>
-								<ins xmlns:ns2="${
+								</del>
+								<del xmlns:ns2="${
 									NamespaceUri.w
 								}" ns2:id="2" ns2:author="Roy" ns2:date="${date.toISOString()}">
 									<moveTo xmlns:ns1="${
 										NamespaceUri.w
 									}" ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Gabe">
 										<r>
-											<t xml:space="preserve">More moved content</t>
+											<delText xml:space="preserve">More moved content</delText>
 										</r>
 									</moveTo>
 									<moveFrom xmlns:ns1="${
 										NamespaceUri.w
 									}" ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Gabe">
 										<r>
-											<t xml:space="preserve">More moved content</t>
+											<delText xml:space="preserve">More moved content</delText>
 										</r>
 									</moveFrom>
-								</ins>
+								</del>
 								
 							</p>`
 						)
@@ -460,9 +452,9 @@ describe('Insertion', () => {
 		});
 
 		describe('MoveRangeStart and MoveRangeEnd', () => {
-			const insertedMoveRangeToNode = create(
+			const deletedMoveRangeToNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
-					<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}">
+					<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}">
 						<w:moveToRangeStart xmlns:w="${
 							NamespaceUri.w
 						}" w:id="0" w:date="${date.toISOString()}" w:author="Gabe" w:name="Move_to_1" />
@@ -471,13 +463,13 @@ describe('Insertion', () => {
 							NamespaceUri.w
 						}" w:id="1" w:date="${date.toISOString()}" w:author="Angel" w:name="Move_from_1" />
 						<w:moveFromRangeEnd xmlns:w="${NamespaceUri.w}" w:id="1" />
-					</w:ins>
+					</w:del>
 				</w:p>
 				`,
 				emptyContext
 			);
 
-			const insertedMoveRange = new Insertion(
+			const deletedMoveRange = new Deletion(
 				{ author: 'Luis', date: date, id: 1 },
 				new MoveRangeStart({
 					id: 0,
@@ -503,32 +495,32 @@ describe('Insertion', () => {
 				})
 			);
 
-			const insertedMoveRangeAsObject = new Paragraph(
+			const deletedMoveRangeAsObject = new Paragraph(
 				{},
-				insertedMoveRange
+				deletedMoveRange
 			);
 
-			const insertedMoveRangeEndAsNode = Paragraph.fromNode(
-				insertedMoveRangeToNode,
+			const deletedMoveRangeEndAsNode = Paragraph.fromNode(
+				deletedMoveRangeToNode,
 				emptyContext
 			);
 
-			it('Move range nodes have expected insertion objects', () => {
-				// It should present the two insertions
-				expect(insertedMoveRangeEndAsNode.children).toHaveLength(1);
-				expect(insertedMoveRangeEndAsNode.children[0]).toEqual(
-					insertedMoveRange
+			it('Move range nodes have expected deletion objects', () => {
+				// It should present the two deletions
+				expect(deletedMoveRangeEndAsNode.children).toHaveLength(1);
+				expect(deletedMoveRangeEndAsNode.children[0]).toEqual(
+					deletedMoveRange
 				);
 			});
 
 			it('serializes and deserialized correctly', async () => {
 				expect(
-					serialize(await insertedMoveRangeAsObject.toNode([]))
+					serialize(await deletedMoveRangeAsObject.toNode([]))
 				).toEqual(
 					serialize(
 						create(
 							`<p xmlns="${NamespaceUri.w}">
-								<ins xmlns:ns1="${
+								<del xmlns:ns1="${
 									NamespaceUri.w
 								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}">
 									<moveToRangeStart xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
@@ -541,7 +533,7 @@ describe('Insertion', () => {
 									<moveFromRangeEnd xmlns="${NamespaceUri.w}" xmlns:ns4="${
 								NamespaceUri.w
 							}" ns4:id="1" />
-								</ins>	
+								</del>	
 							</p>`
 						)
 					)
@@ -550,111 +542,63 @@ describe('Insertion', () => {
 		});
 	});
 
-	describe('Inserted paragraph', () => {
-		// Aquí solo como propiedad para el párrafo
-		const insertedParagraphNode = create(
+	describe('Deleted paragraph', () => {
+		const deletedParagraphNode = create(
 			`<w:p xmlns:w="${NamespaceUri.w}">
 				<w:pPr>
 					<w:rPr>
-						<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}" />
+						<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}" />
 					</w:rPr>
 				</w:pPr>
 				<w:r>
-					<w:t>This is a new paragraph</w:t>
+					<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}">
+						<w:delText>This is a deleted paragraph</w:delText>
+					</w:del>
 				</w:r>
 			</w:p>
 			`,
 			emptyContext
 		);
 
-		const insertedParagraphAsProp = new Paragraph(
-			{ pilcrow: { insertion: { author: 'Luis', date: date, id: 1 } } },
-			new Text({}, 'This is a new paragraph')
+		const deletedParagraphAsProp = new Paragraph(
+			{ pilcrow: { deletion: { author: 'Luis', date: date, id: 1 } } },
+			new Deletion(
+				{ author: 'Luis', date: date, id: 1 },
+				new Text({}, 'This is a deleted paragraph')
+			)
 		);
 
-		const insertedParagraphAsNode = Paragraph.fromNode(
-			insertedParagraphNode,
+		const deletedParagraphAsNode = Paragraph.fromNode(
+			deletedParagraphNode,
 			emptyContext
 		);
 
-		it('Paragraph node has expected insertion objects', () => {
-			expect(insertedParagraphAsNode.props.pilcrow?.insertion).toEqual(
-				insertedParagraphAsProp.props.pilcrow?.insertion
+		it('Paragraph node has expected deletion objects', () => {
+			expect(deletedParagraphAsNode.props.pilcrow?.deletion).toEqual(
+				deletedParagraphAsProp.props.pilcrow?.deletion
 			);
 		});
 
 		it('serializes and deserialized correctly', async () => {
-			expect(serialize(await insertedParagraphAsProp.toNode([]))).toEqual(
+			expect(serialize(await deletedParagraphAsProp.toNode([]))).toEqual(
 				serialize(
 					create(
 						`<p xmlns="${NamespaceUri.w}">
 							<pPr>
 								<rPr>
-									<ins xmlns:ns1="${
+									<del xmlns:ns1="${
 										NamespaceUri.w
 									}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}" />
 								</rPr>
 							</pPr>
+							<del xmlns:ns2="${
+								NamespaceUri.w
+							}" ns2:id="1" ns2:author="Luis" ns2:date="${date.toISOString()}">
 								<r>
-									<t xml:space="preserve">This is a new paragraph</t>
-								</r>				
+									<delText xml:space="preserve">This is a deleted paragraph</delText>
+								</r>
+							</del>
 						</p>`
-					)
-				)
-			);
-		});
-	});
-
-	describe('Inserted table row', () => {
-		const insertedRowNode = create(
-			`
-            <w:tr xmlns:w="${NamespaceUri.w}">
-                <w:trPr>
-                    <w:tblHeader/>
-                    <w:cantSplit/>
-                    <w:tblCellSpacing w:w="1701" w:type="dxa"/>
-                    <w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}"/>
-                </w:trPr>
-                <w:tc>
-                <w:tcPr/>
-                <w:p>
-                    <w:r>
-                        <w:t xml:space="preserve"> it is time</w:t>
-                    </w:r>
-                </w:p>
-                </w:tc>
-            </w:tr>`,
-			emptyContext
-		);
-
-		const insertedRowAsProp = new Row(
-			{
-				insertion: { author: 'Luis', date: date, id: 1 },
-			},
-			new Cell({})
-		);
-		const insertedRowAsNode = Row.fromNode(insertedRowNode, emptyContext);
-
-		it('Row node has expected insertion objects', () => {
-			expect(insertedRowAsNode.props.insertion).toEqual(
-				insertedRowAsProp.props.insertion
-			);
-		});
-
-		it('serializes and deserialized correctly', async () => {
-			const testTable = new Table({});
-			expect(
-				serialize(await insertedRowAsProp.toNode([testTable]))
-			).toEqual(
-				serialize(
-					create(
-						`<tr xmlns="${NamespaceUri.w}">
-							<trPr>
-								<ins xmlns:ns1="${
-									NamespaceUri.w
-								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}"/>
-							</trPr>
-            			</tr>`
 					)
 				)
 			);

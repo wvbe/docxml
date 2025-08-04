@@ -1,5 +1,3 @@
-import './Text.ts';
-
 import {
 	Component,
 	type ComponentAncestor,
@@ -14,11 +12,12 @@ import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
 import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
 import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
+import type { Deletion } from '../../track-changes/src/Deletion.ts';
 import type { Insertion } from '../../track-changes/src/Insertion.ts';
-import type { TextDeletion } from '../../track-changes/src/TextDeletion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import type { Hyperlink } from './Hyperlink.ts';
+import './Text.ts';
 import type { Text } from './Text.ts';
 
 /**
@@ -29,10 +28,10 @@ export type FieldChild =
 	| BookmarkRangeEnd
 	| CommentRangeStart
 	| CommentRangeEnd
-	| TextDeletion
 	| Text
 	| Hyperlink
-	| Insertion;
+	| Insertion
+	| Deletion;
 
 /**
  * A type describing the props accepted by {@link Field}.
@@ -66,10 +65,10 @@ export class Field extends Component<FieldProps, FieldChild> {
 		'BookmarkRangeEnd',
 		'CommentRangeStart',
 		'CommentRangeEnd',
-		'TextDeletion',
 		'Text',
 		'Hyperlink',
 		'Insertion',
+		'Deletion',
 	];
 
 	public static override readonly mixed: boolean = false;

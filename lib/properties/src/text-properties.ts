@@ -1,4 +1,4 @@
-import { Insertion, type InsertionProps } from '../../../mod.ts';
+import { Deletion, Insertion, type InsertionProps } from '../../../mod.ts';
 import {
 	Move,
 	type MoveProps,
@@ -160,6 +160,14 @@ export type TextProperties = {
 	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EZY5V.html
 	 */
 	insertion?: null | InsertionProps;
+	/**
+	 * A property used to indicate when a paragraph has been deleted.
+	 *
+	 * If present, the containing paragraph element will appear as a track-change deleted paragraph.
+	 *
+	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0EMM3V.html
+	 */
+	deletion?: null | InsertionProps;
 };
 
 type IntermediateProps = Omit<TextProperties, 'change'> & {
@@ -229,6 +237,11 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string()
+			},
+			"deletion": ./${QNS.w}del/map {
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(), 
+				"date": @${QNS.w}date/string()
 			}
 		}`,
 				node,
@@ -251,12 +264,23 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 
 	if (props.insertion) {
 		// Convert the date string to a Date object.
-		props.insertion.date = props.insertion.date
-			? new Date(props.insertion.date)
-			: undefined;
-		props.insertion.author = props.insertion.author
-			? props.insertion.author
-			: undefined;
+		props.insertion = {
+			...props.insertion,
+			date: props.insertion.date
+				? new Date(props.insertion.date)
+				: undefined,
+			author: props.insertion.author ? props.insertion.author : undefined,
+		};
+	}
+
+	if (props.deletion) {
+		props.deletion = {
+			...props.deletion,
+			date: props.deletion.date
+				? new Date(props.deletion.date)
+				: undefined,
+			author: props.deletion.author ? props.deletion.author : undefined,
+		};
 	}
 
 	if (props.move) {
@@ -289,7 +313,8 @@ export async function textPropertiesToNode(
 		!data.font &&
 		!data.move &&
 		!data.change &&
-		!data.insertion
+		!data.insertion &&
+		!data.deletion
 	) {
 		return null;
 	}
@@ -349,7 +374,8 @@ export async function textPropertiesToNode(
 				$change('node')
 			} else (),
 			$move,
-			$insertion
+			$insertion,
+			$deletion
 		}`,
 		{
 			style: data.style || null,
@@ -405,6 +431,9 @@ export async function textPropertiesToNode(
 			move: data.move ? await new Move(data.move).toNode([]) : null,
 			insertion: data.insertion
 				? await new Insertion(data.insertion).toNode([])
+				: null,
+			deletion: data.deletion
+				? await new Deletion(data.deletion).toNode([])
 				: null,
 		}
 	);

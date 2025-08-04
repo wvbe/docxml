@@ -1,4 +1,3 @@
-import type { Insertion } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -19,6 +18,7 @@ import {
 	isValidNumber,
 } from '../../../utilities/src/parameter-checking.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
+import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import { Paragraph } from './Paragraph.ts';

@@ -4,7 +4,6 @@ import {
 	Component,
 	type ComponentAncestor,
 	type ComponentContext,
-	type ComponentDefinition,
 } from '../../../classes/src/Component.ts';
 import { FileMime, RelationshipType } from '../../../enums.ts';
 import type { RelationshipsXml } from '../../../files/src/RelationshipsXml.ts';
@@ -369,7 +368,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 	}
 }
 
-registerComponent(Image as unknown as ComponentDefinition);
+registerComponent(Image);
 
 type ExtractedBlipNodeData = {
 	main: {

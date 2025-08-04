@@ -7,7 +7,6 @@ import {
 	Component,
 	type ComponentAncestor,
 	type ComponentContext,
-	type ComponentDefinition,
 } from '../../../classes/src/Component.ts';
 import {
 	type TableRowProperties,
@@ -145,4 +144,4 @@ export class Row extends Component<RowProps, RowChild> {
 	}
 }
 
-registerComponent(Row as unknown as ComponentDefinition);
+registerComponent(Row);

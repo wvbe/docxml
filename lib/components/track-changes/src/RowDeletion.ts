@@ -6,7 +6,6 @@ import {
 	Component,
 	type ComponentAncestor,
 	type ComponentContext,
-	type ComponentDefinition,
 } from '../../../classes/src/Component.ts';
 import type { TableRowProperties } from '../../../properties/src/table-row-properties.ts';
 import {
@@ -119,4 +118,4 @@ export class RowDeletion extends Component<RowDeletionProps, RowDeletionChild> {
 	}
 }
 
-registerComponent(RowDeletion as unknown as ComponentDefinition);
+registerComponent(RowDeletion);

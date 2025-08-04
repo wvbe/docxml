@@ -8,7 +8,6 @@ import {
 	Component,
 	type ComponentAncestor,
 	type ComponentContext,
-	type ComponentDefinition,
 	type ComponentNodes,
 	isComponentDefinition,
 } from '../../../classes/src/Component.ts';
@@ -23,9 +22,9 @@ import {
 } from '../../../utilities/src/components.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
+import type { Move } from '../../track-changes/src/Move.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
-import type { Move } from '../../track-changes/src/Move.ts';
 import { Paragraph } from './Paragraph.ts';
 import type { Table } from './Table.ts';
 
@@ -147,4 +146,4 @@ export class Section extends Component<SectionProps, SectionChild> {
 	}
 }
 
-registerComponent(Section as unknown as ComponentDefinition);
+registerComponent(Section);

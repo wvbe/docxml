@@ -19,42 +19,41 @@ import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts'
 import type { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
 import type { Text } from '../../document/src/Text.ts';
-import type { Deletion } from './Deletion.ts';
+import type { Insertion } from './Insertion.ts';
 import type { Move } from './Move.ts';
 import type { MoveRangeEnd } from './MoveRangeEnd.ts';
 import type { MoveRangeStart } from './MoveRangeStart.ts';
 
 /**
- * A type specifying the children of {@link Insertion}.
+ * A type specifying the children of {@link Deletion}.
  */
-export type InsertionChild =
+export type DeletionChild =
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
 	| CommentRangeStart
 	| CommentRangeEnd
 	| Text
 	| Move
-	| Insertion
 	| MoveRangeStart
 	| MoveRangeEnd
-	| Deletion;
+	| Deletion
+	| Insertion;
 
 /**
- * A type describing the props accepted by {@link Insertion}.
+ * A type describing the props accepted by {@link Deletion}.
  */
-export type InsertionProps = ChangeInformation;
+export type DeletionProps = ChangeInformation;
 
 /**
- * A component that represents a change-tracked for an inserted element.
+ * A component that represents a change-tracked for an deleted element.
  *
- * The documentation with each of the possible cases can be found here.
- * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EOW6V.html
- * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EVH6V.html
- *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EZY5V.html
- *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EA14V.html
- *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EHJ5V.html
+ * Additional documentation is here:
+ * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0ESZZV.html
+ * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0EMM3V.html
+ *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0EH23V.html
+ *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0EOK4V.html
  */
-export class Insertion extends Component<InsertionProps, InsertionChild> {
+export class Deletion extends Component<DeletionProps, DeletionChild> {
 	public static override readonly children: string[] = [
 		'BookmarkRangeEnd',
 		'BookmarkRangeStart',
@@ -64,7 +63,7 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 		'Move',
 		'MoveRangeStart',
 		'MoveRangeEnd',
-		'Deletion',
+		'Insertion',
 		this.name,
 	];
 
@@ -82,7 +81,7 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 					if ($date) then attribute ${QNS.w}date { $date } else ()
 				]
 
-				return element ${QNS.w}ins { $attrs, $children }
+				return element ${QNS.w}del { $attrs, $children }
 			`,
 			{
 				...this.props,
@@ -97,13 +96,13 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:ins';
+		return node.nodeName === 'w:del';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): Insertion {
+	static override fromNode(node: Node, context: ComponentContext): Deletion {
 		const props = getChangeInformation(node);
 		const { children } = evaluateXPathToMap<{
 			rpr: Node;
@@ -129,9 +128,9 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 			node
 		);
 
-		return new Insertion(
+		return new Deletion(
 			props,
-			...createChildComponentsFromNodes<InsertionChild>(
+			...createChildComponentsFromNodes<DeletionChild>(
 				this.children,
 				children,
 				context
@@ -140,4 +139,4 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 	}
 }
 
-registerComponent(Insertion);
+registerComponent(Deletion);

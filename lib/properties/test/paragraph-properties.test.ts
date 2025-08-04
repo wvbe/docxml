@@ -125,4 +125,84 @@ describe('Paragraph formatting', () => {
 			}
 		);
 	});
+
+	describe('Change Information properties', () => {
+		const date = new Date();
+
+		// Node with author, id and date
+		test(
+			`
+			<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:pPrChange w:id="99" w:date="${date.toISOString()}" w:author="Inés"> 
+					<w:pPr>
+						<w:pStyle w:val="Header" />
+					</w:pPr>
+				</w:pPrChange>
+			</w:pPr>`,
+			{
+				change: {
+					id: 99,
+					date: date,
+					style: 'Header',
+					author: 'Inés',
+				},
+			}
+		);
+
+		// Node with id and date, but without author
+		test(
+			`
+            <w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
+                <w:pPrChange w:id="99" w:date="${date.toISOString()}"> 
+                    <w:pPr>
+                        <w:pStyle w:val="Header" />
+                    </w:pPr>
+                </w:pPrChange>
+                </w:pPr>`,
+			{
+				change: {
+					id: 99,
+					date: date,
+					style: 'Header',
+				},
+			}
+		);
+
+		// Node with id and author, but without date
+		test(
+			`
+                <w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
+                    <w:pPrChange w:id="99" w:author="Inés"> 
+                        <w:pPr>
+                            <w:pStyle w:val="Header" />
+                        </w:pPr>
+                    </w:pPrChange>
+                    </w:pPr>`,
+			{
+				change: {
+					id: 99,
+					author: 'Inés',
+					style: 'Header',
+				},
+			}
+		);
+
+		// Node with id, but without date and author
+		test(
+			`
+                <w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
+                    <w:pPrChange w:id="99"> 
+                        <w:pPr>
+                            <w:pStyle w:val="Header" />
+                        </w:pPr>
+                    </w:pPrChange>
+                    </w:pPr>`,
+			{
+				change: {
+					id: 99,
+					style: 'Header',
+				},
+			}
+		);
+	});
 });

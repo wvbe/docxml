@@ -55,7 +55,7 @@ describe('Text', () => {
 		});
 
 		expect(newAddition.props.author).toBe('Y');
-		expect(newAddition.props.date.toISOString()).toEqual(
+		expect(newAddition.props?.date?.toISOString()).toEqual(
 			date.toISOString()
 		);
 

@@ -84,7 +84,7 @@ describe('Paragraph with style change', () => {
 						<pStyle xmlns:ns1="${NamespaceUri.w}" ns1:val="StyleNew"/>
 						<pPrChange xmlns:ns2="${
 							NamespaceUri.w
-						}" ns2:id="0" ns2:author="Wybe" ns2:date="${now.toISOString()}">
+						}" ns2:id="0" ns2:date="${now.toISOString()}" ns2:author="Wybe">
 							<pPr>
 								<pStyle ns2:val="StyleOld"/>
 						</pPr>

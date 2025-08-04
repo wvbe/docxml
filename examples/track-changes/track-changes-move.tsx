@@ -1,3 +1,4 @@
+/** @jsx  Docx.jsx */
 import Docx, {
 	Move,
 	MoveRangeEnd,
@@ -149,4 +150,54 @@ const section = new Section(
 docxFile.document.set(section);
 
 // Write to a file.
-docxFile.toFile('track-changes-move.docx');
+await docxFile.toFile('track-changes-move.docx');
+
+// Alternatively, you can use JSX:
+await Docx.fromJsx(
+	<Section>
+		<Paragraph pilcrow={{ move: { id: 1, type: 'to' } }}>
+			<MoveRangeStart id={2} type="to" name="move_0"></MoveRangeStart>
+			<Move id={3} type="to">
+				<Text>Memories exist outside of time</Text>
+			</Move>
+			<MoveRangeEnd id={4} type="to"></MoveRangeEnd>
+		</Paragraph>
+		<Paragraph>
+			<Text>
+				Silence is a space, a hollow where we take refuge, but where we
+				are never truly safe.
+			</Text>
+		</Paragraph>
+		<Paragraph pilcrow={{ move: { id: 1, type: 'from' } }}>
+			<MoveRangeStart id={2} type="from" name="move_0"></MoveRangeStart>
+			<Move id={3} type="from">
+				<Text>Memories exist outside of time</Text>
+			</Move>
+			<MoveRangeEnd id={4} type="from"></MoveRangeEnd>
+		</Paragraph>
+
+		<Paragraph>
+			<MoveRangeStart id={5} type="to" name="move_1"></MoveRangeStart>
+			<Move id={6} type="to">
+				<Text>
+					For none could tame our savage souls yet you the challenge
+					met,
+				</Text>
+			</Move>
+			<MoveRangeEnd id={7} type="to"></MoveRangeEnd>
+			<Text>
+				Under palest watch, you taught, we changed, base instincts were
+				redeemed,
+			</Text>
+			<MoveRangeStart id={5} type="from" name="move_1"></MoveRangeStart>
+			<Move id={6} author="Inés" type="from">
+				<Text>
+					{' '}
+					For none could tame our savage souls yet you the challenge
+					met,
+				</Text>
+			</Move>
+			<MoveRangeEnd id={7} type="from"></MoveRangeEnd>
+		</Paragraph>
+	</Section>
+).toFile('track-changes-move-jsx.docx');

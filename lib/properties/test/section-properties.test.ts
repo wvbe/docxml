@@ -60,6 +60,7 @@ describe('Section formatting', () => {
 });
 
 describe('Section property change', () => {
+	// Node with id, author and date
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
 			<w:pgSz w:orient="portrait"/>
@@ -75,6 +76,67 @@ describe('Section property change', () => {
 				id: 0,
 				author: 'Gabe',
 				date: date,
+				pageWidth: twip(12240),
+				pageHeight: twip(15840),
+			},
+		}
+	);
+
+	// Node with id and date, but without author
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:pgSz w:orient="portrait"/>
+				<w:sectPrChange w:id="0" w:date="${date.toISOString()}">
+					<w:sectPr>
+						<w:pgSz w:orient="portrait" w:w="12240" w:h="15840" /> 
+					</w:sectPr>
+				</w:sectPrChange> 
+			</w:sectPr>`,
+		{
+			pageOrientation: 'portrait',
+			change: {
+				id: 0,
+				date: date,
+				pageWidth: twip(12240),
+				pageHeight: twip(15840),
+			},
+		}
+	);
+	// Node with id and author, but without date
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:pgSz w:orient="portrait"/>
+			<w:sectPrChange w:id="0" w:author="Gabe">
+				<w:sectPr>
+					<w:pgSz w:orient="portrait" w:w="12240" w:h="15840" /> 
+				</w:sectPr>
+			</w:sectPrChange> 
+		</w:sectPr>`,
+		{
+			pageOrientation: 'portrait',
+			change: {
+				id: 0,
+				author: 'Gabe',
+				pageWidth: twip(12240),
+				pageHeight: twip(15840),
+			},
+		}
+	);
+
+	// Node with id, but without date and author
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:pgSz w:orient="portrait"/>
+				<w:sectPrChange w:id="0">
+					<w:sectPr>
+						<w:pgSz w:orient="portrait" w:w="12240" w:h="15840" /> 
+					</w:sectPr>
+				</w:sectPrChange> 
+			</w:sectPr>`,
+		{
+			pageOrientation: 'portrait',
+			change: {
+				id: 0,
 				pageWidth: twip(12240),
 				pageHeight: twip(15840),
 			},

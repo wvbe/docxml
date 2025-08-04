@@ -73,7 +73,7 @@ describe('Text formatting', () => {
 				date: date,
 				id: 99,
 				color: 'blue',
-				isBold: { simple: false, complex: false} 
+				isBold: { simple: false, complex: false },
 			},
 		}
 	);
@@ -90,6 +90,116 @@ describe('Complex character formatting', () => {
 			isBold: { simple: false, complex: true },
 			isItalic: { simple: false, complex: true },
 			fontSize: { simple: null, complex: hpt(23) },
+		}
+	);
+});
+
+describe('Change Information properties', () => {
+	// Node with author, id and date
+	test(
+		`
+		<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:moveTo w:author="Gabe" w:date="${date.toISOString()}" w:id="1" /> 
+			<w:rPrChange w:author="Angel" w:date="${date.toISOString()}" w:id="99" > 
+				<w:rPr>
+					<w:color w:val="blue" /> 
+					<w:b w:val="false" /> 
+				</w:rPr>
+			</w:rPrChange>
+		</w:rPr>`,
+		{
+			move: {
+				author: 'Gabe',
+				type: 'to',
+				date: date,
+				id: 1,
+			},
+			change: {
+				author: 'Angel',
+				date: date,
+				id: 99,
+				color: 'blue',
+				isBold: { simple: false, complex: false },
+			},
+		}
+	);
+
+	// Node with id and date, but without author
+	test(
+		`
+			<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:moveTo w:date="${date.toISOString()}" w:id="1" /> 
+				<w:rPrChange w:date="${date.toISOString()}" w:id="99" > 
+					<w:rPr>
+						<w:color w:val="blue" /> 
+						<w:b w:val="false" /> 
+					</w:rPr>
+				</w:rPrChange>
+			</w:rPr>`,
+		{
+			move: {
+				type: 'to',
+				date: date,
+				id: 1,
+			},
+			change: {
+				date: date,
+				id: 99,
+				color: 'blue',
+				isBold: { simple: false, complex: false },
+			},
+		}
+	);
+
+	// Node with id and author, but without date
+	test(
+		`
+			<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:moveTo w:author="Gabe" w:id="1" /> 
+				<w:rPrChange w:author="Angel"  w:id="99" > 
+					<w:rPr>
+						<w:color w:val="blue" /> 
+						<w:b w:val="false" /> 
+					</w:rPr>
+				</w:rPrChange>
+			</w:rPr>`,
+		{
+			move: {
+				type: 'to',
+				author: 'Gabe',
+				id: 1,
+			},
+			change: {
+				id: 99,
+				author: 'Angel',
+				color: 'blue',
+				isBold: { simple: false, complex: false },
+			},
+		}
+	);
+
+	// Node with id, but without date and author
+	test(
+		`
+			<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:moveTo w:id="1" /> 
+				<w:rPrChange w:id="99" > 
+					<w:rPr>
+						<w:color w:val="blue" /> 
+						<w:b w:val="false" /> 
+					</w:rPr>
+				</w:rPrChange>
+				</w:rPr>`,
+		{
+			move: {
+				type: 'to',
+				id: 1,
+			},
+			change: {
+				id: 99,
+				color: 'blue',
+				isBold: { simple: false, complex: false },
+			},
 		}
 	);
 });

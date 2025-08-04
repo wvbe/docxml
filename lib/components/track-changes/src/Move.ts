@@ -79,8 +79,8 @@ export class Move extends Component<MoveProps, MoveChild> {
 			`
 				let $attrs := [
 					attribute ${QNS.w}id { $id }, 
-					attribute ${QNS.w}date { $date }, 
-					attribute ${QNS.w}author { $author }
+					if ($date) then attribute ${QNS.w}date { $date } else (),
+					if ($author) then attribute ${QNS.w}author { $author } else ()
 				]
 				let $moveType := 
 					switch ($type)
@@ -91,7 +91,10 @@ export class Move extends Component<MoveProps, MoveChild> {
 			`,
 			{
 				...this.props,
-				date: new Date(this.props.date).toISOString(),
+				date: this.props.date
+					? new Date(this.props.date).toISOString()
+					: null,
+				author: this.props.author ? this.props.author : null,
 				children: await this.childrenToNode(ancestry),
 			}
 		);
@@ -112,7 +115,8 @@ export class Move extends Component<MoveProps, MoveChild> {
 			children: Node[];
 			changeProps: MoveProps;
 		}>(
-			`map { 
+			`
+			map { 
 				"children": array{./(
 					${QNS.w}r |
 					${QNS.w}del |
@@ -130,10 +134,11 @@ export class Move extends Component<MoveProps, MoveChild> {
 				)}, 
 				"changeProps": map { 
 					"id": @${QNS.w}id/number(),
-					"author": @${QNS.w}author/string(),
-					"date": @${QNS.w}date/string(),
-					"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
+					"type": if ($nodeName eq 'moveTo') then 'to' else 'from',
+					"date": if (@${QNS.w}date) then @${QNS.w}date/string() else (),
+					"author": if (@${QNS.w}author) then @${QNS.w}author/string() else ()
 				}
+
 			}`,
 			node,
 			null,
@@ -142,7 +147,8 @@ export class Move extends Component<MoveProps, MoveChild> {
 		return new Move(
 			{
 				...changeProps,
-				date: new Date(changeProps.date),
+				date: changeProps.date ? new Date(changeProps.date) : undefined,
+				author: changeProps.author ? changeProps.author : undefined,
 			},
 			...createChildComponentsFromNodes<MoveChild>(
 				this.children,

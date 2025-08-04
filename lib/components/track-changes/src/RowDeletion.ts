@@ -71,7 +71,7 @@ export class RowDeletion extends Component<RowDeletionProps, RowDeletionChild> {
 				`,
 				{
 					...this.props,
-					date: this.props.date.toISOString(),
+					date: this.props.date?.toISOString(),
 				}
 			),
 			null

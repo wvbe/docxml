@@ -63,7 +63,7 @@ export class TextDeletion extends Component<
 			`,
 			{
 				...this.props,
-				date: this.props.date.toISOString(),
+				date: this.props.date?.toISOString(),
 				children: await this.childrenToNode(ancestry),
 			}
 		);

@@ -54,7 +54,7 @@ describe('Text', () => {
 
 		expect(newDeletion.props.author).toBe('Y');
 
-		expect(newDeletion.props.date.toISOString()).toEqual(
+		expect(newDeletion.props.date?.toISOString()).toEqual(
 			date.toISOString()
 		);
 

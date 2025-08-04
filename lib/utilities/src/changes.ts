@@ -3,8 +3,8 @@ import { evaluateXPathToMap } from '../../utilities/src/xquery.ts';
 
 export type ChangeInformation = {
 	id: number;
-	author: string;
-	date: Date;
+	author?: string;
+	date?: Date;
 };
 
 /**
@@ -21,8 +21,8 @@ export function getChangeInformation(node?: Node | null) {
 	}
 	const props = evaluateXPathToMap<{
 		id: number;
-		author: string;
-		date: string;
+		author?: string;
+		date?: string;
 	}>(
 		`
 			map {
@@ -36,6 +36,7 @@ export function getChangeInformation(node?: Node | null) {
 
 	return {
 		...props,
-		date: new Date(props.date),
+		author: props.author ? props.author : undefined,
+		date: props.date ? new Date(props.date) : undefined,
 	} as ChangeInformation;
 }

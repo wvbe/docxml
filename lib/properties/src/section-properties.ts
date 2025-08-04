@@ -97,8 +97,8 @@ export type SectionProperties = {
 type IntermediateProps = Omit<SectionProperties, 'change'> & {
 	change?: {
 		id: number;
-		author: string;
-		date: Date;
+		author?: string;
+		date?: Date;
 		node: Node | undefined;
 	};
 };
@@ -162,7 +162,8 @@ export function sectionPropertiesFromNode(
 	if (props.change) {
 		props.change = {
 			...props.change,
-			date: new Date(props.change.date),
+			date: props.change.date ? new Date(props.change.date) : undefined,
+			author: props.change.author ? props.change.author : undefined,
 			...sectionPropertiesFromNode(props.change.node),
 			node: undefined,
 		};
@@ -271,8 +272,8 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 			if (exists($isTitlePage)) then element ${QNS.w}titlePg { attribute ${QNS.w}val { "1" } } else (), 
 			if (exists($change)) then element ${QNS.w}sectPrChange { 
 				attribute ${QNS.w}id { $change('id') }, 
-				attribute ${QNS.w}author { $change('author') },
-				attribute ${QNS.w}date { $change('date') }, 
+				if ($change('date')) then attribute ${QNS.w}date { $change('date') } else (),
+				if ($change('author')) then attribute ${QNS.w}author { $change('author') } else (),
 				$change('node')
 			} else ()
  		}`,
@@ -303,8 +304,12 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 			change: data.change
 				? {
 						id: data.change.id,
-						author: data.change.author,
-						date: data.change.date.toISOString(),
+						author: data.change.author
+							? data.change.author
+							: undefined,
+						date: data.change.date
+							? data.change.date.toISOString()
+							: undefined,
 						node: sectionPropertiesToNode(data.change),
 				  }
 				: null,

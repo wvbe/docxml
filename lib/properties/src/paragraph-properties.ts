@@ -1,3 +1,4 @@
+import type { ChangeInformation } from '../../utilities/src/changes.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
@@ -92,13 +93,7 @@ export type ParagraphProperties = {
 	/**
 	 * Change tracking info for this paragraph.
 	 */
-	change?:
-		| null
-		| ({
-				id: number;
-				author: string;
-				date: Date;
-		  } & Omit<ParagraphProperties, 'change'>);
+	change?: null | (ChangeInformation & Omit<ParagraphProperties, 'change'>);
 	/**
 	 * Used for formatting of the `rPr` elements at the top level of a paragraph.
 	 * This is text property changes applied to the whole parent paragraph.
@@ -174,7 +169,7 @@ export function paragraphPropertiesFromNode(
 						"depth": ./${QNS.w}ilvl/@${QNS.w}val/number()
 					},
 					"change": ${QNS.w}pPrChange/map {
-						"id": @${QNS.w}id/string(),
+						"id": @${QNS.w}id/number(),
 						"author": @${QNS.w}author/string(),
 						"date": @${QNS.w}date/string(),
 						"_node": ./${QNS.w}pPr
@@ -197,7 +192,8 @@ export function paragraphPropertiesFromNode(
 	if (data.change) {
 		data.change = {
 			...data.change,
-			date: new Date(data.change.date),
+			date: data.change.date ? new Date(data.change.date) : undefined,
+			author: data.change.author ? data.change.author : undefined,
 			...paragraphPropertiesFromNode(data.change._node),
 			_node: undefined,
 		};
@@ -298,8 +294,8 @@ export async function paragraphPropertiesToNode(
 
 				if (exists($change)) then element ${QNS.w}pPrChange {
 					attribute ${QNS.w}id { $change('id') },
-					attribute ${QNS.w}author { $change('author') },
-					attribute ${QNS.w}date { $change('date') },
+					if ($change('date')) then attribute ${QNS.w}date { $change('date') } else (),
+					if ($change('author')) then attribute ${QNS.w}author { $change('author') } else (),
 					$change('node')
 				} else (),
 
@@ -359,8 +355,12 @@ export async function paragraphPropertiesToNode(
 			change: data.change
 				? {
 						id: data.change.id,
-						author: data.change.author,
-						date: data.change.date.toISOString(),
+						author: data.change.author
+							? data.change.author
+							: undefined,
+						date: data.change.date
+							? data.change.date.toISOString()
+							: undefined,
 						node: await paragraphPropertiesToNode(data.change),
 				  }
 				: null,

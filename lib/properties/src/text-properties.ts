@@ -153,9 +153,9 @@ export type TextProperties = {
 	change?: (ChangeInformation & Omit<TextProperties, 'change'>) | null;
 
 	/**
-	 * A property used to indicate when a text run has been inserted.
+	 * A property used to indicate when a paragraph has been inserted.
 	 *
-	 * If present, the containing text run element will appear as a track-change inserted text run.
+	 * If present, the containing paragraph element will appear as a track-change inserted paragraph.
 	 *
 	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EZY5V.html
 	 */

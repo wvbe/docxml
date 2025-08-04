@@ -98,6 +98,71 @@ describe('Insertion', () => {
 			});
 		});
 
+		describe('Text without date and author', () => {
+			const insertedTextNode = create(
+				`<w:p xmlns:w="${NamespaceUri.w}">
+					<w:ins w:id="1">
+						<w:r><w:t>This is a new paragraph</w:t></w:r>
+					</w:ins>
+					<w:ins w:id="2">
+						<w:r><w:t>This is a another new paragraph</w:t></w:r>
+					</w:ins>
+				</w:p>
+				`,
+				emptyContext
+			);
+
+			const insertedText1 = new Insertion(
+				{ id: 1 },
+				new Text({}, 'This is a new paragraph')
+			);
+			const insertedText2 = new Insertion(
+				{ id: 2 },
+				new Text({}, 'This is a another new paragraph')
+			);
+			const insertedTextAsObject = new Paragraph(
+				{},
+				insertedText1,
+				insertedText2
+			);
+
+			const insertedTextAsNode = Paragraph.fromNode(
+				insertedTextNode,
+				emptyContext
+			);
+
+			it('Text node has expected insertion objects', () => {
+				// It should present the two insertions
+				expect(insertedTextAsNode.children).toHaveLength(2);
+				expect(insertedTextAsNode.children[0]).toEqual(insertedText1);
+				expect(insertedTextAsNode.children[1]).toEqual(insertedText2);
+			});
+
+			it('serializes and deserialized correctly', async () => {
+				expect(
+					serialize(await insertedTextAsObject.toNode([]))
+				).toEqual(
+					serialize(
+						create(
+							`<p xmlns="${NamespaceUri.w}">
+								<ins xmlns:ns1="${NamespaceUri.w}" ns1:id="1">
+										<r>
+											<t xml:space="preserve">This is a new paragraph</t>
+										</r>
+								</ins>
+								<ins xmlns:ns2="${NamespaceUri.w}" ns2:id="2">
+										<r>
+											<t xml:space="preserve">This is a another new paragraph</t>
+										</r>
+								</ins>
+								
+							</p>`
+						)
+					)
+				);
+			});
+		});
+
 		describe('BookmarkRangeStart and BookmarkRangeEnd ', () => {
 			const insertedBookmarkRangeNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">

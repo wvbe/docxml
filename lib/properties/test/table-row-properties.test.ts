@@ -28,3 +28,15 @@ describe('Table row formatting', () => {
 		}
 	);
 });
+
+describe('Table row insertion', () => {
+	const date = new Date();
+	test(
+		`<w:trPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}"/>
+		</w:trPr>`,
+		{
+			insertion: { author: 'Luis', date: date, id: 1 },
+		}
+	);
+});

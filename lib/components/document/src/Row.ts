@@ -25,7 +25,6 @@ import {
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 } from '../../../utilities/src/xquery.ts';
-import type { RowAddition } from '../../track-changes/src/RowAddition.ts';
 import type { RowDeletion } from '../../track-changes/src/RowDeletion.ts';
 import type { Cell } from './Cell.ts';
 import { Table } from './Table.ts';
@@ -67,7 +66,7 @@ export function parsePropsAndChildNodes(
  * Creates an XML node for a given row.
  */
 export async function createNodeFromRow(
-	row: Row | RowAddition | RowDeletion,
+	row: Row | RowDeletion,
 	ancestry: ComponentAncestor[]
 ): Promise<Node> {
 	const table = ancestry.find(
@@ -88,7 +87,7 @@ export async function createNodeFromRow(
 			}
 		`,
 		{
-			trPr: tableRowPropertiesToNode(row.props),
+			trPr: await tableRowPropertiesToNode(row.props),
 			children: await Promise.all(
 				table.model.getCellsInRow(y).map((cell, x) => {
 					const info = table.model.getCellInfo(cell);

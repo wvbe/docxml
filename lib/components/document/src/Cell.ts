@@ -1,3 +1,4 @@
+import type { Insertion } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -31,7 +32,8 @@ export type CellChild =
 	| Paragraph
 	| Table
 	| BookmarkRangeStart
-	| BookmarkRangeEnd;
+	| BookmarkRangeEnd
+	| Insertion;
 
 /**
  * A type describing the props accepted by {@link Cell}.

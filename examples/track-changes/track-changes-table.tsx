@@ -1,9 +1,8 @@
 /** @jsx  Docx.jsx */
-import { Cell } from '../../lib/components/document/src/Cell.ts';
-import { Row } from '../../lib/components/document/src/Row.ts';
 import Docx, {
+	Cell,
 	Paragraph,
-	RowAddition,
+	Row,
 	RowDeletion,
 	Section,
 	Table,
@@ -15,20 +14,14 @@ const docxFile = Docx.fromNothing().withSettings({
 	isTrackChangesEnabled: true,
 });
 
+const date = new Date();
+
 // Create a new table that includes a row, a row deletion, and a row addition.
 const testTable = new Table(
 	{},
 	new Row(
-		{},
+		{ insertion: { author: 'Luis', date: date, id: 1 } },
 		new Cell({}, new Paragraph({}, new Text({}, ' my old friend.')))
-	),
-	new RowAddition(
-		{
-			id: 1,
-			author: 'Inés',
-			date: new Date(),
-		},
-		new Cell({}, new Paragraph({}, new Text({}, ' it is time')))
 	),
 	new RowDeletion(
 		{ id: 2, author: 'Inés', date: new Date() },
@@ -48,16 +41,11 @@ await docxFile.toFile('track-changes-table.docx');
 // Alternatively, you can use JSX:
 await Docx.fromJsx(
 	<Table>
-		<Row>
+		<Row insertion={{ id: 1, author: 'ines', date: new Date() }}>
 			<Cell>
 				<Paragraph> my old friend.</Paragraph>
 			</Cell>
 		</Row>
-		<RowAddition id={1} author="ines" date={new Date()}>
-			<Cell>
-				<Paragraph> it is time</Paragraph>
-			</Cell>
-		</RowAddition>
 		<RowDeletion id={2} author="ines" date={new Date()}>
 			<Cell>
 				<Paragraph> sunlight comes</Paragraph>

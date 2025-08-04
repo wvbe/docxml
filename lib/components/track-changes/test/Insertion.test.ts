@@ -3,11 +3,14 @@ import { describe, it } from 'std/testing/bdd';
 import {
 	BookmarkRangeEnd,
 	BookmarkRangeStart,
+	Cell,
 	CommentRangeEnd,
 	CommentRangeStart,
 	Insertion,
 	Move,
 	Paragraph,
+	Row,
+	Table,
 	Text,
 } from '../../../../mod.ts';
 import { Archive } from '../../../classes/src/Archive.ts';
@@ -531,6 +534,62 @@ describe('Insertion', () => {
 									<t xml:space="preserve">This is a new paragraph</t>
 								</r>				
 						</p>`
+					)
+				)
+			);
+		});
+	});
+
+	describe('Inserted table row', () => {
+		const insertedRowNode = create(
+			`
+            <w:tr xmlns:w="${NamespaceUri.w}">
+                <w:trPr>
+                    <w:tblHeader/>
+                    <w:cantSplit/>
+                    <w:tblCellSpacing w:w="1701" w:type="dxa"/>
+                    <w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}"/>
+                </w:trPr>
+                <w:tc>
+                <w:tcPr/>
+                <w:p>
+                    <w:r>
+                        <w:t xml:space="preserve"> it is time</w:t>
+                    </w:r>
+                </w:p>
+                </w:tc>
+            </w:tr>`,
+			emptyContext
+		);
+
+		const insertedRowAsProp = new Row(
+			{
+				insertion: { author: 'Luis', date: date, id: 1 },
+			},
+			new Cell({})
+		);
+		const insertedRowAsNode = Row.fromNode(insertedRowNode, emptyContext);
+
+		it('Row node has expected insertion objects', () => {
+			expect(insertedRowAsNode.props.insertion).toEqual(
+				insertedRowAsProp.props.insertion
+			);
+		});
+
+		it('serializes and deserialized correctly', async () => {
+			const testTable = new Table({});
+			expect(
+				serialize(await insertedRowAsProp.toNode([testTable]))
+			).toEqual(
+				serialize(
+					create(
+						`<tr xmlns="${NamespaceUri.w}">
+							<trPr>
+								<ins xmlns:ns1="${
+									NamespaceUri.w
+								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}"/>
+							</trPr>
+            			</tr>`
 					)
 				)
 			);

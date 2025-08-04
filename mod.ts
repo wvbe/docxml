@@ -146,11 +146,6 @@ export {
 	type MoveRangeStartProps,
 } from './lib/components/track-changes/src/MoveRangeStart.ts';
 export {
-	RowAddition,
-	type RowAdditionChild,
-	type RowAdditionProps,
-} from './lib/components/track-changes/src/RowAddition.ts';
-export {
 	RowDeletion,
 	type RowDeletionChild,
 	type RowDeletionProps,

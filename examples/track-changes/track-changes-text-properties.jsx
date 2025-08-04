@@ -1,11 +1,5 @@
 /** @jsx  Docx.jsx */
-import Docx, {
-	Paragraph,
-	Section,
-	Text,
-	TextAddition,
-	TextDeletion,
-} from '../../mod.ts';
+import Docx, { Paragraph, Section, Text } from '../../mod.ts';
 
 // Create a new .docx file with track changes enabled.
 const docxFile = Docx.fromNothing().withSettings({
@@ -15,39 +9,20 @@ const docxFile = Docx.fromNothing().withSettings({
 // Create a new paragraph that includes text, a text deletion, and a text addition.
 const testParagraph = new Paragraph(
 	{},
-	new Text({}, 'Hello, '),
-	new TextDeletion(
+	new Text(
 		{
-			id: 2,
-			author: 'Gabe',
-			date: new Date(),
-		},
-		new Text({}, 'nighttime')
-	),
-	new TextAddition(
-		{ id: 2, author: 'Paul Simon', date: new Date() },
-		new Text({}, 'darkness')
-	),
-	new Text({}, ' my old friend.'),
-
-	// This will set our current text style as italics. It will also create a recorded change
-	// that indicates the text style **was** bold, but is no longer.
-	new TextAddition(
-		{ id: 1, author: 'Gabe', date: new Date() },
-		new Text(
-			{
-				color: 'red',
-				isItalic: true,
-				change: {
-					author: 'Gabe',
-					id: 22,
-					date: new Date(),
-					isBold: true,
-					color: 'blue',
-				},
+			insertion: { id: 1, author: 'ines', date: new Date() },
+			color: 'red',
+			isItalic: true,
+			change: {
+				author: 'Gabe',
+				id: 22,
+				date: new Date(),
+				isBold: true,
+				color: 'blue',
 			},
-			` I've come to talk with you again.`
-		)
+		},
+		'my old friend.'
 	)
 );
 
@@ -58,4 +33,24 @@ const testSection = new Section({}, testParagraph);
 docxFile.document.set(testSection);
 
 // Save our document.
-await docxFile.toFile('track-text-property-changes.docx');
+await docxFile.toFile('track-changes-text-properties.docx');
+
+// Alternatively, you can use JSX:
+await Docx.fromJsx(
+	<Paragraph>
+		<Text
+			pilcrow={{ insertion: { id: 1, author: 'ines', date: new Date() } }}
+			color="red"
+			isItalic
+			change={{
+				author: 'Gabe',
+				id: 22,
+				date: new Date(),
+				isBold: true,
+				color: 'blue',
+			}}
+		>
+			I've come to talk with you again.
+		</Text>
+	</Paragraph>
+).toFile('track-changes-text-properties-jsx.docx');

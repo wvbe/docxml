@@ -30,7 +30,7 @@ export type BreakProps = {
 
 /**
  * A component that represents a line break, page break or section break in a DOCX document. Place
- * this in one of the `<Text>`, `<TextAddition>` or `<TextDeletion>` components.
+ * this in one of the `<Text>` or `<TextDeletion>` components.
  */
 export class Break extends Component<BreakProps, BreakChild> {
 	public static override readonly children: string[] = [];

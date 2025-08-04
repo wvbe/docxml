@@ -6,14 +6,12 @@ import '../../comments/src/Comment.ts';
 import '../../comments/src/CommentRangeEnd.ts';
 import '../../comments/src/CommentRangeStart.ts';
 import '../../document/src/Text.ts';
-import '../../track-changes/src/TextAddition.ts';
 import '../../track-changes/src/TextDeletion.ts';
 import './BookmarkRangeEnd.ts';
 import './BookmarkRangeStart.ts';
 import './Field.ts';
 import './Hyperlink.ts';
 
-import type { Hyperlink } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -37,23 +35,23 @@ import type { Comment } from '../../comments/src/Comment.ts';
 import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
 import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
 import type { Text } from '../../document/src/Text.ts';
+import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { Move } from '../../track-changes/src/Move.ts';
 import type { MoveRangeEnd } from '../../track-changes/src/MoveRangeEnd.ts';
 import type { MoveRangeStart } from '../../track-changes/src/MoveRangeStart.ts';
-import type { TextAddition } from '../../track-changes/src/TextAddition.ts';
 import type { TextDeletion } from '../../track-changes/src/TextDeletion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import type { Field } from './Field.ts';
 import type { FootnoteAnchor } from './FootnoteAnchor.ts';
 import type { FootnoteReference } from './FootnoteReference.ts';
+import type { Hyperlink } from './Hyperlink.ts';
 
 /**
  * A type describing the components accepted as children of {@link Paragraph}.
  */
 export type ParagraphChild =
 	| Text
-	| TextAddition
 	| TextDeletion
 	| CommentRangeStart
 	| CommentRangeEnd
@@ -66,7 +64,8 @@ export type ParagraphChild =
 	| Move
 	| MoveRangeStart
 	| MoveRangeEnd
-	| FootnoteAnchor;
+	| FootnoteAnchor
+	| Insertion;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
@@ -91,7 +90,6 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'CommentRangeStart',
 		'Hyperlink',
 		'Text',
-		'TextAddition',
 		'TextDeletion',
 		'Field',
 		'FootnoteReference',
@@ -99,6 +97,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'Move',
 		'MoveRangeStart',
 		'MoveRangeEnd',
+		'Insertion',
 	];
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;

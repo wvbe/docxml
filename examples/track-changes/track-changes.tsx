@@ -1,10 +1,10 @@
 /** @jsx  Docx.jsx */
 import { inch } from '../../lib/utilities/src/length.ts';
 import Docx, {
+	Insertion,
 	Paragraph,
 	Section,
 	Text,
-	TextAddition,
 	TextDeletion,
 } from '../../mod.ts';
 
@@ -25,12 +25,12 @@ const testParagraph = new Paragraph(
 		},
 		new Text({}, 'nighttime')
 	),
-	new TextAddition(
+	new Insertion(
 		{ id: 2, author: 'Paul Simon', date: new Date() },
 		new Text({}, 'darkness')
 	),
 	new Text({}, ' my old friend.'),
-	new TextAddition(
+	new Insertion(
 		{ id: 1, author: 'Gabe', date: new Date() },
 		new Text({}, ` I've come to talk with you again.`)
 	)
@@ -67,9 +67,9 @@ await Docx.fromJsx(
 			<TextDeletion id={1} author="Gabe" date={new Date()}>
 				<Text>six</Text>
 			</TextDeletion>
-			<TextAddition id={1} author="Gabe" date={new Date()}>
+			<Insertion id={1} author="Gabe" date={new Date()}>
 				<Text>seven</Text>
-			</TextAddition>
+			</Insertion>
 			<Text> years ago...</Text>
 		</Paragraph>
 	</Section>

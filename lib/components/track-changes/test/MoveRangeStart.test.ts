@@ -18,7 +18,7 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 			)
 		);
 		expect(moveToRangeStart.props.author).toBe('Gabe');
-		expect(moveToRangeStart.props.date).toBe(date.toISOString());
+		expect(moveToRangeStart.props.date).toEqual(date);
 		expect(moveToRangeStart.props.id).toBe(0);
 		expect(moveToRangeStart.props.name).toBe('Move_to_1');
 		expect(moveToRangeStart.props.type).toBe('to');
@@ -33,9 +33,7 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 			)
 		);
 		expect(moveToRangeStartWithoutAuthor.props.author).toBe(undefined);
-		expect(moveToRangeStartWithoutAuthor.props.date).toBe(
-			date.toISOString()
-		);
+		expect(moveToRangeStartWithoutAuthor.props.date).toEqual(date);
 		expect(moveToRangeStartWithoutAuthor.props.id).toBe(1);
 		expect(moveToRangeStartWithoutAuthor.props.name).toBe('Move_to_1');
 		expect(moveToRangeStartWithoutAuthor.props.type).toBe('to');
@@ -75,9 +73,7 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 			)
 		);
 		expect(moveFromRangeStartWithoutAuthor.props.author).toBe(undefined);
-		expect(moveFromRangeStartWithoutAuthor.props.date).toBe(
-			date.toISOString()
-		);
+		expect(moveFromRangeStartWithoutAuthor.props.date).toEqual(date);
 		expect(moveFromRangeStartWithoutAuthor.props.id).toBe(1);
 		expect(moveFromRangeStartWithoutAuthor.props.name).toBe('Move_from_1');
 		expect(moveFromRangeStartWithoutAuthor.props.type).toBe('from');

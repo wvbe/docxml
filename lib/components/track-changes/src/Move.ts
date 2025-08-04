@@ -5,10 +5,10 @@ import type {
 	BookmarkRangeStart,
 	CommentRangeEnd,
 	CommentRangeStart,
+	Insertion,
 	MoveRangeEnd,
 	MoveRangeStart,
 	Text,
-	TextAddition,
 	TextDeletion,
 } from '../../../../mod.ts';
 import {
@@ -34,12 +34,12 @@ export type MoveChild =
 	| BookmarkRangeEnd
 	| CommentRangeStart
 	| CommentRangeEnd
-	| TextAddition
 	| TextDeletion
 	| Text
 	| Move
 	| MoveRangeStart
-	| MoveRangeEnd;
+	| MoveRangeEnd
+	| Insertion;
 
 /**
  * A type describing the props accepted by {@link Move}.
@@ -61,12 +61,12 @@ export class Move extends Component<MoveProps, MoveChild> {
 		'BookmarkRangeStart',
 		'CommentRangeStart',
 		'CommentRangeEnd',
-		'TextAddition',
 		'TextDeletion',
 		'Text',
 		'Move',
 		'MoveRangeStart',
 		'MoveRangeEnd',
+		'Insertion',
 	];
 
 	public static override readonly mixed: boolean = false;
@@ -119,8 +119,8 @@ export class Move extends Component<MoveProps, MoveChild> {
 			map { 
 				"children": array{./(
 					${QNS.w}r |
-					${QNS.w}del |
 					${QNS.w}ins |
+					${QNS.w}del |
 					${QNS.w}commentRangeStart |
 					${QNS.w}commentRangeEnd |
 					${QNS.w}bookmarkStart |

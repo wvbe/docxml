@@ -2,7 +2,6 @@
  * @file
  * Note this file is 99% the same as RowDeletion. Please maintain both accordingly.
  */
-import { Row } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -45,8 +44,8 @@ export type RowAdditionProps = ChangeInformation & TableRowProperties;
  * a normal row, but requires some props describing the change.
  */
 export class RowAddition extends Component<RowAdditionProps, RowAdditionChild> {
-	public static override readonly children: string[] = Row.children;
-	public static override readonly mixed: boolean = Row.mixed;
+	public static override readonly children: string[] = ['Cell'];
+	public static override readonly mixed: boolean = false;
 
 	/**
 	 * Creates an XML DOM node for this component instance.

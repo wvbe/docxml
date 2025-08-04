@@ -94,6 +94,22 @@ describe('Complex character formatting', () => {
 	);
 });
 
+describe('Insertion property', () => {
+	test(
+		`
+		<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:ins w:author="Gabe" w:date="${date.toISOString()}" w:id="1" /> 
+		</w:rPr>`,
+		{
+			insertion: {
+				author: 'Gabe',
+				date: date,
+				id: 1,
+			},
+		}
+	);
+});
+
 describe('Change Information properties', () => {
 	// Node with author, id and date
 	test(

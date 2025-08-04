@@ -14,7 +14,7 @@ import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
 import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
 import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
-import type { TextAddition } from '../../track-changes/src/TextAddition.ts';
+import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { TextDeletion } from '../../track-changes/src/TextDeletion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
@@ -30,9 +30,9 @@ export type FieldChild =
 	| CommentRangeStart
 	| CommentRangeEnd
 	| TextDeletion
-	| TextAddition
 	| Text
-	| Hyperlink;
+	| Hyperlink
+	| Insertion;
 
 /**
  * A type describing the props accepted by {@link Field}.
@@ -67,9 +67,9 @@ export class Field extends Component<FieldProps, FieldChild> {
 		'CommentRangeStart',
 		'CommentRangeEnd',
 		'TextDeletion',
-		'TextAddition',
 		'Text',
 		'Hyperlink',
+		'Insertion',
 	];
 
 	public static override readonly mixed: boolean = false;

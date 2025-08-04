@@ -20,12 +20,11 @@ import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToNodes } from '../../../utilities/src/xquery.ts';
 import type { Text } from '../../document/src/Text.ts';
-import type { TextAddition } from '../../track-changes/src/TextAddition.ts';
 
 /**
  * A type describing the components accepted as children of {@link TextDeletion}.
  */
-export type TextDeletionChild = Text | TextDeletion | TextAddition;
+export type TextDeletionChild = Text | TextDeletion;
 
 /**
  * A type describing the props accepted by {@link TextDeletion}.
@@ -41,7 +40,6 @@ export class TextDeletion extends Component<
 > {
 	public static override readonly children: string[] = [
 		'Text',
-		'TextAddition',
 		// Sometimes deletions nested into themselves work well? At other times, they don't.
 		// For safety, keep it disabled now (or put it behind a flag possibly)
 		// 'TextDeletion',

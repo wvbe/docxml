@@ -89,7 +89,7 @@ export class MoveRangeStart extends Component<
 			type: type,
 			id: id,
 			name: name,
-			date: date ? date : undefined,
+			date: date ? new Date(date) : undefined,
 			author: author ? author : undefined,
 		});
 	}

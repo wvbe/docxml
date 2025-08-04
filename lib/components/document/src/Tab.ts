@@ -18,7 +18,7 @@ export type TabProps = { [key: string]: never };
 
 /**
  * A component that represents a tab space in a DOCX document. Place
- * this in one of the `<Text>`, `<TextAddition>` or `<TextDeletion>` components.
+ * this in one of the `<Text>` or `<TextDeletion>` components.
  */
 export class Tab extends Component<TabProps, TabChild> {
 	public static override readonly children: string[] = [];

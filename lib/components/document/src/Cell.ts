@@ -18,6 +18,7 @@ import {
 	isValidNumber,
 } from '../../../utilities/src/parameter-checking.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
+import type { Deletion } from '../../track-changes/src/Deletion.ts';
 import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
@@ -33,7 +34,8 @@ export type CellChild =
 	| Table
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
-	| Insertion;
+	| Insertion
+	| Deletion;
 
 /**
  * A type describing the props accepted by {@link Cell}.

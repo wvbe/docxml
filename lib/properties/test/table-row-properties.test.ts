@@ -40,3 +40,15 @@ describe('Table row insertion', () => {
 		}
 	);
 });
+
+describe('Table row deletion', () => {
+	const date = new Date();
+	test(
+		`<w:trPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}"/>
+		</w:trPr>`,
+		{
+			deletion: { author: 'Luis', date: date, id: 1 },
+		}
+	);
+});

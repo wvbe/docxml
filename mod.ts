@@ -150,11 +150,6 @@ export {
 	type MoveRangeStartChild,
 	type MoveRangeStartProps,
 } from './lib/components/track-changes/src/MoveRangeStart.ts';
-export {
-	RowDeletion,
-	type RowDeletionChild,
-	type RowDeletionProps,
-} from './lib/components/track-changes/src/RowDeletion.ts';
 export { FileMime } from './lib/enums.ts';
 
 // Shared properties

@@ -4,7 +4,6 @@ import {
 	checkForForbiddenParameters,
 	isValidNumber,
 } from '../../../utilities/src/parameter-checking.ts';
-import '../../track-changes/src/RowDeletion.ts';
 import './Row.ts';
 
 import {
@@ -26,13 +25,12 @@ import { type Length, twip } from '../../../utilities/src/length.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { TableGridModel } from '../../../utilities/src/tables.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import type { RowDeletion } from '../../track-changes/src/RowDeletion.ts';
 import type { Row } from './Row.ts';
 
 /**
  * A type describing the components accepted as children of {@link Table}.
  */
-export type TableChild = Row | RowDeletion;
+export type TableChild = Row;
 
 /**
  * A type describing the props accepted by {@link Table}.
@@ -45,7 +43,7 @@ export type TableProps = TableProperties & {
  * A component that represents a table.
  */
 export class Table extends Component<TableProps, TableChild> {
-	public static override readonly children: string[] = ['Row', 'RowDeletion'];
+	public static override readonly children: string[] = ['Row'];
 	public static override readonly mixed: boolean = false;
 
 	/**

@@ -112,7 +112,7 @@ export async function tableConditionalPropertiesToNode(
 			rPr: tblpr.text ? await textPropertiesToNode(tblpr.text) : null,
 			tblPr: tblpr.table ? tablePropertiesToNode(tblpr.table) : null,
 			tcPr: tblpr.cell
-				? await tableCellPropertiesToNode(tblpr.cell, false)
+				? tableCellPropertiesToNode(tblpr.cell, false)
 				: null,
 		}
 	);

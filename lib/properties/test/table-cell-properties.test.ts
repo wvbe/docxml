@@ -190,7 +190,7 @@ describe('Table cell formatting', () => {
 		const date = new Date();
 		test(
 			`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}"/>
+				<w:cellIns w:id="1" w:author="Luis" w:date="${date.toISOString()}"/>
 			</w:tcPr>`,
 			{
 				insertion: { author: 'Luis', date: date, id: 1 },
@@ -202,7 +202,7 @@ describe('Table cell formatting', () => {
 		const date = new Date();
 		test(
 			`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}"/>
+				<w:cellDel w:id="1" w:author="Luis" w:date="${date.toISOString()}"/>
 			</w:tcPr>`,
 			{
 				deletion: { author: 'Luis', date: date, id: 1 },

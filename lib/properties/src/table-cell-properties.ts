@@ -1,8 +1,6 @@
-import { Deletion } from '../../components/track-changes/src/Deletion.ts';
-import {
-	Insertion,
-	type InsertionProps,
-} from '../../components/track-changes/src/Insertion.ts';
+import { CellDeletion } from '../../components/track-changes/src/CellDeletion.ts';
+import { CellInsertion } from '../../components/track-changes/src/CellInsertion.ts';
+import type { InsertionProps } from '../../components/track-changes/src/Insertion.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
@@ -113,12 +111,12 @@ export function tableCellPropertiesFromNode(
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
 					"verticalAlignment": ./${QNS.w}vAlign/@${QNS.w}val/string(),
-						"insertion": ./${QNS.w}ins/map {
+						"insertion": ./${QNS.w}cellIns/map {
 						"id": @${QNS.w}id/number(), 
 						"author": @${QNS.w}author/string(), 
 						"date": @${QNS.w}date/string()
 					},
-					"deletion": ./${QNS.w}del/map {
+					"deletion": ./${QNS.w}cellDel/map {
 						"id": @${QNS.w}id/number(), 
 						"author": @${QNS.w}author/string(), 
 						"date": @${QNS.w}date/string()
@@ -151,10 +149,10 @@ export function tableCellPropertiesFromNode(
 	return props;
 }
 
-export async function tableCellPropertiesToNode(
+export function tableCellPropertiesToNode(
 	tcpr: TableCellProperties = {},
 	asRepeatingNode: boolean
-): Promise<Node | null> {
+): Node | null {
 	if (!Object.keys(tcpr).length) {
 		return null;
 	}
@@ -213,10 +211,10 @@ export async function tableCellPropertiesToNode(
 				: null,
 			verticalAlignment: tcpr.verticalAlignment || null,
 			insertion: tcpr.insertion
-				? await new Insertion(tcpr.insertion).toNode([])
+				? new CellInsertion(tcpr.insertion).toNode()
 				: null,
 			deletion: tcpr.deletion
-				? await new Deletion(tcpr.deletion).toNode([])
+				? new CellDeletion(tcpr.deletion).toNode()
 				: null,
 		}
 	);

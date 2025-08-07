@@ -37,9 +37,7 @@ export type CellChild =
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
 	| Insertion
-	| Deletion
-	| CellInsertion
-	| CellDeletion;
+	| Deletion;
 
 /**
  * A type describing the props accepted by {@link Cell}.
@@ -58,8 +56,6 @@ export class Cell extends Component<CellProps, CellChild> {
 		'Table',
 		'BookmarkRangeStart',
 		'BookmarkRangeEnd',
-		'CellInsertion',
-		'CellDeletion',
 	];
 	public static override readonly mixed: boolean = false;
 

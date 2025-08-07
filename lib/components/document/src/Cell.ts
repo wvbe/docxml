@@ -18,6 +18,8 @@ import {
 	isValidNumber,
 } from '../../../utilities/src/parameter-checking.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
+import { CellDeletion } from '../../track-changes/src/CellDeletion.ts';
+import { CellInsertion } from '../../track-changes/src/CellInsertion.ts';
 import type { Deletion } from '../../track-changes/src/Deletion.ts';
 import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
@@ -35,7 +37,9 @@ export type CellChild =
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
 	| Insertion
-	| Deletion;
+	| Deletion
+	| CellInsertion
+	| CellDeletion;
 
 /**
  * A type describing the props accepted by {@link Cell}.
@@ -54,6 +58,8 @@ export class Cell extends Component<CellProps, CellChild> {
 		'Table',
 		'BookmarkRangeStart',
 		'BookmarkRangeEnd',
+		'CellInsertion',
+		'CellDeletion',
 	];
 	public static override readonly mixed: boolean = false;
 
@@ -67,43 +73,58 @@ export class Cell extends Component<CellProps, CellChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
-		const table = ancestry.find(
-			(ancestor): ancestor is Table => ancestor instanceof Table
-		);
-		if (!table) {
-			throw new Error(
-				'A cell cannot be rendered outside the context of a table'
+		const table = ancestry.find((a): a is Table => a instanceof Table);
+		if (!table) throw new Error('A cell must be inside a table');
+
+		/* 1. Create tcPr-level change nodes ONCE (from props, not children) */
+		const tcPrChangeNodes: Node[] = [];
+		if (this.props.insertion) {
+			tcPrChangeNodes.push(
+				new CellInsertion(this.props.insertion).toNode() // no ancestry needed
+			);
+		}
+		if (this.props.deletion) {
+			tcPrChangeNodes.push(
+				new CellDeletion(this.props.deletion).toNode()
 			);
 		}
 
-		const children = (await this.childrenToNode(ancestry)) as Node[];
-		if (!(this.children[this.children.length - 1] instanceof Paragraph)) {
-			// Cells must always end with a paragraph, or MS Word will complain about
-			// file corruption.
-			children.push(await new Paragraph({}).toNode([this, ...ancestry]));
+		/* 2. Normal children go into the cell body */
+		const bodyNodes: Node[] = [];
+		for (const child of this.children) {
+			bodyNodes.push(await child.toNode([this, ...ancestry]));
 		}
 
-		return create(
-			`element ${QNS.w}tc {
-				$tcPr,
-				$children
-			}`,
+		/* ensure cell ends with a paragraph */
+		if (!(this.children.at(-1) instanceof Paragraph)) {
+			bodyNodes.push(await new Paragraph({}).toNode([this, ...ancestry]));
+		}
+
+		/* 3. Build <tcPr> WITHOUT insertion/deletion props */
+		const {
+			insertion: _insertion,
+			deletion: _deletion,
+			...pureTcPrProps
+		} = this.props; // strip them
+		const tcPrNode = await tableCellPropertiesToNode(
 			{
-				tcPr: await tableCellPropertiesToNode(
-					{
-						colSpan: this.getColSpan(),
-						rowSpan: this.getRowSpan(),
-						width:
-							table.props.columnWidths?.[
-								table.model.getCellInfo(this).column
-							] || null,
-						...this.props,
-					},
-					false
-				),
-				children,
-			}
+				colSpan: this.getColSpan(),
+				rowSpan: this.getRowSpan(),
+				width:
+					table.props.columnWidths?.[
+						table.model.getCellInfo(this).column
+					] ?? null,
+				...pureTcPrProps,
+			},
+			false
 		);
+		tcPrChangeNodes.forEach((n) => tcPrNode?.appendChild(n));
+
+		/* 4. Assemble the cell */
+		return create(`element ${QNS.w}tc { $tcPr, $body }`, {
+			tcPr: tcPrNode,
+			body: bodyNodes,
+		});
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -228,7 +249,11 @@ export class Cell extends Component<CellProps, CellChild> {
 						then ./${QNS.w}tcPr/${QNS.w}gridSpan/@${QNS.w}val/number()
 						else 1,
 					"rowSpan": $rowEnd - $rowStart,
-					"children": array{ ./(${QNS.w}p) },
+					"children": array{
+						./(${QNS.w}p),
+						./${QNS.w}tcPr/${QNS.w}cellIns,
+						./${QNS.w}tcPr/${QNS.w}cellDel
+					},
 					"verticalAlignment": ./${QNS.w}tcPr/${QNS.w}vAlign/@${QNS.w}val/string()
 				}
 			`,

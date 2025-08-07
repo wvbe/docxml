@@ -106,7 +106,7 @@ export class Cell extends Component<CellProps, CellChild> {
 			deletion: _deletion,
 			...pureTcPrProps
 		} = this.props; // strip them
-		const tcPrNode = await tableCellPropertiesToNode(
+		const tcPrNode = tableCellPropertiesToNode(
 			{
 				colSpan: this.getColSpan(),
 				rowSpan: this.getRowSpan(),
@@ -128,11 +128,11 @@ export class Cell extends Component<CellProps, CellChild> {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public async toRepeatingNode(
+	public toRepeatingNode(
 		ancestry: ComponentAncestor[],
 		column: number,
 		_row: number
-	): Promise<Node | null> {
+	): Node | null {
 		const table = ancestry.find(
 			(ancestor): ancestor is Table => ancestor instanceof Table
 		);
@@ -154,7 +154,7 @@ export class Cell extends Component<CellProps, CellChild> {
 				element ${QNS.w}p {}
 			}`,
 			{
-				tcPr: await tableCellPropertiesToNode(
+				tcPr: tableCellPropertiesToNode(
 					{
 						width: table.props.columnWidths?.[info.column] || null,
 						colSpan: this.getColSpan(),
@@ -254,7 +254,17 @@ export class Cell extends Component<CellProps, CellChild> {
 						./${QNS.w}tcPr/${QNS.w}cellIns,
 						./${QNS.w}tcPr/${QNS.w}cellDel
 					},
-					"verticalAlignment": ./${QNS.w}tcPr/${QNS.w}vAlign/@${QNS.w}val/string()
+					"verticalAlignment": ./${QNS.w}tcPr/${QNS.w}vAlign/@${QNS.w}val/string(),
+					  "insertion": ./${QNS.w}tcPr/${QNS.w}cellIns/map {
+							"id": @${QNS.w}id/number(),
+							"author": @${QNS.w}author/string(),
+							"date": @${QNS.w}date/string()
+						},
+						"deletion": ./${QNS.w}tcPr/${QNS.w}cellDel/map {
+								"id": @${QNS.w}id/number(),
+								"author": @${QNS.w}author/string(),
+								"date": @${QNS.w}date/string()
+						}
 				}
 			`,
 			node
@@ -262,6 +272,26 @@ export class Cell extends Component<CellProps, CellChild> {
 		if (mergedAway) {
 			return null;
 		}
+
+		// Convert the date string to a Date object.
+		if (props.insertion) {
+			props.insertion.date = props.insertion.date
+				? new Date(props.insertion.date)
+				: undefined;
+			props.insertion.author = props.insertion.author
+				? props.insertion.author
+				: undefined;
+		}
+
+		if (props.deletion) {
+			props.deletion.date = props.deletion.date
+				? new Date(props.deletion.date)
+				: undefined;
+			props.deletion.author = props.deletion.author
+				? props.deletion.author
+				: undefined;
+		}
+
 		return new Cell(
 			props,
 			...createChildComponentsFromNodes<CellChild>(

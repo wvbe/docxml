@@ -89,7 +89,7 @@ export class Cell extends Component<CellProps, CellChild> {
 				$children
 			}`,
 			{
-				tcPr: tableCellPropertiesToNode(
+				tcPr: await tableCellPropertiesToNode(
 					{
 						colSpan: this.getColSpan(),
 						rowSpan: this.getRowSpan(),
@@ -107,11 +107,11 @@ export class Cell extends Component<CellProps, CellChild> {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public toRepeatingNode(
+	public async toRepeatingNode(
 		ancestry: ComponentAncestor[],
 		column: number,
 		_row: number
-	): Node | null {
+	): Promise<Node | null> {
 		const table = ancestry.find(
 			(ancestor): ancestor is Table => ancestor instanceof Table
 		);
@@ -133,7 +133,7 @@ export class Cell extends Component<CellProps, CellChild> {
 				element ${QNS.w}p {}
 			}`,
 			{
-				tcPr: tableCellPropertiesToNode(
+				tcPr: await tableCellPropertiesToNode(
 					{
 						width: table.props.columnWidths?.[info.column] || null,
 						colSpan: this.getColSpan(),

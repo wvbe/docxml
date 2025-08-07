@@ -283,9 +283,6 @@ export class Cell extends Component<CellProps, CellChild> {
 			props.deletion.date = props.deletion.date
 				? new Date(props.deletion.date)
 				: undefined;
-			props.deletion.author = props.deletion.author
-				? props.deletion.author
-				: undefined;
 		}
 
 		return new Cell(

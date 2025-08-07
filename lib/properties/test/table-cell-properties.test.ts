@@ -185,4 +185,28 @@ describe('Table cell formatting', () => {
 			);
 		});
 	});
+
+	describe('Table cell insertion', () => {
+		const date = new Date();
+		test(
+			`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}"/>
+			</w:tcPr>`,
+			{
+				insertion: { author: 'Luis', date: date, id: 1 },
+			}
+		);
+	});
+
+	describe('Table cell deletion', () => {
+		const date = new Date();
+		test(
+			`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}"/>
+			</w:tcPr>`,
+			{
+				deletion: { author: 'Luis', date: date, id: 1 },
+			}
+		);
+	});
 });

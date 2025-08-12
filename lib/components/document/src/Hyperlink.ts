@@ -15,13 +15,15 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
+import type { Deletion } from '../../track-changes/src/Deletion.ts';
+import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { Field } from './Field.ts';
 import type { Text } from './Text.ts';
 
 /**
  * A type describing the components accepted as children of {@link Hyperlink}.
  */
-export type HyperlinkChild = Text | Field;
+export type HyperlinkChild = Text | Field | Insertion | Deletion;
 
 /**
  * A type describing the props accepted by {@link Hyperlink}.
@@ -50,7 +52,12 @@ export type HyperlinkProps =
  * A component that represents a hyperlink to another part of the same document.
  */
 export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
-	public static override readonly children: string[] = ['Text', 'Field'];
+	public static override readonly children: string[] = [
+		'Text',
+		'Field',
+		'Insertion',
+		'Deletion',
+	];
 
 	public static override readonly mixed: boolean = false;
 
@@ -108,7 +115,9 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 				"tooltip": ./@${QNS.w}tooltip/string(),
 				"children": array{ ./(
 					${QNS.w}r |
-					${QNS.w}fldSimple
+					${QNS.w}fldSimple |
+					${QNS.w}ins |
+					${QNS.w}del
 				) }
 			}`,
 			node

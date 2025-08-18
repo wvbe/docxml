@@ -18,6 +18,17 @@ const testTable = new Table(
 	new Row(
 		{ deletion: { author: 'Ángel', date: date, id: 1 } },
 		new Cell({}, new Paragraph({}, new Text({}, ' my new friend.')))
+	),
+	new Row(
+		{},
+		new Cell(
+			{ deletion: { author: 'Carlos', date: date, id: 2 } },
+			new Paragraph({}, new Text({}, 'Bye!'))
+		),
+		new Cell(
+			{ insertion: { author: 'Carlos', date: date, id: 2 } },
+			new Paragraph({}, new Text({}, 'Hello!'))
+		)
 	)
 );
 
@@ -41,6 +52,14 @@ await Docx.fromJsx(
 		<Row deletion={{ id: 1, author: 'ines', date: new Date() }}>
 			<Cell>
 				<Paragraph> my new friend.</Paragraph>
+			</Cell>
+		</Row>
+		<Row>
+			<Cell deletion={{ id: 2, author: 'carlos', date: new Date() }}>
+				<Paragraph> Bye!</Paragraph>
+			</Cell>
+			<Cell insertion={{ id: 2, author: 'carlos', date: new Date() }}>
+				<Paragraph> Hello!</Paragraph>
 			</Cell>
 		</Row>
 	</Table>

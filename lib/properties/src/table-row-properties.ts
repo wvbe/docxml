@@ -90,9 +90,9 @@ export function tableRowPropertiesFromNode(
 }
 
 export async function tableRowPropertiesToNode(
-	tcpr: TableRowProperties = {}
+	trpr: TableRowProperties = {}
 ): Promise<Node | null> {
-	if (!Object.keys(tcpr).length) {
+	if (!Object.keys(trpr).length) {
 		return null;
 	}
 	return create(
@@ -107,14 +107,14 @@ export async function tableRowPropertiesToNode(
 			$deletion
 		}`,
 		{
-			isHeaderRow: tcpr.isHeaderRow || false,
-			isUnsplittable: tcpr.isUnsplittable || false,
-			cellSpacing: tcpr.cellSpacing || null,
-			insertion: tcpr.insertion
-				? await new Insertion(tcpr.insertion).toNode([])
+			isHeaderRow: trpr.isHeaderRow || false,
+			isUnsplittable: trpr.isUnsplittable || false,
+			cellSpacing: trpr.cellSpacing || null,
+			insertion: trpr.insertion
+				? await new Insertion(trpr.insertion).toNode([])
 				: null,
-			deletion: tcpr.deletion
-				? await new Deletion(tcpr.deletion).toNode([])
+			deletion: trpr.deletion
+				? await new Deletion(trpr.deletion).toNode([])
 				: null,
 		}
 	);

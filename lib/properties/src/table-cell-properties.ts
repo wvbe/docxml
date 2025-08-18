@@ -1,3 +1,7 @@
+import { CellDeletion } from '../../components/track-changes/src/CellDeletion.ts';
+import { CellInsertion } from '../../components/track-changes/src/CellInsertion.ts';
+import type { DeletionProps } from '../../components/track-changes/src/Deletion.ts';
+import type { InsertionProps } from '../../components/track-changes/src/Insertion.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
@@ -44,12 +48,28 @@ export type TableCellProperties = {
 	 * The vertical alignment of this cell.
 	 */
 	verticalAlignment?: null | 'bottom' | 'center' | 'top';
+	/**
+	 * A property used to indicate when a cell has been inserted.
+	 *
+	 * If present, the containing cell element will appear as a track-change inserted cell.
+	 *
+	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_cellIns_topic_ID0EQ1OV.html
+	 */
+	insertion?: null | InsertionProps;
+	/**
+	 * A property used to indicate when a cell has been deleted.
+	 *
+	 * If present, the containing cell element will appear as a track-change deleted cell.
+	 *
+	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_cellDel_topic_ID0E5IOV.html
+	 */
+	deletion?: null | DeletionProps;
 };
 
 export function tableCellPropertiesFromNode(
 	node?: Node | null
 ): TableCellProperties {
-	return node
+	const props = node
 		? evaluateXPathToMap<TableCellProperties>(
 				`
 				let $colStart := docxml:cell-column(.)
@@ -91,18 +111,53 @@ export function tableCellPropertiesFromNode(
 						"insideH": docxml:ct-border(${QNS.w}insideH),
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
-					"verticalAlignment": ./${QNS.w}vAlign/@${QNS.w}val/string()
+					"verticalAlignment": ./${QNS.w}vAlign/@${QNS.w}val/string(),
+					"insertion": ./${QNS.w}cellIns/map {
+						"id": @${QNS.w}id/number(), 
+						"author": @${QNS.w}author/string(), 
+						"date": @${QNS.w}date/string()
+					},
+					"deletion": ./${QNS.w}cellDel/map {
+						"id": @${QNS.w}id/number(), 
+						"author": @${QNS.w}author/string(), 
+						"date": @${QNS.w}date/string()
+					}
 				}
 				`,
 				node
 		  )
 		: {};
+
+	// Convert the date string to a Date object.
+	if (props.insertion) {
+		props.insertion.date = props.insertion.date
+			? new Date(props.insertion.date)
+			: undefined;
+		props.insertion.author = props.insertion.author
+			? props.insertion.author
+			: undefined;
+	}
+
+	if (props.deletion) {
+		props.deletion.date = props.deletion.date
+			? new Date(props.deletion.date)
+			: undefined;
+		props.deletion.author = props.deletion.author
+			? props.deletion.author
+			: undefined;
+	}
+
+	return props;
 }
 
 export function tableCellPropertiesToNode(
 	tcpr: TableCellProperties = {},
 	asRepeatingNode: boolean
-): Node {
+): Node | null {
+	if (!Object.keys(tcpr).length) {
+		return null;
+	}
+
 	return create(
 		`element ${QNS.w}tcPr {
 			if ($width) then element ${QNS.w}tcW {
@@ -133,7 +188,9 @@ export function tableCellPropertiesToNode(
 			} else (),
 			if (exists($verticalAlignment)) then element ${QNS.w}vAlign {
 				attribute ${QNS.w}val { $verticalAlignment }
-			} else ()
+			} else (),
+			$insertion,
+			$deletion
 		}`,
 		{
 			asRepeatingNode: !!asRepeatingNode,
@@ -155,6 +212,12 @@ export function tableCellPropertiesToNode(
 				  }
 				: null,
 			verticalAlignment: tcpr.verticalAlignment || null,
+			insertion: tcpr.insertion
+				? new CellInsertion(tcpr.insertion).toNode()
+				: null,
+			deletion: tcpr.deletion
+				? new CellDeletion(tcpr.deletion).toNode()
+				: null,
 		}
 	);
 }

@@ -5,6 +5,7 @@ import { describe, it } from 'std/testing/bdd';
 import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create } from '../../../utilities/src/dom.ts';
+import { twip } from '../../../utilities/src/length.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
 import { Table } from '../src/Table.ts';
 
@@ -24,6 +25,20 @@ describe('Table', () => {
 	const table = Table.fromNode(
 		create(`
 			<w:tbl xmlns:w="${NamespaceUri.w}">
+				<w:tblGrid>
+					<w:gridCol w:w="960"/>
+					<w:gridCol w:w="960"/>
+					<w:gridCol w:w="960"/>
+					<w:gridCol w:w="960"/>
+					<w:tblGridChange w:id="1">
+						<w:tblGrid>
+							<w:gridCol w:w="480"/>
+							<w:gridCol w:w="480"/>
+							<w:gridCol w:w="480"/>
+							<w:gridCol w:w="480"/>
+						</w:tblGrid>
+					</w:tblGridChange>
+				</w:tblGrid>
 				<w:tr>
 					<w:tc>
 						<w:tcPr>
@@ -136,6 +151,23 @@ describe('Table', () => {
 		`),
 		emptyContext
 	);
+	it('Table grid has been defined', () => {
+		expect(table.props.columnWidths).toEqual([
+			twip(960),
+			twip(960),
+			twip(960),
+			twip(960),
+		]);
+	});
+
+	it('Table grid has been changed', () => {
+		expect(table.props.columnWidthChange?.cols).toEqual([
+			twip(480),
+			twip(480),
+			twip(480),
+			twip(480),
+		]);
+	});
 
 	it('Row 0 has the correct amount of cells', () =>
 		expect(table.children[0].children).toHaveLength(2));

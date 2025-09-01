@@ -16,6 +16,7 @@ import {
 	tablePropertiesFromNode,
 	tablePropertiesToNode,
 } from '../../../properties/src/table-properties.ts';
+import type { ChangeInformation } from '../../../utilities/src/changes.ts';
 import {
 	createChildComponentsFromNodes,
 	registerComponent,
@@ -37,6 +38,12 @@ export type TableChild = Row;
  */
 export type TableProps = TableProperties & {
 	columnWidths?: null | Length[];
+	/**
+	 * A property to specify that the table grid model has changed. This will be a tracked change in OOXML.
+	 */
+	columnWidthChange?:
+		| null
+		| (Omit<ChangeInformation, 'author' | 'date'> & { cols: Length[] });
 };
 
 /**
@@ -70,7 +77,15 @@ export class Table extends Component<TableProps, TableChild> {
 					if (exists($columnWidths)) then element ${QNS.w}tblGrid {
 						for $columnWidth in array:flatten($columnWidths) return element ${QNS.w}gridCol {
 							attribute ${QNS.w}w { $columnWidth }
-						}
+						},
+						if (exists($columnWidthChange)) then element ${QNS.w}tblGridChange { 
+							attribute ${QNS.w}id { $columnWidthChange('id') },
+							element ${QNS.w}tblGrid { 
+								for $col in array:flatten($columnWidthChange('cols')) return element ${QNS.w}gridCol { 
+									attribute ${QNS.w}w { $col }
+								}
+							} 
+						} else ()
 					} else (),
 					$children
 				}
@@ -81,6 +96,14 @@ export class Table extends Component<TableProps, TableChild> {
 					? this.props.columnWidths.map((width) =>
 							Math.round(width.twip)
 					  )
+					: null,
+				columnWidthChange: this.props.columnWidthChange
+					? {
+							id: this.props.columnWidthChange.id,
+							cols: this.props.columnWidthChange.cols.map((col) =>
+								Math.round(col.twip)
+							),
+					  }
 					: null,
 				children: await this.childrenToNode(ancestry),
 			}
@@ -103,6 +126,7 @@ export class Table extends Component<TableProps, TableChild> {
 			tblpr: Node;
 			children: Node[];
 			columnWidths: number[];
+			columnWidthChange: { id: number; cols: number[] };
 		}>(
 			`
 				map {
@@ -110,17 +134,29 @@ export class Table extends Component<TableProps, TableChild> {
 					"columnWidths": array {
 						./${QNS.w}tblGrid/${QNS.w}gridCol/@${QNS.w}w/number()
 					},
-					"children": array{ ./(${QNS.w}tr) }
+					"columnWidthChange": ./${QNS.w}tblGrid/${QNS.w}tblGridChange/map { 
+						"id": @${QNS.w}id/number(),
+						"cols": array { ./${QNS.w}tblGrid/${QNS.w}gridCol/@${QNS.w}w/number() }
+					}, 
+					"children": array { ./(${QNS.w}tr) }
 				}
 			`,
 			node
 		);
 		return new Table(
 			{
+				...tablePropertiesFromNode(tblpr),
 				columnWidths: props.columnWidths.map((size: number) =>
 					twip(size)
 				),
-				...tablePropertiesFromNode(tblpr),
+				columnWidthChange: props.columnWidthChange
+					? {
+							id: props.columnWidthChange.id,
+							cols: props.columnWidthChange.cols.map(
+								(size: number) => twip(size)
+							),
+					  }
+					: null,
 			},
 			...createChildComponentsFromNodes<TableChild>(
 				this.children,

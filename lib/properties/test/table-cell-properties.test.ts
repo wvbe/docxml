@@ -1,7 +1,7 @@
 import { describe } from 'std/testing/bdd';
 
 import { parse } from '../../utilities/src/dom.ts';
-import { opt } from '../../utilities/src/length.ts';
+import { opt, twip } from '../../utilities/src/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
 import { createXmlRoundRobinTest } from '../../utilities/src/tests.ts';
 import { evaluateXPathToFirstNode } from '../../utilities/src/xquery.ts';
@@ -15,6 +15,8 @@ const test = createXmlRoundRobinTest<TableCellProperties>(
 	tableCellPropertiesFromNode,
 	(n: TableCellProperties) => tableCellPropertiesToNode(n, false)
 );
+
+const date = new Date();
 
 describe('Table cell formatting', () => {
 	const dom = parse(`<w:tbl ${ALL_NAMESPACE_DECLARATIONS}>
@@ -40,6 +42,11 @@ describe('Table cell formatting', () => {
 						<w:end w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
 						<w:tl2br w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
 					</w:tcBorders>
+					<w:tcPrChange w:id="8" w:author="Eva" w:date="${date}">
+						<w:tcPr>
+							<w:tcW w:w="3402" w:type="dxa" />
+						</w:tcPr>
+					</w:tcPrChange>
 				</w:tcPr>
 				<w:p>
 					<w:pPr />
@@ -131,6 +138,12 @@ describe('Table cell formatting', () => {
 				tr2bl: null,
 				insideH: null,
 				insideV: null,
+			},
+			change: {
+				id: 8,
+				author: 'Eva',
+				date: date,
+				width: twip(3402),
 			},
 		}
 	);

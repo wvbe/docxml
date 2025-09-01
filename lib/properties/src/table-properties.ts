@@ -1,3 +1,5 @@
+import type { TableProps } from '../../components/document/src/Table.ts';
+import type { ChangeInformation } from '../../utilities/src/changes.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
@@ -78,11 +80,16 @@ export type TableProperties = {
 		insideH?: null | Border<LineBorderType | ArtBorderType>;
 		insideV?: null | Border<LineBorderType | ArtBorderType>;
 	};
+	change?: null | (ChangeInformation & Omit<TableProperties, 'change'>);
+};
+
+type IntermediateProps = Omit<TableProperties, 'change'> & {
+	change?: ChangeInformation & { node: Node | null };
 };
 
 export function tablePropertiesFromNode(node: Node | null): TableProperties {
 	const properties = node
-		? evaluateXPathToMap<TableProperties>(
+		? evaluateXPathToMap<IntermediateProps>(
 				`map {
 					"style": ./${QNS.w}tblStyle/@${QNS.w}val/string(),
 					"activeConditions": ./${QNS.w}tblLook/map {
@@ -115,16 +122,33 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 						"length": ./@${QNS.w}w/string(),
 						"unit": ./@${QNS.w}type/string()
 					},
-					"strictColumnWidths": boolean(./${QNS.w}tblLayout/@${QNS.w}type = "fixed")
+					"strictColumnWidths": boolean(./${QNS.w}tblLayout/@${QNS.w}type = "fixed"), 
+					"change": ./${QNS.w}tblPrChange/map { 
+						"id": @${QNS.w}id/number(),
+						"author": @${QNS.w}author/string(),
+						"date": @${QNS.w}date/string(),
+						"node": ./${QNS.w}tblPr
+					}
 				}`,
 				node
 		  )
 		: {};
+	if (properties.change) {
+		properties.change = {
+			...properties.change,
+			id: properties.change.id,
+			date: properties.change.date
+				? new Date(properties.change.date)
+				: undefined,
+			...tablePropertiesFromNode(properties.change.node),
+			node: null,
+		};
+	}
 
-	return properties;
+	return properties as TableProperties;
 }
 
-export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
+export function tablePropertiesToNode(tblpr: TableProps = {}): Node {
 	return create(
 		`element ${QNS.w}tblPr {
 			if ($style) then element ${QNS.w}tblStyle {
@@ -185,7 +209,13 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			} else (),
 			if ($strictColumnWidths) then element ${QNS.w}tblLayout {
 				attribute ${QNS.w}type { "fixed" }
-			} else ()
+			} else (),
+			if (exists($change)) then element ${QNS.w}tblPrChange { 
+				attribute ${QNS.w}id { $change('id') },
+				if (exists($change('author'))) then attribute ${QNS.w}author { $change('author') } else (),
+				if (exists($change('date'))) then attribute ${QNS.w}date { $change('date') } else (),
+				$change('node')
+			} else () 
 		}`,
 		{
 			style: tblpr.style || null,
@@ -216,6 +246,18 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			columnBandingSize: tblpr.columnBandingSize || null,
 			rowBandingSize: tblpr.rowBandingSize || null,
 			strictColumnWidths: tblpr.strictColumnWidths || false,
+			change: tblpr.change
+				? {
+						id: tblpr.change.id,
+						author: tblpr.change.author
+							? tblpr.change.author
+							: undefined,
+						date: tblpr.change.date
+							? new Date(tblpr.change.date).toISOString()
+							: undefined,
+						node: tablePropertiesToNode(tblpr.change),
+				  }
+				: null,
 		}
 	);
 }

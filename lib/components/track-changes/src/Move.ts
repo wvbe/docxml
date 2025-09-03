@@ -18,7 +18,7 @@ import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
 import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
 import type { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
-import '../../document/src/Text.ts';
+import type { FootnoteReference } from '../../document/src/FootnoteReference.ts';
 import type { Text } from '../../document/src/Text.ts';
 import type { Deletion } from './Deletion.ts';
 import type { Insertion } from './Insertion.ts';
@@ -38,7 +38,8 @@ export type MoveChild =
 	| MoveRangeStart
 	| MoveRangeEnd
 	| Insertion
-	| Deletion;
+	| Deletion
+	| FootnoteReference;
 
 /**
  * A type describing the props accepted by {@link Move}.
@@ -61,11 +62,12 @@ export class Move extends Component<MoveProps, MoveChild> {
 		'CommentRangeStart',
 		'CommentRangeEnd',
 		'Text',
-		'Move',
 		'MoveRangeStart',
 		'MoveRangeEnd',
 		'Insertion',
 		'Deletion',
+		'FootnoteReference',
+		this.name,
 	];
 
 	public static override readonly mixed: boolean = false;

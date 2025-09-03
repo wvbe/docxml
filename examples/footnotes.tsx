@@ -33,7 +33,7 @@ const footnote2 = await docxFile.document.footnotes.add(
 );
 
 const image = new Image({
-	data: Deno.readFile('test/spacekees.jpeg'),
+	data: Deno.readFile('assets/spacekees.jpeg'),
 	width: inch(1),
 	height: inch(1),
 	title: 'Title',

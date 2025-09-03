@@ -18,6 +18,7 @@ import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
 import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
 import type { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
+import type { FootnoteReference } from '../../document/src/FootnoteReference.ts';
 import type { Text } from '../../document/src/Text.ts';
 import type { Deletion } from './Deletion.ts';
 import type { Move } from './Move.ts';
@@ -37,7 +38,8 @@ export type InsertionChild =
 	| Insertion
 	| MoveRangeStart
 	| MoveRangeEnd
-	| Deletion;
+	| Deletion
+	| FootnoteReference;
 
 /**
  * A type describing the props accepted by {@link Insertion}.
@@ -65,6 +67,7 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 		'MoveRangeStart',
 		'MoveRangeEnd',
 		'Deletion',
+		'FootnoteReference',
 		this.name,
 	];
 
@@ -110,22 +113,22 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 			children: Node[];
 		}>(
 			`
-						map {
-							"children": array{
-								./${QNS.w}r,
-								./${QNS.w}bookmarkStart,
-								./${QNS.w}bookmarkEnd,
-								./${QNS.w}commentRangeStart,
-								./${QNS.w}commentRangeEnd,
-								./${QNS.w}moveTo,
-								./${QNS.w}moveToRangeStart,
-								./${QNS.w}moveToRangeEnd,
-								./${QNS.w}moveFrom,
-								./${QNS.w}moveFromRangeStart,
-								./${QNS.w}moveFromRangeEnd
-							}
-						}
-					`,
+				map {
+					"children": array{
+						./${QNS.w}r,
+						./${QNS.w}bookmarkStart,
+						./${QNS.w}bookmarkEnd,
+						./${QNS.w}commentRangeStart,
+						./${QNS.w}commentRangeEnd,
+						./${QNS.w}moveTo,
+						./${QNS.w}moveToRangeStart,
+						./${QNS.w}moveToRangeEnd,
+						./${QNS.w}moveFrom,
+						./${QNS.w}moveFromRangeStart,
+						./${QNS.w}moveFromRangeEnd
+					}
+				}
+			`,
 			node
 		);
 

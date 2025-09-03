@@ -113,48 +113,48 @@ export function sectionPropertiesFromNode(
 	const props = node
 		? evaluateXPathToMap<IntermediateProps>(
 				`map {
-			"headers": map {
-				"first": ./${QNS.w}headerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
-				"even": ./${QNS.w}headerReference[@${QNS.w}type = 'even']/@${QNS.r}id/string(),
-				"odd": ./${QNS.w}headerReference[@${QNS.w}type = 'default']/@${QNS.r}id/string()
-			},
-			"footers": map {
-				"first": ./${QNS.w}footerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
-				"even": ./${QNS.w}footerReference[@${QNS.w}type = 'even']/@${QNS.r}id/string(),
-				"odd": ./${QNS.w}footerReference[@${QNS.w}type = 'default']/@${QNS.r}id/string()
-			},
-			"columns": map {
-				"numberOfColumns": ./${QNS.w}cols/@${QNS.w}num/number(),
-				"equalWidth": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}equalWidth),
-				"separator": if (exists(./${QNS.w}cols/@${QNS.w}sep)) then docxml:st-on-off(./${QNS.w}cols/@${QNS.w}sep) else (),
-				"columnSpace": docxml:length(./${QNS.w}cols/@${QNS.w}space, 'twip'),
-				"columnDefs": array{
-						./${QNS.w}cols/${QNS.w}col/map{ 
-							"columnWidth": docxml:length(@${QNS.w}w, 'twip'), 
-							"columnSpace": docxml:length(@${QNS.w}space, 'twip')
+					"headers": map {
+						"first": ./${QNS.w}headerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
+						"even": ./${QNS.w}headerReference[@${QNS.w}type = 'even']/@${QNS.r}id/string(),
+						"odd": ./${QNS.w}headerReference[@${QNS.w}type = 'default']/@${QNS.r}id/string()
+					},
+					"footers": map {
+						"first": ./${QNS.w}footerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
+						"even": ./${QNS.w}footerReference[@${QNS.w}type = 'even']/@${QNS.r}id/string(),
+						"odd": ./${QNS.w}footerReference[@${QNS.w}type = 'default']/@${QNS.r}id/string()
+					},
+					"columns": map {
+						"numberOfColumns": ./${QNS.w}cols/@${QNS.w}num/number(),
+						"equalWidth": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}equalWidth),
+						"separator": if (exists(./${QNS.w}cols/@${QNS.w}sep)) then docxml:st-on-off(./${QNS.w}cols/@${QNS.w}sep) else (),
+						"columnSpace": docxml:length(./${QNS.w}cols/@${QNS.w}space, 'twip'),
+						"columnDefs": array{
+								./${QNS.w}cols/${QNS.w}col/map{ 
+									"columnWidth": docxml:length(@${QNS.w}w, 'twip'), 
+									"columnSpace": docxml:length(@${QNS.w}space, 'twip')
+							}
+						}
+					},
+					"pageWidth": docxml:length(${QNS.w}pgSz/@${QNS.w}w, 'twip'),
+					"pageHeight": docxml:length(${QNS.w}pgSz/@${QNS.w}h, 'twip'),
+					"pageOrientation": ./${QNS.w}pgSz/@${QNS.w}orient/string(),
+					"pageMargin": map {
+						"top": docxml:length(./${QNS.w}pgMar/@${QNS.w}top, 'twip'),
+						"right": docxml:length(./${QNS.w}pgMar/@${QNS.w}right, 'twip'),
+						"bottom": docxml:length(./${QNS.w}pgMar/@${QNS.w}bottom, 'twip'),
+						"left": docxml:length(./${QNS.w}pgMar/@${QNS.w}left, 'twip'),
+						"header": docxml:length(./${QNS.w}pgMar/@${QNS.w}header, 'twip'),
+						"footer": docxml:length(./${QNS.w}pgMar/@${QNS.w}footer, 'twip'),
+						"gutter": docxml:length(./${QNS.w}pgMar/@${QNS.w}gutter, 'twip')
+					},
+					"isTitlePage": exists(./${QNS.w}titlePg) and (not(./${QNS.w}titlePg/@${QNS.w}val) or docxml:st-on-off(./${QNS.w}titlePg/@${QNS.w}val)), 
+					"change": ./${QNS.w}sectPrChange/map { 
+						"id": @${QNS.w}id/number(), 
+						"author": @${QNS.w}author/string(),
+						"date": @${QNS.w}date/string(),
+						"node": ./${QNS.w}sectPr
 					}
-				}
-			},
-			"pageWidth": docxml:length(${QNS.w}pgSz/@${QNS.w}w, 'twip'),
-			"pageHeight": docxml:length(${QNS.w}pgSz/@${QNS.w}h, 'twip'),
-			"pageOrientation": ./${QNS.w}pgSz/@${QNS.w}orient/string(),
-			"pageMargin": map {
-				"top": docxml:length(./${QNS.w}pgMar/@${QNS.w}top, 'twip'),
-				"right": docxml:length(./${QNS.w}pgMar/@${QNS.w}right, 'twip'),
-				"bottom": docxml:length(./${QNS.w}pgMar/@${QNS.w}bottom, 'twip'),
-				"left": docxml:length(./${QNS.w}pgMar/@${QNS.w}left, 'twip'),
-				"header": docxml:length(./${QNS.w}pgMar/@${QNS.w}header, 'twip'),
-				"footer": docxml:length(./${QNS.w}pgMar/@${QNS.w}footer, 'twip'),
-				"gutter": docxml:length(./${QNS.w}pgMar/@${QNS.w}gutter, 'twip')
-			},
-			"isTitlePage": exists(./${QNS.w}titlePg) and (not(./${QNS.w}titlePg/@${QNS.w}val) or docxml:st-on-off(./${QNS.w}titlePg/@${QNS.w}val)), 
-			"change": ./${QNS.w}sectPrChange/map { 
-				"id": @${QNS.w}id/number(), 
-				"author": @${QNS.w}author/string(),
-				"date": @${QNS.w}date/string(),
-				"node": ./${QNS.w}sectPr
-			}
-		}`,
+				}`,
 				node
 		  ) || {}
 		: {};

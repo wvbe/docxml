@@ -61,10 +61,10 @@ export class CommentRangeStart extends Component<
 	static override fromNode(node: Node): CommentRangeStart {
 		const { id } = evaluateXPathToMap<{ id: number }>(
 			`
-					map {
-						"id": ./@${QNS.w}id/number()
-					}
-				`,
+				map {
+					"id": ./@${QNS.w}id/number()
+				}
+			`,
 			node
 		);
 		return new CommentRangeStart({ id: int(id) });

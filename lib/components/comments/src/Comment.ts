@@ -72,10 +72,10 @@ export class Comment extends Component<CommentProps, CommentChild> {
 	static override fromNode(node: Node): Comment {
 		const { id } = evaluateXPathToMap<{ id: number }>(
 			`
-					map {
-						"id": ./@${QNS.w}id/number()
-					}
-				`,
+				map {
+					"id": ./@${QNS.w}id/number()
+				}
+			`,
 			node
 		);
 		return new Comment({ id: int(id) });

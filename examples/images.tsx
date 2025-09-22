@@ -6,7 +6,7 @@ await Docx.fromJsx(
 		<Paragraph>
 			<Text>
 				<Image
-					data={Deno.readFile('test/spacekees.jpeg')}
+					data={Deno.readFile('assets/spacekees.jpeg')}
 					width={cm(16)}
 					height={cm(16)}
 					title="Title"
@@ -23,9 +23,9 @@ await Docx.fromJsx(
 		<Paragraph>
 			<Text>
 				<Image
-					data={Deno.readFile('test/spacekees.jpeg')}
+					data={Deno.readFile('assets/spacekees.jpeg')}
 					dataExtensions={{
-						svg: Deno.readTextFile('test/git.svg'),
+						svg: Deno.readTextFile('assets/git.svg'),
 					}}
 					width={cm(16)}
 					height={cm(16)}

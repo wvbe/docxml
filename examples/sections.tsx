@@ -1,3 +1,4 @@
+// deno-lint-ignore-file jsx-key
 /** @jsx Docx.jsx */
 
 import Docx, { cm, Paragraph, Section, Text } from '../mod.ts';

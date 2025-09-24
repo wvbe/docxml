@@ -1,4 +1,6 @@
+// deno-lint-ignore-file jsx-key
 /** @jsx Docx.jsx */
+
 import { WatermarkText } from '../lib/components/document/src/WatermarkText.ts';
 import Docx, { cm, Image, Paragraph, Section, Text } from '../mod.ts';
 

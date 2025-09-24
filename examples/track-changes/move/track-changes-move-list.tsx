@@ -1,15 +1,11 @@
 /** @jsx  Docx.jsx */
 import Docx, {
-	Cell,
 	cm,
-	Image,
 	Move,
 	MoveRangeEnd,
 	MoveRangeStart,
 	Paragraph,
-	Row,
 	Section,
-	Table,
 	Text,
 } from '../../../mod.ts';
 

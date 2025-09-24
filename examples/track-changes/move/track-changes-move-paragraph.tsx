@@ -1,6 +1,5 @@
 /** @jsx  Docx.jsx */
 import Docx, {
-	cm,
 	Move,
 	MoveRangeEnd,
 	MoveRangeStart,

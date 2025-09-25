@@ -25,7 +25,7 @@ await Docx.fromJsx(
 				name="move_0"
 				author={author}
 				date={date}
-			></MoveRangeStart>
+			/>
 			<Move id={2} type="from" author={author} date={date}>
 				<Text>
 					The House of Bernarda Alba is a tragedy by Federico García
@@ -38,7 +38,7 @@ await Docx.fromJsx(
 					(20).
 				</Text>
 			</Move>
-			<MoveRangeEnd id={1} type="from"></MoveRangeEnd>
+			<MoveRangeEnd id={1} type="from" />
 		</Paragraph>
 		<Paragraph>
 			<Text>
@@ -66,7 +66,7 @@ await Docx.fromJsx(
 				name="move_0"
 				author={author}
 				date={date}
-			></MoveRangeStart>
+			/>
 			<Move id={5} type="to" author={author} date={date}>
 				<Text>
 					The House of Bernarda Alba is a tragedy by Federico García
@@ -79,7 +79,7 @@ await Docx.fromJsx(
 					(20).
 				</Text>
 			</Move>
-			<MoveRangeEnd id={4} type="to"></MoveRangeEnd>
+			<MoveRangeEnd id={4} type="to" />
 		</Paragraph>
 		<Paragraph>
 			<Text>

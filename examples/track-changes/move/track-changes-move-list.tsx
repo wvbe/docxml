@@ -65,7 +65,7 @@ await Docx.fromJsx(
 				name="move_3"
 				author={author}
 				date={date}
-			></MoveRangeStart>
+			/>
 			<Move id={28} type="to" author={author} date={date}>
 				<Text>
 					The play is set in a house in Andalusia, shortly before the
@@ -106,10 +106,12 @@ await Docx.fromJsx(
 				<Text>No courtship or social contact allowed</Text>
 			</Move>
 		</Paragraph>
-		<MoveRangeEnd id={27} type="to"></MoveRangeEnd>
+		<MoveRangeEnd id={27} type="to" />
+
 		<Paragraph>
 			<Text>Key Points List</Text>
 		</Paragraph>
+
 		{/* List MoveFrom */}
 		<Paragraph
 			listItem={{ numbering, depth: 0 }}
@@ -123,7 +125,7 @@ await Docx.fromJsx(
 				name="move_3"
 				author={author}
 				date={date}
-			></MoveRangeStart>
+			/>
 			<Move id={19} type="from" author={author} date={date}>
 				<Text>
 					The play is set in a house in Andalusia, shortly before the
@@ -164,6 +166,6 @@ await Docx.fromJsx(
 				<Text>No courtship or social contact allowed</Text>
 			</Move>
 		</Paragraph>
-		<MoveRangeEnd id={18} type="from"></MoveRangeEnd>
+		<MoveRangeEnd id={18} type="from" />
 	</Section>
 ).toFile('track-changes-move-list.docx');

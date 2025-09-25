@@ -16,18 +16,14 @@ const author = 'Lorca';
 await Docx.fromJsx(
 	<Section>
 		{/* Image MoveTo */}
-		<Paragraph
-			pilcrow={{
-				move: { id: 10, type: 'to', author: author, date: date },
-			}}
-		>
+		<Paragraph>
 			<MoveRangeStart
 				id={11}
 				type="to"
 				name="move_1"
 				author={author}
 				date={date}
-			></MoveRangeStart>
+			/>
 			<Move id={12} type="to" author={author} date={date}>
 				<Text>
 					<Image
@@ -39,7 +35,7 @@ await Docx.fromJsx(
 					/>
 				</Text>
 			</Move>
-			<MoveRangeEnd id={11} type="to"></MoveRangeEnd>
+			<MoveRangeEnd id={11} type="to" />
 		</Paragraph>
 		<Paragraph>
 			<Text isBold isCaps>
@@ -47,18 +43,14 @@ await Docx.fromJsx(
 			</Text>
 		</Paragraph>
 		{/* Image MoveFrom */}
-		<Paragraph
-			pilcrow={{
-				move: { id: 7, type: 'from', author: author, date: date },
-			}}
-		>
+		<Paragraph>
 			<MoveRangeStart
 				id={8}
 				type="from"
 				name="move_1"
 				author={author}
 				date={date}
-			></MoveRangeStart>
+			/>
 			<Move id={9} type="from" author={author} date={date}>
 				<Text>
 					<Image
@@ -70,7 +62,7 @@ await Docx.fromJsx(
 					/>
 				</Text>
 			</Move>
-			<MoveRangeEnd id={8} type="from"></MoveRangeEnd>
+			<MoveRangeEnd id={8} type="from" />
 		</Paragraph>
 	</Section>
 ).toFile('track-changes-move-image.docx');

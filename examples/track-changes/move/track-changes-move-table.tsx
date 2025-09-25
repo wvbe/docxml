@@ -36,7 +36,7 @@ await Docx.fromJsx(
 							name="move_2"
 							author={author}
 							date={date}
-						></MoveRangeStart>
+						/>
 						<Move id={17} type="to" author={author} date={date}>
 							<Text> Author</Text>
 						</Move>
@@ -131,7 +131,7 @@ await Docx.fromJsx(
 				</Cell>
 			</Row>
 		</Table>
-		<MoveRangeEnd id={16} type="to"></MoveRangeEnd>
+		<MoveRangeEnd id={16} type="to" />
 		<Paragraph>
 			<Text isBold isCaps>
 				Summary Table
@@ -157,7 +157,7 @@ await Docx.fromJsx(
 							name="move_2"
 							author={author}
 							date={date}
-						></MoveRangeStart>
+						/>
 						<Move id={14} type="from" author={author} date={date}>
 							<Text> Author</Text>
 						</Move>
@@ -252,6 +252,6 @@ await Docx.fromJsx(
 				</Cell>
 			</Row>
 		</Table>
-		<MoveRangeEnd id={13} type="from"></MoveRangeEnd>
+		<MoveRangeEnd id={13} type="from" />
 	</Section>
 ).toFile('track-changes-move-table.docx');

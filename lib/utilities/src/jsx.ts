@@ -61,14 +61,20 @@ export async function jsx<C extends Component>(
 						isComponentDefinition(component) &&
 						!component.mixed
 					) {
-						child = new Text({}, child) as ComponentChild<C>;
+						child = new Text(
+							{},
+							child
+						) as unknown as ComponentChild<C>;
 					}
 					const isValid =
 						!isComponentDefinition(component) ||
 						(component.mixed && typeof child === 'string') ||
 						component.children.includes(child.constructor.name);
 					if (!isValid) {
-						if (child.constructor === Text && component === Text) {
+						if (
+							child.constructor === component &&
+							child.constructor === Text
+						) {
 							Object.assign((child as Text).props, props);
 						}
 						nodes.push(child);

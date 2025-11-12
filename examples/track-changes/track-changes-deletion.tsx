@@ -2,6 +2,7 @@
 import Docx, {
 	Cell,
 	cm,
+	DeletedText,
 	Deletion,
 	Image,
 	Paragraph,
@@ -59,7 +60,7 @@ await Docx.fromJsx(
 			pilcrow={{ deletion: { id: 1, author: author, date: date } }}
 		>
 			<Deletion id={2} author={author} date={date}>
-				<Text>
+				<DeletedText>
 					The House of Bernarda Alba is a tragedy by Federico García
 					Lorca, set in a small, traditional Andalusian village in
 					southern Spain, just before the Spanish Civil War. The play
@@ -68,7 +69,7 @@ await Docx.fromJsx(
 					eight-year mourning period on her five daughters: Angustias
 					(39), Magdalena (30), Amelia (27), Martirio (24), and Adela
 					(20).
-				</Text>
+				</DeletedText>
 			</Deletion>
 		</Paragraph>
 		<Paragraph>
@@ -86,15 +87,15 @@ await Docx.fromJsx(
 			</Text>
 			{/* Text deletion */}
 			<Deletion id={3} author={author} date={date}>
-				<Text> the youngest daughter.</Text>
+				<DeletedText> the youngest daughter.</DeletedText>
 			</Deletion>
 		</Paragraph>
 		<Paragraph>
 			{/* Text with inline styles deletion */}
 			<Deletion id={4} author={author} date={date}>
-				<Text isItalic isBold>
+				<DeletedText isItalic isBold>
 					As tension escalates,{' '}
-				</Text>
+				</DeletedText>
 			</Deletion>
 			<Text>
 				the household servants Poncia and the Maid observe the emotional
@@ -235,10 +236,10 @@ await Docx.fromJsx(
 			pilcrow={{ deletion: { id: 11, author: author, date: date } }}
 		>
 			<Deletion id={17} author={author} date={date}>
-				<Text>
+				<DeletedText>
 					The play is set in a house in Andalusia, shortly before the
 					Spanish Civil War.
-				</Text>
+				</DeletedText>
 			</Deletion>
 		</Paragraph>
 		<Paragraph
@@ -246,10 +247,10 @@ await Docx.fromJsx(
 			pilcrow={{ deletion: { id: 12, author: author, date: date } }}
 		>
 			<Deletion id={18} author={author} date={date}>
-				<Text>
+				<DeletedText>
 					Bernarda Alba imposes an eight-year mourning period after
 					her husband’s death.
-				</Text>
+				</DeletedText>
 			</Deletion>
 		</Paragraph>
 		<Paragraph
@@ -257,7 +258,9 @@ await Docx.fromJsx(
 			pilcrow={{ deletion: { id: 13, author: author, date: date } }}
 		>
 			<Deletion id={19} author={author} date={date}>
-				<Text>Uses mourning to control her daughters</Text>
+				<DeletedText>
+					Uses mourning to control her daughters
+				</DeletedText>
 			</Deletion>
 		</Paragraph>
 		<Paragraph
@@ -265,7 +268,9 @@ await Docx.fromJsx(
 			pilcrow={{ deletion: { id: 14, author: author, date: date } }}
 		>
 			<Deletion id={20} author={author} date={date}>
-				<Text>No courtship or social contact allowed</Text>
+				<DeletedText>
+					No courtship or social contact allowed
+				</DeletedText>
 			</Deletion>
 		</Paragraph>
 		{/* Image deletion */}
@@ -273,7 +278,7 @@ await Docx.fromJsx(
 			pilcrow={{ deletion: { id: 15, author: author, date: date } }}
 		>
 			<Deletion id={16} author={author} date={date}>
-				<Text>
+				<DeletedText>
 					<Image
 						data={Deno.readFile('assets/oldPhoto.jpg')}
 						width={cm(6)}
@@ -281,7 +286,7 @@ await Docx.fromJsx(
 						title="Title"
 						alt="Description"
 					/>
-				</Text>
+				</DeletedText>
 			</Deletion>
 		</Paragraph>
 	</Section>

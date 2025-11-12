@@ -11,6 +11,7 @@ import { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
 import { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
 import { Paragraph } from '../../document/src/Paragraph.ts';
 import { Text } from '../../document/src/Text.ts';
+import { DeletedText } from '../src/DeletedText.ts';
 import { MoveFromRangeEnd } from '../../track-changes/src/MoveFromRangeEnd.ts';
 import { MoveFromRangeStart } from '../../track-changes/src/MoveFromRangeStart.ts';
 import { MoveToRangeEnd } from '../../track-changes/src/MoveToRangeEnd.ts';
@@ -31,10 +32,10 @@ describe('Deletion', () => {
 			const deletedTextNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
 					<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}">
-						<w:r><w:t>This is a new paragraph</w:t></w:r>
+						<w:r><w:delText>This is a new paragraph</w:delText></w:r>
 					</w:del>
 					<w:del w:id="2" w:author="Roy" w:date="${date.toISOString()}">
-						<w:r><w:t>This is a another new paragraph</w:t></w:r>
+						<w:r><w:delText>This is a another new paragraph</w:delText></w:r>
 					</w:del>
 				</w:p>
 				`,
@@ -43,11 +44,11 @@ describe('Deletion', () => {
 
 			const deletedText1 = new Deletion(
 				{ author: 'Luis', date: date, id: 1 },
-				new Text({}, 'This is a new paragraph')
+				new DeletedText({}, 'This is a new paragraph')
 			);
 			const deletedText2 = new Deletion(
 				{ author: 'Roy', date: date, id: 2 },
-				new Text({}, 'This is a another new paragraph')
+				new DeletedText({}, 'This is a another new paragraph')
 			);
 			const deletedTextAsObject = new Paragraph(
 				{},
@@ -98,10 +99,10 @@ describe('Deletion', () => {
 			const deletedTextNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
 					<w:del w:id="1">
-						<w:r><w:t>This is a new paragraph</w:t></w:r>
+						<w:r><w:delText>This is a new paragraph</w:delText></w:r>
 					</w:del>
 					<w:del w:id="2">
-						<w:r><w:t>This is a another new paragraph</w:t></w:r>
+						<w:r><w:delText>This is a another new paragraph</w:delText></w:r>
 					</w:del>
 				</w:p>
 				`,
@@ -110,11 +111,11 @@ describe('Deletion', () => {
 
 			const deletedText1 = new Deletion(
 				{ id: 1 },
-				new Text({}, 'This is a new paragraph')
+				new DeletedText({}, 'This is a new paragraph')
 			);
 			const deletedText2 = new Deletion(
 				{ id: 2 },
-				new Text({}, 'This is a another new paragraph')
+				new DeletedText({}, 'This is a another new paragraph')
 			);
 			const deletedTextAsObject = new Paragraph(
 				{},
@@ -416,14 +417,14 @@ describe('Deletion', () => {
 										NamespaceUri.w
 									}" ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe">
 										<r>
-											<delText xml:space="preserve">Moved content</delText>
+											<t xml:space="preserve">Moved content</t>
 										</r>
 									</moveTo>
 									<moveFrom xmlns:ns1="${
 										NamespaceUri.w
 									}" ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe">
 										<r>
-											<delText xml:space="preserve">Moved content</delText>
+											<t xml:space="preserve">Moved content</t>
 										</r>
 									</moveFrom>
 								</del>
@@ -434,14 +435,14 @@ describe('Deletion', () => {
 										NamespaceUri.w
 									}" ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Gabe">
 										<r>
-											<delText xml:space="preserve">More moved content</delText>
+											<t xml:space="preserve">More moved content</t>
 										</r>
 									</moveTo>
 									<moveFrom xmlns:ns1="${
 										NamespaceUri.w
 									}" ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Gabe">
 										<r>
-											<delText xml:space="preserve">More moved content</delText>
+											<t xml:space="preserve">More moved content</t>
 										</r>
 									</moveFrom>
 								</del>
@@ -562,7 +563,7 @@ describe('Deletion', () => {
 			{ pilcrow: { deletion: { author: 'Luis', date: date, id: 1 } } },
 			new Deletion(
 				{ author: 'Luis', date: date, id: 1 },
-				new Text({}, 'This is a deleted paragraph')
+				new DeletedText({}, 'This is a deleted paragraph')
 			)
 		);
 

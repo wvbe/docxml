@@ -1,14 +1,14 @@
 // Import without assignment ensures Deno does not tree-shake this component. To avoid circular
 // definitions, components register themselves in a side-effect of their module.
-import './Break.ts';
-import './FieldRangeEnd.ts';
-import './FieldRangeInstruction.ts';
-import './FieldRangeSeparator.ts';
-import './FieldRangeStart.ts';
-import './Image.ts';
-import './NonBreakingHyphen.ts';
-import './Symbol.ts';
-import './Tab.ts';
+import '../../document/src/Break.ts';
+import '../../document/src/FieldRangeEnd.ts';
+import '../../document/src/FieldRangeInstruction.ts';
+import '../../document/src/FieldRangeSeparator.ts';
+import '../../document/src/FieldRangeStart.ts';
+import '../../document/src/Image.ts';
+import '../../document/src/NonBreakingHyphen.ts';
+import '../../document/src/Symbol.ts';
+import '../../document/src/Tab.ts';
 
 import {
 	Component,
@@ -27,52 +27,27 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import type { Break } from './Break.ts';
-import type { FieldRangeEnd } from './FieldRangeEnd.ts';
-import type { FieldRangeInstruction } from './FieldRangeInstruction.ts';
-import type { FieldRangeSeparator } from './FieldRangeSeparator.ts';
-import type { FieldRangeStart } from './FieldRangeStart.ts';
-import type { FootnoteContinuationSeparator } from './FootnoteContinuationSeparator.ts';
-import type { FootnoteSeparator } from './FootnoteSeparator.ts';
-import type { Image } from './Image.ts';
-import type { NonBreakingHyphen } from './NonBreakingHyphen.ts';
-import type { Symbol as CharSymbol } from './Symbol.ts';
-import type { Tab } from './Tab.ts';
+import type { TextChild } from '../../document/src/Text.ts';
 
 /**
- * A type describing the components accepted as children of {@link Text}.
+ * A type describing the components accepted as children of {@link DeletedText}.
  */
-export type TextChild =
-	| string
-	| Break
-	| FieldRangeEnd
-	| FieldRangeInstruction
-	| FieldRangeSeparator
-	| FieldRangeStart
-	| FootnoteSeparator
-	| FootnoteContinuationSeparator
-	| Image
-	| NonBreakingHyphen
-	// eslint-disable-next-line @typescript-eslint/ban-types
-	| CharSymbol
-	| Tab;
+export type DeletedTextChild = TextChild;
 
 const __brand: unique symbol = Symbol();
 
 /**
- * A type describing the props accepted by {@link Text}.
+ * A type describing the props accepted by {@link DeletedText}.
  */
-export type TextProps = TextProperties;
+export type DeletedTextProps = TextProperties;
 
 /**
- * A component that represents text. All inline formatting options, such as bold/italic/underline,
- * are in fact different props or styles on the `<Text>` component.
+ * A component that represents deleted text.
+ * Deleted text is used within Word's track changes to indicate that text content in
+ * the document has been removed. `DeletedText` must have a parent {@link Deletion}.
  */
-export class Text extends Component<TextProps, TextChild> {
-	// Introduce a __brand property so that we cannot use Text and DeletedText interchangeably.
-	// TypeScript's structural typing would allow us to do so otherwise.
-
-	readonly [__brand] = 'regularText';
+export class DeletedText extends Component<DeletedTextProps, DeletedTextChild> {
+	readonly [__brand] = 'deletedText';
 
 	public static override readonly children: string[] = [
 		'Break',
@@ -106,7 +81,7 @@ export class Text extends Component<TextProps, TextChild> {
 					this.children.map((child) => {
 						if (typeof child === 'string') {
 							return create(
-								`element ${QNS.w}t {  
+								`element ${QNS.w}delText {
 									attribute xml:space { "preserve" },
 									$text
 								}`,
@@ -126,13 +101,19 @@ export class Text extends Component<TextProps, TextChild> {
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:r';
+		return (
+			`Q{${(node as Element).namespaceURI}}` === QNS.w &&
+			(node as Element).localName === 'r'
+		);
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): Text {
+	static override fromNode(
+		node: Node,
+		context: ComponentContext
+	): DeletedText {
 		const { children, rpr } = evaluateXPathToMap<{
 			rpr: Node;
 			children: Node[];
@@ -145,7 +126,7 @@ export class Text extends Component<TextProps, TextChild> {
 							${QNS.w}br,
 							${QNS.w}tab,
 							${QNS.w}drawing,
-							${QNS.w}t/text(),
+							${QNS.w}delText/text(),
 							${QNS.w}fldChar,
 							${QNS.w}instrText
 						)
@@ -154,9 +135,9 @@ export class Text extends Component<TextProps, TextChild> {
 			`,
 			node
 		);
-		return new Text(
-			textPropertiesFromNode(rpr),
-			...createChildComponentsFromNodes<TextChild>(
+		return new DeletedText(
+			textPropertiesFromNode(rpr) as DeletedTextProps,
+			...createChildComponentsFromNodes<DeletedTextChild>(
 				this.children,
 				children,
 				context
@@ -165,4 +146,4 @@ export class Text extends Component<TextProps, TextChild> {
 	}
 }
 
-registerComponent(Text);
+registerComponent(DeletedText);

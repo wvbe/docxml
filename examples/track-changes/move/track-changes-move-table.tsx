@@ -2,8 +2,10 @@
 import Docx, {
 	Cell,
 	Move,
-	MoveRangeEnd,
-	MoveRangeStart,
+	MoveFromRangeEnd,
+	MoveFromRangeStart,
+	MoveToRangeEnd,
+	MoveToRangeStart,
 	Paragraph,
 	Row,
 	Section,
@@ -30,9 +32,8 @@ await Docx.fromJsx(
 							},
 						}}
 					>
-						<MoveRangeStart
+						<MoveToRangeStart
 							id={16}
-							type="to"
 							name="move_2"
 							author={author}
 							date={date}
@@ -131,7 +132,7 @@ await Docx.fromJsx(
 				</Cell>
 			</Row>
 		</Table>
-		<MoveRangeEnd id={16} type="to" />
+		<MoveToRangeEnd id={16} />
 		<Paragraph>
 			<Text isBold isCaps>
 				Summary Table
@@ -151,9 +152,8 @@ await Docx.fromJsx(
 							},
 						}}
 					>
-						<MoveRangeStart
+						<MoveFromRangeStart
 							id={13}
-							type="from"
 							name="move_2"
 							author={author}
 							date={date}
@@ -252,6 +252,6 @@ await Docx.fromJsx(
 				</Cell>
 			</Row>
 		</Table>
-		<MoveRangeEnd id={13} type="from" />
+		<MoveFromRangeEnd id={13} />
 	</Section>
 ).toFile('track-changes-move-table.docx');

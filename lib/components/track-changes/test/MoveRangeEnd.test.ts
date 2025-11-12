@@ -3,30 +3,28 @@ import { describe, it } from 'std/testing/bdd';
 
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
-import { MoveRangeEnd } from '../src/MoveRangeEnd.ts';
+import { MoveFromRangeEnd } from '../src/MoveFromRangeEnd.ts';
+import { MoveToRangeEnd } from '../src/MoveToRangeEnd.ts';
 
 describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
-	const moveToRangeEnd = MoveRangeEnd.fromNode(
+	const moveToRangeEnd = MoveToRangeEnd.fromNode(
 		create(`<w:moveToRangeEnd xmlns:w="${NamespaceUri.w}" w:id="0" />`)
 	);
 
-	const moveFromRangeEnd = MoveRangeEnd.fromNode(
+	const moveFromRangeEnd = MoveFromRangeEnd.fromNode(
 		create(`<w:moveFromRangeEnd xmlns:w="${NamespaceUri.w}" w:id="1" />`)
 	);
 	it('Create MoveToRangeEnd from node', () => {
 		expect(moveToRangeEnd.props.id).toBe(0);
-		expect(moveToRangeEnd.props.type).toBe('to');
 	});
 
 	it('Create MoveFromRangeEnd from node', () => {
 		expect(moveFromRangeEnd.props.id).toBe(1);
-		expect(moveFromRangeEnd.props.type).toBe('from');
 	});
 
 	it('Create MoveToRangeEnd node from MoveRangeEnd object', () => {
-		const toRangeObject = new MoveRangeEnd({
+		const toRangeObject = new MoveToRangeEnd({
 			id: 2,
-			type: 'to',
 		});
 
 		expect(serialize(toRangeObject.toNode())).toBe(
@@ -37,9 +35,8 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 			)
 		);
 
-		const fromRangeObject = new MoveRangeEnd({
+		const fromRangeObject = new MoveFromRangeEnd({
 			id: 3,
-			type: 'from',
 		});
 		expect(serialize(fromRangeObject.toNode())).toBe(
 			serialize(

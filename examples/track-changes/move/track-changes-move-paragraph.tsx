@@ -1,8 +1,10 @@
 /** @jsx  Docx.jsx */
 import Docx, {
 	Move,
-	MoveRangeEnd,
-	MoveRangeStart,
+	MoveFromRangeEnd,
+	MoveFromRangeStart,
+	MoveToRangeEnd,
+	MoveToRangeStart,
 	Paragraph,
 	Section,
 	Text,
@@ -19,9 +21,8 @@ await Docx.fromJsx(
 				move: { id: 0, type: 'from', author: author, date: date },
 			}}
 		>
-			<MoveRangeStart
+			<MoveFromRangeStart
 				id={1}
-				type="from"
 				name="move_0"
 				author={author}
 				date={date}
@@ -38,7 +39,7 @@ await Docx.fromJsx(
 					(20).
 				</Text>
 			</Move>
-			<MoveRangeEnd id={1} type="from" />
+			<MoveFromRangeEnd id={1} />
 		</Paragraph>
 		<Paragraph>
 			<Text>
@@ -60,9 +61,8 @@ await Docx.fromJsx(
 				move: { id: 3, type: 'to', author: author, date: date },
 			}}
 		>
-			<MoveRangeStart
+			<MoveToRangeStart
 				id={4}
-				type="to"
 				name="move_0"
 				author={author}
 				date={date}
@@ -79,7 +79,7 @@ await Docx.fromJsx(
 					(20).
 				</Text>
 			</Move>
-			<MoveRangeEnd id={4} type="to" />
+			<MoveToRangeEnd id={4} />
 		</Paragraph>
 		<Paragraph>
 			<Text>

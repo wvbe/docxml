@@ -2,8 +2,10 @@
 import Docx, {
 	cm,
 	Move,
-	MoveRangeEnd,
-	MoveRangeStart,
+	MoveFromRangeEnd,
+	MoveFromRangeStart,
+	MoveToRangeEnd,
+	MoveToRangeStart,
 	Paragraph,
 	Section,
 	Text,
@@ -59,9 +61,8 @@ await Docx.fromJsx(
 				move: { id: 26, type: 'to', author: author, date: date },
 			}}
 		>
-			<MoveRangeStart
+			<MoveToRangeStart
 				id={27}
-				type="to"
 				name="move_3"
 				author={author}
 				date={date}
@@ -106,7 +107,7 @@ await Docx.fromJsx(
 				<Text>No courtship or social contact allowed</Text>
 			</Move>
 		</Paragraph>
-		<MoveRangeEnd id={27} type="to" />
+		<MoveToRangeEnd id={27} />
 
 		<Paragraph>
 			<Text>Key Points List</Text>
@@ -119,9 +120,8 @@ await Docx.fromJsx(
 				move: { id: 17, type: 'from', author: author, date: date },
 			}}
 		>
-			<MoveRangeStart
+			<MoveFromRangeStart
 				id={18}
-				type="from"
 				name="move_3"
 				author={author}
 				date={date}
@@ -166,6 +166,6 @@ await Docx.fromJsx(
 				<Text>No courtship or social contact allowed</Text>
 			</Move>
 		</Paragraph>
-		<MoveRangeEnd id={18} type="from" />
+		<MoveFromRangeEnd id={18} />
 	</Section>
 ).toFile('track-changes-move-list.docx');

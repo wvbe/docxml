@@ -11,10 +11,12 @@ import { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
 import { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
 import { Paragraph } from '../../document/src/Paragraph.ts';
 import { Text } from '../../document/src/Text.ts';
+import { MoveFromRangeEnd } from '../../track-changes/src/MoveFromRangeEnd.ts';
+import { MoveFromRangeStart } from '../../track-changes/src/MoveFromRangeStart.ts';
+import { MoveToRangeEnd } from '../../track-changes/src/MoveToRangeEnd.ts';
+import { MoveToRangeStart } from '../../track-changes/src/MoveToRangeStart.ts';
 import { Deletion } from '../src/Deletion.ts';
 import { Move } from '../src/Move.ts';
-import { MoveRangeEnd } from '../src/MoveRangeEnd.ts';
-import { MoveRangeStart } from '../src/MoveRangeStart.ts';
 
 describe('Deletion', () => {
 	const date = new Date();
@@ -451,7 +453,7 @@ describe('Deletion', () => {
 			});
 		});
 
-		describe('MoveRangeStart and MoveRangeEnd', () => {
+		describe('MoveToRangeStart, MoveToRangeEnd, MoveFromRangeStart, MoveFromRangeEnd', () => {
 			const deletedMoveRangeToNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
 					<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}">
@@ -471,27 +473,23 @@ describe('Deletion', () => {
 
 			const deletedMoveRange = new Deletion(
 				{ author: 'Luis', date: date, id: 1 },
-				new MoveRangeStart({
+				new MoveToRangeStart({
 					id: 0,
 					date: date,
 					author: 'Gabe',
-					type: 'to',
 					name: 'Move_to_1',
 				}),
-				new MoveRangeEnd({
+				new MoveToRangeEnd({
 					id: 0,
-					type: 'to',
 				}),
-				new MoveRangeStart({
+				new MoveFromRangeStart({
 					id: 1,
 					date: date,
 					author: 'Angel',
-					type: 'from',
 					name: 'Move_from_1',
 				}),
-				new MoveRangeEnd({
+				new MoveFromRangeEnd({
 					id: 1,
-					type: 'from',
 				})
 			);
 

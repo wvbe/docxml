@@ -14,8 +14,10 @@ import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
-import { MoveRangeEnd } from '../src/MoveRangeEnd.ts';
-import { MoveRangeStart } from '../src/MoveRangeStart.ts';
+import { MoveFromRangeEnd } from '../src/MoveFromRangeEnd.ts';
+import { MoveFromRangeStart } from '../src/MoveFromRangeStart.ts';
+import { MoveToRangeEnd } from '../src/MoveToRangeEnd.ts';
+import { MoveToRangeStart } from '../src/MoveToRangeStart.ts';
 
 describe('Insertion', () => {
 	const date = new Date();
@@ -412,27 +414,23 @@ describe('Insertion', () => {
 
 			const insertedMoveRange = new Insertion(
 				{ author: 'Luis', date: date, id: 1 },
-				new MoveRangeStart({
+				new MoveToRangeStart({
 					id: 0,
 					date: date,
 					author: 'Gabe',
-					type: 'to',
 					name: 'Move_to_1',
 				}),
-				new MoveRangeEnd({
+				new MoveToRangeEnd({
 					id: 0,
-					type: 'to',
 				}),
-				new MoveRangeStart({
+				new MoveFromRangeStart({
 					id: 1,
 					date: date,
 					author: 'Angel',
-					type: 'from',
 					name: 'Move_from_1',
 				}),
-				new MoveRangeEnd({
+				new MoveFromRangeEnd({
 					id: 1,
-					type: 'from',
 				})
 			);
 

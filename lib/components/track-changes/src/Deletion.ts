@@ -22,9 +22,10 @@ import type { FootnoteReference } from '../../document/src/FootnoteReference.ts'
 import type { Text } from '../../document/src/Text.ts';
 import type { Insertion } from './Insertion.ts';
 import type { Move } from './Move.ts';
-import type { MoveRangeEnd } from './MoveRangeEnd.ts';
-import type { MoveRangeStart } from './MoveRangeStart.ts';
-
+import type { MoveFromRangeEnd } from './MoveFromRangeEnd.ts';
+import type { MoveFromRangeStart } from './MoveFromRangeStart.ts';
+import type { MoveToRangeEnd } from './MoveToRangeEnd.ts';
+import type { MoveToRangeStart } from './MoveToRangeStart.ts';
 /**
  * A type specifying the children of {@link Deletion}.
  */
@@ -35,8 +36,10 @@ export type DeletionChild =
 	| CommentRangeEnd
 	| Text
 	| Move
-	| MoveRangeStart
-	| MoveRangeEnd
+	| MoveToRangeStart
+	| MoveToRangeEnd
+	| MoveFromRangeStart
+	| MoveFromRangeEnd
 	| Deletion
 	| Insertion
 	| FootnoteReference;
@@ -63,8 +66,10 @@ export class Deletion extends Component<DeletionProps, DeletionChild> {
 		'CommentRangeEnd',
 		'Text',
 		'Move',
-		'MoveRangeStart',
-		'MoveRangeEnd',
+		'MoveToRangeStart',
+		'MoveToRangeEnd',
+		'MoveFromRangeStart',
+		'MoveFromRangeEnd',
 		'Insertion',
 		'FootnoteReference',
 		this.name,

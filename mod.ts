@@ -141,15 +141,25 @@ export {
 	type MoveProps,
 } from './lib/components/track-changes/src/Move.ts';
 export {
-	MoveRangeEnd,
-	type MoveRangeEndChild,
-	type MoveRangeEndProps,
-} from './lib/components/track-changes/src/MoveRangeEnd.ts';
+	MoveFromRangeEnd,
+	type MoveFromRangeEndChild,
+	type MoveFromRangeEndProps,
+} from './lib/components/track-changes/src/MoveFromRangeEnd.ts';
 export {
-	MoveRangeStart,
-	type MoveRangeStartChild,
-	type MoveRangeStartProps,
-} from './lib/components/track-changes/src/MoveRangeStart.ts';
+	MoveFromRangeStart,
+	type MoveFromRangeStartChild,
+	type MoveFromRangeStartProps,
+} from './lib/components/track-changes/src/MoveFromRangeStart.ts';
+export {
+	MoveToRangeEnd,
+	type MoveRangeEndChild,
+	type MoveToRangeEndProps,
+} from './lib/components/track-changes/src/MoveToRangeEnd.ts';
+export {
+	MoveToRangeStart,
+	type MoveToRangeStartChild,
+	type MoveToRangeStartProps,
+} from './lib/components/track-changes/src/MoveToRangeStart.ts';
 export { FileMime } from './lib/enums.ts';
 
 // Shared properties

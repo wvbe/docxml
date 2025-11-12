@@ -10,17 +10,16 @@ import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
 
 export type MoveRangeEndChild = never;
 
-export type MoveRangeEndProps = {
+export type MoveToRangeEndProps = {
 	id: number;
-	type: 'from' | 'to';
 };
 
 /**
- * A type for indicating the end of a range of moved content.
+ * A type for indicating the end of a range of content that was moved to one place from elsewhere.
  * In OOXML, these are self-closing tags.
  */
-export class MoveRangeEnd extends Component<
-	MoveRangeEndProps,
+export class MoveToRangeEnd extends Component<
+	MoveToRangeEndProps,
 	MoveRangeEndChild
 > {
 	public static override readonly children: string[] = [];
@@ -32,19 +31,11 @@ export class MoveRangeEnd extends Component<
 	public override toNode(): Node {
 		return create(
 			`
-				switch ($type)
-				case 'to' return 
 				element ${QNS.w}moveToRangeEnd {
 					attribute ${QNS.w}id { $id }
 				}
-				case 'from' return 
-				element ${QNS.w}moveFromRangeEnd { 
-					attribute ${QNS.w}id { $id }
-				}
-				default return ()
 			`,
 			{
-				type: this.props.type,
 				id: this.props.id,
 			}
 		);
@@ -55,16 +46,15 @@ export class MoveRangeEnd extends Component<
 	 */
 	static override matchesNode(node: Node): boolean {
 		return (
-			node.nodeName === 'w:moveFromRangeEnd' ||
-			node.nodeName === 'w:moveToRangeEnd'
+			`Q{${(node as Element).namespaceURI}}` === QNS.w &&
+			(node as Element).localName === `moveToRangeEnd`
 		);
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node): MoveRangeEnd {
-		const type = node.nodeName === 'w:moveFromRangeEnd' ? 'from' : 'to';
+	static override fromNode(node: Node): MoveToRangeEnd {
 		const { id } = evaluateXPathToMap<{
 			id: number;
 		}>(
@@ -73,11 +63,10 @@ export class MoveRangeEnd extends Component<
 			}`,
 			node
 		);
-		return new MoveRangeEnd({
-			type: type,
+		return new MoveToRangeEnd({
 			id: id,
 		});
 	}
 }
 
-registerComponent(MoveRangeEnd);
+registerComponent(MoveToRangeEnd);

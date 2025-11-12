@@ -3,8 +3,10 @@ import Docx, {
 	cm,
 	Image,
 	Move,
-	MoveRangeEnd,
-	MoveRangeStart,
+	MoveFromRangeEnd,
+	MoveFromRangeStart,
+	MoveToRangeEnd,
+	MoveToRangeStart,
 	Paragraph,
 	Section,
 	Text,
@@ -17,9 +19,8 @@ await Docx.fromJsx(
 	<Section>
 		{/* Image MoveTo */}
 		<Paragraph>
-			<MoveRangeStart
+			<MoveToRangeStart
 				id={11}
-				type="to"
 				name="move_1"
 				author={author}
 				date={date}
@@ -35,7 +36,7 @@ await Docx.fromJsx(
 					/>
 				</Text>
 			</Move>
-			<MoveRangeEnd id={11} type="to" />
+			<MoveToRangeEnd id={11} />
 		</Paragraph>
 		<Paragraph>
 			<Text isBold isCaps>
@@ -44,9 +45,8 @@ await Docx.fromJsx(
 		</Paragraph>
 		{/* Image MoveFrom */}
 		<Paragraph>
-			<MoveRangeStart
+			<MoveFromRangeStart
 				id={8}
-				type="from"
 				name="move_1"
 				author={author}
 				date={date}
@@ -62,7 +62,7 @@ await Docx.fromJsx(
 					/>
 				</Text>
 			</Move>
-			<MoveRangeEnd id={8} type="from" />
+			<MoveFromRangeEnd id={8} />
 		</Paragraph>
 	</Section>
 ).toFile('track-changes-move-image.docx');

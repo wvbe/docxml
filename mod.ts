@@ -141,10 +141,10 @@ export {
 	type InsertionProps,
 } from './lib/components/track-changes/src/Insertion.ts';
 export {
-	Move,
-	type MoveChild,
-	type MoveProps,
-} from './lib/components/track-changes/src/Move.ts';
+	MoveFrom,
+	type MoveFromChild,
+	type MoveFromProps,
+} from './lib/components/track-changes/src/MoveFrom.ts';
 export {
 	MoveFromRangeEnd,
 	type MoveFromRangeEndChild,
@@ -155,6 +155,11 @@ export {
 	type MoveFromRangeStartChild,
 	type MoveFromRangeStartProps,
 } from './lib/components/track-changes/src/MoveFromRangeStart.ts';
+export {
+	MoveTo,
+	type MoveToChild,
+	type MoveToProps,
+} from './lib/components/track-changes/src/MoveTo.ts';
 export {
 	MoveToRangeEnd,
 	type MoveRangeEndChild,

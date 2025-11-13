@@ -147,7 +147,9 @@ export class Text extends Component<TextProps, TextChild> {
 							${QNS.w}drawing,
 							${QNS.w}t/text(),
 							${QNS.w}fldChar,
-							${QNS.w}instrText
+							${QNS.w}instrText,
+							${QNS.w}moveTo, 
+							${QNS.w}moveFrom
 						)
 					}
 				}

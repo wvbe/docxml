@@ -22,7 +22,8 @@ import {
 } from '../../../utilities/src/components.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import type { Move } from '../../track-changes/src/Move.ts';
+import type { MoveFrom } from '../../track-changes/src/MoveFrom.ts';
+import type { MoveTo } from '../../track-changes/src/MoveTo.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import { Paragraph } from './Paragraph.ts';
@@ -36,14 +37,16 @@ export type SectionChild =
 	| Table
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
-	| Move;
+	| MoveTo
+	| MoveFrom;
 
 export const sectionChildComponentNames = [
 	'Table',
 	'Paragraph',
 	'BookmarkRangeStart',
 	'BookmarkRangeEnd',
-	'Move',
+	'MoveTo',
+	'MoveFrom',
 ];
 
 /**

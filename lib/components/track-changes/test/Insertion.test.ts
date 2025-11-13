@@ -6,7 +6,8 @@ import {
 	CommentRangeEnd,
 	CommentRangeStart,
 	Insertion,
-	Move,
+	MoveFrom,
+	MoveTo,
 	Paragraph,
 	Text,
 } from '../../../../mod.ts';
@@ -281,42 +282,38 @@ describe('Insertion', () => {
 
 			const insertedMove1 = new Insertion(
 				{ author: 'Luis', date: date, id: 1 },
-				new Move(
+				new MoveTo(
 					{
 						id: 0,
 						date: date,
 						author: 'Gabe',
-						type: 'to',
 					},
 					new Text({}, 'Moved content')
 				),
-				new Move(
+				new MoveFrom(
 					{
 						id: 0,
 						date: date,
 						author: 'Gabe',
-						type: 'from',
 					},
 					new Text({}, 'Moved content')
 				)
 			);
 			const insertedMove2 = new Insertion(
 				{ author: 'Roy', date: date, id: 2 },
-				new Move(
+				new MoveTo(
 					{
 						id: 1,
 						date: date,
 						author: 'Gabe',
-						type: 'to',
 					},
 					new Text({}, 'More moved content')
 				),
-				new Move(
+				new MoveFrom(
 					{
 						id: 1,
 						date: date,
 						author: 'Gabe',
-						type: 'from',
 					},
 					new Text({}, 'More moved content')
 				)

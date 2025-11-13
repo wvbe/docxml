@@ -17,7 +17,8 @@ import { MoveFromRangeStart } from '../../track-changes/src/MoveFromRangeStart.t
 import { MoveToRangeEnd } from '../../track-changes/src/MoveToRangeEnd.ts';
 import { MoveToRangeStart } from '../../track-changes/src/MoveToRangeStart.ts';
 import { Deletion } from '../src/Deletion.ts';
-import { Move } from '../src/Move.ts';
+import { MoveFrom } from '../src/MoveFrom.ts';
+import { MoveTo } from '../src/MoveTo.ts';
 
 describe('Deletion', () => {
 	const date = new Date();
@@ -341,42 +342,38 @@ describe('Deletion', () => {
 
 			const deletedMove1 = new Deletion(
 				{ author: 'Luis', date: date, id: 1 },
-				new Move(
+				new MoveTo(
 					{
 						id: 0,
 						date: date,
 						author: 'Gabe',
-						type: 'to',
 					},
 					new Text({}, 'Moved content')
 				),
-				new Move(
+				new MoveFrom(
 					{
 						id: 0,
 						date: date,
 						author: 'Gabe',
-						type: 'from',
 					},
 					new Text({}, 'Moved content')
 				)
 			);
 			const deletedMove2 = new Deletion(
 				{ author: 'Roy', date: date, id: 2 },
-				new Move(
+				new MoveTo(
 					{
 						id: 1,
 						date: date,
 						author: 'Gabe',
-						type: 'to',
 					},
 					new Text({}, 'More moved content')
 				),
-				new Move(
+				new MoveFrom(
 					{
 						id: 1,
 						date: date,
 						author: 'Gabe',
-						type: 'from',
 					},
 					new Text({}, 'More moved content')
 				)

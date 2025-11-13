@@ -1,8 +1,12 @@
 import { Deletion, Insertion, type InsertionProps } from '../../../mod.ts';
 import {
-	Move,
-	type MoveProps,
-} from '../../components/track-changes/src/Move.ts';
+	MoveFrom,
+	type MoveFromProps,
+} from '../../components/track-changes/src/MoveFrom.ts';
+import {
+	MoveTo,
+	type MoveToProps,
+} from '../../components/track-changes/src/MoveTo.ts';
 import type { ChangeInformation } from '../../utilities/src/changes.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
@@ -138,9 +142,12 @@ export type TextProperties = {
 	 *
 	 * If present, the containing paragraph element will appear as a track-change moved paragraph.
 	 *
-	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
-	 */
-	move?: MoveProps | null;
+	 * Read more here:
+	 * https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EE3IW.html and
+	 * https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveFrom_topic_ID0EJ6EW.html
+	 **/
+	moveTo?: MoveToProps | null;
+	moveFrom?: MoveFromProps | null;
 
 	/**
 	 * A property used to indicate that the way this text is deiplayed has changed somehow.
@@ -221,15 +228,19 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"ascii": @${QNS.w}ascii/string(),
 				"hAnsi": @${QNS.w}hAnsi/string()
 			},
-			"move": ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/map {
+			"moveTo": ./${QNS.w}moveTo/map {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
-				"date": @${QNS.w}date/string(),
-				"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
+				"date": @${QNS.w}date/string()
 			}, 
+			"moveFrom": ./${QNS.w}moveFrom/map { 
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(), 
+				"date": @${QNS.w}date/string()
+			},
 			"change": ./${QNS.w}rPrChange/map { 
 				"id": @${QNS.w}id/number(), 
-				"author": @${QNS.w}author/string(), 
+				"author": if (@${QNS.w}author/string()) then @${QNS.w}author/string() else (), 
 				"date": @${QNS.w}date/string(), 
 				"node": ./${QNS.w}rPr
 			},
@@ -283,12 +294,22 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		};
 	}
 
-	if (props.move) {
-		// Convert the date string to a Date object.
-		props.move.date = props.move.date
-			? new Date(props.move.date)
-			: undefined;
-		props.move.author = props.move.author ? props.move.author : undefined;
+	if (props.moveTo) {
+		props.moveTo = {
+			id: props.moveTo.id,
+			author: props.moveTo.author ? props.moveTo.author : undefined,
+			date: props.moveTo.date ? new Date(props.moveTo.date) : undefined,
+		};
+	}
+
+	if (props.moveFrom) {
+		props.moveFrom = {
+			id: props.moveFrom.id,
+			author: props.moveFrom.author ? props.moveFrom.author : undefined,
+			date: props.moveFrom.date
+				? new Date(props.moveFrom.date)
+				: undefined,
+		};
 	}
 
 	return props as TextProperties;
@@ -311,7 +332,8 @@ export async function textPropertiesToNode(
 		!data.isStrike &&
 		!data.shading &&
 		!data.font &&
-		!data.move &&
+		!data.moveTo &&
+		!data.moveFrom &&
 		!data.change &&
 		!data.insertion &&
 		!data.deletion
@@ -373,7 +395,8 @@ export async function textPropertiesToNode(
 				if ($change('author')) then attribute ${QNS.w}author { $change('author') } else (),
 				$change('node')
 			} else (),
-			$move,
+			$moveTo, 
+			$moveFrom,
 			$insertion,
 			$deletion
 		}`,
@@ -424,11 +447,27 @@ export async function textPropertiesToNode(
 				  }
 				: null,
 			/*
-			 * Although the Move and Insertion components are used here and it can have children,
+			 * Although the MoveTo, MoveFrom and Insertion components are used here and it can have children,
 			 * since the move information is sent as properties rather than as an
 			 * object, we can be sure that no more children will ever be created.
 			 */
-			move: data.move ? await new Move(data.move).toNode([]) : null,
+			moveTo: data.moveTo
+				? await new MoveTo({
+						...data.moveTo,
+						date: data.moveTo.date
+							? new Date(data.moveTo.date)
+							: undefined,
+				  }).toNode([])
+				: null,
+
+			moveFrom: data.moveFrom
+				? await new MoveFrom({
+						...data.moveFrom,
+						date: data.moveFrom.date
+							? new Date(data.moveFrom.date)
+							: undefined,
+				  }).toNode([])
+				: null,
 			insertion: data.insertion
 				? await new Insertion(data.insertion).toNode([])
 				: null,

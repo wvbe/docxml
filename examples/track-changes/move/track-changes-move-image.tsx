@@ -2,11 +2,12 @@
 import Docx, {
 	cm,
 	Image,
-	Move,
+	MoveFrom,
 	MoveFromRangeEnd,
 	MoveFromRangeStart,
 	MoveToRangeEnd,
 	MoveToRangeStart,
+	MoveTo,
 	Paragraph,
 	Section,
 	Text,
@@ -25,7 +26,7 @@ await Docx.fromJsx(
 				author={author}
 				date={date}
 			/>
-			<Move id={12} type="to" author={author} date={date}>
+			<MoveTo id={12} author={author} date={date}>
 				<Text>
 					<Image
 						data={Deno.readFile('assets/oldPhoto.jpg')}
@@ -35,7 +36,7 @@ await Docx.fromJsx(
 						alt="Description"
 					/>
 				</Text>
-			</Move>
+			</MoveTo>
 			<MoveToRangeEnd id={11} />
 		</Paragraph>
 		<Paragraph>
@@ -51,7 +52,7 @@ await Docx.fromJsx(
 				author={author}
 				date={date}
 			/>
-			<Move id={9} type="from" author={author} date={date}>
+			<MoveFrom id={9} author={author} date={date}>
 				<Text>
 					<Image
 						data={Deno.readFile('assets/oldPhoto.jpg')}
@@ -61,7 +62,7 @@ await Docx.fromJsx(
 						alt="Description"
 					/>
 				</Text>
-			</Move>
+			</MoveFrom>
 			<MoveFromRangeEnd id={8} />
 		</Paragraph>
 	</Section>

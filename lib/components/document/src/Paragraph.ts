@@ -36,11 +36,12 @@ import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts'
 import type { Text } from '../../document/src/Text.ts';
 import type { Deletion } from '../../track-changes/src/Deletion.ts';
 import type { Insertion } from '../../track-changes/src/Insertion.ts';
-import type { Move } from '../../track-changes/src/Move.ts';
+import type { MoveFrom } from '../../track-changes/src/MoveFrom.ts';
 import type { MoveFromRangeEnd } from '../../track-changes/src/MoveFromRangeEnd.ts';
 import type { MoveFromRangeStart } from '../../track-changes/src/MoveFromRangeStart.ts';
 import type { MoveToRangeEnd } from '../../track-changes/src/MoveToRangeEnd.ts';
 import type { MoveToRangeStart } from '../../track-changes/src/MoveToRangeStart.ts';
+import type { MoveTo } from '../../track-changes/src/MoveTo.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import type { Field } from './Field.ts';
@@ -61,7 +62,8 @@ export type ParagraphChild =
 	| Hyperlink
 	| Field
 	| FootnoteReference
-	| Move
+	| MoveTo
+	| MoveFrom
 	| MoveToRangeStart
 	| MoveToRangeEnd
 	| MoveFromRangeStart
@@ -96,7 +98,8 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'Field',
 		'FootnoteReference',
 		'FootnoteAnchor',
-		'Move',
+		'MoveTo',
+		'MoveFrom',
 		'MoveToRangeStart',
 		'MoveToRangeEnd',
 		'MoveFromRangeStart',

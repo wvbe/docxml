@@ -1,12 +1,12 @@
+// Import without assignment ensures Deno does not tree-shake this component. To avoid circular
+// definitions, components register themselves in a side-effect of their module.
+
 import {
 	Component,
 	type ComponentAncestor,
 	type ComponentContext,
 } from '../../../classes/src/Component.ts';
-import {
-	type ChangeInformation,
-	getChangeInformation,
-} from '../../../utilities/src/changes.ts';
+import type { ChangeInformation } from '../../../utilities/src/changes.ts';
 import {
 	createChildComponentsFromNodes,
 	registerComponent,
@@ -21,17 +21,17 @@ import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.t
 import type { FootnoteReference } from '../../document/src/FootnoteReference.ts';
 import type { Text } from '../../document/src/Text.ts';
 import type { Deletion } from './Deletion.ts';
+import type { Insertion } from './Insertion.ts';
 import type { MoveFrom } from './MoveFrom.ts';
 import type { MoveFromRangeEnd } from './MoveFromRangeEnd.ts';
 import type { MoveFromRangeStart } from './MoveFromRangeStart.ts';
 import type { MoveToRangeEnd } from './MoveToRangeEnd.ts';
 import type { MoveToRangeStart } from './MoveToRangeStart.ts';
-import type { MoveTo } from './MoveTo.ts';
 
 /**
- * A type specifying the children of {@link Insertion}.
+ * A type specifying the children of {@link MoveTo}.
  */
-export type InsertionChild =
+export type MoveToChild =
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
 	| CommentRangeStart
@@ -39,42 +39,42 @@ export type InsertionChild =
 	| Text
 	| MoveTo
 	| MoveFrom
-	| Insertion
 	| MoveToRangeStart
 	| MoveToRangeEnd
 	| MoveFromRangeStart
 	| MoveFromRangeEnd
+	| Insertion
 	| Deletion
 	| FootnoteReference;
 
 /**
- * A type describing the props accepted by {@link Insertion}.
+ * A type describing the props accepted by {@link MoveTo}.
  */
-export type InsertionProps = ChangeInformation;
+export type MoveToProps = ChangeInformation;
 
 /**
- * A component that represents a change-tracked for an inserted element.
+ * A component that represents a change-tracked text or paragraph that was moved to a new location.
  *
- * The documentation with each of the possible cases can be found here.
- * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EOW6V.html
- * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EVH6V.html
- *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EZY5V.html
- *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EA14V.html
- *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EHJ5V.html
+ * If a `MoveTo` is present outside the text-properties, then paragraphs appear as a insertion in Word.
+ *
+ * Additional documentation is here:
+ * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EE3IW.html#topic_ID0EE3IW
+ * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
  */
-export class Insertion extends Component<InsertionProps, InsertionChild> {
+export class MoveTo extends Component<MoveToProps, MoveToChild> {
 	public static override readonly children: string[] = [
 		'BookmarkRangeEnd',
 		'BookmarkRangeStart',
 		'CommentRangeStart',
 		'CommentRangeEnd',
 		'Text',
-		'MoveTo',
-		'MoveFrom',
 		'MoveToRangeStart',
 		'MoveToRangeEnd',
 		'MoveFromRangeStart',
 		'MoveFromRangeEnd',
+		'MoveTo',
+		'MoveFrom',
+		'Insertion',
 		'Deletion',
 		'FootnoteReference',
 		this.name,
@@ -88,13 +88,13 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
-				let $attrs := [
+				element ${QNS.w}moveTo { 
 					attribute ${QNS.w}id { $id }, 
-					if ($author) then attribute ${QNS.w}author { $author } else (),
-					if ($date) then attribute ${QNS.w}date { $date } else ()
-				]
+					if (exists($date)) then attribute ${QNS.w}date { $date } else (),
+					if (exists($author)) then attribute ${QNS.w}author { $author } else (),
+					$children
+				}
 
-				return element ${QNS.w}ins { $attrs, $children }
 			`,
 			{
 				...this.props,
@@ -109,41 +109,52 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:ins';
+		return node.nodeName === 'w:moveTo';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): Insertion {
-		const props = getChangeInformation(node);
-		const { children } = evaluateXPathToMap<{
-			rpr: Node;
+	static override fromNode(node: Node, context: ComponentContext): MoveTo {
+		const { children, changeProps } = evaluateXPathToMap<{
 			children: Node[];
+			changeProps: MoveToProps;
 		}>(
 			`
-				map {
-					"children": array{
-						./${QNS.w}r,
-						./${QNS.w}bookmarkStart,
-						./${QNS.w}bookmarkEnd,
-						./${QNS.w}commentRangeStart,
-						./${QNS.w}commentRangeEnd,
-						./${QNS.w}moveTo,
-						./${QNS.w}moveToRangeStart,
-						./${QNS.w}moveToRangeEnd,
-						./${QNS.w}moveFrom,
-						./${QNS.w}moveFromRangeStart,
-						./${QNS.w}moveFromRangeEnd
-					}
+			map { 
+				"children": array{./(
+					${QNS.w}r |
+					${QNS.w}ins |
+					${QNS.w}del |
+					${QNS.w}commentRangeStart |
+					${QNS.w}commentRangeEnd |
+					${QNS.w}bookmarkStart |
+					${QNS.w}bookmarkEnd | 
+					${QNS.w}moveTo | 
+					${QNS.w}moveFrom | 
+					${QNS.w}moveToRangeStart | 
+					${QNS.w}moveToRangeEnd | 
+					${QNS.w}moveFromRangeStart | 
+					${QNS.w}moveFromRangeEnd
+				)}, 
+				"changeProps": map { 
+					"id": @${QNS.w}id/number(),
+					"date": if (@${QNS.w}date) then @${QNS.w}date/string() else (),
+					"author": if (@${QNS.w}author) then @${QNS.w}author/string() else ()
 				}
-			`,
-			node
-		);
 
-		return new Insertion(
-			props,
-			...createChildComponentsFromNodes<InsertionChild>(
+			}`,
+			node,
+			null,
+			{ nodeName: (node as Element).localName }
+		);
+		return new MoveTo(
+			{
+				...changeProps,
+				author: changeProps.author ? changeProps.author : undefined,
+				date: changeProps.date ? new Date(changeProps.date) : undefined,
+			},
+			...createChildComponentsFromNodes<MoveToChild>(
 				this.children,
 				children,
 				context
@@ -152,4 +163,4 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 	}
 }
 
-registerComponent(Insertion);
+registerComponent(MoveTo);

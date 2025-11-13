@@ -1,11 +1,12 @@
 /** @jsx  Docx.jsx */
 import Docx, {
 	cm,
-	Move,
+	MoveFrom,
 	MoveFromRangeEnd,
 	MoveFromRangeStart,
 	MoveToRangeEnd,
 	MoveToRangeStart,
+	MoveTo,
 	Paragraph,
 	Section,
 	Text,
@@ -58,7 +59,7 @@ await Docx.fromJsx(
 		<Paragraph
 			listItem={{ numbering, depth: 0 }}
 			pilcrow={{
-				move: { id: 26, type: 'to', author: author, date: date },
+				moveTo: { id: 26, author: author, date: date },
 			}}
 		>
 			<MoveToRangeStart
@@ -67,45 +68,45 @@ await Docx.fromJsx(
 				author={author}
 				date={date}
 			/>
-			<Move id={28} type="to" author={author} date={date}>
+			<MoveTo id={28} author={author} date={date}>
 				<Text>
 					The play is set in a house in Andalusia, shortly before the
 					Spanish Civil War.
 				</Text>
-			</Move>
+			</MoveTo>
 		</Paragraph>
 		<Paragraph
 			listItem={{ numbering, depth: 0 }}
 			pilcrow={{
-				move: { id: 29, type: 'to', author: author, date: date },
+				moveTo: { id: 29, author: author, date: date },
 			}}
 		>
-			<Move id={30} type="to" author={author} date={date}>
+			<MoveTo id={30} author={author} date={date}>
 				<Text>
 					Bernarda Alba imposes an eight-year mourning period after
 					her husband’s death.
 				</Text>
-			</Move>
+			</MoveTo>
 		</Paragraph>
 		<Paragraph
 			listItem={{ numbering, depth: 1 }}
 			pilcrow={{
-				move: { id: 31, type: 'to', author: author, date: date },
+				moveTo: { id: 31, author: author, date: date },
 			}}
 		>
-			<Move id={32} type="to" author={author} date={date}>
+			<MoveTo id={32} author={author} date={date}>
 				<Text>Uses mourning to control her daughters</Text>
-			</Move>
+			</MoveTo>
 		</Paragraph>
 		<Paragraph
 			listItem={{ numbering, depth: 2 }}
 			pilcrow={{
-				move: { id: 33, type: 'to', author: author, date: date },
+				moveTo: { id: 33, author: author, date: date },
 			}}
 		>
-			<Move id={34} type="to" author={author} date={date}>
+			<MoveTo id={34} author={author} date={date}>
 				<Text>No courtship or social contact allowed</Text>
-			</Move>
+			</MoveTo>
 		</Paragraph>
 		<MoveToRangeEnd id={27} />
 
@@ -117,7 +118,7 @@ await Docx.fromJsx(
 		<Paragraph
 			listItem={{ numbering, depth: 0 }}
 			pilcrow={{
-				move: { id: 17, type: 'from', author: author, date: date },
+				moveFrom: { id: 17, author: author, date: date },
 			}}
 		>
 			<MoveFromRangeStart
@@ -126,45 +127,45 @@ await Docx.fromJsx(
 				author={author}
 				date={date}
 			/>
-			<Move id={19} type="from" author={author} date={date}>
+			<MoveFrom id={19} author={author} date={date}>
 				<Text>
 					The play is set in a house in Andalusia, shortly before the
 					Spanish Civil War.
 				</Text>
-			</Move>
+			</MoveFrom>
 		</Paragraph>
 		<Paragraph
 			listItem={{ numbering, depth: 0 }}
 			pilcrow={{
-				move: { id: 20, type: 'from', author: author, date: date },
+				moveFrom: { id: 20, author: author, date: date },
 			}}
 		>
-			<Move id={21} type="from" author={author} date={date}>
+			<MoveFrom id={21} author={author} date={date}>
 				<Text>
 					Bernarda Alba imposes an eight-year mourning period after
 					her husband’s death.
 				</Text>
-			</Move>
+			</MoveFrom>
 		</Paragraph>
 		<Paragraph
 			listItem={{ numbering, depth: 1 }}
 			pilcrow={{
-				move: { id: 22, type: 'from', author: author, date: date },
+				moveFrom: { id: 22, author: author, date: date },
 			}}
 		>
-			<Move id={23} type="from" author={author} date={date}>
+			<MoveFrom id={23} author={author} date={date}>
 				<Text>Uses mourning to control her daughters</Text>
-			</Move>
+			</MoveFrom>
 		</Paragraph>
 		<Paragraph
 			listItem={{ numbering, depth: 2 }}
 			pilcrow={{
-				move: { id: 24, type: 'from', author: author, date: date },
+				moveFrom: { id: 24, author: author, date: date },
 			}}
 		>
-			<Move id={25} type="from" author={author} date={date}>
+			<MoveFrom id={25} author={author} date={date}>
 				<Text>No courtship or social contact allowed</Text>
-			</Move>
+			</MoveFrom>
 		</Paragraph>
 		<MoveFromRangeEnd id={18} />
 	</Section>

@@ -14,52 +14,27 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
-import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
-import type { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
-import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
-import type { FootnoteReference } from '../../document/src/FootnoteReference.ts';
-import type { Text } from '../../document/src/Text.ts';
-import type { Deletion } from './Deletion.ts';
-import type { Insertion } from './Insertion.ts';
-import type { MoveFromRangeEnd } from './MoveFromRangeEnd.ts';
-import type { MoveFromRangeStart } from './MoveFromRangeStart.ts';
-import type { MoveToRangeEnd } from './MoveToRangeEnd.ts';
-import type { MoveToRangeStart } from './MoveToRangeStart.ts';
+import type { MoveToChild } from './MoveTo.ts';
 
 /**
- * A type specifying the children of {@link Move}.
+ * A type specifying the children of {@link MoveFrom}.
  */
-export type MoveChild =
-	| BookmarkRangeStart
-	| BookmarkRangeEnd
-	| CommentRangeStart
-	| CommentRangeEnd
-	| Text
-	| Move
-	| MoveToRangeStart
-	| MoveToRangeEnd
-	| MoveFromRangeStart
-	| MoveFromRangeEnd
-	| Insertion
-	| Deletion
-	| FootnoteReference;
-
+export type MoveFromChild = MoveToChild;
 /**
- * A type describing the props accepted by {@link Move}.
+ * A type describing the props accepted by {@link MoveFrom}.
  */
-export type MoveProps = ChangeInformation & { type: 'to' | 'from' };
+export type MoveFromProps = ChangeInformation;
 
 /**
- * A component that represents a change-tracked text or paragraph that was moved.
+ * A component that represents a change-tracked text or paragraph that was moved from one location to another.
  *
- * If a `Move` is present outside the text-properties, then paragraphs appear as a insertion in Word.
+ * If a `MoveFrom` is present outside the text-properties, then paragraphs appear as a deletion in Word.
  *
  * Additional documentation is here:
  * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EE3IW.html#topic_ID0EE3IW
  * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
  */
-export class Move extends Component<MoveProps, MoveChild> {
+export class MoveFrom extends Component<MoveFromProps, MoveFromChild> {
 	public static override readonly children: string[] = [
 		'BookmarkRangeEnd',
 		'BookmarkRangeStart',
@@ -70,6 +45,8 @@ export class Move extends Component<MoveProps, MoveChild> {
 		'MoveToRangeEnd',
 		'MoveFromRangeStart',
 		'MoveFromRangeEnd',
+		'MoveTo',
+		'MoveFrom',
 		'Insertion',
 		'Deletion',
 		'FootnoteReference',
@@ -84,17 +61,12 @@ export class Move extends Component<MoveProps, MoveChild> {
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
-				let $attrs := [
+				element ${QNS.w}moveFrom { 
 					attribute ${QNS.w}id { $id }, 
 					if ($date) then attribute ${QNS.w}date { $date } else (),
-					if ($author) then attribute ${QNS.w}author { $author } else ()
-				]
-				let $moveType := 
-					switch ($type)
-					case 'to' return element ${QNS.w}moveTo { $attrs, $children } 
-					case 'from' return element ${QNS.w}moveFrom { $attrs, $children } 
-					default return () 
-				return $moveType
+					if ($author) then attribute ${QNS.w}author { $author } else (), 
+					$children
+				}
 			`,
 			{
 				...this.props,
@@ -109,16 +81,16 @@ export class Move extends Component<MoveProps, MoveChild> {
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:moveFrom' || node.nodeName === 'w:moveTo';
+		return node.nodeName === 'w:moveFrom';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): Move {
+	static override fromNode(node: Node, context: ComponentContext): MoveFrom {
 		const { children, changeProps } = evaluateXPathToMap<{
 			children: Node[];
-			changeProps: MoveProps;
+			changeProps: MoveFromProps;
 		}>(
 			`
 			map { 
@@ -139,7 +111,6 @@ export class Move extends Component<MoveProps, MoveChild> {
 				)}, 
 				"changeProps": map { 
 					"id": @${QNS.w}id/number(),
-					"type": if ($nodeName eq 'moveTo') then 'to' else 'from',
 					"date": if (@${QNS.w}date) then @${QNS.w}date/string() else (),
 					"author": if (@${QNS.w}author) then @${QNS.w}author/string() else ()
 				}
@@ -149,13 +120,13 @@ export class Move extends Component<MoveProps, MoveChild> {
 			null,
 			{ nodeName: (node as Element).localName }
 		);
-		return new Move(
+		return new MoveFrom(
 			{
 				...changeProps,
 				date: changeProps.date ? new Date(changeProps.date) : undefined,
 				author: changeProps.author ? changeProps.author : undefined,
 			},
-			...createChildComponentsFromNodes<MoveChild>(
+			...createChildComponentsFromNodes<MoveFromChild>(
 				this.children,
 				children,
 				context
@@ -164,4 +135,4 @@ export class Move extends Component<MoveProps, MoveChild> {
 	}
 }
 
-registerComponent(Move);
+registerComponent(MoveFrom);

@@ -21,9 +21,10 @@ import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.t
 import type { FootnoteReference } from '../../document/src/FootnoteReference.ts';
 import type { DeletedText } from "./DeletedText.ts";
 import type { Insertion } from './Insertion.ts';
-import type { Move } from './Move.ts';
+import type { MoveFrom } from './MoveFrom.ts';
 import type { MoveFromRangeEnd } from './MoveFromRangeEnd.ts';
 import type { MoveFromRangeStart } from './MoveFromRangeStart.ts';
+import type { MoveTo } from './MoveTo.ts';
 import type { MoveToRangeEnd } from './MoveToRangeEnd.ts';
 import type { MoveToRangeStart } from './MoveToRangeStart.ts';
 /**
@@ -35,7 +36,8 @@ export type DeletionChild =
 	| CommentRangeStart
 	| CommentRangeEnd
 	| DeletedText
-	| Move
+	| MoveTo
+	| MoveFrom
 	| MoveToRangeStart
 	| MoveToRangeEnd
 	| MoveFromRangeStart
@@ -65,7 +67,8 @@ export class Deletion extends Component<DeletionProps, DeletionChild> {
 		'CommentRangeStart',
 		'CommentRangeEnd',
 		'DeletedText',
-		'Move',
+		'MoveFrom',
+		'MoveTo',
 		'MoveToRangeStart',
 		'MoveToRangeEnd',
 		'MoveFromRangeStart',

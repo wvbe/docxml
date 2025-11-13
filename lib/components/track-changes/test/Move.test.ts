@@ -1,14 +1,14 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { Paragraph } from '../../document/src/Paragraph.ts';
-import { Text } from '../../document/src/Text.ts';
-import { Move } from '../src/Move.ts';
-
 import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
+import { Paragraph } from '../../document/src/Paragraph.ts';
+import { Text } from '../../document/src/Text.ts';
+import { MoveFrom } from '../src/MoveFrom.ts';
+import { MoveTo } from '../src/MoveTo.ts';
 
 describe('Move content in track changes...', () => {
 	const date = new Date();
@@ -160,12 +160,11 @@ describe('Move content in track changes...', () => {
 	// Testing a move inside a paragraph.
 	const moveToObject = new Paragraph(
 		{ style: null },
-		new Move(
+		new MoveTo(
 			{
 				id: 0,
 				date: date,
 				author: 'Gabe',
-				type: 'to',
 			},
 			new Text({}, 'This is a paragraph')
 		)
@@ -173,11 +172,10 @@ describe('Move content in track changes...', () => {
 
 	const moveToObjectWithoutDate = new Paragraph(
 		{ style: null },
-		new Move(
+		new MoveTo(
 			{
 				id: 0,
 				author: 'Gabe',
-				type: 'to',
 			},
 			new Text({}, 'This is a paragraph')
 		)
@@ -185,40 +183,36 @@ describe('Move content in track changes...', () => {
 
 	const moveToObjectWithoutAuthor = new Paragraph(
 		{ style: null },
-		new Move(
+		new MoveTo(
 			{
 				id: 0,
 				date: date,
-				type: 'to',
 			},
 			new Text({}, 'This is a paragraph')
 		)
 	);
 
 	// Testing a move as a stand-alone object
-	const moveFromObject = new Move(
+	const moveFromObject = new MoveFrom(
 		{
 			id: 1,
 			date: date,
 			author: 'Angel',
-			type: 'from',
 		},
 		new Text({}, 'This is a moveFrom node.')
 	);
 
-	const moveFromObjectWithoutAuthor = new Move(
+	const moveFromObjectWithoutAuthor = new MoveFrom(
 		{
 			id: 1,
 			date: date,
-			type: 'from',
 		},
 		new Text({}, 'This is a moveFrom node.')
 	);
-	const moveFromObjectWithoutDate = new Move(
+	const moveFromObjectWithoutDate = new MoveFrom(
 		{
 			id: 1,
 			author: 'Angel',
-			type: 'from',
 		},
 		new Text({}, 'This is a moveFrom node.')
 	);
@@ -226,10 +220,9 @@ describe('Move content in track changes...', () => {
 	const moveToAsPropObject = new Paragraph(
 		{
 			pilcrow: {
-				move: {
+				moveTo: {
 					author: 'Luis',
 					date: date,
-					type: 'to',
 					id: 1,
 				},
 			},
@@ -240,9 +233,8 @@ describe('Move content in track changes...', () => {
 	const moveToAsPropObjectWithoutAuthor = new Paragraph(
 		{
 			pilcrow: {
-				move: {
+				moveTo: {
 					date: date,
-					type: 'to',
 					id: 1,
 				},
 			},
@@ -253,9 +245,8 @@ describe('Move content in track changes...', () => {
 	const moveToAsPropObjectWithoutDate = new Paragraph(
 		{
 			pilcrow: {
-				move: {
+				moveTo: {
 					author: 'Luis',
-					type: 'to',
 					id: 1,
 				},
 			},
@@ -266,11 +257,10 @@ describe('Move content in track changes...', () => {
 	const moveFromAsPropObject = new Paragraph(
 		{
 			pilcrow: {
-				move: {
+				moveFrom: {
 					id: 2,
 					author: 'Ines',
 					date: date,
-					type: 'from',
 				},
 			},
 		},
@@ -280,10 +270,9 @@ describe('Move content in track changes...', () => {
 	const moveFromAsPropObjectWithoutAuthor = new Paragraph(
 		{
 			pilcrow: {
-				move: {
+				moveFrom: {
 					id: 2,
 					date: date,
-					type: 'from',
 				},
 			},
 		},
@@ -293,10 +282,9 @@ describe('Move content in track changes...', () => {
 	const moveFromAsPropObjectWithoutDate = new Paragraph(
 		{
 			pilcrow: {
-				move: {
+				moveFrom: {
 					id: 2,
 					author: 'Ines',
-					type: 'from',
 				},
 			},
 		},
@@ -315,12 +303,12 @@ describe('Move content in track changes...', () => {
 	);
 
 	// MoveFrom as an object
-	const newMoveFrom = Move.fromNode(moveFromNode, emptyContext);
-	const newMoveFromWithoutAuthor = Move.fromNode(
+	const newMoveFrom = MoveFrom.fromNode(moveFromNode, emptyContext);
+	const newMoveFromWithoutAuthor = MoveFrom.fromNode(
 		moveFromNodeWithoutAuthor,
 		emptyContext
 	);
-	const newMoveFromWithoutDate = Move.fromNode(
+	const newMoveFromWithoutDate = MoveFrom.fromNode(
 		moveFromNodeWithoutDate,
 		emptyContext
 	);
@@ -359,24 +347,24 @@ describe('Move content in track changes...', () => {
 		expect(newMoveFromWithoutAuthor).toEqual(moveFromObjectWithoutAuthor);
 		expect(newMoveFromWithoutDate).toEqual(moveFromObjectWithoutDate);
 
-		expect(newMoveToAsProp.props.pilcrow?.move).toEqual(
-			moveToAsPropObject.props.pilcrow?.move
+		expect(newMoveToAsProp.props.pilcrow?.moveTo).toEqual(
+			moveToAsPropObject.props.pilcrow?.moveTo
 		);
-		expect(newMoveToAsPropWithoutAuthor.props.pilcrow?.move).toEqual(
-			moveToAsPropObjectWithoutAuthor.props.pilcrow?.move
+		expect(newMoveToAsPropWithoutAuthor.props.pilcrow?.moveTo).toEqual(
+			moveToAsPropObjectWithoutAuthor.props.pilcrow?.moveTo
 		);
-		expect(newMoveToAsPropWithoutDate.props.pilcrow?.move).toEqual(
-			moveToAsPropObjectWithoutDate.props.pilcrow?.move
+		expect(newMoveToAsPropWithoutDate.props.pilcrow?.moveTo).toEqual(
+			moveToAsPropObjectWithoutDate.props.pilcrow?.moveTo
 		);
 
-		expect(newMoveFromAsProp.props.pilcrow?.move).toEqual(
-			moveFromAsPropObject.props.pilcrow?.move
+		expect(newMoveFromAsProp.props.pilcrow?.moveFrom).toEqual(
+			moveFromAsPropObject.props.pilcrow?.moveFrom
 		);
-		expect(newMoveFromAsPropWithoutAuthor.props.pilcrow?.move).toEqual(
-			moveFromAsPropObjectWithoutAuthor.props.pilcrow?.move
+		expect(newMoveFromAsPropWithoutAuthor.props.pilcrow?.moveFrom).toEqual(
+			moveFromAsPropObjectWithoutAuthor.props.pilcrow?.moveFrom
 		);
-		expect(newMoveFromAsPropWithoutDate.props.pilcrow?.move).toEqual(
-			moveFromAsPropObjectWithoutDate.props.pilcrow?.move
+		expect(newMoveFromAsPropWithoutDate.props.pilcrow?.moveFrom).toEqual(
+			moveFromAsPropObjectWithoutDate.props.pilcrow?.moveFrom
 		);
 	});
 

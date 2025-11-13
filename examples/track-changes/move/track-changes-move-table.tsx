@@ -1,11 +1,12 @@
 /** @jsx  Docx.jsx */
 import Docx, {
 	Cell,
-	Move,
+	MoveFrom,
 	MoveFromRangeEnd,
 	MoveFromRangeStart,
 	MoveToRangeEnd,
 	MoveToRangeStart,
+	MoveTo,
 	Paragraph,
 	Row,
 	Section,
@@ -24,9 +25,8 @@ await Docx.fromJsx(
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveTo: {
 								id: 15,
-								type: 'to',
 								author: author,
 								date: date,
 							},
@@ -38,25 +38,24 @@ await Docx.fromJsx(
 							author={author}
 							date={date}
 						/>
-						<Move id={17} type="to" author={author} date={date}>
+						<MoveTo id={17} author={author} date={date}>
 							<Text> Author</Text>
-						</Move>
+						</MoveTo>
 					</Paragraph>
 				</Cell>
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveTo: {
 								id: 45,
-								type: 'to',
 								author: author,
 								date: date,
 							},
 						}}
 					>
-						<Move id={46} type="to" author={author} date={date}>
+						<MoveTo id={46} author={author} date={date}>
 							<Text>Federico García Lorca</Text>
-						</Move>
+						</MoveTo>
 					</Paragraph>
 				</Cell>
 			</Row>
@@ -64,33 +63,31 @@ await Docx.fromJsx(
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveTo: {
 								id: 47,
-								type: 'to',
 								author: author,
 								date: date,
 							},
 						}}
 					>
-						<Move id={48} type="to" author={author} date={date}>
+						<MoveTo id={48} author={author} date={date}>
 							<Text>Genre</Text>
-						</Move>
+						</MoveTo>
 					</Paragraph>
 				</Cell>
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveTo: {
 								id: 49,
-								type: 'to',
 								author: author,
 								date: date,
 							},
 						}}
 					>
-						<Move id={50} type="to" author={author} date={date}>
+						<MoveTo id={50} author={author} date={date}>
 							<Text>Tragedy</Text>
-						</Move>
+						</MoveTo>
 					</Paragraph>
 				</Cell>
 			</Row>
@@ -98,36 +95,34 @@ await Docx.fromJsx(
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveTo: {
 								id: 51,
-								type: 'to',
 								author: author,
 								date: date,
 							},
 						}}
 					>
-						<Move id={52} type="to" author={author} date={date}>
+						<MoveTo id={52} author={author} date={date}>
 							<Text>Message</Text>
-						</Move>
+						</MoveTo>
 					</Paragraph>
 				</Cell>
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveTo: {
 								id: 53,
-								type: 'to',
 								author: author,
 								date: date,
 							},
 						}}
 					>
-						<Move id={54} type="to" author={author} date={date}>
+						<MoveTo id={54} author={author} date={date}>
 							<Text>
 								Critique of social and familial repression,
 								especially against women
 							</Text>
-						</Move>
+						</MoveTo>
 					</Paragraph>
 				</Cell>
 			</Row>
@@ -144,9 +139,8 @@ await Docx.fromJsx(
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveFrom: {
 								id: 12,
-								type: 'from',
 								author: author,
 								date: date,
 							},
@@ -158,25 +152,24 @@ await Docx.fromJsx(
 							author={author}
 							date={date}
 						/>
-						<Move id={14} type="from" author={author} date={date}>
+						<MoveFrom id={14} author={author} date={date}>
 							<Text> Author</Text>
-						</Move>
+						</MoveFrom>
 					</Paragraph>
 				</Cell>
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveFrom: {
 								id: 35,
-								type: 'from',
 								author: author,
 								date: date,
 							},
 						}}
 					>
-						<Move id={36} type="from" author={author} date={date}>
+						<MoveFrom id={36} author={author} date={date}>
 							<Text>Federico García Lorca</Text>
-						</Move>
+						</MoveFrom>
 					</Paragraph>
 				</Cell>
 			</Row>
@@ -184,33 +177,31 @@ await Docx.fromJsx(
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveFrom: {
 								id: 37,
-								type: 'from',
 								author: author,
 								date: date,
 							},
 						}}
 					>
-						<Move id={38} type="from" author={author} date={date}>
+						<MoveFrom id={38} author={author} date={date}>
 							<Text>Genre</Text>
-						</Move>
+						</MoveFrom>
 					</Paragraph>
 				</Cell>
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveFrom: {
 								id: 39,
-								type: 'from',
 								author: author,
 								date: date,
 							},
 						}}
 					>
-						<Move id={40} type="from" author={author} date={date}>
+						<MoveFrom id={40} author={author} date={date}>
 							<Text>Tragedy</Text>
-						</Move>
+						</MoveFrom>
 					</Paragraph>
 				</Cell>
 			</Row>
@@ -218,36 +209,34 @@ await Docx.fromJsx(
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveFrom: {
 								id: 41,
-								type: 'from',
 								author: author,
 								date: date,
 							},
 						}}
 					>
-						<Move id={42} type="from" author={author} date={date}>
+						<MoveFrom id={42} author={author} date={date}>
 							<Text>Message</Text>
-						</Move>
+						</MoveFrom>
 					</Paragraph>
 				</Cell>
 				<Cell>
 					<Paragraph
 						pilcrow={{
-							move: {
+							moveFrom: {
 								id: 43,
-								type: 'from',
 								author: author,
 								date: date,
 							},
 						}}
 					>
-						<Move id={44} type="from" author={author} date={date}>
+						<MoveFrom id={44} author={author} date={date}>
 							<Text>
 								Critique of social and familial repression,
 								especially against women
 							</Text>
-						</Move>
+						</MoveFrom>
 					</Paragraph>
 				</Cell>
 			</Row>

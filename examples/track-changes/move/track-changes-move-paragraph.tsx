@@ -1,8 +1,9 @@
 /** @jsx  Docx.jsx */
 import Docx, {
-	Move,
+	MoveFrom,
 	MoveFromRangeEnd,
 	MoveFromRangeStart,
+	MoveTo,
 	MoveToRangeEnd,
 	MoveToRangeStart,
 	Paragraph,
@@ -18,7 +19,7 @@ await Docx.fromJsx(
 		{/* Paragraph MoveFrom */}
 		<Paragraph
 			pilcrow={{
-				move: { id: 0, type: 'from', author: author, date: date },
+				moveFrom: { id: 0, author: author, date: date },
 			}}
 		>
 			<MoveFromRangeStart
@@ -27,7 +28,7 @@ await Docx.fromJsx(
 				author={author}
 				date={date}
 			/>
-			<Move id={2} type="from" author={author} date={date}>
+			<MoveFrom id={2} author={author} date={date}>
 				<Text>
 					The House of Bernarda Alba is a tragedy by Federico García
 					Lorca, set in a small, traditional Andalusian village in
@@ -38,7 +39,7 @@ await Docx.fromJsx(
 					(39), Magdalena (30), Amelia (27), Martirio (24), and Adela
 					(20).
 				</Text>
-			</Move>
+			</MoveFrom>
 			<MoveFromRangeEnd id={1} />
 		</Paragraph>
 		<Paragraph>
@@ -58,7 +59,7 @@ await Docx.fromJsx(
 		{/* Paragraph MoveTo */}
 		<Paragraph
 			pilcrow={{
-				move: { id: 3, type: 'to', author: author, date: date },
+				moveTo: { id: 3, author: author, date: date },
 			}}
 		>
 			<MoveToRangeStart
@@ -67,7 +68,7 @@ await Docx.fromJsx(
 				author={author}
 				date={date}
 			/>
-			<Move id={5} type="to" author={author} date={date}>
+			<MoveTo id={5} author={author} date={date}>
 				<Text>
 					The House of Bernarda Alba is a tragedy by Federico García
 					Lorca, set in a small, traditional Andalusian village in
@@ -78,7 +79,7 @@ await Docx.fromJsx(
 					(39), Magdalena (30), Amelia (27), Martirio (24), and Adela
 					(20).
 				</Text>
-			</Move>
+			</MoveTo>
 			<MoveToRangeEnd id={4} />
 		</Paragraph>
 		<Paragraph>

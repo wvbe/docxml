@@ -36,6 +36,7 @@ describe('Paragraph formatting', () => {
 				<w:tab w:val="right" w:leader="dot" w:pos="10" />
 				<w:tab w:val="left" w:leader="dot" w:pos="100" />
 			</w:tabs>
+			<w:pageBreakBefore w:val="false"/>
 		</w:pPr>`,
 		{
 			alignment: null,
@@ -98,6 +99,7 @@ describe('Paragraph formatting', () => {
 					position: twip(100),
 				},
 			],
+			pageBreakBefore: false,
 		}
 	);
 

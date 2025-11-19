@@ -83,6 +83,14 @@ export type SectionProperties = {
 		footer?: null | Length;
 		gutter?: null | Length;
 	};
+
+	pageBreakType?:
+		| 'continuous'
+		| 'evenPage'
+		| 'nextColumn'
+		| 'nextPage'
+		| 'oddPage'
+		| null;
 	/**
 	 * Specifies whether sections in the document shall have different headers and footers for even and odd pages.
 	 */
@@ -147,6 +155,7 @@ export function sectionPropertiesFromNode(
 						"footer": docxml:length(./${QNS.w}pgMar/@${QNS.w}footer, 'twip'),
 						"gutter": docxml:length(./${QNS.w}pgMar/@${QNS.w}gutter, 'twip')
 					},
+					"pageBreakType": ./${QNS.w}type/@${QNS.w}val/string(),  
 					"isTitlePage": exists(./${QNS.w}titlePg) and (not(./${QNS.w}titlePg/@${QNS.w}val) or docxml:st-on-off(./${QNS.w}titlePg/@${QNS.w}val)), 
 					"change": ./${QNS.w}sectPrChange/map { 
 						"id": @${QNS.w}id/number(), 
@@ -269,6 +278,7 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 					round($pageMargin('gutter')('twip'))
 				} else ()
 			} else (),
+			if (exists($pageBreakType)) then element ${QNS.w}type { attribute ${QNS.w}val { $pageBreakType } } else (),
 			if (exists($isTitlePage)) then element ${QNS.w}titlePg { attribute ${QNS.w}val { "1" } } else (), 
 			if (exists($change)) then element ${QNS.w}sectPrChange { 
 				attribute ${QNS.w}id { $change('id') }, 
@@ -300,6 +310,7 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 			pageHeight: data.pageHeight || null,
 			pageMargin: data.pageMargin || null,
 			pageOrientation: data.pageOrientation || null,
+			pageBreakType: data.pageBreakType || null,
 			isTitlePage: data.isTitlePage || null,
 			change: data.change
 				? {

@@ -94,6 +94,7 @@ export type ParagraphProperties = {
 	 * Change tracking info for this paragraph.
 	 */
 	change?: null | (ChangeInformation & Omit<ParagraphProperties, 'change'>);
+	pageBreakBefore?: null | boolean;
 	/**
 	 * Used for formatting of the `rPr` elements at the top level of a paragraph.
 	 * This is text property changes applied to the whole parent paragraph.
@@ -174,6 +175,7 @@ export function paragraphPropertiesFromNode(
 						"date": @${QNS.w}date/string(),
 						"_node": ./${QNS.w}pPr
 					},
+					"pageBreakBefore": docxml:ct-on-off(./${QNS.w}pageBreakBefore), 
 					"tabs": ./${QNS.w}tabs/array {${QNS.w}tab/map {
 						"type": @${QNS.w}val/string(),
 						"leader": @${QNS.w}leader/string(),
@@ -292,6 +294,10 @@ export async function paragraphPropertiesToNode(
 				$rpr,
 				$sectpr,
 
+				if (exists($pageBreakBefore)) then element ${QNS.w}pageBreakBefore { 
+						attribute ${QNS.w}val { $pageBreakBefore } 
+				} else (),
+
 				if (exists($change)) then element ${QNS.w}pPrChange {
 					attribute ${QNS.w}id { $change('id') },
 					if ($change('date')) then attribute ${QNS.w}date { $change('date') } else (),
@@ -352,6 +358,7 @@ export async function paragraphPropertiesToNode(
 				  }
 				: null,
 			listItem: data.listItem || null,
+			pageBreakBefore: data.pageBreakBefore || null,
 			change: data.change
 				? {
 						id: data.change.id,

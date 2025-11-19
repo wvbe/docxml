@@ -161,6 +161,95 @@ describe('Section column formatting for equally sized columns', () => {
 	);
 });
 
+describe('Section breaks', () => {
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:type w:val="nextPage" />
+		</w:sectPr>`,
+		{
+			pageBreakType: 'nextPage',
+		}
+	);
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:type w:val="nextColumn" />
+		</w:sectPr>`,
+		{
+			pageBreakType: 'nextColumn',
+		}
+	);
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:type w:val="oddPage" />
+		</w:sectPr>`,
+		{
+			pageBreakType: 'oddPage',
+		}
+	);
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:type w:val="evenPage" />
+		</w:sectPr>`,
+		{
+			pageBreakType: 'evenPage',
+		}
+	);
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:type w:val="continuous" />
+		</w:sectPr>`,
+		{
+			pageBreakType: 'continuous',
+		}
+	);
+
+	reverseTest(
+		{
+			pageBreakType: 'evenPage',
+		},
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:type w:val='evenPage' />
+		</w:sectPr>
+		`
+	);
+	reverseTest(
+		{
+			pageBreakType: 'oddPage',
+		},
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:type w:val='oddPage' />
+		</w:sectPr>
+		`
+	);
+	reverseTest(
+		{
+			pageBreakType: 'nextColumn',
+		},
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:type w:val='nextColumn' />
+		</w:sectPr>
+		`
+	);
+	reverseTest(
+		{
+			pageBreakType: 'continuous',
+		},
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:type w:val='continuous' />
+		</w:sectPr>
+		`
+	);
+	reverseTest(
+		{
+			pageBreakType: 'nextPage',
+		},
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:type w:val='nextPage' />
+		</w:sectPr>
+		`
+	);
+});
+
 describe('Section column formatting for differently sized columns', () => {
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>

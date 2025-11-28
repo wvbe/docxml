@@ -12,6 +12,7 @@ import {
 	registerComponent,
 } from '../../../utilities/src/components.ts';
 import { create } from '../../../utilities/src/dom.ts';
+import { twip } from '../../../utilities/src/length.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import {
 	checkForForbiddenParameters,
@@ -64,6 +65,27 @@ export class Cell extends Component<CellProps, CellChild> {
 	}
 
 	/**
+	 * Get the with of the cell by keeping in mind the colspan property of cells.
+	 * @returns The width of the cell or null.
+	 */
+	private getCellWidth(table: Table) {
+		const colSpan = this.getColSpan();
+		const info = table.model.getCellInfo(this);
+
+		const colWidth = table.props.columnWidths?.[info.column];
+		if (!colWidth) {
+			return null;
+		}
+
+		let colSpanAcc = 0;
+		for (let i = 0; i < colSpan; ++i) {
+			colSpanAcc += table.props.columnWidths?.[info.column + i].twip || 0;
+		}
+
+		return twip(colSpanAcc);
+	}
+
+	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
@@ -93,10 +115,7 @@ export class Cell extends Component<CellProps, CellChild> {
 					{
 						colSpan: this.getColSpan(),
 						rowSpan: this.getRowSpan(),
-						width:
-							table.props.columnWidths?.[
-								table.model.getCellInfo(this).column
-							] || null,
+						width: this.getCellWidth(table),
 						...this.props,
 					},
 					false
@@ -135,7 +154,7 @@ export class Cell extends Component<CellProps, CellChild> {
 			{
 				tcPr: tableCellPropertiesToNode(
 					{
-						width: table.props.columnWidths?.[info.column] || null,
+						width: this.getCellWidth(table),
 						colSpan: this.getColSpan(),
 						rowSpan: this.getRowSpan(),
 						...this.props,

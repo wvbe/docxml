@@ -45,6 +45,9 @@ import type { MoveTo } from '../../track-changes/src/MoveTo.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import type { Field } from './Field.ts';
+import type { FieldRangeEnd } from './FieldRangeEnd.ts';
+import type { FieldRangeInstruction } from './FieldRangeInstruction.ts';
+import type { FieldRangeStart } from './FieldRangeStart.ts';
 import type { FootnoteAnchor } from './FootnoteAnchor.ts';
 import type { FootnoteReference } from './FootnoteReference.ts';
 import type { Hyperlink } from './Hyperlink.ts';
@@ -61,6 +64,9 @@ export type ParagraphChild =
 	| BookmarkRangeEnd
 	| Hyperlink
 	| Field
+	| FieldRangeEnd
+	| FieldRangeStart
+	| FieldRangeInstruction
 	| FootnoteReference
 	| MoveTo
 	| MoveFrom
@@ -96,6 +102,9 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'Hyperlink',
 		'Text',
 		'Field',
+		'FieldRangeStart',
+		'FieldRangeEnd',
+		'FieldRangeInstruction',
 		'FootnoteReference',
 		'FootnoteAnchor',
 		'MoveTo',
@@ -190,6 +199,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 						${QNS.w}ins |
 						${QNS.w}commentRangeStart |
 						${QNS.w}commentRangeEnd |
+						${QNS.w}fieldChar | 
 						${QNS.w}bookmarkStart |
 						${QNS.w}bookmarkEnd | 
 						${QNS.w}moveTo | 

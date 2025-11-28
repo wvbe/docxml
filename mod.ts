@@ -45,6 +45,13 @@ export {
 	type FieldChild,
 	type FieldProps,
 } from './lib/components/document/src/Field.ts';
+
+export {
+	FieldDefinition,
+	FieldNames,
+	type FieldDefinitionChild,
+	type FieldDefinitionProps,
+} from './lib/components/document/src/FieldDefinition.ts';
 export {
 	FieldRangeEnd,
 	type FieldRangeEndChild,

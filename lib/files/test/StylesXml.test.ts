@@ -1,7 +1,12 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
+import { Docx } from '../../Docx.ts';
+import { Paragraph } from '../../components/document/src/Paragraph.ts';
+import { Section } from '../../components/document/src/Section.ts';
+import { Text } from '../../components/document/src/Text.ts';
 import { serialize } from '../../utilities/src/dom.ts';
+import { pt } from '../../utilities/src/length.ts';
 import { StylesXml } from '../src/StylesXml.ts';
 
 describe('Styles', () => {
@@ -82,5 +87,40 @@ describe('Styles', () => {
 			spacing: null,
 			color: '000000',
 		});
+	});
+
+	it('can read a document with no theme', async () => {
+		const docx = Docx.fromNothing();
+		const style = docx.document.styles.add({
+			id: 'Text',
+			name: 'Text',
+			type: 'paragraph',
+			text: {
+				fontSize: pt(9),
+			},
+		});
+		docx.document.set([
+			new Section({}, new Paragraph({ style }, new Text({}, 'foo'))),
+		]);
+		const archive = await docx.toArchive();
+
+		// word/theme/theme1.xml is the default location for the first theme that is included in a document.
+		let theme: string | null;
+		try {
+			theme = await archive.readText('word/theme/theme1.xml');
+		} catch (_) {
+			theme = null;
+		}
+		// It shouldn't be there.
+		expect(theme).toBeFalsy();
+
+		// styles.xml is the default location for the first theme that is included in a document.
+		// This call shouldn't crash if there's no theme.
+		const styles = await StylesXml.fromArchive(archive, 'styles.xml');
+		expect(styles).toBeTruthy();
+
+		// Same here, shouldn't crash when loading the whole doc.
+		const fromArchive = Docx.fromArchive(archive);
+		expect(fromArchive).toBeTruthy();
 	});
 });

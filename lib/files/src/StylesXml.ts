@@ -193,7 +193,7 @@ export class StylesXml extends XmlFile {
 													}
 												)
 										)
-								  )
+									)
 								: null,
 						})
 					)
@@ -390,7 +390,7 @@ export class StylesXml extends XmlFile {
 											}),
 										{}
 									),
-							  }
+								}
 							: {}),
 					},
 				};
@@ -421,7 +421,13 @@ export class StylesXml extends XmlFile {
 		location: string
 	): Promise<StylesXml> {
 		if (archive.hasFile(location)) {
-			const theme = await ThemeXml.fromArchive(archive);
+			let theme: ThemeXml | undefined;
+			try {
+				theme = await ThemeXml.fromArchive(archive);
+			} catch (_) {
+				// no-op
+				// something happened, the theme document couldn't be read.
+			}
 			const dom = await archive.readXml(location);
 			return this.fromDom(dom, location, theme);
 		}

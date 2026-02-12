@@ -40,12 +40,5 @@
 		"*.xqm": "xquery"
 	},
 
-	"prettier.enable": true,
-	"prettier.trailingComma": "all",
-	"prettier.singleQuote": true,
-	"prettier.jsxSingleQuote": true,
-	"prettier.arrowParens": "avoid",
-	"prettier.tabWidth": 4,
-	"prettier.printWidth": 120,
-	"prettier.useTabs": true
+	"prettier.enable": true
 }

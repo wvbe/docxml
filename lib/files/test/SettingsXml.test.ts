@@ -51,4 +51,16 @@ describe('SettingsXml', () => {
 			position: 'beneathText',
 		});
 	});
+	it('DocumentProtectionProps', () => {
+		const settings = new SettingsXml('test');
+		expect(settings.get('documentProtection')).toBe(null);
+		settings.set('documentProtection', {
+			edit: 'readOnly',
+			enforcement: true,
+		});
+		expect(settings.get('documentProtection')).toEqual({
+			edit: 'readOnly',
+			enforcement: true,
+		});
+	});
 });

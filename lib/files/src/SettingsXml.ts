@@ -32,6 +32,19 @@ export type SettingsI = {
 	defaultTabStop: Length | null;
 
 	footnoteProperties?: FootnoteProps | null;
+
+	documentProtection?: DocumentProtectionProps | null;
+};
+
+export type DocumentProtectionProps = {
+	// Defines the allowed editing permissions
+	edit?:
+		| 'none' // No restrictions: the content can be edited freely
+		| 'readOnly' // Read-only: the content cannot be modified
+		| 'comments' // Comments only: content cannot be edited, only comments can be added
+		| 'trackedChanges' // Tracked changes only: edits are allowed but must be tracked (change tracking enabled)
+		| 'forms'; // Only forms fields can be edited
+	enforcement: boolean;
 };
 
 const DEFAULT_SETTINGS: SettingsI = {
@@ -40,6 +53,7 @@ const DEFAULT_SETTINGS: SettingsI = {
 	attachedTemplate: null,
 	defaultTabStop: null,
 	footnoteProperties: null,
+	documentProtection: null,
 };
 
 enum SettingType {
@@ -98,6 +112,11 @@ const settingsMeta: Array<SettingMeta> = [
 		ooxmlLocalName: 'footnotePr',
 		ooxmlType: SettingType.Formatting,
 	},
+	{
+		docxmlName: 'documentProtection',
+		ooxmlLocalName: 'documentProtection',
+		ooxmlType: SettingType.OnOff,
+	},
 ];
 
 export class SettingsXml extends XmlFileWithContentTypes {
@@ -135,7 +154,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 				? (this.relationships.add(
 						meta.ooxmlRelationshipType,
 						value as string
-				  ) as SettingsI[Key])
+					) as SettingsI[Key])
 				: value;
 		} else {
 			this.#props[key] = value;
@@ -154,7 +173,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 			return this.#props[key]
 				? (this.relationships.getTarget(
 						this.#props[key] as string
-				  ) as SettingsI[Key])
+					) as SettingsI[Key])
 				: (this.#props[key] as SettingsI[Key]);
 		} else {
 			return this.#props[key];
@@ -186,6 +205,10 @@ export class SettingsXml extends XmlFileWithContentTypes {
 					if ($attachedTemplate) then element ${QNS.w}attachedTemplate {
 						attribute ${QNS.r}id { $attachedTemplate }
 					} else (),
+					if ($documentProtection) then element ${QNS.w}documentProtection {
+						attribute ${QNS.w}edit { map:get($documentProtection, 'edit') },
+						attribute ${QNS.w}enforcement { map:get($documentProtection, 'enforcement') }
+					} else (),
 					if (exists($footnoteProperties)) then (
 						element ${QNS.w}footnotePr {
 							element ${QNS.w}numFmt { 
@@ -204,15 +227,10 @@ export class SettingsXml extends XmlFileWithContentTypes {
 								attribute ${QNS.w}id { 0 }
 							}
 						}
-					) else (), 
-					${
-						this.#props.defaultTabStop
-							? `
-						element ${QNS.w}defaultTabStop {
-							attribute ${QNS.w}val { map:get($defaultTabStop, 'twip') }
-						}`
-							: '()'
-					}
+					) else (),
+					 if (exists($defaultTabStop)) then element ${QNS.w}defaultTabStop {
+						attribute ${QNS.w}val { map:get($defaultTabStop, 'twip') }
+					} else ()
 				}
 			</w:settings>`,
 			this.#props,
@@ -261,7 +279,8 @@ export class SettingsXml extends XmlFileWithContentTypes {
 		const settings = evaluateXPathToMap<SettingsI>(
 			`/${QNS.w}settings/map {
 				"isTrackChangesEnabled": docxml:ct-on-off(./${QNS.w}trackChanges),
-				"evenAndOddHeaders": docxml:ct-on-off(./${QNS.w}evenAndOddHeaders)
+				"evenAndOddHeaders": docxml:ct-on-off(./${QNS.w}evenAndOddHeaders),
+				"documentProtection": docxml:ct-on-off(./${QNS.w}documentProtection)
 			}`,
 			xml
 		);

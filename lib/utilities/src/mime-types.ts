@@ -9,11 +9,11 @@
 import { FileMime } from '../../enums.ts';
 
 function getMimeTypeFromHexSignature(signature: string): FileMime {
+	// All valid JPEG files start with SOI marker (FF D8) followed by FF
+	if (signature.startsWith('FFD8FF')) {
+		return FileMime.jpeg;
+	}
 	switch (signature) {
-		case 'FFD8FFDB':
-		case 'FFD8FFE0':
-		case 'FFD8FFE1':
-			return FileMime.jpeg;
 		case '89504E47':
 			return FileMime.png;
 		case '47494638':

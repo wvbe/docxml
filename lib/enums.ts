@@ -55,6 +55,7 @@ export enum RelationshipType {
 	commentsExtended = 'http://schemas.microsoft.com/office/2011/relationships/commentsExtended',
 	corePropertiesAlternative = 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties',
 	coreProperties = 'http://schemas.openxmlformats.org/officedocument/2006/relationships/metadata/core-properties',
+
 	customProperties = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties',
 	customXml = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXml',
 	endnotes = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/endnotes',
@@ -79,4 +80,12 @@ export enum RelationshipType {
 	// Legacy template (.dot)
 	downRev = 'http://schemas.microsoft.com/office/2006/relationships/downRev',
 	graphicFrameDoc = 'http://schemas.microsoft.com/office/2006/relationships/graphicFrameDoc',
+	/*
+	 * thumbnail and stylesWithEffects are relationships that are not yet known.
+	 * For the time being, they will be treated as such in lib > files > index.ts.
+	 * Info about thumbnail: https://c-rex.net/samples/ooxml/e1/Part1/OOXML_P1_Fundamentals_Thumbnail_topic_ID0EWLEO.html?hl=thumbnail
+	 * I guess that something like "CorePropertiesXml.ts" has to be created.
+	 */
+	thumbnail = 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail',
+	stylesWithEffects = 'http://schemas.microsoft.com/office/2007/relationships/stylesWithEffects',
 }

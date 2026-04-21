@@ -218,6 +218,13 @@ export class Cell extends Component<CellProps, CellChild> {
 		node: Node,
 		context: ComponentContext
 	): null | Cell {
+		/*
+		 * Note: This code is similar to tableCellPropertiesFromNode().
+		 * In other elements (Table for example), this code reuses the tableXPropertiesFromNode() functions.
+		 * But in this case there are slight differences: $firstNextRow logic, $mergeCells and props.changes.
+		 * We should consider aligning both.
+		 */
+
 		const { mergedAway, children, ...props } = evaluateXPathToMap<
 			CellProps & { mergedAway: boolean; children: Node[] }
 		>(
@@ -248,6 +255,17 @@ export class Cell extends Component<CellProps, CellChild> {
 						else 1,
 					"rowSpan": $rowEnd - $rowStart,
 					"children": array{ ./(${QNS.w}p) },
+					"shading": ./${QNS.w}tcPr/${QNS.w}shd/docxml:ct-shd(.),
+					"borders": ./${QNS.w}tcPr/${QNS.w}tcBorders/map {
+						"top": docxml:ct-border(${QNS.w}top),
+						"start": docxml:ct-border((${QNS.w}start|${QNS.w}left)[1]),
+						"bottom": docxml:ct-border(${QNS.w}bottom),
+						"end": docxml:ct-border((${QNS.w}end|${QNS.w}right)[1]),
+						"tl2br": docxml:ct-border(${QNS.w}tl2br),
+						"tr2bl": docxml:ct-border(${QNS.w}tr2bl),
+						"insideH": docxml:ct-border(${QNS.w}insideH),
+						"insideV": docxml:ct-border(${QNS.w}insideV)
+					},
 					"verticalAlignment": ./${QNS.w}tcPr/${QNS.w}vAlign/@${QNS.w}val/string(),
 					"insertion": ./${QNS.w}tcPr/${QNS.w}cellIns/map {
 						"id": @${QNS.w}id/number(),

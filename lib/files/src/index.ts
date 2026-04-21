@@ -68,6 +68,11 @@ export function castRelationshipToClass(
 		case RelationshipType.downRev:
 		case RelationshipType.graphicFrameDoc:
 		case RelationshipType.glossary:
+		/**
+		 * @todo Implement these relationships. Check enums.ts
+		 */
+		case RelationshipType.thumbnail:
+		case RelationshipType.stylesWithEffects:
 			return UnhandledXmlFile.fromArchive(archive, meta.target);
 
 		case RelationshipType.attachedTemplate:

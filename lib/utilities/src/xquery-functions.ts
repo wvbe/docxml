@@ -68,6 +68,8 @@ fontoxpath.registerXQueryModule(`
 		$val/map {
 			"foreground": ./@${QNS.w}color/string(),
 			"background": ./@${QNS.w}fill/string(),
+			"themeColor": ./@${QNS.w}themeColor/string(),
+			"themeFill": ./@${QNS.w}themeFill/string(),
 			"pattern": ./@${QNS.w}val/string()
 		}
 	};
@@ -77,6 +79,8 @@ fontoxpath.registerXQueryModule(`
 		if (exists($data)) then element {$name} {
 			if (exists($data('foreground'))) then attribute ${QNS.w}color { $data('foreground') } else (),
 			if (exists($data('background'))) then attribute ${QNS.w}fill { $data('background') } else (),
+			if (exists($data('themeColor'))) then attribute ${QNS.w}themeColor { $data('themeColor') } else (),
+			if (exists($data('themeFill'))) then attribute ${QNS.w}themeFill { $data('themeFill') } else (),
 			if (exists($data('pattern'))) then attribute ${QNS.w}val { $data('pattern') } else ()
 		} else ()
 	};

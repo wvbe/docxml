@@ -29,7 +29,7 @@ type RuleResult = SyncRuleResult | AsyncRuleResult | Array<RuleResult>;
  * DOCX archive, such as `ContentTypes.xml`, `word/document.xml`, and `_rels/.rels`.
  */
 export class Docx<
-	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never }
+	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
 > {
 	/**
 	 * The JSX pragma.
@@ -144,9 +144,7 @@ export class Docx<
 		) {
 			// Loop over all content to ensure styles are registered, relationships created etc.
 			await Promise.all(
-				(
-					await children
-				).map(async function walk(componentPromise) {
+				(await children).map(async function walk(componentPromise) {
 					const component = await componentPromise;
 					if (typeof component === 'string') {
 						return;
@@ -217,7 +215,7 @@ export class Docx<
 	public static async fromArchive<
 		PropsGeneric extends { [key: string]: unknown } = {
 			[key: string]: never;
-		}
+		},
 	>(archive: Archive): Promise<Docx<PropsGeneric>>;
 
 	/**
@@ -226,7 +224,7 @@ export class Docx<
 	public static async fromArchive<
 		PropsGeneric extends { [key: string]: unknown } = {
 			[key: string]: never;
-		}
+		},
 	>(data: Uint8Array): Promise<Docx<PropsGeneric>>;
 
 	/**
@@ -235,7 +233,7 @@ export class Docx<
 	public static async fromArchive<
 		PropsGeneric extends { [key: string]: unknown } = {
 			[key: string]: never;
-		}
+		},
 	>(location: string): Promise<Docx<PropsGeneric>>;
 
 	/**
@@ -244,7 +242,7 @@ export class Docx<
 	public static async fromArchive<
 		PropsGeneric extends { [key: string]: unknown } = {
 			[key: string]: never;
-		}
+		},
 	>(
 		locationOrZipArchive: string | Archive | Uint8Array
 	): Promise<Docx<PropsGeneric>> {
@@ -252,8 +250,8 @@ export class Docx<
 			typeof locationOrZipArchive === 'string'
 				? await Archive.fromFile(locationOrZipArchive)
 				: locationOrZipArchive instanceof Uint8Array
-				? await Archive.fromUInt8Array(locationOrZipArchive)
-				: locationOrZipArchive;
+					? await Archive.fromUInt8Array(locationOrZipArchive)
+					: locationOrZipArchive;
 
 		const contentTypes = await ContentTypesXml.fromArchive(
 			archive,
@@ -274,7 +272,7 @@ export class Docx<
 	public static fromNothing<
 		PropsGeneric extends { [key: string]: unknown } = {
 			[key: string]: never;
-		}
+		},
 	>(): Docx<PropsGeneric> {
 		return new Docx<PropsGeneric>();
 	}

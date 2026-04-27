@@ -202,9 +202,40 @@ export type ArtBorderType =
 	| 'zigZag'
 	| 'zigZagStitch';
 
+export type ThemeColor =
+	| 'dark1'
+	| 'light1'
+	| 'dark2'
+	| 'light2'
+	| 'accent1'
+	| 'accent2'
+	| 'accent3'
+	| 'accent4'
+	| 'accent5'
+	| 'accent6'
+	| 'hyperlink'
+	| 'followedHyperlink'
+	| 'none'
+	| 'background1'
+	| 'text1'
+	| 'background2'
+	| 'text2';
+
+export type ThemeFont =
+	| 'majorAscii'
+	| 'majorHAnsi'
+	| 'majorEastAsia'
+	| 'majorBidi'
+	| 'minorAscii'
+	| 'minorHAnsi'
+	| 'minorEastAsia'
+	| 'minorBidi';
+
 export type Shading = {
 	foreground?: null | string;
 	background?: null | string;
+	themeColor?: null | ThemeColor;
+	themeFill?: null | ThemeColor;
 	pattern?:
 		| null
 		| 'nil'

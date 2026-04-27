@@ -15,6 +15,7 @@ export enum FileLocation {
 	settings = 'word/settings.xml',
 	styles = 'word/styles.xml',
 	customProperties = 'docProps/custom.xml',
+	theme = 'word/theme/theme1.xml',
 }
 
 export enum FileMime {

@@ -57,11 +57,15 @@ describe('XQuery functions', () => {
 				w:fill="abc123"
 				w:color="def456"
 				w:val="thinDiagCross"
+				w:themeColor="dark1"
+				w:themeFill="light2"
 			/>`
 		);
 		expect(evaluateXPathToMap(`docxml:ct-shd(/*)`, dom)).toEqual({
 			background: 'abc123',
 			foreground: 'def456',
+			themeColor: 'dark1',
+			themeFill: 'light2',
 			pattern: 'thinDiagCross',
 		});
 	});

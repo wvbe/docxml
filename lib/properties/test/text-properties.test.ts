@@ -159,6 +159,57 @@ describe('Deletion property', () => {
 	);
 });
 
+describe('Theme color and font properties', () => {
+	test(
+		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:color w:val="4F81BD" w:themeColor="accent1" />
+		</w:rPr>`,
+		{
+			color: '4F81BD',
+			colorTheme: 'accent1',
+		}
+	);
+
+	test(
+		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:color w:themeColor="dark1" />
+		</w:rPr>`,
+		{
+			colorTheme: 'dark1',
+		}
+	);
+
+	test(
+		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:asciiTheme="minorHAnsi" w:hAnsiTheme="minorHAnsi" w:csTheme="minorBidi" />
+		</w:rPr>`,
+		{
+			font: {
+				ascii: 'Calibri',
+				hAnsi: 'Calibri',
+				asciiTheme: 'minorHAnsi',
+				hAnsiTheme: 'minorHAnsi',
+				csTheme: 'minorBidi',
+			},
+		}
+	);
+
+	test(
+		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:shd w:color="auto" w:fill="EEECE1" w:val="clear" w:themeColor="dark1" w:themeFill="light2" />
+		</w:rPr>`,
+		{
+			shading: {
+				foreground: 'auto',
+				background: 'EEECE1',
+				pattern: 'clear',
+				themeColor: 'dark1',
+				themeFill: 'light2',
+			},
+		}
+	);
+});
+
 describe('Change Information properties', () => {
 	// Node with author, id and date
 	test(

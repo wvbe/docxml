@@ -15,7 +15,7 @@ import {
 	evaluateXPathToFirstNode,
 	evaluateXPathToMap,
 } from '../../utilities/src/xquery.ts';
-import type { Shading } from './shared-properties.ts';
+import type { Shading, ThemeColor, ThemeFont } from './shared-properties.ts';
 
 type SimpleOrComplex<Generic> = {
 	simple?: Generic | null;
@@ -58,6 +58,11 @@ export type TextProperties = {
 	 * The color of this text. Type as a hexidecimal code (`"ff0000"`) or a basic color name (`"red"`).
 	 */
 	color?: string | null;
+	/**
+	 * The theme color slot for this text (e.g. "accent1", "dark1"). When present, the actual
+	 * color value should be resolved from the document's theme.
+	 */
+	colorTheme?: ThemeColor | null;
 	/**
 	 * The background color of this paragraph, optionally with a pattern in a secondary color.
 	 */
@@ -136,6 +141,9 @@ export type TextProperties = {
 				cs?: string;
 				ascii?: string;
 				hAnsi?: string;
+				asciiTheme?: ThemeFont;
+				hAnsiTheme?: ThemeFont;
+				csTheme?: ThemeFont;
 		  };
 	/**
 	 * A property used to indicate when an entire paragraph has moved.
@@ -177,7 +185,21 @@ export type TextProperties = {
 	deletion?: null | InsertionProps;
 };
 
-type IntermediateProps = Omit<TextProperties, 'change'> & {
+type IntermediateProps = Omit<
+	TextProperties,
+	'change' | 'colorTheme' | 'font'
+> & {
+	colorTheme?: string | null;
+	font?:
+		| string
+		| {
+				cs?: string;
+				ascii?: string;
+				hAnsi?: string;
+				asciiTheme?: string;
+				hAnsiTheme?: string;
+				csTheme?: string;
+		  };
 	change?: {
 		id: number;
 		author?: string;
@@ -202,6 +224,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				`map {
 			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
 			"color": ./${QNS.w}color/@${QNS.w}val/string(),
+			"colorTheme": ./${QNS.w}color/@${QNS.w}themeColor/string(),
 			"shading": ./${QNS.w}shd/docxml:ct-shd(.),
 			"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
 			"isBold": map {
@@ -226,7 +249,10 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 			"font": ./${QNS.w}rFonts/map {
 				"cs": @${QNS.w}cs/string(),
 				"ascii": @${QNS.w}ascii/string(),
-				"hAnsi": @${QNS.w}hAnsi/string()
+				"hAnsi": @${QNS.w}hAnsi/string(),
+				"asciiTheme": @${QNS.w}asciiTheme/string(),
+				"hAnsiTheme": @${QNS.w}hAnsiTheme/string(),
+				"csTheme": @${QNS.w}csTheme/string()
 			},
 			"moveTo": ./${QNS.w}moveTo/map {
 				"id": @${QNS.w}id/number(), 
@@ -258,7 +284,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				node,
 				null,
 				{ nodeName: nodeName ? nodeName.localName : null }
-		  )
+			)
 		: {};
 
 	if (props.change) {
@@ -346,8 +372,9 @@ export async function textPropertiesToNode(
 			if ($style) then element ${QNS.w}rStyle {
 				attribute ${QNS.w}val { $style }
 			} else (),
-			if ($color) then element ${QNS.w}color {
-				attribute ${QNS.w}val { $color }
+			if ($color or $colorTheme) then element ${QNS.w}color {
+				if ($color) then attribute ${QNS.w}val { $color } else (),
+				if ($colorTheme) then attribute ${QNS.w}themeColor { $colorTheme } else ()
 			} else (),
 			if ($isUnderlined) then element ${QNS.w}u {
 				attribute ${QNS.w}val { $isUnderlined }
@@ -387,6 +414,15 @@ export async function textPropertiesToNode(
 				} else (),
 				if (exists($font('hAnsi'))) then attribute ${QNS.w}hAnsi {
 					$font('hAnsi')
+				} else (),
+				if (exists($font('asciiTheme'))) then attribute ${QNS.w}asciiTheme {
+					$font('asciiTheme')
+				} else (),
+				if (exists($font('hAnsiTheme'))) then attribute ${QNS.w}hAnsiTheme {
+					$font('hAnsiTheme')
+				} else (),
+				if (exists($font('csTheme'))) then attribute ${QNS.w}csTheme {
+					$font('csTheme')
 				} else ()
 			} else (),
 			if (exists($change)) then element ${QNS.w}rPrChange { 
@@ -403,6 +439,7 @@ export async function textPropertiesToNode(
 		{
 			style: data.style || null,
 			color: data.color || null,
+			colorTheme: data.colorTheme || null,
 			isUnderlined:
 				data.isUnderlined === true
 					? 'single'
@@ -426,14 +463,20 @@ export async function textPropertiesToNode(
 							cs: data.font,
 							ascii: data.font,
 							hAnsi: data.font,
-					  }
+							asciiTheme: null,
+							hAnsiTheme: null,
+							csTheme: null,
+						}
 					: data.font
-					? {
-							cs: data.font.cs || null,
-							ascii: data.font.ascii || null,
-							hAnsi: data.font.hAnsi || null,
-					  }
-					: null,
+						? {
+								cs: data.font.cs || null,
+								ascii: data.font.ascii || null,
+								hAnsi: data.font.hAnsi || null,
+								asciiTheme: data.font.asciiTheme || null,
+								hAnsiTheme: data.font.hAnsiTheme || null,
+								csTheme: data.font.csTheme || null,
+							}
+						: null,
 			change: data.change
 				? {
 						id: data.change.id,
@@ -444,7 +487,7 @@ export async function textPropertiesToNode(
 							? new Date(data.change.date).toISOString()
 							: undefined,
 						node: await textPropertiesToNode(data.change),
-				  }
+					}
 				: null,
 			/*
 			 * Although the MoveTo, MoveFrom and Insertion components are used here and it can have children,
@@ -457,7 +500,7 @@ export async function textPropertiesToNode(
 						date: data.moveTo.date
 							? new Date(data.moveTo.date)
 							: undefined,
-				  }).toNode([])
+					}).toNode([])
 				: null,
 
 			moveFrom: data.moveFrom
@@ -466,7 +509,7 @@ export async function textPropertiesToNode(
 						date: data.moveFrom.date
 							? new Date(data.moveFrom.date)
 							: undefined,
-				  }).toNode([])
+					}).toNode([])
 				: null,
 			insertion: data.insertion
 				? await new Insertion(data.insertion).toNode([])

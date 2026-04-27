@@ -31,6 +31,7 @@ import { NumberingXml } from './NumberingXml.ts';
 import { type File, RelationshipsXml } from './RelationshipsXml.ts';
 import { SettingsXml } from './SettingsXml.ts';
 import { StylesXml } from './StylesXml.ts';
+import { ThemeXml } from './ThemeXml.ts';
 
 export type DocumentChild = SectionChild | Section;
 
@@ -53,6 +54,18 @@ export class DocumentXml extends XmlFileWithContentTypes {
 	) {
 		super(location);
 		this.relationships = relationships;
+	}
+
+	#theme: ThemeXml | null = null;
+
+	public get theme(): ThemeXml {
+		if (!this.#theme) {
+			this.#theme = this.relationships.ensureRelationship(
+				RelationshipType.theme,
+				() => new ThemeXml(FileLocation.theme)
+			);
+		}
+		return this.#theme;
 	}
 
 	#styles: StylesXml | null = null;

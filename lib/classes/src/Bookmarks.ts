@@ -9,8 +9,6 @@ export class Bookmarks {
 
 	/**
 	 * Marks a unique identifier as taken.
-	 *
-	 * @todo When loading an existing document, bookmarks are not registered from it yet.
 	 */
 	public registerIdentifier(id: number, name?: string) {
 		if (this.#bookmarks.has(id)) {
@@ -31,5 +29,12 @@ export class Bookmarks {
 		const name = `__docxml_bookmark_${id}`;
 		this.registerIdentifier(id);
 		return { id, name };
+	}
+
+	/**
+	 * Get a bookmark name by its identifier.
+	 */
+	public get(id: number): string | null | undefined {
+		return this.#bookmarks.get(id);
 	}
 }

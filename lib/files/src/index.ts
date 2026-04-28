@@ -1,5 +1,6 @@
 import type { ContentTypesXml } from '../../../mod.ts';
 import type { Archive } from '../../classes/src/Archive.ts';
+import type { Bookmarks } from '../../classes/src/Bookmarks.ts';
 import { UnhandledXmlFile } from '../../classes/src/XmlFile.ts';
 import { RelationshipType } from '../../enums.ts';
 import { CommentsXml } from './CommentsXml.ts';
@@ -18,6 +19,8 @@ import { ExtendedPropertiesXml } from './wip/ExtendedPropertiesXml.ts';
 import { FontTableXml } from './wip/FontTableXml.ts';
 import { WebSettingsXml } from './wip/WebSettingsXml.ts';
 
+export type ArchiveContext = { bookmarks: Bookmarks };
+
 /**
  * @deprecated This is probably not the best way to instantiate new classes. Should be looking at
  * the content type instead.
@@ -25,7 +28,8 @@ import { WebSettingsXml } from './wip/WebSettingsXml.ts';
 export function castRelationshipToClass(
 	archive: Archive,
 	contentTypes: ContentTypesXml,
-	meta: Pick<RelationshipMeta, 'type' | 'target'>
+	meta: Pick<RelationshipMeta, 'type' | 'target'>,
+	context?: ArchiveContext
 ) {
 	switch (meta.type) {
 		case RelationshipType.customProperties:
@@ -46,7 +50,12 @@ export function castRelationshipToClass(
 		case RelationshipType.header:
 			return HeaderXml.fromArchive(archive, contentTypes, meta.target);
 		case RelationshipType.officeDocument:
-			return DocumentXml.fromArchive(archive, contentTypes, meta.target);
+			return DocumentXml.fromArchive(
+				archive,
+				contentTypes,
+				meta.target,
+				context
+			);
 		case RelationshipType.settings:
 			return SettingsXml.fromArchive(archive, contentTypes, meta.target);
 		case RelationshipType.styles:

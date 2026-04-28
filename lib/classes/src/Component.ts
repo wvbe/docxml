@@ -2,6 +2,7 @@ import type { DocumentXml } from '../../files/src/DocumentXml.ts';
 import type { FooterXml, HeaderXml } from '../../files/src/HeaderFooterXml.ts';
 import type { RelationshipsXml } from '../../files/src/RelationshipsXml.ts';
 import type { Archive } from './Archive.ts';
+import type { Bookmarks } from './Bookmarks.ts';
 
 /**
  * An ancestor of a component at serialization time, or the {@link DocumentXml} instance that is the
@@ -53,6 +54,9 @@ export type ComponentContext = {
 
 	/** Relationships that the nodes in this context can reference. */
 	relationships: RelationshipsXml | null;
+
+	/** The bookmarks. */
+	bookmarks?: Bookmarks;
 };
 
 /**
@@ -66,7 +70,7 @@ const IS_COMPONENT: unique symbol = Symbol();
  * it must have a `children` and `mixed` static properties.
  */
 export interface ComponentDefinition<
-	C extends AnyComponent | unknown = AnyComponent
+	C extends AnyComponent | unknown = AnyComponent,
 > {
 	new (props: ComponentProps<C>, ...children: ComponentChild<C>[]): C;
 	children: string[];
@@ -82,7 +86,7 @@ export interface ComponentDefinition<
  */
 export type ComponentFunction<
 	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
-	ChildGeneric extends AnyComponent | string = never
+	ChildGeneric extends AnyComponent | string = never,
 > = (
 	props: PropsGeneric & { children?: ChildGeneric | ChildGeneric[] }
 ) => AnyComponent;
@@ -106,7 +110,7 @@ export function isComponentDefinition(
 
 export abstract class Component<
 	PropsGeneric extends { [key: string]: unknown } = { [key: string]: never },
-	ChildGeneric extends AnyComponent | string = never
+	ChildGeneric extends AnyComponent | string = never,
 > {
 	// eslint-disable-next-line @typescript-eslint/prefer-as-const
 	public static [IS_COMPONENT]: true = true;

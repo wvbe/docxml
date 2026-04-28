@@ -68,10 +68,15 @@ export class Docx<
 		rules: GenericRenderer<
 			RuleResult,
 			{ document: DocumentXml } & PropsGeneric
-		> | null = null
+		> | null = null,
+		bookmarks: Bookmarks | null = null
 	) {
 		this.contentTypes = contentTypes;
 		this.relationships = relationships;
+
+		if (bookmarks) {
+			this.bookmarks = bookmarks;
+		}
 
 		if (rules) {
 			this.#renderer.merge(rules);
@@ -145,7 +150,7 @@ export class Docx<
 			// Loop over all content to ensure styles are registered, relationships created etc.
 			await Promise.all(
 				(await children).map(async function walk(componentPromise) {
-					const component = await componentPromise;
+					const component = componentPromise;
 					if (typeof component === 'string') {
 						return;
 					}
@@ -163,7 +168,7 @@ export class Docx<
 					}
 
 					if (relationships !== null) {
-						await component.ensureRelationship(relationships);
+						component.ensureRelationship(relationships);
 					}
 
 					await Promise.all(
@@ -257,13 +262,22 @@ export class Docx<
 			archive,
 			FileLocation.contentTypes
 		);
+		const bookmarks = new Bookmarks();
 		const relationships = await RelationshipsXml.fromArchive(
 			archive,
 			contentTypes,
-			FileLocation.relationships
+			FileLocation.relationships,
+			{
+				bookmarks,
+			}
 		);
 
-		return new Docx<PropsGeneric>(contentTypes, relationships);
+		return new Docx<PropsGeneric>(
+			contentTypes,
+			relationships,
+			null,
+			bookmarks
+		);
 	}
 
 	/**

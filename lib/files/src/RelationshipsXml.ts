@@ -12,7 +12,7 @@ import { create } from '../../utilities/src/dom.ts';
 import { createRandomId } from '../../utilities/src/identifiers.ts';
 import { QNS } from '../../utilities/src/namespaces.ts';
 import { evaluateXPathToArray } from '../../utilities/src/xquery.ts';
-import { castRelationshipToClass } from './index.ts';
+import { type ArchiveContext, castRelationshipToClass } from './index.ts';
 
 export type RelationshipMeta = {
 	id: string;
@@ -167,7 +167,7 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 								: relative(
 										dirname(dirname(this.location)),
 										meta.target
-								  ),
+									),
 						}
 					)
 				),
@@ -204,7 +204,8 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
-		location: string
+		location: string,
+		context?: ArchiveContext
 	): Promise<RelationshipsXml> {
 		const meta = evaluateXPathToArray(
 			`
@@ -235,15 +236,16 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 									archive,
 									contentTypes,
 									meta.target
-							  )
+								)
 							: await castRelationshipToClass(
 									archive,
 									contentTypes,
 									{
 										type: meta.type,
 										target: meta.target,
-									}
-							  ),
+									},
+									context
+								),
 					}))
 			)
 		).reduce((map, { id, instance }) => {

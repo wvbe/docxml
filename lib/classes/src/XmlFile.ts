@@ -1,5 +1,6 @@
 import { FileMime } from '../../enums.ts';
 import type { ContentTypesXml } from '../../files/src/ContentTypesXml.ts';
+import type { ArchiveContext } from '../../files/src/index.ts';
 import { parse } from '../../utilities/src/dom.ts';
 import type { Archive } from './Archive.ts';
 import type { BinaryFile } from './BinaryFile.ts';
@@ -104,7 +105,8 @@ export class XmlFileWithContentTypes extends XmlFileBase {
 	public static fromArchive(
 		_archive: Archive,
 		_contentTypes: ContentTypesXml,
-		location: string
+		location: string,
+		_context?: ArchiveContext
 	): Promise<XmlFile> {
 		return Promise.resolve(new XmlFile(location));
 	}

@@ -1,7 +1,8 @@
 import type { Bookmark } from '../../../classes/src/Bookmarks.ts';
 import {
-	type ComponentAncestor,
 	Component,
+	type ComponentAncestor,
+	type ComponentContext,
 } from '../../../classes/src/Component.ts';
 import { registerComponent } from '../../../utilities/src/components.ts';
 import { create } from '../../../utilities/src/dom.ts';
@@ -30,7 +31,7 @@ export type BookmarkRangeStartProps =
 	  };
 
 /**
- * The start of a range associated with a comment.
+ * The start of a range associated with a bookmark.
  */
 export class BookmarkRangeStart extends Component<
 	BookmarkRangeStartProps,
@@ -67,16 +68,20 @@ export class BookmarkRangeStart extends Component<
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node): BookmarkRangeStart {
-		return new BookmarkRangeStart(
-			evaluateXPathToMap<BookmarkRangeStartProps>(
-				`map {
-					"id": ./@${QNS.w}id/number(),
-					"name": ./@${QNS.w}name/string()
+	static override fromNode(
+		node: Node,
+		context: ComponentContext
+	): BookmarkRangeStart {
+		const props = evaluateXPathToMap<BookmarkRangeStartProps>(
+			`map {
+				"id": ./@${QNS.w}id/number(),
+				"name": ./@${QNS.w}name/string()
 				}`,
-				node
-			)
+			node
 		);
+
+		context.bookmarks?.registerIdentifier(props.id!, props.name);
+		return new BookmarkRangeStart(props);
 	}
 }
 

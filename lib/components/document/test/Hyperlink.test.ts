@@ -2,7 +2,10 @@ import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
 import { Archive } from '../../../classes/src/Archive.ts';
+import { Bookmarks } from '../../../classes/src/Bookmarks.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
+import { RelationshipType } from '../../../enums.ts';
+import { RelationshipsXml } from '../../../files/src/RelationshipsXml.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
 import { Hyperlink } from '../src/Hyperlink.ts';
@@ -10,6 +13,7 @@ import { Hyperlink } from '../src/Hyperlink.ts';
 const emptyContext: ComponentContext = {
 	archive: new Archive(),
 	relationships: null,
+	bookmarks: new Bookmarks(),
 };
 
 describe('Hyperlink', () => {
@@ -59,5 +63,45 @@ describe('Hyperlink', () => {
 				</del>
 			</hyperlink>`.replace(/\t|\n/g, '')
 		);
+	});
+
+	it('resolves url from relationshipId via relationships', () => {
+		const relationships = new RelationshipsXml('_rels/.rels', [
+			{
+				id: 'rId1',
+				type: RelationshipType.hyperlink,
+				target: 'https://example.com',
+				isExternal: true,
+				isBinary: false,
+			},
+		]);
+		const context: ComponentContext = {
+			archive: new Archive(),
+			relationships,
+			bookmarks: new Bookmarks(),
+		};
+		const link = Hyperlink.fromNode(
+			create(`
+				<w:hyperlink xmlns:w="${NamespaceUri.w}" xmlns:r="${NamespaceUri.r}" r:id="rId1">
+					<w:r><w:t>Click</w:t></w:r>
+				</w:hyperlink>
+			`),
+			context
+		);
+		expect(link.props.url).toBe('https://example.com');
+		expect(link.props.relationshipId).toBe('rId1');
+	});
+
+	it('does not set url when there is no relationshipId', () => {
+		const link = Hyperlink.fromNode(
+			create(`
+				<w:hyperlink xmlns:w="${NamespaceUri.w}" w:anchor="bookmark1">
+					<w:r><w:t>Click</w:t></w:r>
+				</w:hyperlink>
+			`),
+			emptyContext
+		);
+		expect(link.props.url).toBeFalsy();
+		expect(link.props.anchor).toBe('bookmark1');
 	});
 });

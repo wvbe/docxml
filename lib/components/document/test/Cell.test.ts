@@ -2,6 +2,7 @@ import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
 import { Archive } from '../../../classes/src/Archive.ts';
+import { Bookmarks } from '../../../classes/src/Bookmarks.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
@@ -15,6 +16,7 @@ import { Table } from '../src/Table.ts';
 const emptyContext: ComponentContext = {
 	archive: new Archive(),
 	relationships: null,
+	bookmarks: new Bookmarks(),
 };
 
 describe('Cell', () => {

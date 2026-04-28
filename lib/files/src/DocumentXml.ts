@@ -32,6 +32,7 @@ import { type File, RelationshipsXml } from './RelationshipsXml.ts';
 import { SettingsXml } from './SettingsXml.ts';
 import { StylesXml } from './StylesXml.ts';
 import { ThemeXml } from './ThemeXml.ts';
+import type { ArchiveContext } from './index.ts';
 
 export type DocumentChild = SectionChild | Section;
 
@@ -291,12 +292,14 @@ export class DocumentXml extends XmlFileWithContentTypes {
 	public static override async fromArchive(
 		archive: Archive,
 		contentTypes: ContentTypesXml,
-		location: string
+		location: string,
+		context?: ArchiveContext
 	): Promise<DocumentXml> {
 		const relationships = await RelationshipsXml.fromArchive(
 			archive,
 			contentTypes,
-			`${dirname(location)}/_rels/${basename(location)}.rels`
+			`${dirname(location)}/_rels/${basename(location)}.rels`,
+			context
 		);
 		const doc = new DocumentXml(location, relationships);
 		const dom = await archive.readXml(location);
@@ -305,17 +308,20 @@ export class DocumentXml extends XmlFileWithContentTypes {
 			`/*/${QNS.w}body/(${QNS.w}p/${QNS.w}pPr/${QNS.w}sectPr | ${QNS.w}sectPr)`,
 			dom
 		);
-		const context: ComponentContext = {
+		const componentContext: ComponentContext = {
 			archive,
 			relationships,
+			bookmarks: context?.bookmarks,
 		};
 		doc.set(
 			sections.length
-				? sections.map((node) => Section.fromNode(node, context))
+				? sections.map((node) =>
+						Section.fromNode(node, componentContext)
+					)
 				: createChildComponentsFromNodes<Table | Paragraph>(
 						sectionChildComponentNames,
 						evaluateXPathToNodes(`/*/${QNS.w}body/*`, dom),
-						context
+						componentContext
 					)
 		);
 		return doc;

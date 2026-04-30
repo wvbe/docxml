@@ -114,6 +114,26 @@ describe('Paragraph formatting', () => {
 		);
 	});
 
+	for (const lineRule of [null, 'exact', 'atLeast', 'auto'] as const) {
+		describe(`lineRule "${lineRule}"`, () => {
+			test(
+				`<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
+					<w:spacing w:line="240"${lineRule ? ` w:lineRule="${lineRule}"` : ''} />
+				</w:pPr>`,
+				{
+					spacing: {
+						before: null,
+						after: null,
+						line: twip(240),
+						lineRule,
+						afterAutoSpacing: false,
+						beforeAutoSpacing: false,
+					},
+				}
+			);
+		});
+	}
+
 	describe('Legacy "left"/"right"', () => {
 		test(
 			`<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>

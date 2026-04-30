@@ -52,7 +52,7 @@ export type ParagraphProperties = {
 		before?: Length | null;
 		after?: Length | null;
 		line?: Length | null;
-		lineRule?: 'atLeast' | 'exactly' | 'auto' | null;
+		lineRule?: 'atLeast' | 'exact' | 'auto' | null;
 		afterAutoSpacing?: boolean | null;
 		beforeAutoSpacing?: boolean | null;
 	} | null;

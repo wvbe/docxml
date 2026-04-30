@@ -19,28 +19,28 @@ const emptyContext: ComponentContext = {
 describe('Hyperlink', () => {
 	const hyperlink = Hyperlink.fromNode(
 		create(`
-                <w:hyperlink xmlns:w="${NamespaceUri.w}" w:anchor="chapter1" w:tooltip="link">
-                    <w:r>
-                        <w:t>Link</w:t>
-                    </w:r>
-					<w:ins w:id="1">
-						<w:r>
-							<w:t xml:space="preserve">This is a new paragraph</w:t>
-						</w:r>
-					</w:ins>
-					<w:del w:id="1">
-						<w:r>
-							<w:delText xml:space="preserve">This is removed paragraph</w:delText>
-						</w:r>
-					</w:del>
-                </w:hyperlink>
-                `),
+			<w:hyperlink xmlns:w="${NamespaceUri.w}" xmlns:r="${NamespaceUri.r}" r:id="rId1" w:anchor="chapter1" w:tooltip="link">
+				<w:r>
+					<w:t>Link</w:t>
+				</w:r>
+				<w:ins w:id="1">
+					<w:r>
+						<w:t xml:space="preserve">This is a new paragraph</w:t>
+					</w:r>
+				</w:ins>
+				<w:del w:id="1">
+					<w:r>
+						<w:delText xml:space="preserve">This is removed paragraph</w:delText>
+					</w:r>
+				</w:del>
+			</w:hyperlink>`),
 		emptyContext
 	);
 
 	it('parses props correctly', () => {
 		expect(hyperlink.props.anchor).toBe('chapter1');
 		expect(hyperlink.props.tooltip).toBe('link');
+		expect(hyperlink.props.relationshipId).toBe('rId1');
 	});
 
 	it('parses children correctly', () => {

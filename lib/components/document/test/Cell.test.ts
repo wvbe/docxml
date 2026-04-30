@@ -188,3 +188,50 @@ describe('Cell - with colspan', () => {
 		expect(originalCellWidths).toEqual(newCellWidths);
 	});
 });
+
+describe('Cell - with borders', () => {
+	const tableNode = create(`
+		<w:tbl xmlns:w="${NamespaceUri.w}">
+			<w:tblGrid>
+				<w:gridCol w:w="1129"/>
+			</w:tblGrid>
+			<w:tr>
+				<w:tc>
+					<w:tcPr>
+						<w:tcBorders>
+							<w:top w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
+						</w:tcBorders>
+					</w:tcPr>
+					<w:p/>
+				</w:tc>
+			</w:tr>
+		</w:tbl>
+	`);
+
+	it('cell width', async () => {
+		const fromNode = Table.fromNode(tableNode, emptyContext);
+		const toNode = await fromNode.toNode([]);
+
+		const originalBorder = evaluateXPathToFirstNode<Element>(
+			`./descendant::Q{${NamespaceUri.w}}tcBorders`,
+			tableNode
+		);
+		const newBorder = evaluateXPathToFirstNode<Element>(
+			`./descendant::Q{${NamespaceUri.w}}tcBorders`,
+			toNode
+		);
+
+		expect(originalBorder?.getAttributeNS(NamespaceUri.w, 'val')).toEqual(
+			newBorder?.getAttributeNS(NamespaceUri.w, 'val')
+		);
+		expect(originalBorder?.getAttributeNS(NamespaceUri.w, 'sz')).toEqual(
+			newBorder?.getAttributeNS(NamespaceUri.w, 'sz')
+		);
+		expect(originalBorder?.getAttributeNS(NamespaceUri.w, 'space')).toEqual(
+			newBorder?.getAttributeNS(NamespaceUri.w, 'space')
+		);
+		expect(originalBorder?.getAttributeNS(NamespaceUri.w, 'color')).toEqual(
+			newBorder?.getAttributeNS(NamespaceUri.w, 'color')
+		);
+	});
+});

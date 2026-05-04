@@ -34,6 +34,12 @@ export type SettingsI = {
 	footnoteProperties?: FootnoteProps | null;
 
 	documentProtection?: DocumentProtectionProps | null;
+
+	/**
+	 * Word compatibility mode version. Common values: 11 (2003), 12 (2007), 14 (2010), 15 (2013+).
+	 * Set to `null` to omit the compatibility block entirely.
+	 */
+	compatibilityMode?: 11 | 12 | 14 | 15 | null;
 };
 
 export type DocumentProtectionProps = {
@@ -54,6 +60,7 @@ const DEFAULT_SETTINGS: SettingsI = {
 	defaultTabStop: null,
 	footnoteProperties: null,
 	documentProtection: null,
+	compatibilityMode: null,
 };
 
 enum SettingType {
@@ -61,6 +68,7 @@ enum SettingType {
 	OnOff,
 	Relationship,
 	Formatting,
+	Custom,
 }
 
 type SettingMeta =
@@ -78,6 +86,11 @@ type SettingMeta =
 			docxmlName: keyof SettingsI;
 			ooxmlLocalName: string;
 			ooxmlType: SettingType.Formatting;
+	  }
+	| {
+			docxmlName: keyof SettingsI;
+			ooxmlLocalName: string;
+			ooxmlType: SettingType.Custom;
 	  }
 	| {
 			docxmlName: keyof SettingsI;
@@ -116,6 +129,11 @@ const settingsMeta: Array<SettingMeta> = [
 		docxmlName: 'documentProtection',
 		ooxmlLocalName: 'documentProtection',
 		ooxmlType: SettingType.OnOff,
+	},
+	{
+		docxmlName: 'compatibilityMode',
+		ooxmlLocalName: 'compat',
+		ooxmlType: SettingType.Custom,
 	},
 ];
 
@@ -230,6 +248,13 @@ export class SettingsXml extends XmlFileWithContentTypes {
 					) else (),
 					if (exists($defaultTabStop)) then element ${QNS.w}defaultTabStop {
 						attribute ${QNS.w}val { $defaultTabStop('twip') }
+					} else (),
+					if (exists($compatibilityMode)) then element ${QNS.w}compat {
+						element ${QNS.w}compatSetting {
+							attribute ${QNS.w}name { "compatibilityMode" },
+							attribute ${QNS.w}uri { "http://schemas.microsoft.com/office/word" },
+							attribute ${QNS.w}val { $compatibilityMode }
+						}
 					} else ()
 				}
 			</w:settings>`,
@@ -290,8 +315,14 @@ export class SettingsXml extends XmlFileWithContentTypes {
 					} else map {
 						"enforcement": $enforcement
 					}
-				) else ()
+				) else (),
+				"compatibilityMode": let $cs := ./${QNS.w}compat/${QNS.w}compatSetting[
+					@${QNS.w}name = "compatibilityMode" and
+					@${QNS.w}uri = "http://schemas.microsoft.com/office/word"
+				]
+				return if ($cs) then number($cs/@${QNS.w}val) else ()
 			}`,
+
 			xml
 		);
 

@@ -108,4 +108,41 @@ describe('SettingsXml', () => {
 			docxFromArchive.document.settings.get('documentProtection')
 		).toEqual(customSettings);
 	});
+
+	describe('compatibilityMode', () => {
+		it('compatibilityMode default is null', async () => {
+			const settings = new SettingsXml('test');
+			expect(settings.get('compatibilityMode')).toBe(null);
+			expect(serialize(await settings.$$$toNode())).toEqual(
+				`<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>`
+			);
+		});
+		it('compatibilityMode set and get', async () => {
+			const settings = new SettingsXml('test');
+			settings.set('compatibilityMode', 15);
+			expect(settings.get('compatibilityMode')).toBe(15);
+			expect(serialize(await settings.$$$toNode())).toEqual(
+				`<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:compat><w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/></w:compat></w:settings>`
+			);
+		});
+		it('compatibilityMode roundtrips through archive', async () => {
+			const docx = Docx.fromNothing();
+			docx.document.settings.set('compatibilityMode', 15);
+			const docxFromArchive = await Docx.fromArchive(
+				await docx.toArchive()
+			);
+			expect(
+				docxFromArchive.document.settings.get('compatibilityMode')
+			).toBe(15);
+		});
+		it('compatibilityMode null roundtrips through archive', async () => {
+			const docx = Docx.fromNothing();
+			const docxFromArchive = await Docx.fromArchive(
+				await docx.toArchive()
+			);
+			expect(
+				docxFromArchive.document.settings.get('compatibilityMode')
+			).toBe(null);
+		});
+	});
 });

@@ -148,8 +148,10 @@ export class Text extends Component<TextProps, TextChild> {
 							${QNS.w}t/text(),
 							${QNS.w}fldChar,
 							${QNS.w}instrText,
-							${QNS.w}moveTo, 
-							${QNS.w}moveFrom
+							${QNS.w}noBreakHyphen,
+							${QNS.w}separator,
+							${QNS.w}continuationSeparator,
+							${QNS.w}sym
 						)
 					}
 				}

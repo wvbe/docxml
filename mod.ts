@@ -73,10 +73,20 @@ export {
 	type FieldRangeStartProps,
 } from './lib/components/document/src/FieldRangeStart.ts';
 export {
+	FootnoteContinuationSeparator,
+	type FootnoteContinuationSeparatorChild,
+	type FootnoteContinuationSeparatorProps,
+} from './lib/components/document/src/FootnoteContinuationSeparator.ts';
+export {
 	FootnoteReference,
 	type FootnoteProps,
 	type FootnoteReferenceProps,
 } from './lib/components/document/src/FootnoteReference.ts';
+export {
+	FootnoteSeparator,
+	type FootnoteSeparatorChild,
+	type FootnoteSeparatorProps,
+} from './lib/components/document/src/FootnoteSeparator.ts';
 export {
 	Hyperlink,
 	type HyperlinkChild,

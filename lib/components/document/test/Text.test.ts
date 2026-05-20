@@ -52,4 +52,29 @@ describe('Text', () => {
 			`.replace(/\n|\t/g, '')
 		);
 	});
+
+	it('parses inline symbol and footnote separators correctly', () => {
+		const textWithSpecialInlineNodes = Text.fromNode(
+			create(`
+				<w:r xmlns:w="${NamespaceUri.w}">
+					<w:noBreakHyphen />
+					<w:separator />
+					<w:continuationSeparator />
+					<w:sym w:font="Wingdings" w:char="F02A" />
+				</w:r>
+			`),
+			emptyContext
+		);
+
+		expect(
+			textWithSpecialInlineNodes.children.map(
+				(child) => child.constructor.name
+			)
+		).toEqual([
+			'NonBreakingHyphen',
+			'FootnoteSeparator',
+			'FootnoteContinuationSeparator',
+			'Symbol',
+		]);
+	});
 });

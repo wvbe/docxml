@@ -1,6 +1,6 @@
 import { describe } from 'std/testing/bdd';
 
-import { pt } from '../../utilities/src/length.ts';
+import { pt, twip } from '../../utilities/src/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
 import { createXmlRoundRobinTest } from '../../utilities/src/tests.ts';
 import {
@@ -62,6 +62,26 @@ describe('Table row deletion', () => {
 		</w:trPr>`,
 		{
 			deletion: { author: 'Luis', date: date, id: 1 },
+		}
+	);
+});
+
+describe('Table row height', () => {
+	test(
+		`<w:trPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:trHeight w:val="949" w:hRule="exact"/>
+		</w:trPr>`,
+		{
+			height: { value: twip(949), rule: 'exact' },
+		}
+	);
+
+	test(
+		`<w:trPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:trHeight w:val="560"/>
+		</w:trPr>`,
+		{
+			height: { value: twip(560) },
 		}
 	);
 });

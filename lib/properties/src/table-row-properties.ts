@@ -27,6 +27,19 @@ export type TableRowProperties = {
 	 */
 	cellSpacing?: null | Length;
 	/**
+	 * The height of the row. Corresponds to `w:trHeight` in OOXML.
+	 *
+	 * - `value`: the height of the row.
+	 * - `rule`: how the height is applied:
+	 *   - `'auto'` (default when omitted): the row height is determined by the content.
+	 *   - `'atLeast'`: the row height is at least the specified value.
+	 *   - `'exact'`: the row height is exactly the specified value regardless of content.
+	 */
+	height?: null | {
+		value: Length;
+		rule?: null | 'auto' | 'atLeast' | 'exact';
+	};
+	/**
 	 * A property used to indicate when a table row property has changed. This will appear as a tracked
 	 * change in Word's track changes feature.
 	 */
@@ -66,6 +79,10 @@ export function tableRowPropertiesFromNode(
 					"isHeaderRow": docxml:ct-on-off(./${QNS.w}tblHeader),
 					"isUnsplittable": docxml:ct-on-off(./${QNS.w}cantSplit),
 					"cellSpacing": docxml:length(${QNS.w}tblCellSpacing[not(@${QNS.w}type = 'nil')]/@${QNS.w}w, 'twip'),
+					"height": ./${QNS.w}trHeight/map {
+						"value": docxml:length(@${QNS.w}val, 'twip'),
+						"rule": @${QNS.w}hRule/string()
+					},
 					"change": ./${QNS.w}trPrChange/map {
 						"id": @${QNS.w}id/number(),
 						"author": @${QNS.w}author/string(),
@@ -84,7 +101,7 @@ export function tableRowPropertiesFromNode(
 					}
 				}`,
 				node
-		  ) || {}
+			) || {}
 		: {};
 	// Convert the date string to a Date object.
 	if (props.change) {
@@ -132,6 +149,10 @@ export async function tableRowPropertiesToNode(
 				attribute ${QNS.w}w { round($cellSpacing('twip')) },
 				attribute ${QNS.w}type { "dxa" }
 			} else (),
+			if (exists($height)) then element ${QNS.w}trHeight {
+				attribute ${QNS.w}val { round($height('twip')) },
+				if (exists($heightRule)) then attribute ${QNS.w}hRule { $heightRule } else ()
+			} else (),
 			if (exists($change)) then element ${QNS.w}trPrChange { 
 				attribute ${QNS.w}id { $change('id') }, 
 				if ($change('author')) then attribute ${QNS.w}author { $change('author') } else (), 
@@ -145,6 +166,8 @@ export async function tableRowPropertiesToNode(
 			isHeaderRow: trpr.isHeaderRow || false,
 			isUnsplittable: trpr.isUnsplittable || false,
 			cellSpacing: trpr.cellSpacing || null,
+			height: trpr.height?.value || null,
+			heightRule: trpr.height?.rule || null,
 			change: trpr.change
 				? {
 						id: trpr.change.id,
@@ -155,7 +178,7 @@ export async function tableRowPropertiesToNode(
 							? new Date(trpr.change.date).toISOString()
 							: undefined,
 						node: await tableRowPropertiesToNode(trpr.change),
-				  }
+					}
 				: null,
 			insertion: trpr.insertion
 				? await new Insertion(trpr.insertion).toNode([])

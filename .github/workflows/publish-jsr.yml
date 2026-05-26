@@ -1,17 +1,17 @@
-name: Tests
+name: Publish to JSR
 
 on:
     push:
-    pull_request:
-    workflow_dispatch:
+        tags:
+            - '*.*.*'
 
 permissions:
     contents: read
+    id-token: write
 
 jobs:
-    test:
+    publish:
         runs-on: ubuntu-latest
-
         steps:
             - name: Setup repo
               uses: actions/checkout@v6
@@ -29,3 +29,6 @@ jobs:
 
             - name: Run tests
               run: deno task test
+
+            - name: Publish package
+              run: deno publish

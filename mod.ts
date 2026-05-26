@@ -1,3 +1,21 @@
+/**
+ * Docxml - A module for creating and manipulating .docx documents
+ *
+ * This module provides APIs for:
+ * - Creating .docx documents from scratch
+ * - Using .docx or .dotx templates
+ * - Building documents programmatically with TypeScript/JavaScript
+ * - Extracting and modifying existing document content
+ * - Using vanilla classes or JSX syntax (Deno)
+ *
+ * @module docxml
+ * @example
+ * ```ts
+ * import Docx from 'jsr:@fontoxml/docxml';
+ * const doc = new Docx();
+ * ```
+ */
+
 // Top-level API
 export { Docx as default } from './lib/Docx.ts';
 

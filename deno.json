@@ -1,14 +1,46 @@
 {
 	"name": "@fontoxml/docxml",
 	"version": "5.22.0",
-	"description": "A module for making .docx documents from scratch or from an existing .docx or .dotx template.",
+	"description": "Create, modify, and parse Microsoft Word (.docx) documents programmatically. Build documents from scratch or use existing templates. Supports vanilla JavaScript and JSX syntax with full TypeScript support.",
 	"license": "MIT",
+	"author": "FontoXML",
+	"keywords": [
+		"docx",
+		"word",
+		"document",
+		"markup",
+		"office",
+		"microsoft-word",
+		"template"
+	],
 	"homepage": "https://jsr.io/@fontoxml/docxml",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/fontoxml/docxml"
 	},
+	"bugs": "https://github.com/fontoxml/docxml/issues",
 	"exports": "./mod.ts",
+	"publish": {
+		"exclude": [
+			".github/",
+			".vscode/",
+			".npmrc",
+			"deno.lock",
+			"assets/",
+			"coverage/",
+			"docs/",
+			"eslint.config.mjs",
+			"examples/",
+			"playground/",
+			".prettierrc.json",
+			"inspect.ts",
+			"lib/utilities/src/tests.ts",
+			"**/*.test.ts",
+			"**/*.test.tsx",
+			"**/test/**",
+			"**/__tests__/**"
+		]
+	},
 	"compilerOptions": {
 		"strict": true,
 		"lib": ["deno.ns", "dom", "dom.iterable"],

@@ -96,6 +96,10 @@ export type ParagraphProperties = {
 	change?: null | (ChangeInformation & Omit<ParagraphProperties, 'change'>);
 	pageBreakBefore?: null | boolean;
 	/**
+	 * Suppress space above/below when the adjacent paragraph uses the same style.
+	 */
+	contextualSpacing?: null | boolean;
+	/**
 	 * Used for formatting of the `rPr` elements at the top level of a paragraph.
 	 * This is text property changes applied to the whole parent paragraph.
 	 */
@@ -175,7 +179,8 @@ export function paragraphPropertiesFromNode(
 						"date": @${QNS.w}date/string(),
 						"_node": ./${QNS.w}pPr
 					},
-					"pageBreakBefore": docxml:ct-on-off(./${QNS.w}pageBreakBefore), 
+					"pageBreakBefore": docxml:ct-on-off(./${QNS.w}pageBreakBefore),
+					"contextualSpacing": docxml:ct-on-off(./${QNS.w}contextualSpacing),
 					"tabs": ./${QNS.w}tabs/array {${QNS.w}tab/map {
 						"type": @${QNS.w}val/string(),
 						"leader": @${QNS.w}leader/string(),
@@ -294,8 +299,12 @@ export async function paragraphPropertiesToNode(
 				$rpr,
 				$sectpr,
 
-				if (exists($pageBreakBefore)) then element ${QNS.w}pageBreakBefore { 
-						attribute ${QNS.w}val { $pageBreakBefore } 
+				if (exists($pageBreakBefore)) then element ${QNS.w}pageBreakBefore {
+					attribute ${QNS.w}val { $pageBreakBefore }
+				} else (),
+
+				if (exists($contextualSpacing)) then element ${QNS.w}contextualSpacing {
+					attribute ${QNS.w}val { $contextualSpacing }
 				} else (),
 
 				if (exists($change)) then element ${QNS.w}pPrChange {
@@ -359,6 +368,7 @@ export async function paragraphPropertiesToNode(
 				: null,
 			listItem: data.listItem || null,
 			pageBreakBefore: data.pageBreakBefore || null,
+			contextualSpacing: data.contextualSpacing || null,
 			change: data.change
 				? {
 						id: data.change.id,

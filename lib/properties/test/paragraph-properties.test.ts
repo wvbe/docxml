@@ -227,4 +227,20 @@ describe('Paragraph formatting', () => {
 			}
 		);
 	});
+
+	describe('contextualSpacing', () => {
+		test(
+			`<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:contextualSpacing w:val="true" />
+			</w:pPr>`,
+			{ contextualSpacing: true }
+		);
+
+		test(
+			`<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:contextualSpacing w:val="false" />
+			</w:pPr>`,
+			{ contextualSpacing: false }
+		);
+	});
 });

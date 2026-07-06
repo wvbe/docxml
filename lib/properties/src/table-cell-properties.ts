@@ -46,6 +46,26 @@ export type TableCellProperties = {
 		tr2bl?: null | Border<LineBorderType>;
 	};
 	/**
+	 * The margins (internal padding) of this cell, overriding the table-level
+	 * default cell margins (`w:tblCellMar`). Corresponds to `w:tcMar` in OOXML.
+	 *
+	 * Each side is a {@link Length}. Omitted sides fall back to the table default.
+	 */
+	margin?: null | {
+		top?: null | Length;
+		/**
+		 * The leading (left, in left-to-right) margin. Serialized as `w:start`;
+		 * both `w:start` and the legacy `w:left` are accepted when reading.
+		 */
+		start?: null | Length;
+		bottom?: null | Length;
+		/**
+		 * The trailing (right, in left-to-right) margin. Serialized as `w:end`;
+		 * both `w:end` and the legacy `w:right` are accepted when reading.
+		 */
+		end?: null | Length;
+	};
+	/**
 	 * The vertical alignment of this cell.
 	 */
 	verticalAlignment?: null | 'bottom' | 'center' | 'top';
@@ -127,6 +147,20 @@ export function tableCellPropertiesFromNode(
 						"insideH": docxml:ct-border(${QNS.w}insideH),
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
+					"margin": ./${QNS.w}tcMar/map {
+						"top": if (${QNS.w}top/@${QNS.w}w)
+							then docxml:length(${QNS.w}top/@${QNS.w}w, 'twip')
+							else (),
+						"start": if ((${QNS.w}start|${QNS.w}left)/@${QNS.w}w)
+							then docxml:length((${QNS.w}start|${QNS.w}left)[1]/@${QNS.w}w, 'twip')
+							else (),
+						"bottom": if (${QNS.w}bottom/@${QNS.w}w)
+							then docxml:length(${QNS.w}bottom/@${QNS.w}w, 'twip')
+							else (),
+						"end": if ((${QNS.w}end|${QNS.w}right)/@${QNS.w}w)
+							then docxml:length((${QNS.w}end|${QNS.w}right)[1]/@${QNS.w}w, 'twip')
+							else ()
+					},
 					"verticalAlignment": ./${QNS.w}vAlign/@${QNS.w}val/string(),
 					"insertion": ./${QNS.w}cellIns/map {
 						"id": @${QNS.w}id/number(), 
@@ -147,7 +181,7 @@ export function tableCellPropertiesFromNode(
 				}
 				`,
 				node
-		  )
+			)
 		: {};
 
 	if (props.change) {
@@ -218,6 +252,24 @@ export function tableCellPropertiesToNode(
 				docxml:ct-border(fn:QName("${NamespaceUri.w}", "insideH"), $borders('insideH')),
 				docxml:ct-border(fn:QName("${NamespaceUri.w}", "insideV"), $borders('insideV'))
 			} else (),
+			if (exists($margin)) then element ${QNS.w}tcMar {
+				if (exists($margin('top'))) then element ${QNS.w}top {
+					attribute ${QNS.w}w { $margin('top') },
+					attribute ${QNS.w}type { "dxa" }
+				} else (),
+				if (exists($margin('start'))) then element ${QNS.w}start {
+					attribute ${QNS.w}w { $margin('start') },
+					attribute ${QNS.w}type { "dxa" }
+				} else (),
+				if (exists($margin('bottom'))) then element ${QNS.w}bottom {
+					attribute ${QNS.w}w { $margin('bottom') },
+					attribute ${QNS.w}type { "dxa" }
+				} else (),
+				if (exists($margin('end'))) then element ${QNS.w}end {
+					attribute ${QNS.w}w { $margin('end') },
+					attribute ${QNS.w}type { "dxa" }
+				} else ()
+			} else (),
 			if (exists($verticalAlignment)) then element ${QNS.w}vAlign {
 				attribute ${QNS.w}val { $verticalAlignment }
 			} else (),
@@ -247,8 +299,29 @@ export function tableCellPropertiesToNode(
 						tl2br: null,
 						tr2bl: null,
 						...tcpr.borders,
-				  }
+					}
 				: null,
+			margin:
+				tcpr.margin &&
+				(tcpr.margin.top ||
+					tcpr.margin.start ||
+					tcpr.margin.bottom ||
+					tcpr.margin.end)
+					? {
+							top: tcpr.margin.top
+								? Math.round(tcpr.margin.top.twip)
+								: null,
+							start: tcpr.margin.start
+								? Math.round(tcpr.margin.start.twip)
+								: null,
+							bottom: tcpr.margin.bottom
+								? Math.round(tcpr.margin.bottom.twip)
+								: null,
+							end: tcpr.margin.end
+								? Math.round(tcpr.margin.end.twip)
+								: null,
+						}
+					: null,
 			verticalAlignment: tcpr.verticalAlignment || null,
 			change: tcpr.change
 				? {
@@ -260,7 +333,7 @@ export function tableCellPropertiesToNode(
 							? new Date(tcpr.change.date).toISOString()
 							: undefined,
 						node: tableCellPropertiesToNode(tcpr.change, true),
-				  }
+					}
 				: null,
 			insertion: tcpr.insertion
 				? new CellInsertion(tcpr.insertion).toNode()

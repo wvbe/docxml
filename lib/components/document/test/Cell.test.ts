@@ -86,6 +86,59 @@ describe('Cell', () => {
 	});
 });
 
+describe('Cell - tcMar (per-cell margins)', () => {
+	const dom = create(`<w:tbl xmlns:w="${NamespaceUri.w}">
+		<w:tr>
+			<w:tc xid="modern">
+				<w:tcPr>
+					<w:tcMar>
+						<w:top w:w="28" w:type="dxa"/>
+						<w:start w:w="14" w:type="dxa"/>
+						<w:bottom w:w="28" w:type="dxa"/>
+						<w:end w:w="14" w:type="dxa"/>
+					</w:tcMar>
+				</w:tcPr>
+				<w:p/>
+			</w:tc>
+			<w:tc xid="legacy">
+				<w:tcPr>
+					<w:tcMar>
+						<w:left w:w="14" w:type="dxa"/>
+						<w:right w:w="14" w:type="dxa"/>
+					</w:tcMar>
+				</w:tcPr>
+				<w:p/>
+			</w:tc>
+		</w:tr>
+	</w:tbl>`);
+
+	describe('modern start/end', () => {
+		const cell = Cell.fromNode(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			evaluateXPathToFirstNode('.//*[@xid="modern"]', dom)!,
+			emptyContext
+		);
+		it('parses all four sides', () => {
+			expect(cell?.props.margin?.top?.twip).toBe(28);
+			expect(cell?.props.margin?.start?.twip).toBe(14);
+			expect(cell?.props.margin?.bottom?.twip).toBe(28);
+			expect(cell?.props.margin?.end?.twip).toBe(14);
+		});
+	});
+
+	describe('legacy left/right', () => {
+		const cell = Cell.fromNode(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			evaluateXPathToFirstNode('.//*[@xid="legacy"]', dom)!,
+			emptyContext
+		);
+		it('maps left/right onto start/end', () => {
+			expect(cell?.props.margin?.start?.twip).toBe(14);
+			expect(cell?.props.margin?.end?.twip).toBe(14);
+		});
+	});
+});
+
 describe('Cell - with colspan', () => {
 	const tableNode = create(`
 		<w:tbl xmlns:w="${NamespaceUri.w}">

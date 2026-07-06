@@ -199,6 +199,46 @@ describe('Table cell formatting', () => {
 		});
 	});
 
+	describe('Table cell margins (w:tcMar)', () => {
+		test(
+			`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:tcMar>
+					<w:top w:w="28" w:type="dxa"/>
+					<w:start w:w="14" w:type="dxa"/>
+					<w:bottom w:w="28" w:type="dxa"/>
+					<w:end w:w="14" w:type="dxa"/>
+				</w:tcMar>
+			</w:tcPr>`,
+			{
+				margin: {
+					top: twip(28),
+					start: twip(14),
+					bottom: twip(28),
+					end: twip(14),
+				},
+			}
+		);
+
+		describe('Legacy "left"/"right"', () => {
+			test(
+				`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
+					<w:tcMar>
+						<w:left w:w="14" w:type="dxa"/>
+						<w:right w:w="14" w:type="dxa"/>
+					</w:tcMar>
+				</w:tcPr>`,
+				{
+					margin: {
+						top: null,
+						start: twip(14),
+						bottom: null,
+						end: twip(14),
+					},
+				}
+			);
+		});
+	});
+
 	describe('Table cell insertion', () => {
 		const date = new Date();
 		test(

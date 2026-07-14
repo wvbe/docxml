@@ -267,18 +267,10 @@ export class Cell extends Component<CellProps, CellChild> {
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
 					"margin": ./${QNS.w}tcPr/${QNS.w}tcMar/map {
-						"top": if (${QNS.w}top/@${QNS.w}w)
-							then docxml:length(${QNS.w}top/@${QNS.w}w, 'twip')
-							else (),
-						"start": if ((${QNS.w}start|${QNS.w}left)/@${QNS.w}w)
-							then docxml:length((${QNS.w}start|${QNS.w}left)[1]/@${QNS.w}w, 'twip')
-							else (),
-						"bottom": if (${QNS.w}bottom/@${QNS.w}w)
-							then docxml:length(${QNS.w}bottom/@${QNS.w}w, 'twip')
-							else (),
-						"end": if ((${QNS.w}end|${QNS.w}right)/@${QNS.w}w)
-							then docxml:length((${QNS.w}end|${QNS.w}right)[1]/@${QNS.w}w, 'twip')
-							else ()
+						"top": docxml:length(${QNS.w}top/@${QNS.w}w, 'twip'),
+						"start": docxml:length((${QNS.w}start|${QNS.w}left)[1]/@${QNS.w}w, 'twip'),
+						"bottom": docxml:length(${QNS.w}bottom/@${QNS.w}w, 'twip'),
+						"end": docxml:length((${QNS.w}end|${QNS.w}right)[1]/@${QNS.w}w, 'twip')
 					},
 					"verticalAlignment": ./${QNS.w}tcPr/${QNS.w}vAlign/@${QNS.w}val/string(),
 					"insertion": ./${QNS.w}tcPr/${QNS.w}cellIns/map {

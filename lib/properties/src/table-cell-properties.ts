@@ -148,18 +148,10 @@ export function tableCellPropertiesFromNode(
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
 					"margin": ./${QNS.w}tcMar/map {
-						"top": if (${QNS.w}top/@${QNS.w}w)
-							then docxml:length(${QNS.w}top/@${QNS.w}w, 'twip')
-							else (),
-						"start": if ((${QNS.w}start|${QNS.w}left)/@${QNS.w}w)
-							then docxml:length((${QNS.w}start|${QNS.w}left)[1]/@${QNS.w}w, 'twip')
-							else (),
-						"bottom": if (${QNS.w}bottom/@${QNS.w}w)
-							then docxml:length(${QNS.w}bottom/@${QNS.w}w, 'twip')
-							else (),
-						"end": if ((${QNS.w}end|${QNS.w}right)/@${QNS.w}w)
-							then docxml:length((${QNS.w}end|${QNS.w}right)[1]/@${QNS.w}w, 'twip')
-							else ()
+						"top": docxml:length(${QNS.w}top/@${QNS.w}w, 'twip'),
+						"start": docxml:length((${QNS.w}start|${QNS.w}left)[1]/@${QNS.w}w, 'twip'),
+						"bottom": docxml:length(${QNS.w}bottom/@${QNS.w}w, 'twip'),
+						"end": docxml:length((${QNS.w}end|${QNS.w}right)[1]/@${QNS.w}w, 'twip')
 					},
 					"verticalAlignment": ./${QNS.w}vAlign/@${QNS.w}val/string(),
 					"insertion": ./${QNS.w}cellIns/map {
@@ -301,27 +293,22 @@ export function tableCellPropertiesToNode(
 						...tcpr.borders,
 					}
 				: null,
-			margin:
-				tcpr.margin &&
-				(tcpr.margin.top ||
-					tcpr.margin.start ||
-					tcpr.margin.bottom ||
-					tcpr.margin.end)
-					? {
-							top: tcpr.margin.top
-								? Math.round(tcpr.margin.top.twip)
-								: null,
-							start: tcpr.margin.start
-								? Math.round(tcpr.margin.start.twip)
-								: null,
-							bottom: tcpr.margin.bottom
-								? Math.round(tcpr.margin.bottom.twip)
-								: null,
-							end: tcpr.margin.end
-								? Math.round(tcpr.margin.end.twip)
-								: null,
-						}
-					: null,
+			margin: tcpr.margin
+				? {
+						top: tcpr.margin.top
+							? Math.round(tcpr.margin.top.twip)
+							: null,
+						start: tcpr.margin.start
+							? Math.round(tcpr.margin.start.twip)
+							: null,
+						bottom: tcpr.margin.bottom
+							? Math.round(tcpr.margin.bottom.twip)
+							: null,
+						end: tcpr.margin.end
+							? Math.round(tcpr.margin.end.twip)
+							: null,
+					}
+				: null,
 			verticalAlignment: tcpr.verticalAlignment || null,
 			change: tcpr.change
 				? {
